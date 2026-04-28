@@ -15,18 +15,25 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from functools import lru_cache
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import cv2
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont
 
 import mediapipe as mp
 
 
 DEFAULT_REPO_ROOT = Path("/data/WYC/signLanguage")
 DEFAULT_OUTPUT_DIR = DEFAULT_REPO_ROOT / "work" / "generated" / "holistic_viz"
+DEFAULT_CJK_FONT_CANDIDATES = (
+    Path("/home/wuyangcheng/.fonts/SimHei.ttf"),
+    Path("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"),
+    Path("/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc"),
+)
 
 
 @dataclass
@@ -49,6 +56,54 @@ def _configure_headless() -> None:
 
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     os.environ.setdefault("DISPLAY", "")
+
+
+def _find_cjk_font_path() -> Optional[Path]:
+    """查找可用的中文字体文件。"""
+
+    for candidate in DEFAULT_CJK_FONT_CANDIDATES:
+        if candidate.exists():
+            return candidate
+    return None
+
+
+@lru_cache(maxsize=8)
+def _load_font(font_size: int) -> ImageFont.FreeTypeFont:
+    """加载中文字体，找不到时退回默认字体。"""
+
+    font_path = _find_cjk_font_path()
+    if font_path is not None:
+        try:
+            return ImageFont.truetype(str(font_path), font_size)
+        except OSError:
+            pass
+    return ImageFont.load_default()
+
+
+def _draw_text_overlay(
+    image: np.ndarray,
+    text: str,
+    *,
+    position: Tuple[int, int],
+    font_size: int = 24,
+    text_color: Tuple[int, int, int] = (255, 255, 255),
+    background_color: Tuple[int, int, int] = (0, 0, 0),
+    padding: int = 8,
+) -> np.ndarray:
+    """用 PIL 绘制文本，避免 OpenCV 默认字体不支持中文。"""
+
+    rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    pil_image = Image.fromarray(rgb)
+    draw = ImageDraw.Draw(pil_image)
+    font = _load_font(font_size)
+    bbox = draw.textbbox(position, text, font=font)
+    x0 = max(0, bbox[0] - padding)
+    y0 = max(0, bbox[1] - padding // 2)
+    x1 = min(pil_image.width, bbox[2] + padding)
+    y1 = min(pil_image.height, bbox[3] + padding // 2)
+    draw.rectangle([x0, y0, x1, y1], fill=background_color)
+    draw.text(position, text, font=font, fill=text_color)
+    return cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
 
 
 def _import_drawing_helpers():
@@ -118,22 +173,12 @@ def _draw_skeleton_canvas(shape: Tuple[int, int], results: Any) -> np.ndarray:
     return _draw_landmarks(canvas, results)
 
 
-def _label_frame(image: np.ndarray, text: str, y: int = 28) -> np.ndarray:
+def _label_frame(image: np.ndarray, text: str, y: int = 30) -> np.ndarray:
     """给图像加标题。"""
 
     out = image.copy()
-    cv2.rectangle(out, (0, 0), (out.shape[1], 38), (0, 0, 0), thickness=-1)
-    cv2.putText(
-        out,
-        text,
-        (12, y),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        0.8,
-        (255, 255, 255),
-        2,
-        cv2.LINE_AA,
-    )
-    return out
+    label_y = max(12, out.shape[0] - 42)
+    return _draw_text_overlay(out, text, position=(12, label_y), font_size=26)
 
 
 def _concat_triptych(left: np.ndarray, mid: np.ndarray, right: np.ndarray) -> np.ndarray:
@@ -228,10 +273,14 @@ def visualize_video(
             annotated = _draw_landmarks(frame, results)
             skeleton = _draw_skeleton_canvas(frame.shape[:2], results)
 
-            text = f"{video_name} | frame={frame_idx} | t={frame_idx / fps:.2f}s | pose={bool(results.pose_landmarks)} | left={bool(results.left_hand_landmarks)} | right={bool(results.right_hand_landmarks)} | face={bool(results.face_landmarks)}"
-            original_l = _label_frame(frame, "Original")
-            annotated_l = _label_frame(annotated, "Annotated")
-            skeleton_l = _label_frame(skeleton, "Skeleton")
+            text = (
+                f"视频={video_name} | 帧={frame_idx} | 时间={frame_idx / fps:.2f}s | "
+                f"姿态={bool(results.pose_landmarks)} | 左手={bool(results.left_hand_landmarks)} | "
+                f"右手={bool(results.right_hand_landmarks)} | 面部={bool(results.face_landmarks)}"
+            )
+            original_l = _label_frame(frame, "原图")
+            annotated_l = _label_frame(annotated, "关键点图")
+            skeleton_l = _label_frame(skeleton, "骨骼图")
             triptych = _concat_triptych(original_l, annotated_l, skeleton_l)
             triptych = _label_frame(triptych, text)
 
