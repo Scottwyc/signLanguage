@@ -19,6 +19,12 @@
 - `work/past/generate_pdf.py`: PDF 生成工具。
 - `work/past/md2latex.py`: Markdown 到 LaTeX 的转换脚本。
 - `work/past/ascii_diagram_v3.py`: ASCII 框图解析与绘制的早期版本。
+- `work/scripts/signlanguage_common.py`: DOCX 解析、视频探测等通用工具。
+- `work/scripts/profile_sign_data.py`: 手语资料结构化盘点脚本。
+- `work/scripts/holistic_sampling_probe.py`: Holistic 关键点采样探针脚本。
+- `work/scripts/plot_holistic_probe_summary.py`: Holistic 探针结果可视化和分析脚本。
+- `work/scripts/recommend_keyframes_from_probe.py`: 基于探针结果推荐关键帧和采样策略的脚本。
+- `work/scripts/visualize_holistic_features.py`: Holistic 特征检测结果可视化脚本，输出骨骼图、三联图和联系表。
 
 ## 主要文档
 
