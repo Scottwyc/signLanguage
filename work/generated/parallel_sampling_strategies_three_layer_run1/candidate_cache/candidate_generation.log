@@ -1,0 +1,19 @@
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+W0000 00:00:1777418814.214772 2213184 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1777418814.259586 2213184 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1777418814.266598 2213196 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1777418814.278970 2213196 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1777418814.279350 2213199 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1777418814.285626 2213220 landmark_projection_calculator.cc:186] Using NORM_RECT without IMAGE_DIMENSIONS is only supported for the square ROI. Provide IMAGE_DIMENSIONS or use PROJECTION_MATRIX.
+W0000 00:00:1777418814.300659 2213197 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1777418814.303308 2213199 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1777418814.308715 2213196 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+Traceback (most recent call last):
+  File "/data/WYC/signLanguage/work/scripts/sample_keyframe_candidates.py", line 164, in <module>
+    raise SystemExit(main())
+  File "/data/WYC/signLanguage/work/scripts/sample_keyframe_candidates.py", line 157, in main
+    md_path.write_text(_build_report(payload), encoding="utf-8")
+  File "/data/WYC/signLanguage/work/scripts/sample_keyframe_candidates.py", line 74, in _build_report
+    row = payload["video_result"]
+KeyError: 'video_result'

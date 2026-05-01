@@ -7,51 +7,30 @@
 - 采样帧联系表
 - 覆盖时间轴
 - 便于汇报的 Markdown / JSON 摘要
+
+注意：这里直接读取已保存的 Holistic 结果文件，只做统一可视化，不再重复跑识别。
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import math
-import os
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence
 
 import cv2
 import numpy as np
 from PIL import Image, ImageDraw
 
-from keyframe_sampling_common import DEFAULT_VIDEO_ROOT, configure_headless, _open_holistic
+from keyframe_sampling_common import DEFAULT_VIDEO_ROOT, configure_headless, _render_visual_cache
 from visualize_holistic_features import (
-    _concat_triptych,
     _configure_headless as _viz_configure_headless,
-    _draw_landmarks,
-    _draw_skeleton_canvas,
-    _label_frame,
-    _make_contact_sheet,
 )
 
 
 DEFAULT_OUTPUT_ROOT = Path("/data/WYC/signLanguage/work/generated/keyframe_sampling_visuals")
-
-
-def _ensure_rgb_text(image: np.ndarray, text: str, position: tuple[int, int], font_size: int = 26) -> np.ndarray:
-    """用 PIL 在图像上添加文本。"""
-
-    rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    pil = Image.fromarray(rgb)
-    draw = ImageDraw.Draw(pil)
-    try:
-        from visualize_holistic_features import _load_font  # type: ignore
-
-        font = _load_font(font_size)
-    except Exception:
-        font = None
-    draw.text(position, text, fill=(255, 255, 255), font=font)
-    return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
 
 def _draw_timeline(video_name: str, total_frames: int, sampled_indices: Sequence[int], output_path: Path) -> None:
@@ -94,17 +73,20 @@ def _draw_timeline(video_name: str, total_frames: int, sampled_indices: Sequence
     img.save(output_path)
 
 
-def _render_single_video(video_path: Path, sampled_indices: Sequence[int], out_dir: Path) -> Dict[str, Any]:
+def _render_single_video(
+    video_path: Path,
+    sampled_indices: Sequence[int],
+    out_dir: Path,
+    holistic_result_file: Optional[str] = None,
+) -> Dict[str, Any]:
     """把一个视频的采样点渲染成可视化结果。"""
 
     started = time.perf_counter()
-    cv2_backend, _, holistic_cls = _open_holistic()
-    if cv2_backend is None or holistic_cls is None:
-        raise RuntimeError("需要安装 mediapipe 和 opencv-python 才能渲染采样可视化")
-
     video_name = video_path.stem
     video_out = out_dir / video_name
     video_out.mkdir(parents=True, exist_ok=True)
+
+    selected = sorted({int(idx) for idx in sampled_indices if int(idx) >= 0})
 
     cap = cv2.VideoCapture(str(video_path))
     if not cap.isOpened():
@@ -112,89 +94,62 @@ def _render_single_video(video_path: Path, sampled_indices: Sequence[int], out_d
 
     fps = float(cap.get(cv2.CAP_PROP_FPS) or 25.0)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
-    selected = sorted({int(idx) for idx in sampled_indices if int(idx) >= 0})
+    if holistic_result_file:
+        try:
+            payload = json.loads(Path(holistic_result_file).read_text(encoding="utf-8"))
+            if not total_frames:
+                total_frames = int(payload.get("total_frames") or 0)
+            if not fps:
+                fps = float(payload.get("fps") or 25.0)
+        except Exception:
+            pass
+
+    result_file = Path(holistic_result_file) if holistic_result_file else video_out / f"{video_name}_holistic_results.json"
+    if not result_file.exists():
+        raise RuntimeError(f"缺少 Holistic 结果文件：{result_file}")
+    payload = json.loads(result_file.read_text(encoding="utf-8"))
+    records = {int(item["frame_idx"]): item for item in payload.get("records", [])}
+
+    visual_cache: List[Dict[str, Any]] = []
     selected_set = set(selected)
     max_target = selected[-1] if selected else -1
     frame_idx = 0
     target_pos = 0
-    contact_images: List[np.ndarray] = []
-    frame_outputs: List[Dict[str, Any]] = []
-
-    with holistic_cls.Holistic(
-        static_image_mode=False,
-        model_complexity=1,
-        smooth_landmarks=True,
-        enable_segmentation=False,
-        refine_face_landmarks=True,
-        min_detection_confidence=0.5,
-        min_tracking_confidence=0.5,
-    ) as model:
-        target = selected[target_pos] if selected else None
-        while True:
-            ok, frame = cap.read()
-            if not ok:
-                break
-            if target is not None and frame_idx > max_target:
-                break
-            if target is not None and frame_idx < target:
-                frame_idx += 1
-                continue
-
-            if target is not None and frame_idx == target and frame_idx in selected_set:
-                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                results = model.process(rgb)
-                annotated = _draw_landmarks(frame, results)
-                skeleton = _draw_skeleton_canvas(frame.shape[:2], results)
-                triptych = _concat_triptych(
-                    _label_frame(frame, "原图"),
-                    _label_frame(annotated, "关键点图"),
-                    _label_frame(skeleton, "骨骼图"),
-                )
-                triptych = _ensure_rgb_text(
-                    triptych,
-                    f"视频={video_name} | 帧={frame_idx} | 时间={frame_idx / fps:.2f}s | "
-                    f"姿态={bool(results.pose_landmarks)} | 左手={bool(results.left_hand_landmarks)} | "
-                    f"右手={bool(results.right_hand_landmarks)} | 面部={bool(results.face_landmarks)}",
-                    position=(16, 18),
-                    font_size=24,
-                )
-
-                triptych_path = video_out / f"{video_name}_f{frame_idx:04d}_triptych.png"
-                annotated_path = video_out / f"{video_name}_f{frame_idx:04d}_annotated.png"
-                skeleton_path = video_out / f"{video_name}_f{frame_idx:04d}_skeleton.png"
-                cv2.imwrite(str(triptych_path), triptych)
-                cv2.imwrite(str(annotated_path), annotated)
-                cv2.imwrite(str(skeleton_path), skeleton)
-
-                contact_images.append(triptych)
-                frame_outputs.append(
-                    {
-                        "frame_idx": frame_idx,
-                        "timestamp_sec": frame_idx / fps,
-                        "triptych_path": str(triptych_path),
-                        "annotated_path": str(annotated_path),
-                        "skeleton_path": str(skeleton_path),
-                        "pose_present": bool(results.pose_landmarks),
-                        "left_hand_present": bool(results.left_hand_landmarks),
-                        "right_hand_present": bool(results.right_hand_landmarks),
-                        "face_present": bool(results.face_landmarks),
-                    }
-                )
-
-                target_pos += 1
-                target = selected[target_pos] if target_pos < len(selected) else None
-
+    target = selected[target_pos] if selected else None
+    while True:
+        ok, frame = cap.read()
+        if not ok:
+            break
+        if target is not None and frame_idx > max_target:
+            break
+        if target is not None and frame_idx < target:
             frame_idx += 1
+            continue
+
+        if target is not None and frame_idx == target and frame_idx in selected_set:
+            record = records.get(frame_idx)
+            if record is None:
+                raise RuntimeError(f"结果文件中缺少帧 {frame_idx} 的 Holistic 记录：{result_file}")
+            visual_cache.append(
+                {
+                    "frame": frame.copy(),
+                    "frame_idx": frame_idx,
+                    "row": record.get("row", {}),
+                    "result_data": record.get("result_data", {}),
+                }
+            )
+            target_pos += 1
+            target = selected[target_pos] if target_pos < len(selected) else None
+
+        frame_idx += 1
 
     cap.release()
 
-    contact_sheet = _make_contact_sheet(contact_images, cols=2)
-    contact_sheet_path = video_out / f"{video_name}_contact_sheet.png"
-    if contact_sheet is not None:
-        cv2.imwrite(str(contact_sheet_path), contact_sheet)
-
-    timeline_path = video_out / f"{video_name}_timeline.png"
-    _draw_timeline(video_name, total_frames, selected, timeline_path)
+    rendered = _render_visual_cache(cv2, video_path, fps, total_frames, visual_cache, video_out)
+    frame_outputs = rendered["frame_outputs"]
+    contact_sheet_path = rendered["contact_sheet_path"]
+    timeline_path = rendered["timeline_path"]
+    render_sec = round(float(rendered["visualization_sec"]), 3)
 
     summary = {
         "video": str(video_path),
@@ -202,10 +157,12 @@ def _render_single_video(video_path: Path, sampled_indices: Sequence[int], out_d
         "total_frames": total_frames,
         "sampled_frame_indices": selected,
         "sampled_timestamps_sec": [x["timestamp_sec"] for x in frame_outputs],
-        "contact_sheet": str(contact_sheet_path) if contact_sheet is not None else None,
-        "timeline": str(timeline_path),
+        "contact_sheet": contact_sheet_path,
+        "timeline": timeline_path,
         "frames": frame_outputs,
-        "render_sec": round(time.perf_counter() - started, 3),
+        "render_sec": render_sec,
+        "visualization_sec": render_sec,
+        "holistic_result_file": str(holistic_result_file) if holistic_result_file else None,
     }
     (video_out / f"{video_name}_viz_summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -215,7 +172,8 @@ def _render_single_video(video_path: Path, sampled_indices: Sequence[int], out_d
         f"- 视频：{video_path}",
         f"- 总帧数：{total_frames}",
         f"- 采样帧数：{len(selected)}",
-        f"- 联系表：{contact_sheet_path if contact_sheet is not None else '(无)'}",
+        f"- Holistic结果文件：{result_file}",
+        f"- 联系表：{contact_sheet_path if contact_sheet_path is not None else '(无)'}",
         f"- 时间轴：{timeline_path}",
         "",
         "## 采样点",
@@ -263,10 +221,26 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         strategy_out = out_root / strategy
         strategy_out.mkdir(parents=True, exist_ok=True)
 
+        video_rows = payload.get("videos")
+        if not video_rows and isinstance(payload.get("video_result"), dict):
+            video_rows = [payload["video_result"]]
         videos: List[Dict[str, Any]] = []
-        for row in payload.get("videos", []):
+        for row in video_rows or []:
             video_path = Path(row["video_path"])
-            videos.append(_render_single_video(video_path, row["sampled_frame_indices"], strategy_out))
+            sampled_indices = row.get("sampled_frame_indices")
+            if sampled_indices is None:
+                sampled_indices = row.get("selected_frame_indices")
+            if sampled_indices is None:
+                sampled_indices = row.get("dense_frame_indices")
+            holistic_result_file = row.get("candidate_cache_file") or row.get("result_file")
+            videos.append(
+                _render_single_video(
+                    video_path,
+                    sampled_indices or [],
+                    strategy_out,
+                    holistic_result_file=str(holistic_result_file) if holistic_result_file else None,
+                )
+            )
 
         summary = {
             "generated_at": datetime.now().isoformat(timespec="seconds"),
