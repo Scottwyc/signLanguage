@@ -1,0 +1,169 @@
+{
+  "request_id": "web_20260522_225823_46498d30",
+  "generated_at": "2026-05-22T22:58:24",
+  "claim_policy": "prototype sanity check only; no calibrated real-user score or pass/fail threshold",
+  "target_word": "花",
+  "standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run2/all_demo_step4_worker_cache_v2/results/花/花_holistic_results.json",
+  "query_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260522_225823_46498d30/holistic/user_花_web_20260522_225823_46498d30_holistic_results.json",
+  "duration_sec": 3.0,
+  "capture_fps": 5.0,
+  "frame_count": 15,
+  "worker": {
+    "input_mode": "frame_slices",
+    "ingest_sec": 0.015,
+    "holistic_eval_sec": 0.717,
+    "request_total_sec": 0.832,
+    "samples": 15
+  },
+  "timing": {
+    "api_total_sec": 0.947
+  },
+  "score": {
+    "prototype_score": 23.613415847637633,
+    "dtw_distance": 0.1589224168232509,
+    "normalized_distance": 0.17320262008236978,
+    "path_length": 28,
+    "sequence_penalty": {
+      "length_ratio": 0.5357142857142857,
+      "length_penalty": 0.0,
+      "temporal_profile_factor": 0.07936507936507933,
+      "presence_delta": {
+        "left_hand": 0.0,
+        "right_hand": 0.2833333333333333,
+        "pose": 0.0,
+        "face": 0.0
+      },
+      "presence_penalty": 0.012693333333333334,
+      "motion_delta": {
+        "left_hand": 0.0,
+        "right_hand": 0.27089242936183605,
+        "pose": 0.2232267926660439,
+        "face": 1.1698943511942694
+      },
+      "motion_penalty": 0.00041756680299066297,
+      "roughness_delta": {
+        "left_hand": 0.0,
+        "right_hand": 0.4912255749233506,
+        "pose": 0.18620942690963393,
+        "face": 1.0999044828355664
+      },
+      "roughness_penalty": 0.0011693031227948813,
+      "info_penalty": 0.0,
+      "endpoint_penalty": 0.0,
+      "confidence_warning_penalty": 0.0,
+      "total_sequence_penalty": 0.014280203259118879,
+      "standard_presence": {
+        "pose": 1.0,
+        "left_hand": 0.0,
+        "right_hand": 0.75,
+        "face": 1.0
+      },
+      "query_presence": {
+        "pose": 1.0,
+        "left_hand": 0.0,
+        "right_hand": 0.4666666666666667,
+        "face": 1.0
+      },
+      "standard_motion": {
+        "left_hand": 0.0,
+        "right_hand": 0.07481883615255355,
+        "pose": 0.10811316553089353,
+        "face": 0.12829929328075163
+      },
+      "query_motion": {
+        "left_hand": 0.0,
+        "right_hand": 0.09812863506376743,
+        "pose": 0.13517771714500018,
+        "face": 0.039755106338166764
+      },
+      "standard_roughness": {
+        "left_hand": 0.0,
+        "right_hand": 0.10454303910955787,
+        "pose": 0.1775838531410465,
+        "face": 0.2105873410966104
+      },
+      "query_roughness": {
+        "left_hand": 0.0,
+        "right_hand": 0.1709199994802475,
+        "pose": 0.2139512114226818,
+        "face": 0.07003842265560077
+      }
+    },
+    "group_mean_distance": {
+      "left_hand": 0.0,
+      "right_hand": 0.07291111721613068,
+      "pose": 0.43904715273501344,
+      "face": 0.3786594548395702,
+      "missing": 0.125,
+      "weighted": 0.1589224414559393
+    },
+    "worst_alignment_points": [
+      {
+        "standard_frame_idx": 44,
+        "query_frame_idx": 9,
+        "standard_timestamp_sec": 1.4940809968847353,
+        "query_timestamp_sec": 1.8,
+        "weighted_distance": 0.27035980574426133,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.48376093555545713,
+        "pose_distance": 0.37000027598768426,
+        "face_distance": 0.4459373354911804,
+        "missing_penalty": 0.0
+      },
+      {
+        "standard_frame_idx": 40,
+        "query_frame_idx": 8,
+        "standard_timestamp_sec": 1.3582554517133958,
+        "query_timestamp_sec": 1.6,
+        "weighted_distance": 0.22797562932934826,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.3782657857837552,
+        "pose_distance": 0.35166532101064873,
+        "face_distance": 0.37551501393318176,
+        "missing_penalty": 0.0
+      },
+      {
+        "standard_frame_idx": 36,
+        "query_frame_idx": 7,
+        "standard_timestamp_sec": 1.222429906542056,
+        "query_timestamp_sec": 1.4,
+        "weighted_distance": 0.20461509606748565,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.3164298381278158,
+        "pose_distance": 0.3459680318305962,
+        "face_distance": 0.33875367045402527,
+        "missing_penalty": 0.0
+      },
+      {
+        "standard_frame_idx": 106,
+        "query_frame_idx": 14,
+        "standard_timestamp_sec": 3.5993769470404984,
+        "query_timestamp_sec": 2.8,
+        "weighted_distance": 0.20257111746320405,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.23028631275582176,
+        "pose_distance": 0.45843341835791707,
+        "face_distance": 0.314257949590683,
+        "missing_penalty": 0.0
+      },
+      {
+        "standard_frame_idx": 100,
+        "query_frame_idx": 12,
+        "standard_timestamp_sec": 3.3956386292834893,
+        "query_timestamp_sec": 2.4,
+        "weighted_distance": 0.1879190226494054,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.20202508198194755,
+        "pose_distance": 0.4359316287916743,
+        "face_distance": 0.310790091753006,
+        "missing_penalty": 0.0
+      }
+    ]
+  },
+  "artifacts": {
+    "result_dir": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260522_225823_46498d30",
+    "holistic_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260522_225823_46498d30/holistic/user_花_web_20260522_225823_46498d30_holistic_results.json",
+    "scoring_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260522_225823_46498d30/scoring_result.json",
+    "worker_stderr_log": "/data/WYC/signLanguage/work/logs/web_holistic_worker_20260522_224550.stderr.log"
+  }
+}

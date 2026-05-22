@@ -1,0 +1,176 @@
+        height = 220
+        margin_x = 80
+        img = Image.new("RGB", (width, height), (18, 18, 18))
+        draw = ImageDraw.Draw(img)
+        line_y = 120
+        draw.line((margin_x, line_y, width - margin_x, line_y), fill=(210, 210, 210)
+, width=6)
+
+        if total_frames_value <= 1:
+            total_frames_value = 2
+
+        font = _load_font(28)
+        small_font = _load_font(22)
+        for frac, label in [(0.0, "0%"), (0.25, "25%"), (0.5, "50%"), (0.75, "75%"),
+ (1.0, "100%")]:
+            x = int(margin_x + frac * (width - 2 * margin_x))
+            draw.line((x, line_y - 18, x, line_y + 18), fill=(140, 140, 140), width=
+3)
+            draw.text((x - 18, line_y + 28), label, fill=(230, 230, 230), font=small
+_font)
+
+        for idx in sampled_indices:
+            frac = idx / max(1, total_frames_value - 1)
+            x = int(margin_x + frac * (width - 2 * margin_x))
+            draw.line((x, line_y - 42, x, line_y + 42), fill=(89, 173, 255), width=5
+)
+            draw.ellipse((x - 8, line_y - 8, x + 8, line_y + 8), fill=(89, 173, 255)
+)
+
+        draw.text((margin_x, 20), f"{video_name} 采样时间轴", fill=(255, 255, 255),
+font=font)
+        draw.text((margin_x, 168), f"总帧数：{total_frames_value}   采样帧数：{len(s
+ampled_indices)}", fill=(220, 220, 220), font=small_font)
+        img.save(output_path)
+
+    def _make_contact_sheet(images: List[np.ndarray], cols: int = 2) -> Optional[np.
+ndarray]:
+        if not images:
+            return None
+        w = max(img.shape[1] for img in images)
+        h = max(img.shape[0] for img in images)
+        padded: List[np.ndarray] = []
+        for img in images:
+            canvas = np.zeros((h, w, 3), dtype=np.uint8)
+            canvas[:] = (24, 24, 24)
+            y0 = (h - img.shape[0]) // 2
+            x0 = (w - img.shape[1]) // 2
+            canvas[y0:y0 + img.shape[0], x0:x0 + img.shape[1]] = img
+            padded.append(canvas)
+
+        rows: List[np.ndarray] = []
+        for start in range(0, len(padded), cols):
+            row = padded[start:start + cols]
+            if len(row) < cols:
+                blank = np.zeros((h, w, 3), dtype=np.uint8)
+                blank[:] = (24, 24, 24)
+                row = row + [blank] * (cols - len(row))
+            rows.append(np.hstack(row))
+        return np.vstack(rows)
+
+    for item in visual_cache:
+        frame = item["frame"]
+        frame_idx = int(item["frame_idx"])
+        result_data = item["result_data"] or {}
+        pose_data = result_data.get("pose_landmarks") or []
+        left_hand_data = result_data.get("left_hand_landmarks") or []
+        right_hand_data = result_data.get("right_hand_landmarks") or []
+        face_data = result_data.get("face_landmarks") or []
+
+        annotated = frame.copy()
+        annotated = _draw_serialized_landmarks(
+            annotated,
+            face_data,
+            face_connections.FACEMESH_CONTOURS,
+            landmark_color=(120, 255, 120),
+            connection_color=(220, 220, 220),
+            circle_radius=1,
+            line_thickness=1,
+        )
+        annotated = _draw_serialized_landmarks(
+            annotated,
+            pose_data,
+            pose_connections.POSE_CONNECTIONS,
+            landmark_color=(80, 220, 255),
+            connection_color=(255, 255, 255),
+            circle_radius=2,
+            line_thickness=2,
+        )
+        annotated = _draw_serialized_landmarks(
+            annotated,
+            left_hand_data,
+            hand_connections.HAND_CONNECTIONS,
+            landmark_color=(255, 120, 80),
+            connection_color=(255, 255, 255),
+            circle_radius=2,
+            line_thickness=2,
+        )
+        annotated = _draw_serialized_landmarks(
+            annotated,
+            right_hand_data,
+            hand_connections.HAND_CONNECTIONS,
+            landmark_color=(255, 120, 80),
+            connection_color=(255, 255, 255),
+            circle_radius=2,
+            line_thickness=2,
+        )
+
+        skeleton = np.zeros((frame.shape[0], frame.shape[1], 3), dtype=np.uint8)
+        skeleton[:] = (18, 18, 18)
+        skeleton = _draw_serialized_landmarks(
+            skeleton,
+            face_data,
+            face_connections.FACEMESH_CONTOURS,
+            landmark_color=(120, 255, 120),
+            connection_color=(220, 220, 220),
+            circle_radius=1,
+            line_thickness=1,
+        )
+        skeleton = _draw_serialized_landmarks(
+            skeleton,
+            pose_data,
+            pose_connections.POSE_CONNECTIONS,
+            landmark_color=(80, 220, 255),
+            connection_color=(255, 255, 255),
+            circle_radius=2,
+            line_thickness=2,
+        )
+        skeleton = _draw_serialized_landmarks(
+            skeleton,
+            left_hand_data,
+            hand_connections.HAND_CONNECTIONS,
+            landmark_color=(255, 120, 80),
+            connection_color=(255, 255, 255),
+            circle_radius=2,
+            line_thickness=2,
+        )
+        skeleton = _draw_serialized_landmarks(
+            skeleton,
+            right_hand_data,
+            hand_connections.HAND_CONNECTIONS,
+            landmark_color=(255, 120, 80),
+            connection_color=(255, 255, 255),
+            circle_radius=2,
+            line_thickness=2,
+        )
+
+        triptych = _concat_triptych(
+            _label_frame(frame, "原图"),
+            _label_frame(annotated, "关键点图"),
+            _label_frame(skeleton, "骨骼图"),
+        )
+        triptych = _draw_text_overlay(
+            triptych,
+            f"视频={video_path.stem} | 帧={frame_idx} | 时间={frame_idx / fps:.2f}s
+| "
+            f"姿态={bool(pose_data)} | 左手={bool(left_hand_data)} | "
+            f"右手={bool(right_hand_data)} | 面部={bool(face_data)}",
+
+codex
+The code confirms the cache already stores dense or step-dense Holistic records with
+ `result_data` landmark arrays and lightweight row summaries. I’m moving into report
+ drafting; before writing, I’ll record that context milestone and keep the output li
+mited to the owned draft plus worker state files.
+exec
+/bin/bash -lc "date '+%Y-%m-%dT%H:%M:%S%z'" in /data/WYC/signLanguage
+ succeeded in 0ms:
+2026-05-20T17:19:34+0800
+
+exec
+/bin/bash -lc 'find .codex/tmux-workers/inbox/scoring-design -maxdepth 1 -type f -pr
+int | sort' in /data/WYC/signLanguage
+ succeeded in 0ms:
+codex
+The progress file is mounted read-only in this sandbox, so I can’t update it despite
+ the worker instruction. I’ll proceed with the owned draft report path under `work/r
+eports/` and record the progress-file blocker in the final worker report.

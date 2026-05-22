@@ -1,0 +1,176 @@
+def _has_landmark_records(records: Sequence[Dict[str, Any]]) -> bool:
+    for item in records:
+        result_data = item.get("result_data")
+        if not isinstance(result_data, dict):
+            return False
+        if result_data.get("pose_landmarks") or result_data.get("left_hand_landmarks
+") or result_data.get("right_hand_landmarks"):
+            return True
+    return False
+
+
+def _landmark_array(
+    items: Sequence[Dict[str, Any]],
+    indices: Optional[Sequence[int]] = None,
+    expected_count: Optional[int] = None,
+) -> Tuple[np.ndarray, np.ndarray]:
+    if indices is not None:
+        selected = list(indices)
+    elif expected_count is not None:
+        selected = list(range(expected_count))
+    else:
+        selected = list(range(len(items)))
+    coords: List[List[float]] = []
+    mask: List[float] = []
+    for idx in selected:
+        if 0 <= idx < len(items):
+            lm = items[idx]
+            coords.append([float(lm.get("x", 0.0)), float(lm.get("y", 0.0)), float(l
+m.get("z", 0.0))])
+            mask.append(1.0)
+        else:
+            coords.append([0.0, 0.0, 0.0])
+            mask.append(0.0)
+    return np.asarray(coords, dtype=np.float32), np.asarray(mask, dtype=np.float32)
+
+
+def _normalization_from_pose(pose: np.ndarray, pose_mask: np.ndarray) -> Tuple[np.nd
+array, float]:
+    if pose.shape[0] >= 3 and pose_mask[1] > 0 and pose_mask[2] > 0:
+        center = (pose[1] + pose[2]) / 2.0
+        scale = float(np.linalg.norm(pose[1, :2] - pose[2, :2]))
+        return center, max(scale, 1e-3)
+    valid = pose[pose_mask > 0]
+    if len(valid) > 0:
+        xy = valid[:, :2]
+        center = np.asarray([float(xy[:, 0].mean()), float(xy[:, 1].mean()), 0.0], d
+type=np.float32)
+        span = np.ptp(xy, axis=0)
+        return center, max(float(np.linalg.norm(span)), 1e-3)
+    return np.zeros(3, dtype=np.float32), 1.0
+
+
+def _append_group(parts: List[np.ndarray], masks: List[np.ndarray], groups: Dict[str
+, slice], name: str, arr: np.ndarray, mask: np.ndarray) -> None:
+    start = sum(part.size for part in parts)
+    flat = arr.reshape(-1)
+    parts.append(flat)
+    masks.append(np.repeat(mask, 3))
+    groups[name] = slice(start, start + flat.size)
+
+
+def _landmark_feature(record: Dict[str, Any], fps: float) -> FrameFeature:
+    result_data = record.get("result_data") or {}
+    pose, pose_mask = _landmark_array(result_data.get("pose_landmarks") or [], POSE_
+CORE_INDICES)
+    left, left_mask = _landmark_array(result_data.get("left_hand_landmarks") or [],
+expected_count=21)
+    right, right_mask = _landmark_array(result_data.get("right_hand_landmarks") or [
+], expected_count=21)
+    face, face_mask = _landmark_array(result_data.get("face_landmarks") or [], FACE_
+CORE_INDICES)
+
+    center, scale = _normalization_from_pose(pose, pose_mask)
+
+    def norm(arr: np.ndarray) -> np.ndarray:
+        if arr.size == 0:
+            return arr
+        out = arr.copy()
+        out[:, :3] = (out[:, :3] - center) / scale
+        return out
+
+    parts: List[np.ndarray] = []
+    masks: List[np.ndarray] = []
+    groups: Dict[str, slice] = {}
+    _append_group(parts, masks, groups, "pose", norm(pose), pose_mask)
+    _append_group(parts, masks, groups, "left_hand", norm(left), left_mask)
+    _append_group(parts, masks, groups, "right_hand", norm(right), right_mask)
+    _append_group(parts, masks, groups, "face", norm(face), face_mask)
+
+    frame_idx = int(record.get("frame_idx") if record.get("frame_idx") is not None e
+lse record.get("row", {}).get("frame_idx", 0))
+    timestamp = float(record.get("timestamp_sec") if record.get("timestamp_sec") is
+not None else frame_idx / max(fps, 1e-6))
+    return FrameFeature(
+        frame_idx=frame_idx,
+        timestamp_sec=timestamp,
+        vector=np.concatenate(parts).astype(np.float32),
+        mask=np.concatenate(masks).astype(np.float32),
+        groups=groups,
+        presence={
+            "pose": bool(pose_mask.sum() > 0),
+            "left_hand": bool(left_mask.sum() > 0),
+            "right_hand": bool(right_mask.sum() > 0),
+            "face": bool(face_mask.sum() > 0),
+        },
+    )
+
+
+def _bbox_to_features(row: Dict[str, Any]) -> Tuple[np.ndarray, np.ndarray, Dict[str
+, slice], Dict[str, bool]]:
+    pose_box = (row.get("pose") or {}).get("bbox") or {}
+    center_x = (float(pose_box.get("x_min", 0.0)) + float(pose_box.get("x_max", 1.0)
+)) / 2.0
+    center_y = (float(pose_box.get("y_min", 0.0)) + float(pose_box.get("y_max", 1.0)
+)) / 2.0
+    span_x = max(float(pose_box.get("x_max", 1.0)) - float(pose_box.get("x_min", 0.0
+)), 1.0)
+    span_y = max(float(pose_box.get("y_max", 1.0)) - float(pose_box.get("y_min", 0.0
+)), 1.0)
+    scale = max(math.hypot(span_x, span_y), 1.0)
+
+    parts: List[np.ndarray] = []
+    masks: List[np.ndarray] = []
+    groups: Dict[str, slice] = {}
+    presence: Dict[str, bool] = {}
+    for group in ["pose", "left_hand", "right_hand", "face"]:
+        box = (row.get(group) or {}).get("bbox")
+        present = bool(row.get(f"{group}_present")) and isinstance(box, dict)
+        presence[group] = present
+        if present:
+            x_min = (float(box.get("x_min", center_x)) - center_x) / scale
+            x_max = (float(box.get("x_max", center_x)) - center_x) / scale
+            y_min = (float(box.get("y_min", center_y)) - center_y) / scale
+            y_max = (float(box.get("y_max", center_y)) - center_y) / scale
+            vis = float(box.get("visibility_mean", row.get(group, {}).get("visibilit
+y_mean", 0.0)) or 0.0)
+            arr = np.asarray([x_min, x_max, y_min, y_max, vis], dtype=np.float32)
+            mask = np.ones(5, dtype=np.float32)
+        else:
+            arr = np.zeros(5, dtype=np.float32)
+            mask = np.zeros(5, dtype=np.float32)
+        start = sum(part.size for part in parts)
+        parts.append(arr)
+        masks.append(mask)
+        groups[group] = slice(start, start + arr.size)
+
+    return np.concatenate(parts), np.concatenate(masks), groups, presence
+
+
+def _bbox_feature(record: Dict[str, Any], fps: float) -> FrameFeature:
+    row = record.get("row") or record
+    vector, mask, groups, presence = _bbox_to_features(row)
+    frame_idx = int(row.get("frame_idx", record.get("frame_idx", 0)))
+    timestamp = float(row.get("timestamp_sec", record.get("timestamp_sec", frame_idx
+ / max(fps, 1e-6))))
+    return FrameFeature(frame_idx, timestamp, vector.astype(np.float32), mask.astype
+(np.float32), groups, presence)
+
+
+def load_sequence(path: Path, requested_mode: str = "auto", force_bbox: bool = False
+) -> SequenceData:
+    payload = _load_json(path)
+    records = _records_from_payload(payload)
+    fps = float(payload.get("fps") or payload.get("meta", {}).get("fps") or 25.0)
+    total_frames = int(payload.get("total_frames") or payload.get("meta", {}).get("f
+rame_count") or len(records))
+
+exec
+/bin/bash -lc "find /data/WYC/signLanguage/.codex/tmux-workers/inbox/data-cache-audi
+t -maxdepth 1 -type f -printf '%TY-%Tm-%Td %TH:%TM %p\\n' | sort" in /data/WYC/signL
+anguage
+ succeeded in 0ms:
+codex
+I’ve finished the audit pass and am writing the Chinese draft report to the owned re
+port path. The report will classify each artifact by reuse value instead of treating
+ every JSON as dense scoring data.

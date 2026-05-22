@@ -1,0 +1,169 @@
+{
+  "request_id": "web_20260523_001241_e882a59e",
+  "generated_at": "2026-05-23T00:12:43",
+  "claim_policy": "prototype sanity check only; no calibrated real-user score or pass/fail threshold",
+  "target_word": "香蕉",
+  "standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run2/all_demo_step4_worker_cache_v2/results/香蕉/香蕉_holistic_results.json",
+  "query_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_001241_e882a59e/holistic/user_香蕉_web_20260523_001241_e882a59e_holistic_results.json",
+  "duration_sec": 3.0,
+  "capture_fps": 10.0,
+  "frame_count": 30,
+  "worker": {
+    "input_mode": "frame_slices",
+    "ingest_sec": 0.027,
+    "holistic_eval_sec": 1.635,
+    "request_total_sec": 1.881,
+    "samples": 30
+  },
+  "timing": {
+    "api_total_sec": 2.042
+  },
+  "score": {
+    "prototype_score": 10.341481506065383,
+    "dtw_distance": 0.16623870531717935,
+    "normalized_distance": 0.2722808457665647,
+    "path_length": 30,
+    "sequence_penalty": {
+      "length_ratio": 0.7333333333333333,
+      "length_penalty": 0.0,
+      "temporal_profile_factor": 0.5185185185185184,
+      "presence_delta": {
+        "left_hand": 0.8757575757575757,
+        "right_hand": 0.2848484848484849,
+        "pose": 0.0,
+        "face": 0.0
+      },
+      "presence_penalty": 0.05199515151515152,
+      "motion_delta": {
+        "left_hand": 3.0,
+        "right_hand": 0.48087210717992623,
+        "pose": 0.5796676126908978,
+        "face": 0.585107199193938
+      },
+      "motion_penalty": 0.016697666913083695,
+      "roughness_delta": {
+        "left_hand": 3.0,
+        "right_hand": 0.3802427759494484,
+        "pose": 0.7961876487690807,
+        "face": 0.6148137897096069
+      },
+      "roughness_penalty": 0.03734932202115014,
+      "info_penalty": 0.0,
+      "endpoint_penalty": 0.0,
+      "confidence_warning_penalty": 0.0,
+      "total_sequence_penalty": 0.10604214044938536,
+      "standard_presence": {
+        "pose": 1.0,
+        "left_hand": 0.9090909090909091,
+        "right_hand": 0.8181818181818182,
+        "face": 1.0
+      },
+      "query_presence": {
+        "pose": 1.0,
+        "left_hand": 0.03333333333333333,
+        "right_hand": 0.5333333333333333,
+        "face": 1.0
+      },
+      "standard_motion": {
+        "left_hand": 0.08683367176471572,
+        "right_hand": 0.0660432456061244,
+        "pose": 0.10740852205171472,
+        "face": 0.0831080326544387
+      },
+      "query_motion": {
+        "left_hand": 0.0,
+        "right_hand": 0.10688566839830442,
+        "pose": 0.19185053948955288,
+        "face": 0.046250713716164744
+      },
+      "standard_roughness": {
+        "left_hand": 0.10463744360539648,
+        "right_hand": 0.07075730684612479,
+        "pose": 0.1444673653692007,
+        "face": 0.1300293950829655
+      },
+      "query_roughness": {
+        "left_hand": 0.0,
+        "right_hand": 0.10353870578110218,
+        "pose": 0.3204163355486734,
+        "face": 0.07026637438684702
+      }
+    },
+    "group_mean_distance": {
+      "left_hand": 0.005250940141193942,
+      "right_hand": 0.08720256410791534,
+      "pose": 0.4191840351661357,
+      "face": 0.35082340439160664,
+      "missing": 0.25,
+      "weighted": 0.16623869406308395
+    },
+    "worst_alignment_points": [
+      {
+        "standard_frame_idx": 56,
+        "query_frame_idx": 22,
+        "standard_timestamp_sec": 2.1853658536585368,
+        "query_timestamp_sec": 2.2,
+        "weighted_distance": 0.25389003563945267,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.31689754428297234,
+        "pose_distance": 0.49682525100141717,
+        "face_distance": 0.3040793538093567,
+        "missing_penalty": 0.25
+      },
+      {
+        "standard_frame_idx": 60,
+        "query_frame_idx": 23,
+        "standard_timestamp_sec": 2.341463414634146,
+        "query_timestamp_sec": 2.3,
+        "weighted_distance": 0.24269706297938798,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.31257301868826104,
+        "pose_distance": 0.4524247080269451,
+        "face_distance": 0.3181961178779602,
+        "missing_penalty": 0.25
+      },
+      {
+        "standard_frame_idx": 28,
+        "query_frame_idx": 14,
+        "standard_timestamp_sec": 1.0926829268292684,
+        "query_timestamp_sec": 1.4,
+        "weighted_distance": 0.22484881338708795,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.20723383428484154,
+        "pose_distance": 0.5051788472735059,
+        "face_distance": 0.37151771783828735,
+        "missing_penalty": 0.25
+      },
+      {
+        "standard_frame_idx": 48,
+        "query_frame_idx": 19,
+        "standard_timestamp_sec": 1.8731707317073172,
+        "query_timestamp_sec": 1.9,
+        "weighted_distance": 0.2191984282830277,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.21767841579347802,
+        "pose_distance": 0.4793639784224995,
+        "face_distance": 0.32489967346191406,
+        "missing_penalty": 0.25
+      },
+      {
+        "standard_frame_idx": 64,
+        "query_frame_idx": 24,
+        "standard_timestamp_sec": 2.497560975609756,
+        "query_timestamp_sec": 2.4,
+        "weighted_distance": 0.20837005961959337,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.19169295133978081,
+        "pose_distance": 0.4620770842018719,
+        "face_distance": 0.3521635830402374,
+        "missing_penalty": 0.25
+      }
+    ]
+  },
+  "artifacts": {
+    "result_dir": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_001241_e882a59e",
+    "holistic_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_001241_e882a59e/holistic/user_香蕉_web_20260523_001241_e882a59e_holistic_results.json",
+    "scoring_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_001241_e882a59e/scoring_result.json",
+    "worker_stderr_log": "/data/WYC/signLanguage/work/logs/web_holistic_worker_20260522_234012.stderr.log"
+  }
+}

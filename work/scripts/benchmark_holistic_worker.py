@@ -28,8 +28,9 @@ from keyframe_sampling_common import (
     import_optional_backends,
     normalize_total_frames,
     probe_video_metadata,
+    select_energy_coverage_keyframes,
+    summarize_rows,
 )
-from sample_keyframes_dense_uniform import _select_frames_from_dense_rows, _summarize_rows
 from signlanguage_common import find_demo_videos
 
 
@@ -82,13 +83,14 @@ def _load_frame_slices(video_path: Path, frame_indices: Sequence[int]) -> Dict[s
     if cv2 is None:
         raise RuntimeError("需要安装 opencv-python 才能编码帧切片")
 
-    meta = probe_video_metadata(video_path)
-    fps = float(meta.get("fps") or 25.0)
-    total_frames = normalize_total_frames(meta)
-
     cap = cv2.VideoCapture(str(video_path))
     if not cap.isOpened():
         raise RuntimeError(f"无法打开视频：{video_path}")
+    fps = float(cap.get(cv2.CAP_PROP_FPS) or 25.0)
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+    if total_frames <= 0:
+        meta = probe_video_metadata(video_path)
+        total_frames = normalize_total_frames(meta)
 
     started = time.perf_counter()
     frames: List[Dict[str, Any]] = []
@@ -115,6 +117,27 @@ def _load_frame_slices(video_path: Path, frame_indices: Sequence[int]) -> Dict[s
         "frames": frames,
         "client_prepare_sec": round(time.perf_counter() - started, 3),
     }
+
+
+def _dense_indices_from_video(video_path: Path, dense_step: int) -> List[int]:
+    cv2, _ = import_optional_backends()
+    if cv2 is None:
+        meta = probe_video_metadata(video_path)
+        total_frames = normalize_total_frames(meta)
+    else:
+        cap = cv2.VideoCapture(str(video_path))
+        if not cap.isOpened():
+            raise RuntimeError(f"无法打开视频：{video_path}")
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+        cap.release()
+        if total_frames <= 0:
+            meta = probe_video_metadata(video_path)
+            total_frames = normalize_total_frames(meta)
+
+    selected_indices = list(range(0, max(1, total_frames), max(1, dense_step)))
+    if total_frames > 1 and selected_indices[-1] != total_frames - 1:
+        selected_indices.append(total_frames - 1)
+    return sorted(dict.fromkeys(selected_indices))
 
 
 def run_experiment(
@@ -148,12 +171,7 @@ def run_experiment(
         client_prepare_sec = None
         dense_meta = None
         if input_mode == "frame_slices":
-            video_meta = probe_video_metadata(video_path)
-            total_frames = normalize_total_frames(video_meta)
-            selected_indices = list(range(0, total_frames, max(1, dense_step)))
-            if total_frames > 1 and selected_indices[-1] != total_frames - 1:
-                selected_indices.append(total_frames - 1)
-            selected_indices = sorted(dict.fromkeys(selected_indices))
+            selected_indices = _dense_indices_from_video(video_path, dense_step)
             dense_meta = _load_frame_slices(video_path, selected_indices)
             req = {
                 "cmd": "process_frames",
@@ -187,10 +205,10 @@ def run_experiment(
         selected_indices_out: List[int] = []
         dense_rows = resp.get("rows", [])
         if input_mode == "frame_slices":
-            selected_indices_out = _select_frames_from_dense_rows(dense_rows, sample_budget)
+            selected_indices_out = select_energy_coverage_keyframes(dense_rows, sample_budget)
             dense_rows_map = {int(row["frame_idx"]): row for row in dense_rows}
             selected_rows = [dense_rows_map[idx] for idx in selected_indices_out if idx in dense_rows_map]
-            selected_summary = _summarize_rows(
+            selected_summary = summarize_rows(
                 {
                     "fps": resp.get("meta", {}).get("fps"),
                     "duration_sec": None,
@@ -326,12 +344,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     if args.input_mode == "frame_slices":
         # 密采样模式下默认使用整段视频的候选帧，不再只请求少数几帧。
-        first_meta = probe_video_metadata(videos[0])
-        total_frames = normalize_total_frames(first_meta)
-        frame_indices = list(range(0, total_frames, max(1, args.dense_step)))
-        if total_frames > 1 and frame_indices[-1] != total_frames - 1:
-            frame_indices.append(total_frames - 1)
-        frame_indices = sorted(dict.fromkeys(frame_indices))
+        frame_indices = _dense_indices_from_video(videos[0], args.dense_step)
 
     payload = run_experiment(
         videos,

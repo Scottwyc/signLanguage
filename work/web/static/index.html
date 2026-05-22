@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>手语动作打分 MVP</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <h1>手语动作打分 MVP</h1>
+          <p>浏览器采集几秒摄像头帧，发送到远端常驻 Holistic 后端，与当前 demo 模板做原型相似度评分。点击采集后会先倒计时 3 秒，便于准备动作。</p>
+        </div>
+        <div class="status-pill" id="workerStatus">后端状态读取中</div>
+      </header>
+
+      <section class="workspace">
+        <section class="panel capture-panel">
+          <div class="panel-header capture-header">
+            <h2>采集</h2>
+            <div class="header-actions">
+              <span id="cameraStatus">摄像头未开启</span>
+              <button id="referenceToggle" class="ghost-button" type="button" aria-expanded="false">查看参考</button>
+            </div>
+          </div>
+          <div class="media-row reference-hidden" id="mediaRow">
+            <div class="camera-view">
+              <video id="preview" autoplay playsinline muted></video>
+              <div class="countdown-overlay hidden" id="countdownOverlay" aria-live="polite">
+                <span id="countdownValue">3</span>
+              </div>
+            </div>
+            <aside class="reference-view">
+              <div class="reference-title">
+                <span>参考动作</span>
+                <strong id="referenceLabel">--</strong>
+              </div>
+              <video id="referenceVideo" controls muted loop playsinline preload="metadata"></video>
+            </aside>
+          </div>
+          <canvas id="captureCanvas" width="480" height="360" hidden></canvas>
+
+          <div class="controls">
+            <label>
+              目标动作
+              <select id="targetWord"></select>
+            </label>
+            <label>
+              采集时长
+              <input id="durationSec" type="number" min="1" max="8" step="0.5" value="3" />
+            </label>
+            <label>
+              采样 FPS
+              <input id="captureFps" type="number" min="1" max="12" step="1" value="5" />
+            </label>
+            <label>
+              帧宽
+              <input id="frameWidth" type="number" min="240" max="960" step="40" value="960" />
+            </label>
+          </div>
+
+          <div class="actions">
+            <button id="cameraBtn" type="button">开启摄像头</button>
+            <button id="recordBtn" type="button" disabled>采集并打分</button>
+          </div>
+
+          <div class="progress-wrap">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <div class="logline" id="captureLog">通过 SSH 隧道访问 http://127.0.0.1:5080 时，浏览器可直接申请本机摄像头权限。</div>
+        </section>
+
+        <section class="panel result-panel">
+          <div class="panel-header">
+            <h2>结果</h2>
+            <span>prototype similarity</span>
+          </div>
+          <div class="score-wrap">
+            <div class="score-ring" id="scoreRing">
+              <span id="scoreValue">--</span>
+            </div>
+            <div class="score-copy">
+              <h3 id="resultTitle">等待采集</h3>
+              <p id="resultNote">当前分数是离线原型相似度，不是正式用户评分或合格线。</p>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <div>
+              <span>DTW distance</span>
+              <strong id="dtwDistance">--</strong>
+            </div>
+            <div>
+              <span>normalized distance</span>
+              <strong id="normDistance">--</strong>
+            </div>
+            <div>
+              <span>Holistic</span>
+              <strong id="workerTime">--</strong>
+            </div>
+            <div>
+              <span>frames</span>
+              <strong id="frameCount">--</strong>
+            </div>
+          </div>
+
+          <h3 class="subhead">分组平均距离</h3>
+          <table>
+            <tbody id="groupMetrics">
+              <tr><td>暂无结果</td><td>--</td></tr>
+            </tbody>
+          </table>
+
+          <h3 class="subhead">序列惩罚</h3>
+          <table>
+            <tbody id="penaltyMetrics">
+              <tr><td>暂无结果</td><td>--</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

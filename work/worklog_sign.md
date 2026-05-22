@@ -472,3 +472,326 @@ P:下一步可以继续把这条线升级成真正的“端口池”版 worker�
 
 - **signLanguage 策略可视化修正**：策略可视化阶段确认只读 `Holistic` JSON，不再重新跑识别；公共渲染函数改为直接按 JSON 里的 landmark 坐标手工绘制关键点和骨架，避免 `drawing_utils` 在反序列化结果上的空绘制问题
 - **signLanguage workflow skill**：已创建本地 skill `signlanguage-workflow`，后续 signLanguage 的采样、worker、可视化和报告工作流默认按该 skill 的三层架构、常驻 worker 和 JSON 读写口径执行
+
+
+# workEpoch2 26/5/20~
+
+## 2026-05-20
+
+P: 现在，根据已有结果，沿着后续计划继续探索，一是建立标准数据采集方案，二是设计打分机制（关键帧选取、时序对齐、逐关节差异分析与相似度评分等）。请把相关探索更新到工作日志里，形成一个完整的工作闭环。请你启动skill中的自主探索模式，派生具体的skill。请你说明工作计划，我确认后正式启动
+
+A: 下面是确认版工作计划。
+
+  派生 Skill
+
+  拟派生专用 skill：
+
+  - 名称：signlanguage-scoring-autonomous
+  - 路径：/home/wuyangcheng/.codex/skills/new/signlanguage-scoring-autonomous/
+    SKILL.md
+  - 来源：从 long-running-autonomous-project-management 派生，并叠加 signlanguage-
+    workflow 的项目规则
+  - 目标：持续推进 /data/WYC/signLanguage 的“标准数据采集方案 + 手语动作打分 MVP”闭
+    环，直到形成可复用方案、原型脚本、实验结果和报告
+
+  这个 skill 会固化以下规则：
+
+  - 继续使用 /home/wuyangcheng/myenv
+  - Holistic 计算优先复用常驻 worker / 缓存 JSON
+  - 打分探索优先基于 dense Holistic 时间序列，关键帧策略作为压缩版方案
+  - 所有报告明确区分：候选生成、选择、时序对齐、逐关节误差、总分计算
+  - 每次阶段进展更新项目日志和全局记忆
+
+  启动后的执行计划
+
+  1. 建立任务闭环文档
+     我会补充并维护：
+      - /data/WYC/signLanguage/work/worklog_sign.md
+      - /home/wuyangcheng/.codex/memories/projects/signLanguage/work_log.md
+      - /data/WYC/signLanguage/work/reports/scoring_mvp_followup_20260520.md
+      - /data/WYC/signLanguage/work/reports/scoring_mvp_phase_summary_20260520.md
+
+     另外我会把 worklog_sign.md 里当前 2025/5/20 修正为实际日期 2026-05-20。
+  2. 标准数据采集方案设计
+     输出一份可执行采集规范，覆盖：
+      - 每个词汇需要多少标准样本、多少用户测试样本
+      - 拍摄角度、距离、光照、背景、帧率、分辨率
+      - 动作起止标注规则
+      - 是否保留原视频、dense Holistic JSON、关键帧结果、可视化图
+      - 标准样本库字段设计和版本管理
+      - 质量控制指标，比如手部覆盖率、pose 稳定性、缺帧率、动作完整性
+  3. 打分机制设计
+     形成 MVP 打分框架：
+      - 输入：标准样本 dense Holistic 序列 + 用户视频 dense Holistic 序列
+      - 预处理：坐标归一化、尺度对齐、左右手/pose/face 权重、缺失点处理
+      - 关键帧方案：uniform_select、two_stage_select、adaptive_select、能量覆盖率筛
+        选
+      - 时序对齐：优先探索 DTW / 分段 DTW / 关键帧锚点对齐
+      - 逐关节差异：手部、手腕、肘肩、躯干、面部可分组统计
+      - 相似度评分：整体分、手部动作分、姿态稳定分、节奏分、完成度分
+      - 诊断输出：指出哪个时间段、哪个关节组偏差最大
+  4. 原型实验
+     基于现有 demo 视频先做可运行验证：
+      - 复用已有 Holistic JSON 缓存，缺失时再通过 worker 生成
+      - 先做“标准样本 vs 查询样本”的模板匹配原型
+      - 在当前 demo 只有少量样本的前提下，先验证流程正确性，不虚假声称评分泛化可靠
+      - 输出 JSON 指标、可视化对齐图、逐关节误差图和中文分析报告
+  5. 自主探索模式组织
+     正式启动后，我会按 skill 的自治流程运行：
+      - 当前会话作为 coordinator
+      - 如需要并行，会使用 skill 里的 tmux Codex worker，不使用内置 subagent
+      - 维护 .codex/tmux-workers/COORDINATOR_SCHEDULE.md
+      - 让分支任务分别处理：资料审计、采集方案草案、评分原型、报告整合
+  6. 完整闭环交付
+     阶段结束时应至少形成：
+      - 派生 skill
+      - 标准数据采集方案
+      - 打分机制设计文档
+      - 可运行评分原型或最小实验脚本
+      - 实验结果目录
+      - 更新后的项目 worklog
+      - 更新后的全局 signLanguage memory
+
+
+Q: 当前其实还没有用户视频流样本，会影响你的计划吗
+
+A: • 不会阻塞，但会影响验证口径。
+
+  当前没有用户视频流样本，意味着我们暂时不能做这几件事：
+
+  - 不能可靠校准“多少分算好 / 合格 / 不合格”
+  - 不能验证真实用户动作偏差类型，比如左右手不到位、节奏慢、动作漏做
+  - 不能证明评分对不同人、不同拍摄环境有泛化性
+  - 不能做真实的“标准样本 vs 用户样本”闭环评测
+
+  但不影响继续推进这两条主线：
+
+  1. 标准数据采集方案
+     反而更应该先做。因为现在缺的正是未来打分系统需要的数据规范：每个词采几条、怎么
+     拍、怎么标动作起止、怎么保存 dense Holistic JSON、怎么做质量控制。
+  2. 打分机制原型
+     可以先用现有 demo 视频做方法验证，而不是最终性能评估。具体方式：
+      - 用现有 demo 当标准样本库雏形
+      - 用同一视频的不同采样密度、截断片段、轻微扰动版本做“伪用户样本”
+      - 用不同词汇之间的对比做负例 sanity check
+      - 先验证：坐标归一化、DTW 时序对齐、逐关节误差、总分计算、诊断输出是否跑通
+
+  所以我会把计划修订为：
+
+  - 第一阶段：不宣称真实评分效果，只完成“采集规范 + 数据结构 + 评分算法原型 + 离线
+    sanity check”
+  - 第二阶段：等有真实用户样本后，再做阈值校准、评分等级、泛化评估和前端实时流闭环
+
+  实时视频流本身也不是阻塞点，因为已有 frame_slices worker 路径可以模拟“前端逐帧/分
+  片发送”。当前真正缺的是真实用户动作样本和人工评分标签。
+
+  确认后我会按这个修订版启动。
+
+P: 好，请正式启动
+
+STATUS 2026-05-20 17:20:00 CST：
+
+- 已正式启动 `signLanguage` 标准数据采集与打分 MVP 自主探索线。
+- 已派生专用 skill：`/home/wuyangcheng/.codex/skills/new/signlanguage-scoring-autonomous/SKILL.md`。
+- 本轮任务基于 `signlanguage-workflow` 和 `long-running-autonomous-project-management`，后续默认按常驻 worker、raw `Holistic` JSON 缓存、dense 时间序列匹配和 tmux Codex worker 协作推进。
+- 已明确当前缺少真实用户视频流样本和人工评分标签，因此第一阶段只做“标准采集规范 + 数据结构 + 打分算法原型 + 离线 sanity check”，不宣称真实用户评分准确性、阈值有效性或泛化能力。
+- 已建立阶段跟进文档：`/data/WYC/signLanguage/work/reports/scoring_mvp_followup_20260520.md`。
+- 已建立阶段总结文档：`/data/WYC/signLanguage/work/reports/scoring_mvp_phase_summary_20260520.md`。
+- 下一步通过 tmux Codex worker 并行推进资料/缓存审计、标准采集方案草案、打分机制设计和最小评分原型计划，coordinator 负责最终整合。
+
+STATUS 2026-05-20 17:50:00 CST：
+
+- 四个 tmux Codex worker 已完成并输出草案：
+  - 数据/缓存审计：`/data/WYC/signLanguage/work/reports/scoring_data_cache_audit_20260520_draft.md`
+  - 标准采集协议：`/data/WYC/signLanguage/work/reports/standard_data_collection_protocol_20260520_draft.md`
+  - 打分机制设计：`/data/WYC/signLanguage/work/reports/scoring_mechanism_design_20260520_draft.md`
+  - 原型实施计划：`/data/WYC/signLanguage/work/reports/scoring_mvp_prototype_plan_20260520_draft.md`
+- coordinator 已新增离线评分 MVP 脚本：`/data/WYC/signLanguage/work/scripts/score_holistic_sequence_mvp.py`。该脚本只读已有 `Holistic` JSON，不重新运行 MediaPipe；支持 raw landmark 模式和旧 bbox 兼容模式。
+- 已完成初始 sanity check，结果目录为 `/data/WYC/signLanguage/work/generated/scoring_mvp_run1/`，报告为 `/data/WYC/signLanguage/work/reports/scoring_mvp_initial_experiment_20260520.md`。
+- 关键结果：`花` raw landmark 自身对齐 `prototype_score=100.000`；`花` 降采样/裁剪伪用户样本约 `93.987-98.046`；`花` vs 稀疏 `唱歌` raw landmark 负例约 `62.945`；旧 bbox `花` vs `唱歌` 负例仍有 `85.837`，说明 bbox 只适合兼容诊断，不能作为主评分特征。
+- 已形成闭环整合方案：`/data/WYC/signLanguage/work/reports/scoring_mvp_integrated_plan_20260520.md`。
+- worker 运行中发现 `.codex/tmux-workers/progress` 和 `.codex/tmux-workers/reports` 在 worker sandbox 内不可写，但项目 owned report 路径可写；本轮证据已通过项目报告和 manager capture 保留。
+- 下一步优先为其余 demo 视频生成统一 step-4 raw landmark 缓存，补充不同词负例，并在评分脚本中拆出 `confidence_score`、对齐图和逐组误差曲线。
+
+STATUS 2026-05-20 18:25:00 CST：
+
+- 根据“当前 `花` vs `唱歌` 区分度仍弱”的反馈，已继续优化打分模块，目标改为：目标动作合理变体高分，其他 demo 动作和随机假动作显著低分。
+- 已更新 skill：`/home/wuyangcheng/.codex/skills/new/signlanguage-scoring-autonomous/SKILL.md`，补充判别性门控目标和当前参考结果。
+- 已更新评分脚本：`/data/WYC/signLanguage/work/scripts/score_holistic_sequence_mvp.py`，新增 `--run-discrimination-suite`、`--negative-json label=path`、目标动作裁剪/降采样/幅度调整正例、随机假动作负例、序列级惩罚、端点一致性和幅度缩放鲁棒性。
+- 已修复 `/data/WYC/signLanguage/work/scripts/benchmark_holistic_worker.py`：当前环境没有 `ffprobe` 时，帧切片模式改用 OpenCV `CAP_PROP_FRAME_COUNT/FPS` 读取总帧数和 fps，避免所有视频只采第 0 帧。
+- 已用一个常驻 Holistic worker 生成 10 个 demo 的 step-4 raw landmark 缓存：`/data/WYC/signLanguage/work/generated/scoring_mvp_run2/all_demo_step4_worker_cache_v2/`；worker 初始化 `260.107s`，全流程 `274.915s`。
+- 已完成 `花` 目标动作全 demo 判别实验：`/data/WYC/signLanguage/work/generated/scoring_mvp_run2/flower_all_demo_discrimination_v2/`。
+- 最终门控结果：目标动作正例最低分 `75.494`，负例最高分 `41.495`，分离 margin `33.999`，门控通过。其他 9 个 demo 对 `花` 的得分全部低于 `21`，随机假动作最高 `41.495`，目标动作裁剪/降采样/幅度调整变体均高于 `75`。
+- 新增报告：`/data/WYC/signLanguage/work/reports/scoring_mvp_discrimination_optimization_20260520.md`。
+- 当前结论仍是 demo-only sanity gate，不是用户评分阈值；下一步可把同样套件推广到其他 demo 词，并补 `confidence_score`、对齐图和逐组误差曲线。
+
+### 打分区分度实验
+Q: 你实验的用唱歌和话交叉打分是个不错的方式，不过当前的区分度似乎还是太弱了？你看看怎么优化。你当前的目标可以设置为，在目标动作场景下，其他demo动作打分显著低；同时你可以基于demo视频生成随机假动作，来进行打分测试，要求打分低；而基于目标动作的裁剪和动作幅度调整，应该对应较高分数。请让打分模块实现这样的功能。请你更新相应skill。请你继续自主探索模式，完成所有目标。
+
+
+P: 先总结一个当前完整打分方案的md工作报告，说明采用的策略，目前的实验场景，同时导出word版
+
+
+
+
+## 2026-05-22
+
+
+
+STATUS 2026-05-22 21:45:00 CST：
+
+- 已按当前打分 MVP 进展整理完整方案工作报告，路径为 `/data/WYC/signLanguage/work/reports/scoring_scheme_current_report_20260522.md`。
+- 已导出同名 Word 版本：`/data/WYC/signLanguage/work/reports/scoring_scheme_current_report_20260522.docx`。
+- 报告覆盖当前采用策略、数据/缓存路线、评分机制、`花` 目标动作 demo-only 判别性实验场景、正例/假动作/其他 demo 负例结果、工程可用性判断和后续工作。
+- 报告继续明确当前没有真实用户视频流样本和人工评分标签，因此 `75/50` 只作为离线工程 sanity gate，不作为正式用户评分阈值。
+
+STATUS 2026-05-22 22:25:00 CST：
+
+- 已实现基础网页前端和常驻 Holistic 后端 MVP：
+  - 后端：`/data/WYC/signLanguage/work/web/backend.py`
+  - 前端：`/data/WYC/signLanguage/work/web/static/index.html`
+  - 样式：`/data/WYC/signLanguage/work/web/static/styles.css`
+  - 交互脚本：`/data/WYC/signLanguage/work/web/static/app.js`
+  - 运行说明：`/data/WYC/signLanguage/work/docs/web_scoring_mvp.md`
+- 后端采用 FastAPI，当前绑定 `127.0.0.1:5080`，启动时异步初始化一个常驻 `holistic_worker_daemon.py` 子进程；网页和 API 在同一个服务下，Windows 本地浏览器可通过 SSH local tunnel 访问 `http://127.0.0.1:5080` 并申请本机摄像头权限。
+- 前端已支持：选择目标 demo 模板、开启摄像头、按时长/FPS/帧宽采集 JPEG 帧、POST 到 `/api/score`、展示 `prototype_score`、DTW 距离、normalized distance、Holistic 耗时、分组平均距离和 sequence penalty。
+- 后端已接入当前 10 个 demo step-4 raw landmark 模板库 `/data/WYC/signLanguage/work/generated/scoring_mvp_run2/all_demo_step4_worker_cache_v2/results/`，并复用 `score_holistic_sequence_mvp.py` 中的 `load_sequence/run_pair` 评分逻辑。
+- 已在 tmux session `signlanguage-web` 启动服务，日志 `/data/WYC/signLanguage/work/logs/web_scoring_backend.log`；`/api/status` 显示 worker ready，Holistic 初始化耗时 `260.116s`。
+- 已用服务器端 `花.mp4` 抽帧模拟浏览器上传跑通 `/api/score`，返回 request `web_20260522_222243_a23d679c`，12 帧测试 `prototype_score=57.392`、`dtw_distance=0.026631`、`normalized_distance=0.066631`、`holistic_eval_sec=0.597`、`api_total_sec=0.796`，输出 JSON 位于 `/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260522_222243_a23d679c/`。
+- 当前网页输出仍是 demo-only prototype similarity，不是正式用户评分；下一步应补动作起止检测、多模板匹配、`confidence_score`、对齐图和真实用户样本校准。
+
+STATUS 2026-05-22 22:40:00 CST：
+
+- 已根据四位数端口要求，把 Web 打分 MVP 默认端口从 `18080` 调整为 `8080`。
+- 已同步更新 `/data/WYC/signLanguage/work/web/backend.py`、前端提示 `/data/WYC/signLanguage/work/web/static/index.html` 和运行说明 `/data/WYC/signLanguage/work/docs/web_scoring_mvp.md`。
+
+STATUS 2026-05-22 22:50:00 CST：
+
+- 已按“5 开头四位数端口”要求，把 Web 打分 MVP 默认端口从 `8080` 调整为 `5080`。
+- 已同步更新后端监听端口、前端提示、运行说明、项目 memory 和全局 memory。
+- Windows 本地访问方式改为 `ssh -N -L 5080:127.0.0.1:5080 ...` 后打开 `http://127.0.0.1:5080`。
+- 已重启 tmux session `signlanguage-web` 并确认当前仅监听 `127.0.0.1:5080`；`/api/status` 显示 worker ready，模板数 `10`，本次 Holistic 初始化耗时 `260.121s`。
+
+STATUS 2026-05-22 23:00:00 CST：
+
+- 已按“保留旧版、派生新版本方便对比”的要求新增参考视频版 Web MVP v2，旧版 `5080` 不动，新版监听 `127.0.0.1:5081`。
+- v2 后端入口：`/data/WYC/signLanguage/work/web/backend_v2.py`；v2 前端目录：`/data/WYC/signLanguage/work/web/static_v2/`；v2 运行说明：`/data/WYC/signLanguage/work/docs/web_scoring_mvp_v2.md`。
+- v2 页面在采集区增加“查看参考”按钮，参考动作视频默认隐藏；用户点击后才展开右侧小参考视频，再点击“隐藏参考”可收起。参考视频随目标动作下拉框切换，来源为 `/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/`。
+- 已启动 tmux session `signlanguage-web-v2`，当前 `5080` 和 `5081` 同时监听；`/api/status` 显示 v2 worker ready，模板数 `10`，本次 Holistic 初始化耗时 `260.126s`。已验证 `/api/reference-video/香蕉` 返回 MP4。
+
+STATUS 2026-05-22 23:10:00 CST：
+
+- 已按“v1/v2 保留、在 v3 上增加倒计时”的要求派生 Web MVP v3，端口为 `127.0.0.1:5082`。
+- v3 后端入口：`/data/WYC/signLanguage/work/web/backend_v3.py`；v3 前端目录：`/data/WYC/signLanguage/work/web/static_v3/`；v3 运行说明：`/data/WYC/signLanguage/work/docs/web_scoring_mvp_v3.md`。
+- v3 保留 v2 的“查看参考”按钮和默认隐藏参考视频逻辑，同时在用户摄像头画面上新增 3 秒倒计时覆盖层。点击“采集并打分”后先显示 `3、2、1、开始`，倒计时结束后才正式采集帧并提交评分。
+- 已启动 tmux session `signlanguage-web-v3`，当前 `5080/5081/5082` 同时监听；`/api/status` 显示 v3 worker ready，模板数 `10`，本次 Holistic 初始化耗时 `260.116s`。已验证 v3 页面包含倒计时元素，参考视频接口可返回 MP4。
+
+STATUS 2026-05-22 23:15:00 CST：
+
+- 根据“前端版本应复用同一个 Holistic 后端”的反馈，已调整 Web 架构：`5080` 作为唯一共享评分/Holistic 常驻后端，`5081` v2 和 `5082` v3 只保留静态前端、参考视频接口和轻量 API 代理。
+- 已改造 `/data/WYC/signLanguage/work/web/backend_v2.py` 和 `/data/WYC/signLanguage/work/web/backend_v3.py`，移除各自的 `HolisticWorkerService` 启动逻辑；其 `/api/status`、`/api/templates`、`/api/score` 统一代理到 `http://127.0.0.1:5080`。
+- 已重启 tmux session `signlanguage-web-v2` 和 `signlanguage-web-v3`。当前 `5080/5081/5082` 均监听，但 `holistic_worker_daemon.py` 只有 `1` 个进程，即 `5080` 共享后端持有的 worker。
+- 已验证 v2/v3 `/api/status` 均显示 shared backend ready；已通过 v3 `/api/score` 代理完成一次 6 帧 smoke test，返回 `frontend_proxy.version=v3_countdown_reference_video`，说明前端版本代理到共享后端的链路可用。
+
+
+### 实现简单前端网页demo和对应常驻后端
+P: 现在，实现基础的网页前端和对应的常驻holistic后端，从而能够实现基础的功能：网页前端申请电脑的摄像头权限，从而能获取用户几秒的视频流，然后发送视频帧给服务器常驻后端，基于已有方案，根据目前已经建立的基础数据库进行打分。你codex现在在远端服务器上，我希望我能够在本地windows电脑上运行网页前端，你看看如何实现？
+
+不错，网页端可以再补充一个版面展示demo的参考视频动作，这个参考动作的界面可以小一些，页面其他的部分仍然保留，请你调整出合适位置。之前建议的网页端口仍然保留，你可以派生新版本，使用新端口，方便对比调整。请你实现。
+
+这个参考视频版面可以设置按钮，选择开启还是不开启，因为是测评，所以默认不开启；如果用户需要可以“查看参考”。
+
+
+P: 网页端点击“采集并打分”后，可以在用户视频界面增加一个3s倒计时，方便用户准备和开始。请你在v3上调整。v1，v2的端口和脚本都保留，方便比较。
+
+P: 实际上前端可以复用同样的holistic后端吧？不用每启动一个新的前端就也要启动一个新的后端吧，请改进逻辑。
+
+
+
+P: 所以现在的工作流中，前端网页通过摄像头采集视频流后，传输了什么给服务器后端？可以写一个当前前后端实现的具体报告md吗
+
+STATUS 2026-05-22 23:25:00 CST：
+
+- 已整理当前 Web 前后端实现报告：`/data/WYC/signLanguage/work/reports/web_frontend_backend_current_implementation_20260522.md`。
+- 报告明确当前前端不是上传完整视频文件，也不是上传 `MediaStream`；实际上传的是按固定 FPS 从摄像头画面抽取、经 canvas 缩放并 JPEG 压缩后的多帧 base64 JSON。
+- 报告覆盖字段级请求体：`target_word`、`fps`、`duration_sec`、`frame_indices`、`frames[].image_format`、`frames[].image_b64`、`wait_for_ready_sec`，并说明不上传音频、不上传 MP4/WebM、不上传未压缩原始帧。
+- 报告也说明当前共享后端架构：`5080` 唯一持有 Holistic worker，`5081/5082` 只做代理和参考视频；后端将帧切片解码为 OpenCV 图像，走 `frame_slices` worker 路径生成 raw Holistic JSON，再调用现有 DTW 打分。
+
+
+
+P: 网页还有一些细节可以调整：1.增加摄像头关闭的逻辑，可以在同一个按钮上 2. 左边的视频实时视频显式版面可以更宽一些，右边的结果版面可以调窄一些。 改动后让5080端口加载这个新版本
+
+网页的视频板块高度要小一些，可以保持为显示参考时候的视频板块大小，只是那个小的参考视频板块在不显示参考时候就隐藏；这个大小刚好能让下方的按钮和文字能在不滚动页面的情况下露出来，方便查看。
+
+
+Q: holistic后端和前端的调整应该是独立的吧，启动不同端口的前端，按理说和固定后端不冲突？所以你更新页面设计后，启动新的端口，只需要继续和之前的常驻后端发消息即可吧（不用总是重新初始化后端？），目前我们先只建一个常驻后端，未来可以扩充成为后端池，方便处理前端高并发的操作。
+请你完善后，更新前后端设计的报告文档，然后导出word
+
+STATUS 2026-05-22 23:55:00 CST：
+
+- 已按“前端与 Holistic 后端独立”的架构口径新增 v4 前端代理：`/data/WYC/signLanguage/work/web/backend_v4.py`，静态目录 `/data/WYC/signLanguage/work/web/static_v4/`，端口 `127.0.0.1:5083`。
+- `5083` 只服务页面、参考视频和轻量 API 代理；`/api/status`、`/api/templates`、`/api/score` 均转发到共享后端 `http://127.0.0.1:5080`，不会启动新的 `HolisticWorkerService`。
+- v4 页面保留默认隐藏参考视频、3 秒倒计时和同按钮开关摄像头；同时调整参考隐藏时的用户视频宽度，保持接近参考开启时的紧凑高度，避免按钮和提示文本被挤出首屏。
+- 已启动 tmux session `signlanguage-web-v4`；当前 `5080/5081/5082/5083` 均监听 `127.0.0.1`，但 `holistic_worker_daemon.py` 仍只有 1 个进程，属于 `5080` 共享评分后端。
+- 已更新前后端设计报告 `/data/WYC/signLanguage/work/reports/web_frontend_backend_current_implementation_20260522.md`，并导出 Word 版 `/data/WYC/signLanguage/work/reports/web_frontend_backend_current_implementation_20260522.docx`。报告补充了固定评分后端、多前端代理、浏览器上传帧格式、当前 v4 页面、运维策略和未来后端池扩展方案。
+
+STATUS 2026-05-23 00:20:00 CST：
+
+- 已按“Holistic 后端保留一个，其他 tmux 后端关闭”的要求收敛运行态：关闭 `signlanguage-web-v2`、`signlanguage-web-v3`、`signlanguage-web-v4`，只保留 `signlanguage-web`。
+- 当前仅 `127.0.0.1:5080` 在监听；`5081/5082/5083` 已不再监听。`holistic_worker_daemon.py` 仍只有 1 个进程，PID `3570432`，归属 `5080` 后端。
+- 已把 v4 的紧凑用户视频布局同步到 `5080` 静态页面，用户继续通过 `http://127.0.0.1:5080` 使用摄像头开关、默认隐藏参考、3 秒倒计时和当前新版布局。
+- 已同步更新运行说明 `/data/WYC/signLanguage/work/docs/web_scoring_mvp.md` 以及前后端设计报告 `/data/WYC/signLanguage/work/reports/web_frontend_backend_current_implementation_20260522.md`，并重新导出 Word 版。
+
+
+
+
+
+
+### 安全访问端口
+Q: 关于安全访问服务器网页，能不能设置成内网（校园网）ip用户就可以正常访问服务器上面的端口？这样应该也算安全？
+
+
+
+
+## 2026-05-23
+### 打分优化：提高打分准确性
+
+
+
+P: 经过实际测试，目前打分的鲁棒性还不够，测试评分明显偏低。
+关键在于，要根据资料的文本参考给出对应样本中各个特征（脸/手/手臂等）的加权（或mask），体现动作正确性的重点，比如“花”这个动作，其实重点就是手部的张开的动作，其他的面部等特征都不重要。
+另外，动作本身的关键语义，也只在于关键特征中的关键节点的相对移动，比如“花”的手部张开，其实只是手指关节“张开”的相对移动，看看当前的DTW等算法是不是能有效捕捉其中的正确性。
+
+那么，你需要根据data里面的文本说明，补充数据库中的权重信息，并且优化打分算法。请你补充实现。
+
+
+？根据文档说明自动提取重点特征并给出具体特征权重，这一步可以用大模型快速完成吧？
+
+### 语义特征的简化？
+P: 或许，具体的手语动作语义可以简化成各种“相对运动”，比如手指关节的张开/合并，比如手部相对躯干向左/向右/向上/向下的移动，比如手和手之间相对移动。这些重要特征中的相对运动，一部分可以从文档资料中提取出来，另外就需要从视频原本的密集采样中识别出来，并保存到相应的语义数据中。对于用户的输入视频流，由于其实只是针对目标词汇的动作识别，所以可以直接分析重要特征的相对运动，来和数据库进行语义相似度比较，从而打分。
+
+当然，上述这套流程非常“手工化”，未来或许可以用深度学习来自动抓取“重要特征的相对运动”信息。
+
+P: 另外，既然关键看的是 “重要特征的相对运动”，所以数据库也应该采取类似能量密度覆盖的方式，强调关键的动态部分，或者说，给密集采样的时间序列附上权重，不同帧的权重不一样，关键动作上面的权重要显著高，这对于后续进行DTW对齐等计算很重要。
+
+
+NEW:!!
+• 回放已有网页测试结果后，花 的旧分数大多在 15-30，语义加权后多数提升到 60-80，
+  其中较完整的几次提升到 75-80；质量较差或动作不完整的样本仍保持偏低。现在我会生
+  成一份实现记录，然后重启唯一的 5080 服务使网页端真正加载新代码。
+
+STATUS 2026-05-23 00:50:00 CST：
+
+- 已实现文本语义加权评分更新，新增 profile 生成脚本 `/data/WYC/signLanguage/work/scripts/build_semantic_weight_profiles.py`，读取 `/data/WYC/signLanguage/data/Demo词汇.docx` 并按动作语义关键词为 10 个模板词生成权重配置。
+- 已生成语义权重库 `/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json` 和可读报告 `/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.md`。其中 `花` 的 profile 主要权重为 `right_hand_shape=0.35`、`right_hand=0.32`、`left_hand_shape=0.18`、`left_hand=0.12`，`pose/face=0`。
+- 已优化 `/data/WYC/signLanguage/work/scripts/score_holistic_sequence_mvp.py`：新增左右手 shape 特征、关键指尖/拇指节点加权、左右手互换匹配、语义起止变化惩罚和更强 roughness penalty，用于抑制倒放/乱序假动作。
+- `花` 目标动作离线判别实验输出 `/data/WYC/signLanguage/work/generated/scoring_mvp_run3/flower_semantic_weighted_discrimination_v6/`：正例最低 `81.437`，负例最高 `49.049`，margin `32.388`，工程门控通过。
+- 已回放已有网页采集样本，`花` 的若干旧低分样本明显回升，例如 `web_20260522_232642_fe440fb9` 从 `30.093` 升到 `79.683`，`web_20260523_000852_b2c2f1de` 从 `27.923` 升到 `75.351`，同时明显质量差/动作不完整样本仍保持偏低。
+- 已在 `/data/WYC/signLanguage/work/web/backend.py` 接入语义 profile，`/api/status` 和 `/api/templates` 返回 profile 信息，`/api/score` 的 `score.semantic_profile` 返回本次使用的权重配置。
+- 已整理实现报告 `/data/WYC/signLanguage/work/reports/scoring_semantic_weighted_update_20260523.md`，并导出 Word 版 `/data/WYC/signLanguage/work/reports/scoring_semantic_weighted_update_20260523.docx`。
+- 已重启唯一的 `5080` 常驻 Web/Holistic 后端以加载新评分代码；重启过程中仍只保留一个 `signlanguage-web` tmux 服务和一个 Holistic worker。
+- 2026-05-23 00:55 CST 复核：`5080` worker 已 ready，本次 Holistic 初始化 `389.252s`；当前只监听 `127.0.0.1:5080`，没有 `5081/5082/5083`。网页默认上传帧宽已从 `480` 改为 `960`，以提高小手部区域的 Holistic 检测稳定性。`5080/api/score` 使用 `花.mp4` 标准采样帧 smoke test 返回 request `web_20260523_005320_4bd5e0a3`，语义加权 score `79.347`，`score.semantic_profile.word=花`。
+
+
+
+

@@ -1,0 +1,176 @@
+   - per-joint and per-group error metrics
+   - component scores and total score
+   - diagnostic output
+4. Prototype or minimal experiment
+   - use existing demo videos and cached `Holistic` JSON where possible
+   - generate pseudo-user variants if real user samples are absent
+   - include same-word self/perturbed sanity checks and different-word negative chec
+ks
+   - output JSON metrics and a Chinese analysis report
+
+## Scoring Claim Policy
+
+Use careful wording:
+
+- Allowed: "pipeline sanity check", "method prototype", "offline demo validation", "
+relative similarity".
+- Not allowed in phase 1: "real-user score is accurate", "pass/fail threshold is val
+idated", "generalizes to users", "front-end real-time scoring has been proven".
+
+## Autonomous Interruption Rule
+
+User questions, corrections, or status requests are intermediate interactions. Answe
+r them, then resume this autonomous scoring target unless the user explicitly says t
+o stop, pause, or exit autonomous follow-up mode.
+
+exec
+/bin/bash -lc "date '+%Y-%m-%d %H:%M:%S %Z (%z)'" in /data/WYC/signLanguage
+ succeeded in 0ms:
+2026-05-20 17:16:30 CST (+0800)
+
+exec
+/bin/bash -lc "find /data/WYC/signLanguage/.codex/tmux-workers/inbox/data-cache-audi
+t -maxdepth 1 -type f -printf '%TY-%Tm-%Td %TH:%TM %p\\n' | sort" in /data/WYC/signL
+anguage
+ succeeded in 0ms:
+codex
+The worker plan matches the requested scope, and the inbox is currently empty. I’m a
+lso reading the base project workflow skill because the scoring workflow explicitly
+depends on it.
+exec
+/bin/bash -lc "sed -n '1,240p' /home/wuyangcheng/.codex/skills/new/signlanguage-work
+flow/SKILL.md" in /data/WYC/signLanguage
+ succeeded in 0ms:
+---
+name: signlanguage-workflow
+description: signLanguage project workflow for Holistic-based sampling, persistent w
+orkers, visualization, reporting, and memory updates. Use when working on the signLa
+nguage project, especially sampling strategies, worker orchestration, visualizations
+, reports, or pipeline changes.
+---
+
+# SignLanguage Workflow
+
+## Overview
+
+Use this skill when working on the `signLanguage` project. It captures the current o
+perating workflow for Holistic-based sampling, persistent worker execution, visualiz
+ation, reporting, and log/memory updates.
+
+## Core Workflow
+
+1. Use `/home/wuyangcheng/myenv` for `mediapipe` / `opencv` work unless the user ask
+s otherwise.
+2. Prefer persistent backend workers for expensive Holistic tasks. Keep workers aliv
+e in `tmux` when useful, and support both `video_path` and `frame_slices` requests t
+hrough parameters.
+3. Keep the pipeline split into three layers:
+   - candidate generation: produce raw Holistic JSON cache
+   - selection: read the cached JSON and choose keyframes
+   - visualization: read the Holistic JSON and render overlays without rerunning Hol
+istic
+4. For strategy comparison, keep timing definitions explicit:
+   - candidate generation time
+   - selection time
+   - combined sampling + Holistic time, when the stages overlap
+   - visualization time only if the user wants it
+5. When storage pressure is acceptable, dense Holistic time-series plus database-sty
+le matching is a valid alternative to keyframe selection.
+6. If Holistic initialization dominates, do not blindly maximize worker count. Prefe
+r worker reuse, warm caches, or a smaller number of long-lived workers.
+7. After major workflow changes or report refreshes, update the project worklog and
+the relevant global memory entries.
+
+## Reference
+
+See [references/workflow.md](references/workflow.md) for the current report conventi
+ons, worker modes, and dense-matching notes.
+
+exec
+/bin/bash -lc "sed -n '1,220p' /data/WYC/signLanguage/.codex/tmux-workers/progress/d
+ata-cache-audit.md" in /data/WYC/signLanguage
+ succeeded in 0ms:
+# data-cache-audit Progress
+
+Updated: 2026-05-20T17:16:12+08:00
+Status: launched
+Session: signlanguage-scoring-workers:cw-data-cache-audit
+Working directory: /data/WYC/signLanguage
+
+## Current Progress
+
+- Started with task plan: /data/WYC/signLanguage/.codex/tmux-workers/workplans/data-
+cache-audit.md
+- Inbox directory: /data/WYC/signLanguage/.codex/tmux-workers/inbox/data-cache-audit
+- Background job registry: /data/WYC/signLanguage/.codex/tmux-workers/jobs/data-cach
+e-audit.json
+- Log file will be updated under this worker state directory.
+
+## Next
+
+- Worker should update this file when key milestones, blockers, or completion occur.
+
+exec
+/bin/bash -lc "sed -n '1,220p' /data/WYC/signLanguage/.codex/tmux-workers/reports/da
+ta-cache-audit.md" in /data/WYC/signLanguage
+ succeeded in 0ms:
+# Codex Tmux Worker Report - data-cache-audit
+
+Created: 2026-05-20T17:16:12+08:00
+Task: You are Worker data-cache-audit in a tmux-launched Codex process.
+
+Goal: inspect the current /data/WYC/signLanguage project state and identify reusable
+ existing artifacts for the scoring MVP line.
+
+Working directory: /data/WYC/signLanguage
+
+Write scope:
+- Write only your report at /data/WYC/signLanguage/work/reports/scoring_data_cache_a
+udit_20260520_draft.md
+- You may update your assigned progress/report files under /data/WYC/signLanguage/.c
+odex/tmux-workers/
+
+Do not modify:
+- Source scripts
+- Existing worklog files
+- Existing generated artifacts
+- Other scoring report drafts
+
+Use these constraints:
+- Current project has no real user video stream samples and no human score labels.
+- Treat existing demo videos and cached Holistic JSON as assets for offline sanity c
+hecks only.
+- Prefer exact paths and concise evidence over broad speculation.
+
+Tasks:
+1. Inventory current demo videos and existing Holistic/cache/result files that can s
+eed a scoring prototype.
+2. Identify which files are raw dense or step-dense Holistic JSON versus selected ke
+yframe outputs or visualizations.
+3. Summarize missing data for a real scoring dataset.
+4. Propose a minimal reusable data layout for standard templates and pseudo-user san
+ity-check cases.
+5. Write a Chinese draft report to your owned path with timestamp, inspected paths,
+evidence, risks, and next recommendations.
+
+Return: changed files, commands run, key findings, blockers, and next recommendation
+.
+Session: signlanguage-scoring-workers:cw-data-cache-audit
+
+## Summary
+
+Pending worker updates.
+
+## Evidence
+
+Pending.
+
+## Completion
+
+Pending.
+
+exec
+/bin/bash -lc "test -f /data/WYC/signLanguage/work/reports/scoring_data_cache_audit_
+20260520_draft.md && sed -n '1,80p' /data/WYC/signLanguage/work/reports/scoring_data
+_cache_audit_20260520_draft.md || true" in /data/WYC/signLanguage
+ succeeded in 0ms:

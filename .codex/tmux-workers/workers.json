@@ -1,0 +1,149 @@
+{
+  "consult": {
+    "approval": "never",
+    "best_model_default": true,
+    "context_file": "/data/WYC/signLanguage/.codex/tmux-workers/consult/CONSULT_CONTEXT.md",
+    "created_at": "2026-05-20T17:15:14+08:00",
+    "cwd": "/data/WYC/signLanguage",
+    "log_file": "/data/WYC/signLanguage/.codex/tmux-workers/logs/consult.log",
+    "model": "gpt-5.5",
+    "prompt_file": "/data/WYC/signLanguage/.codex/tmux-workers/consult/consult.prompt.md",
+    "reasoning_effort": "xhigh",
+    "role": "user-consultation",
+    "sandbox": "read-only",
+    "schedule_file": "/data/WYC/signLanguage/.codex/tmux-workers/COORDINATOR_SCHEDULE.md",
+    "session": "signlanguage-scoring-workers",
+    "status_file": "/data/WYC/signLanguage/.codex/tmux-workers/consult/consult.status.json",
+    "updated_at": "2026-05-20T17:15:14+08:00",
+    "window": "cw-consult"
+  },
+  "default_worker_model": "gpt-5.5",
+  "default_worker_reasoning": "xhigh",
+  "mission": "2026-05-20 signLanguage scoring MVP autonomous line: standard data collection protocol, dense Holistic template storage, temporal alignment, per-joint error scoring, and offline sanity-check prototype under the current no-real-user-samples constraint.",
+  "session": "signlanguage-scoring-workers",
+  "state_dir": "/data/WYC/signLanguage/.codex/tmux-workers",
+  "updated_at": "2026-05-20T17:16:30+08:00",
+  "version": 1,
+  "workers": {
+    "collection-spec": {
+      "best_model_default": true,
+      "created_at": "2026-05-20T17:16:19+08:00",
+      "cwd": "/data/WYC/signLanguage",
+      "git_worktree": null,
+      "inbox_dir": "/data/WYC/signLanguage/.codex/tmux-workers/inbox/collection-spec",
+      "jobs_file": "/data/WYC/signLanguage/.codex/tmux-workers/jobs/collection-spec.json",
+      "log_file": "/data/WYC/signLanguage/.codex/tmux-workers/logs/collection-spec.log",
+      "mode": "exec",
+      "model": "gpt-5.5",
+      "name": "collection-spec",
+      "owned_paths": [
+        "/data/WYC/signLanguage/work/reports/standard_data_collection_protocol_20260520_draft.md"
+      ],
+      "progress_file": "/data/WYC/signLanguage/.codex/tmux-workers/progress/collection-spec.md",
+      "prompt_file": "/data/WYC/signLanguage/.codex/tmux-workers/tasks/collection-spec.prompt.md",
+      "reasoning_effort": "xhigh",
+      "report_file": "/data/WYC/signLanguage/.codex/tmux-workers/reports/collection-spec.md",
+      "resources": [
+        "cpu:collection-spec"
+      ],
+      "session": "signlanguage-scoring-workers",
+      "status_file": "/data/WYC/signLanguage/.codex/tmux-workers/status/collection-spec.json",
+      "updated_at": "2026-05-20T17:16:19+08:00",
+      "window": "cw-collection-spec",
+      "workplan_file": "/data/WYC/signLanguage/.codex/tmux-workers/workplans/collection-spec.md",
+      "write_scope": [
+        "report:/data/WYC/signLanguage/work/reports/standard_data_collection_protocol_20260520_draft.md"
+      ]
+    },
+    "data-cache-audit": {
+      "best_model_default": true,
+      "created_at": "2026-05-20T17:16:12+08:00",
+      "cwd": "/data/WYC/signLanguage",
+      "git_worktree": null,
+      "inbox_dir": "/data/WYC/signLanguage/.codex/tmux-workers/inbox/data-cache-audit",
+      "jobs_file": "/data/WYC/signLanguage/.codex/tmux-workers/jobs/data-cache-audit.json",
+      "log_file": "/data/WYC/signLanguage/.codex/tmux-workers/logs/data-cache-audit.log",
+      "mode": "exec",
+      "model": "gpt-5.5",
+      "name": "data-cache-audit",
+      "owned_paths": [
+        "/data/WYC/signLanguage/work/reports/scoring_data_cache_audit_20260520_draft.md"
+      ],
+      "progress_file": "/data/WYC/signLanguage/.codex/tmux-workers/progress/data-cache-audit.md",
+      "prompt_file": "/data/WYC/signLanguage/.codex/tmux-workers/tasks/data-cache-audit.prompt.md",
+      "reasoning_effort": "xhigh",
+      "report_file": "/data/WYC/signLanguage/.codex/tmux-workers/reports/data-cache-audit.md",
+      "resources": [
+        "cpu:data-audit"
+      ],
+      "session": "signlanguage-scoring-workers",
+      "status_file": "/data/WYC/signLanguage/.codex/tmux-workers/status/data-cache-audit.json",
+      "updated_at": "2026-05-20T17:16:12+08:00",
+      "window": "cw-data-cache-audit",
+      "workplan_file": "/data/WYC/signLanguage/.codex/tmux-workers/workplans/data-cache-audit.md",
+      "write_scope": [
+        "report:/data/WYC/signLanguage/work/reports/scoring_data_cache_audit_20260520_draft.md"
+      ]
+    },
+    "prototype-plan": {
+      "best_model_default": true,
+      "created_at": "2026-05-20T17:16:30+08:00",
+      "cwd": "/data/WYC/signLanguage",
+      "git_worktree": null,
+      "inbox_dir": "/data/WYC/signLanguage/.codex/tmux-workers/inbox/prototype-plan",
+      "jobs_file": "/data/WYC/signLanguage/.codex/tmux-workers/jobs/prototype-plan.json",
+      "log_file": "/data/WYC/signLanguage/.codex/tmux-workers/logs/prototype-plan.log",
+      "mode": "exec",
+      "model": "gpt-5.5",
+      "name": "prototype-plan",
+      "owned_paths": [
+        "/data/WYC/signLanguage/work/reports/scoring_mvp_prototype_plan_20260520_draft.md"
+      ],
+      "progress_file": "/data/WYC/signLanguage/.codex/tmux-workers/progress/prototype-plan.md",
+      "prompt_file": "/data/WYC/signLanguage/.codex/tmux-workers/tasks/prototype-plan.prompt.md",
+      "reasoning_effort": "xhigh",
+      "report_file": "/data/WYC/signLanguage/.codex/tmux-workers/reports/prototype-plan.md",
+      "resources": [
+        "cpu:prototype-plan"
+      ],
+      "session": "signlanguage-scoring-workers",
+      "status_file": "/data/WYC/signLanguage/.codex/tmux-workers/status/prototype-plan.json",
+      "updated_at": "2026-05-20T17:16:30+08:00",
+      "window": "cw-prototype-plan",
+      "workplan_file": "/data/WYC/signLanguage/.codex/tmux-workers/workplans/prototype-plan.md",
+      "write_scope": [
+        "report:/data/WYC/signLanguage/work/reports/scoring_mvp_prototype_plan_20260520_draft.md"
+      ]
+    },
+    "scoring-design": {
+      "best_model_default": true,
+      "created_at": "2026-05-20T17:16:24+08:00",
+      "cwd": "/data/WYC/signLanguage",
+      "git_worktree": null,
+      "inbox_dir": "/data/WYC/signLanguage/.codex/tmux-workers/inbox/scoring-design",
+      "jobs_file": "/data/WYC/signLanguage/.codex/tmux-workers/jobs/scoring-design.json",
+      "log_file": "/data/WYC/signLanguage/.codex/tmux-workers/logs/scoring-design.log",
+      "mode": "exec",
+      "model": "gpt-5.5",
+      "name": "scoring-design",
+      "owned_paths": [
+        "/data/WYC/signLanguage/work/reports/scoring_mechanism_design_20260520_draft.md"
+      ],
+      "progress_file": "/data/WYC/signLanguage/.codex/tmux-workers/progress/scoring-design.md",
+      "prompt_file": "/data/WYC/signLanguage/.codex/tmux-workers/tasks/scoring-design.prompt.md",
+      "reasoning_effort": "xhigh",
+      "report_file": "/data/WYC/signLanguage/.codex/tmux-workers/reports/scoring-design.md",
+      "resources": [
+        "cpu:scoring-design"
+      ],
+      "session": "signlanguage-scoring-workers",
+      "status_file": "/data/WYC/signLanguage/.codex/tmux-workers/status/scoring-design.json",
+      "updated_at": "2026-05-20T17:16:24+08:00",
+      "window": "cw-scoring-design",
+      "workplan_file": "/data/WYC/signLanguage/.codex/tmux-workers/workplans/scoring-design.md",
+      "write_scope": [
+        "report:/data/WYC/signLanguage/work/reports/scoring_mechanism_design_20260520_draft.md"
+      ]
+    }
+  }
+}

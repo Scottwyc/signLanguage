@@ -1,0 +1,175 @@
+- dense `Holistic` JSON storage convention
+- scoring mechanism design
+- offline sanity-check prototype
+- reports, worklogs, and global memory updates
+
+This skill specializes `long-running-autonomous-project-management` and must also fo
+llow `signlanguage-workflow`.
+
+## Current Constraint
+
+The project currently has no real user video stream samples or human score labels. T
+his is not a blocker for phase 1, but it changes the claim:
+
+- Phase 1 may validate pipeline correctness with demo videos, pseudo-user variants,
+and negative sanity checks.
+- Phase 1 must not claim calibrated real-user scoring, pass/fail thresholds, or gene
+ralization.
+- Real-user samples are required before score-level calibration, grading bands, and
+front-end real-time scoring validation.
+
+## Required Operating Rules
+
+1. Use `/data/WYC/signLanguage` as the canonical project path.
+2. Use `/home/wuyangcheng/myenv` for `mediapipe`, `opencv`, plotting, and scoring sc
+ripts.
+3. Reuse cached raw `Holistic` JSON where possible.
+4. For expensive recognition, prefer long-lived worker reuse over repeated `Holistic
+` initialization.
+5. Keep the pipeline split:
+   - candidate generation: dense or step-dense raw `Holistic` JSON
+   - selection: keyframes from cached JSON
+   - scoring: temporal alignment, per-joint error, and similarity
+   - visualization/reporting: read cached JSON and scoring outputs
+6. Treat dense time-series matching as the primary scoring direction when storage pr
+essure is acceptable.
+7. Treat keyframe scoring as a compressed or diagnostic route, not the only route.
+8. For autonomous mode, use `tmux-codex-parallel-workers` for independent side branc
+hes unless unavailable or unsuitable.
+9. Keep the coordinator responsible for final judgment, integration, and user-facing
+ summaries.
+10. Do not overwrite historical reports; create date-stamped new docs or append prog
+ress sections.
+
+## Documentation Files
+
+Maintain these files during this autonomous line:
+
+- Project worklog: `/data/WYC/signLanguage/work/worklog_sign.md`
+- Global project memory: `/home/wuyangcheng/.codex/memories/projects/signLanguage/wo
+rk_log.md`
+- Follow-up report: `/data/WYC/signLanguage/work/reports/scoring_mvp_followup_202605
+20.md`
+- Key phase summary: `/data/WYC/signLanguage/work/reports/scoring_mvp_phase_summary_
+20260520.md`
+- Worker schedule: `/data/WYC/signLanguage/.codex/tmux-workers/COORDINATOR_SCHEDULE.
+md`
+
+Every meaningful update must include a concrete timestamp with timezone, for example
+ `2026-05-20 17:20:00 CST`.
+
+## Phase 1 Deliverables
+
+1. Standard collection protocol
+   - vocabulary/sample count recommendations
+   - camera, lighting, resolution, fps, background, and distance rules
+   - action start/end annotation rules
+   - raw video, dense JSON, keyframe, visualization, and metadata retention rules
+   - quality gates for hand coverage, pose stability, missing rate, and action compl
+eteness
+2. Standard-template data schema
+   - file layout
+   - metadata fields
+   - versioning and quality status
+   - future database mapping
+3. Scoring design
+   - normalization
+   - missing-keypoint handling
+   - temporal alignment: DTW / segmented DTW / keyframe-anchor alignment
+   - per-joint and per-group error metrics
+   - component scores and total score
+   - diagnostic output
+4. Prototype or minimal experiment
+   - use existing demo videos and cached `Holistic` JSON where possible
+   - generate pseudo-user variants if real user samples are absent
+   - include same-word self/perturbed sanity checks and different-word negative chec
+ks
+   - output JSON metrics and a Chinese analysis report
+
+## Scoring Claim Policy
+
+Use careful wording:
+
+- Allowed: "pipeline sanity check", "method prototype", "offline demo validation", "
+relative similarity".
+- Not allowed in phase 1: "real-user score is accurate", "pass/fail threshold is val
+idated", "generalizes to users", "front-end real-time scoring has been proven".
+
+## Autonomous Interruption Rule
+
+User questions, corrections, or status requests are intermediate interactions. Answe
+r them, then resume this autonomous scoring target unless the user explicitly says t
+o stop, pause, or exit autonomous follow-up mode.
+
+exec
+/bin/bash -lc "sed -n '1,220p' /home/wuyangcheng/.codex/skills/new/signlanguage-work
+flow/SKILL.md" in /data/WYC/signLanguage
+ succeeded in 0ms:
+---
+name: signlanguage-workflow
+description: signLanguage project workflow for Holistic-based sampling, persistent w
+orkers, visualization, reporting, and memory updates. Use when working on the signLa
+nguage project, especially sampling strategies, worker orchestration, visualizations
+, reports, or pipeline changes.
+---
+
+# SignLanguage Workflow
+
+## Overview
+
+Use this skill when working on the `signLanguage` project. It captures the current o
+perating workflow for Holistic-based sampling, persistent worker execution, visualiz
+ation, reporting, and log/memory updates.
+
+## Core Workflow
+
+1. Use `/home/wuyangcheng/myenv` for `mediapipe` / `opencv` work unless the user ask
+s otherwise.
+2. Prefer persistent backend workers for expensive Holistic tasks. Keep workers aliv
+e in `tmux` when useful, and support both `video_path` and `frame_slices` requests t
+hrough parameters.
+3. Keep the pipeline split into three layers:
+   - candidate generation: produce raw Holistic JSON cache
+   - selection: read the cached JSON and choose keyframes
+   - visualization: read the Holistic JSON and render overlays without rerunning Hol
+istic
+4. For strategy comparison, keep timing definitions explicit:
+   - candidate generation time
+   - selection time
+   - combined sampling + Holistic time, when the stages overlap
+   - visualization time only if the user wants it
+5. When storage pressure is acceptable, dense Holistic time-series plus database-sty
+le matching is a valid alternative to keyframe selection.
+6. If Holistic initialization dominates, do not blindly maximize worker count. Prefe
+r worker reuse, warm caches, or a smaller number of long-lived workers.
+7. After major workflow changes or report refreshes, update the project worklog and
+the relevant global memory entries.
+
+## Reference
+
+See [references/workflow.md](references/workflow.md) for the current report conventi
+ons, worker modes, and dense-matching notes.
+
+exec
+/bin/bash -lc "sed -n '1,220p' .codex/tmux-workers/progress/scoring-design.md 2>/dev
+/null || true" in /data/WYC/signLanguage
+ succeeded in 0ms:
+# scoring-design Progress
+
+Updated: 2026-05-20T17:16:24+08:00
+Status: launched
+Session: signlanguage-scoring-workers:cw-scoring-design
+Working directory: /data/WYC/signLanguage
+
+## Current Progress
+
+- Started with task plan: /data/WYC/signLanguage/.codex/tmux-workers/workplans/scori
+ng-design.md
+- Inbox directory: /data/WYC/signLanguage/.codex/tmux-workers/inbox/scoring-design
+- Background job registry: /data/WYC/signLanguage/.codex/tmux-workers/jobs/scoring-d
+esign.json
+- Log file will be updated under this worker state directory.
+
+## Next
+
+- Worker should update this file when key milestones, blockers, or completion occur.

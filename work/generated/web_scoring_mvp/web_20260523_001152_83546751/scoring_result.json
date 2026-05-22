@@ -1,0 +1,169 @@
+{
+  "request_id": "web_20260523_001152_83546751",
+  "generated_at": "2026-05-23T00:11:53",
+  "claim_policy": "prototype sanity check only; no calibrated real-user score or pass/fail threshold",
+  "target_word": "跳",
+  "standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run2/all_demo_step4_worker_cache_v2/results/跳/跳_holistic_results.json",
+  "query_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_001152_83546751/holistic/user_跳_web_20260523_001152_83546751_holistic_results.json",
+  "duration_sec": 3.0,
+  "capture_fps": 5.0,
+  "frame_count": 15,
+  "worker": {
+    "input_mode": "frame_slices",
+    "ingest_sec": 0.012,
+    "holistic_eval_sec": 0.797,
+    "request_total_sec": 0.913,
+    "samples": 15
+  },
+  "timing": {
+    "api_total_sec": 0.972
+  },
+  "score": {
+    "prototype_score": 8.238104794656795,
+    "dtw_distance": 0.2650630791982015,
+    "normalized_distance": 0.29956798430032366,
+    "path_length": 15,
+    "sequence_penalty": {
+      "length_ratio": 0.6666666666666666,
+      "length_penalty": 0.0,
+      "temporal_profile_factor": 0.3703703703703703,
+      "presence_delta": {
+        "left_hand": 0.13333333333333341,
+        "right_hand": 0.30000000000000004,
+        "pose": 0.0,
+        "face": 0.0
+      },
+      "presence_penalty": 0.01941333333333334,
+      "motion_delta": {
+        "left_hand": 0.4460267554609934,
+        "right_hand": 0.767376522175644,
+        "pose": 0.26246737505608714,
+        "face": 0.07281862012812333
+      },
+      "motion_penalty": 0.00421898459319326,
+      "roughness_delta": {
+        "left_hand": 0.47880013399708465,
+        "right_hand": 0.8565855672875248,
+        "pose": 0.41355020584900976,
+        "face": 0.11949524675516218
+      },
+      "roughness_penalty": 0.010872587175595586,
+      "info_penalty": 0.0,
+      "endpoint_penalty": 0.0,
+      "confidence_warning_penalty": 0.0,
+      "total_sequence_penalty": 0.03450490510212219,
+      "standard_presence": {
+        "pose": 1.0,
+        "left_hand": 0.8,
+        "right_hand": 0.9,
+        "face": 1.0
+      },
+      "query_presence": {
+        "pose": 1.0,
+        "left_hand": 0.6666666666666666,
+        "right_hand": 0.6,
+        "face": 1.0
+      },
+      "standard_motion": {
+        "left_hand": 0.07531588205269404,
+        "right_hand": 0.08556408551521599,
+        "pose": 0.1617402947611279,
+        "face": 0.09818103909492493
+      },
+      "query_motion": {
+        "left_hand": 0.11770664108917117,
+        "right_hand": 0.18442965601570904,
+        "pose": 0.21031407799039567,
+        "face": 0.091278708273811
+      },
+      "standard_roughness": {
+        "left_hand": 0.09683944222827752,
+        "right_hand": 0.10223614983260632,
+        "pose": 0.21388913597911596,
+        "face": 0.12442232761532068
+      },
+      "query_roughness": {
+        "left_hand": 0.1563734912446567,
+        "right_hand": 0.24091243956770217,
+        "pose": 0.32348940808039445,
+        "face": 0.14022768360490984
+      }
+    },
+    "group_mean_distance": {
+      "left_hand": 0.19151332446204525,
+      "right_hand": 0.22136583000958882,
+      "pose": 0.4324292235205991,
+      "face": 0.3526455859343211,
+      "missing": 0.13333333333333333,
+      "weighted": 0.26506307823192593
+    },
+    "worst_alignment_points": [
+      {
+        "standard_frame_idx": 28,
+        "query_frame_idx": 7,
+        "standard_timestamp_sec": 1.907027027027027,
+        "query_timestamp_sec": 1.4,
+        "weighted_distance": 0.44931145574262105,
+        "left_hand_distance": 0.48796433510214043,
+        "right_hand_distance": 0.4844408363285656,
+        "pose_distance": 0.4532349437656994,
+        "face_distance": 0.48942357301712036,
+        "missing_penalty": 0.0
+      },
+      {
+        "standard_frame_idx": 24,
+        "query_frame_idx": 6,
+        "standard_timestamp_sec": 1.6345945945945948,
+        "query_timestamp_sec": 1.2,
+        "weighted_distance": 0.35841632832114667,
+        "left_hand_distance": 0.35019972920417786,
+        "right_hand_distance": 0.3962877124729748,
+        "pose_distance": 0.4091799587193127,
+        "face_distance": 0.35561928153038025,
+        "missing_penalty": 0.0
+      },
+      {
+        "standard_frame_idx": 32,
+        "query_frame_idx": 13,
+        "standard_timestamp_sec": 2.1794594594594594,
+        "query_timestamp_sec": 2.6,
+        "weighted_distance": 0.3548307472423646,
+        "left_hand_distance": 0.19026278923372905,
+        "right_hand_distance": 0.5449803501549358,
+        "pose_distance": 0.42518258394628716,
+        "face_distance": 0.2918187081813812,
+        "missing_penalty": 0.0
+      },
+      {
+        "standard_frame_idx": 36,
+        "query_frame_idx": 14,
+        "standard_timestamp_sec": 2.451891891891892,
+        "query_timestamp_sec": 2.8,
+        "weighted_distance": 0.3310404550199153,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.5524947077217693,
+        "pose_distance": 0.50769125980879,
+        "face_distance": 0.28993743658065796,
+        "missing_penalty": 0.25
+      },
+      {
+        "standard_frame_idx": 32,
+        "query_frame_idx": 8,
+        "standard_timestamp_sec": 2.1794594594594594,
+        "query_timestamp_sec": 1.6,
+        "weighted_distance": 0.3220425605664944,
+        "left_hand_distance": 0.3282696604845996,
+        "right_hand_distance": 0.2702153805049113,
+        "pose_distance": 0.4600424796524639,
+        "face_distance": 0.33528587222099304,
+        "missing_penalty": 0.0
+      }
+    ]
+  },
+  "artifacts": {
+    "result_dir": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_001152_83546751",
+    "holistic_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_001152_83546751/holistic/user_跳_web_20260523_001152_83546751_holistic_results.json",
+    "scoring_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_001152_83546751/scoring_result.json",
+    "worker_stderr_log": "/data/WYC/signLanguage/work/logs/web_holistic_worker_20260522_234012.stderr.log"
+  }
+}

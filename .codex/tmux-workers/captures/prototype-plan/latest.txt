@@ -1,0 +1,176 @@
+    48  ) -> Dict[str, Any]:
+    49      """基于候选 Holistic 缓存执行能量覆盖率筛选。"""
+    50
+    51      started = time.perf_counter()
+    52      if candidate_cache_path is not None:
+    53          cache_payload = load_candidate_cache(candidate_cache_path)
+    54          candidate_entry = get_candidate_video_entry(cache_payload, video_pat
+h.name)
+    55          candidate_generation_sec = 0.0
+    56      else:
+    57          candidate_build_start = time.perf_counter()
+    58          candidate_entry = build_candidate_cache(
+    59              video_path,
+    60              candidate_step=dense_step,
+    61              short_video_full_threshold=48,
+    62              workers=workers if workers and workers > 0 else 1,
+    63              result_dir=DEFAULT_OUTPUT_DIR / video_path.stem,
+    64          )
+    65          candidate_generation_sec = round(time.perf_counter() - candidate_bui
+ld_start, 3)
+    66
+    67      candidate_rows = candidate_entry["rows"]
+    68      meta = candidate_entry.get("meta") or candidate_entry or {}
+    69      total_frames = int(
+    70          candidate_entry.get("candidate_summary", {}).get("video_total_frames
+")
+    71          or candidate_entry.get("total_frames")
+    72          or len(candidate_rows)
+    73      )
+    74
+    75      selection_start = time.perf_counter()
+    76      selected_indices = select_energy_coverage_keyframes(candidate_rows, samp
+le_budget)
+    77      selection_sec = round(time.perf_counter() - selection_start, 3)
+    78      row_map = {int(row["frame_idx"]): row for row in candidate_rows}
+    79      selected_rows = [row_map[idx] for idx in selected_indices if idx in row_
+map]
+    80
+    81      dense_summary = candidate_entry.get("candidate_summary") or summarize_ro
+ws(meta, total_frames, candidate_rows)
+    82      selected_summary = summarize_rows(meta, total_frames, selected_rows)
+    83      dense_holistic_wall_sec = round(float(candidate_entry.get("cache_summary
+", {}).get("holistic_wall_sec") or 0.0), 3)
+    84      dense_holistic_init_sec = round(float(candidate_entry.get("cache_summary
+", {}).get("holistic_init_sec") or 0.0), 3)
+    85      dense_holistic_eval_sec = round(float(candidate_entry.get("cache_summary
+", {}).get("holistic_eval_sec") or 0.0), 3)
+    86      dense_result_file = candidate_entry.get("candidate_result_file") or cand
+idate_entry.get("cache_summary", {}).get("holistic_result_file")
+    87      dense_indices = [int(x) for x in candidate_entry.get("candidate_frame_in
+dices", [])]
+    88      combined_sec = round(candidate_generation_sec + selection_sec, 3)
+    89
+    90      return {
+    91          "video": video_path.name,
+    92          "video_path": str(video_path),
+    93          "dense_step": dense_step,
+    94          "dense_frame_indices": dense_indices,
+    95          "selected_frame_indices": selected_indices,
+    96          "dense_summary": dense_summary,
+    97          "selected_summary": selected_summary,
+    98          "dense_holistic_wall_sec": dense_holistic_wall_sec,
+    99          "dense_holistic_init_sec": dense_holistic_init_sec,
+   100          "dense_holistic_eval_sec": dense_holistic_eval_sec,
+   101          "selection_sec": selection_sec,
+   102          "candidate_generation_sec": candidate_generation_sec,
+   103          "worker_count": workers if workers and workers > 0 else 1,
+   104          "result_file": dense_result_file,
+   105          "candidate_cache_file": str(candidate_cache_path) if candidate_cache
+_path is not None else dense_result_file,
+   106          "processing_sec": combined_sec,
+   107          "combined_sec": combined_sec,
+   108      }
+   109
+   110
+   111  def _build_report(payload: Dict[str, Any]) -> str:
+   112      """生成能量覆盖率筛选实验报告。"""
+   113
+   114      row = payload["video_result"]
+   115      dense = row["dense_summary"]
+   116      selected = row["selected_summary"]
+   117
+   118      lines: List[str] = []
+   119      lines.append("# 能量覆盖率筛选实验")
+   120      lines.append("")
+   121      lines.append(f"- 对象视频：`{payload.get('video_name')}`")
+   122      lines.append(f"- 密采样步长：每 `{payload.get('dense_step')}` 帧采 1 帧"
+)
+   123      lines.append(f"- 目标筛选帧数：{payload.get('sample_budget')}")
+   124      lines.append("")
+   125      lines.append("## 方法")
+   126      lines.append("")
+   127      lines.append("- 先对整段视频做固定步长密采样。")
+   128      lines.append("- 对密采样帧一次性跑 Holistic，保留全部结果。")
+   129      lines.append("- 再从密采样结果里先按运动能量取一半，再按双手覆盖率取一半
+；重复帧则继续往后补。")
+   130      lines.append("")
+   131      lines.append("## 结果")
+   132      lines.append("")
+   133      lines.append(f"- 密采样帧数：{dense.get('samples')}")
+   134      lines.append(f"- 最终筛选帧数：{selected.get('samples')}")
+   135      lines.append(f"- 候选生成耗时：{row.get('candidate_generation_sec')}s")
+   136      lines.append(f"- 密采样 Holistic 初始化总耗时：{row.get('dense_holistic_
+init_sec')}s")
+   137      lines.append(f"- 密采样 Holistic 识别总耗时：{row.get('dense_holistic_ev
+al_sec')}s")
+   138      lines.append(f"- 密采样 Holistic 总墙钟耗时：{row.get('dense_holistic_wa
+ll_sec')}s")
+   139      lines.append(f"- 关键帧筛选耗时：{row.get('selection_sec')}s")
+   140      lines.append(f"- 并行 worker 数：{row.get('worker_count')}")
+   141      lines.append(f"- 密采样帧索引：{', '.join(str(x) for x in row.get('dense
+_frame_indices', []))}")
+   142      lines.append(f"- 最终 12 帧：{', '.join(str(x) for x in row.get('selecte
+d_frame_indices', []))}")
+   143      lines.append(f"- 最终帧覆盖比例：{selected.get('frame_span_ratio')}")
+   144      lines.append(f"- 最终尾部覆盖比例：{selected.get('tail_coverage_ratio')}
+")
+   145      lines.append(f"- 最终后半段采样占比：{selected.get('late_half_fraction')
+}")
+   146      lines.append(f"- 最终后 75% 采样占比：{selected.get('late_75_fraction')}
+")
+   147      lines.append(f"- 最终平均运动能量：{selected.get('motion_energy_mean')}"
+)
+   148      lines.append("")
+   149      lines.append("## 观察")
+   150      lines.append("")
+   151      lines.append("- 这个策略把复杂度从“设计采样策略”转成了“先密采样，再筛选”
+。")
+   152      lines.append("- 如果密采样候选足够密，最终筛出的 12 帧会保留较好的覆盖，
+同时实现逻辑更简单。")
+   153      lines.append("- 这条路径的主耗时是密采样 Holistic 的初始化 + 识别总成本
+，总体是否划算主要看“全量候选覆盖质量”与“总墙钟耗时”之间的平衡。")
+   154      lines.append("")
+   155      lines.append("## 可视化")
+   156      lines.append("")
+   157      lines.append(f"- 密采样 Holistic 结果文件：{row.get('result_file')}")
+   158      lines.append("- 后续可视化将基于该结果文件单独生成，不计入本次核心耗时。
+")
+   159      lines.append("")
+   160      return "\n".join(lines).rstrip() + "\n"
+   161
+   162
+   163  def main(argv: Optional[Sequence[str]] = None) -> int:
+   164      configure_headless()
+   165      started = time.perf_counter()
+   166
+   167      parser = argparse.ArgumentParser(description="密采样筛选实验")
+   168      parser.add_argument("--video-root", default=str(DEFAULT_VIDEO_ROOT), hel
+p="视频目录")
+   169      parser.add_argument("--video", action="append", help="单个视频路径，可重
+复传入")
+   170      parser.add_argument("--dense-step", type=int, default=DEFAULT_DENSE_STEP
+, help="密采样步长")
+   171      parser.add_argument("--sample-budget", type=int, default=DEFAULT_SAMPLE_
+BUDGET, help="最终筛选帧数")
+   172      parser.add_argument("--candidate-cache", help="候选缓存 JSON，提供后将只
+做筛选不再生成候选")
+   173      parser.add_argument("--workers", type=int, default=0, help="并行 worker
+数，0 表示使用 CPU 核数")
+   174      parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR), hel
+p="输出目录")
+   175      args = parser.parse_args(argv)
+   176
+   177      video_root = Path(args.video_root)
+   178      output_dir = Path(args.output_dir)
+   179      output_dir.mkdir(parents=True, exist_ok=True)
+   180
+
+exec
+/bin/bash -lc "date '+%Y-%m-%d %H:%M:%S %Z'" in /data/WYC/signLanguage
+ succeeded in 0ms:
+2026-05-20 17:20:45 CST
+
+codex
+我已经完成只读审计，确认了现有缓存结构和依赖状态：`numpy/cv2/mediapipe/scipy/matplot
+lib` 可用，`fastdtw` 不在环境里。现在写入 owned 的中文草稿报告。

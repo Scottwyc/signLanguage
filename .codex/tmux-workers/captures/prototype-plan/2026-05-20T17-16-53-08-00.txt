@@ -1,0 +1,176 @@
+   - camera, lighting, resolution, fps, background, and distance rules
+   - action start/end annotation rules
+   - raw video, dense JSON, keyframe, visualization, and metadata retention rules
+   - quality gates for hand coverage, pose stability, missing rate, and action compl
+eteness
+2. Standard-template data schema
+   - file layout
+   - metadata fields
+   - versioning and quality status
+   - future database mapping
+3. Scoring design
+   - normalization
+   - missing-keypoint handling
+   - temporal alignment: DTW / segmented DTW / keyframe-anchor alignment
+   - per-joint and per-group error metrics
+   - component scores and total score
+   - diagnostic output
+4. Prototype or minimal experiment
+   - use existing demo videos and cached `Holistic` JSON where possible
+   - generate pseudo-user variants if real user samples are absent
+   - include same-word self/perturbed sanity checks and different-word negative chec
+ks
+   - output JSON metrics and a Chinese analysis report
+
+## Scoring Claim Policy
+
+Use careful wording:
+
+- Allowed: "pipeline sanity check", "method prototype", "offline demo validation", "
+relative similarity".
+- Not allowed in phase 1: "real-user score is accurate", "pass/fail threshold is val
+idated", "generalizes to users", "front-end real-time scoring has been proven".
+
+## Autonomous Interruption Rule
+
+User questions, corrections, or status requests are intermediate interactions. Answe
+r them, then resume this autonomous scoring target unless the user explicitly says t
+o stop, pause, or exit autonomous follow-up mode.
+
+exec
+/bin/bash -lc "sed -n '1,220p' /data/WYC/signLanguage/.codex/tmux-workers/progress/p
+rototype-plan.md" in /data/WYC/signLanguage
+ succeeded in 0ms:
+# prototype-plan Progress
+
+Updated: 2026-05-20T17:16:30+08:00
+Status: launched
+Session: signlanguage-scoring-workers:cw-prototype-plan
+Working directory: /data/WYC/signLanguage
+
+## Current Progress
+
+- Started with task plan: /data/WYC/signLanguage/.codex/tmux-workers/workplans/proto
+type-plan.md
+- Inbox directory: /data/WYC/signLanguage/.codex/tmux-workers/inbox/prototype-plan
+- Background job registry: /data/WYC/signLanguage/.codex/tmux-workers/jobs/prototype
+-plan.json
+- Log file will be updated under this worker state directory.
+
+## Next
+
+- Worker should update this file when key milestones, blockers, or completion occur.
+
+## Supervisor Capture - 2026-05-20T17:16:45+08:00
+
+- Target: signlanguage-scoring-workers:cw-prototype-plan
+- State: running
+- Capture changed: True
+- Latest capture: /data/WYC/signLanguage/.codex/tmux-workers/captures/prototype-plan
+/2026-05-20T17-16-45-08-00.txt
+
+exec
+/bin/bash -lc "sed -n '1,220p' /data/WYC/signLanguage/.codex/tmux-workers/workplans/
+prototype-plan.md" in /data/WYC/signLanguage
+ succeeded in 0ms:
+# Codex Tmux Worker Plan - prototype-plan
+
+Created: 2026-05-20T17:16:30+08:00
+Session: signlanguage-scoring-workers
+Window: cw-prototype-plan
+Working directory: /data/WYC/signLanguage
+Model: gpt-5.5
+Reasoning effort: xhigh
+
+## Task
+
+You are Worker prototype-plan in a tmux-launched Codex process.
+
+Goal: inspect existing scripts and propose a minimal scoring prototype implementatio
+n plan that fits the current codebase.
+
+Working directory: /data/WYC/signLanguage
+
+Write scope:
+- Write only /data/WYC/signLanguage/work/reports/scoring_mvp_prototype_plan_20260520
+_draft.md
+- You may update your assigned progress/report files under /data/WYC/signLanguage/.c
+odex/tmux-workers/
+
+Do not modify:
+- Source scripts
+- Existing worklogs
+- Existing generated artifacts
+- Other scoring report drafts
+
+Use these constraints:
+- No real user samples are available; propose offline sanity checks using demo video
+s, pseudo-user perturbations, and different-word negatives.
+- Prefer reusing existing code under /data/WYC/signLanguage/work/scripts.
+- The prototype should read cached Holistic JSON and avoid rerunning Holistic unless
+ a cache is missing.
+- Use /home/wuyangcheng/myenv for Python execution if you run lightweight inspection
+s.
+
+Tasks:
+1. Inspect existing scripts and identify reusable functions/modules for reading Holi
+stic rows, keyframe selection, metrics, and visualization.
+2. Propose a minimal script/module layout for the scoring prototype.
+3. Define output JSON structure and visualization/report artifacts.
+4. Define sanity-check cases and expected qualitative behavior.
+5. Note implementation risks and any dependency gaps.
+6. Write a Chinese draft report to your owned path.
+
+Return: changed files, commands run, key findings, blockers, and next recommendation
+.
+
+## Write Scope
+
+- report:/data/WYC/signLanguage/work/reports/scoring_mvp_prototype_plan_20260520_dra
+ft.md
+
+## Owned Paths
+
+- /data/WYC/signLanguage/work/reports/scoring_mvp_prototype_plan_20260520_draft.md
+
+## Resources
+
+- cpu:prototype-plan
+
+## Git Isolation
+
+- Shared working tree.
+
+## Inbox
+
+/data/WYC/signLanguage/.codex/tmux-workers/inbox/prototype-plan
+
+## Background Job Registry
+
+/data/WYC/signLanguage/.codex/tmux-workers/jobs/prototype-plan.json
+
+Register background jobs with:
+
+```bash
+python /home/wuyangcheng/.codex/skills/general/tmux-codex-parallel-workers/scripts/c
+odex_tmux_manager.py --state-dir /data/WYC/signLanguage/.codex/tmux-workers --sessio
+n signlanguage-scoring-workers job-add prototype-plan --pid <PID> --name <job-name>
+--log <log-path> --command '<command>'
+```
+
+## Coordinator Notes
+
+None.
+
+## Required Completion Report
+
+- Changed files, if any
+- Commands run
+- Result or metric evidence
+- Blockers
+- Next recommended action
+
+exec
+/bin/bash -lc 'find /data/WYC/signLanguage/.codex/tmux-workers/inbox/prototype-plan
+-maxdepth 1 -type f -print | sort' in /data/WYC/signLanguage
+ succeeded in 0ms:

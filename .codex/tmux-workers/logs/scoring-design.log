@@ -1,0 +1,3004 @@
+[2026-05-20T17:16:24+08:00] worker started
+Node.js EventListener MaxListeners 已设置为 100
+OpenAI Codex v0.130.0
+--------
+workdir: /data/WYC/signLanguage
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, /home/wuyangcheng/.codex/memories]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 019e44ac-080b-7933-9846-74539017156e
+--------
+user
+You are a background Codex worker launched by a coordinator in tmux.
+
+Do not revert edits made by the coordinator or other workers. Stay inside the assigned task and report changed files, commands run, results, blockers, and next recommended action before exiting.
+
+Update the progress file at key milestones and before completion. If you produce a longer result, write it into the report file.
+
+Check the inbox directory before major transitions and after coordinator messages; it may contain queued instructions that are also sent through tmux.
+
+If you start any background process, register it with the manager using the job-add command shown in the worker plan.
+
+Worker plan: /data/WYC/signLanguage/.codex/tmux-workers/workplans/scoring-design.md
+
+Progress file: /data/WYC/signLanguage/.codex/tmux-workers/progress/scoring-design.md
+
+Report file: /data/WYC/signLanguage/.codex/tmux-workers/reports/scoring-design.md
+
+Inbox directory: /data/WYC/signLanguage/.codex/tmux-workers/inbox/scoring-design
+
+Background jobs file: /data/WYC/signLanguage/.codex/tmux-workers/jobs/scoring-design.json
+
+Write scope:
+- report:/data/WYC/signLanguage/work/reports/scoring_mechanism_design_20260520_draft.md
+
+Task:
+You are Worker scoring-design in a tmux-launched Codex process.
+
+Goal: design the first scoring mechanism for the signLanguage MVP.
+
+Working directory: /data/WYC/signLanguage
+
+Write scope:
+- Write only /data/WYC/signLanguage/work/reports/scoring_mechanism_design_20260520_draft.md
+- You may update your assigned progress/report files under /data/WYC/signLanguage/.codex/tmux-workers/
+
+Do not modify:
+- Source scripts
+- Existing worklogs
+- Existing generated artifacts
+- Other scoring report drafts
+
+Use these constraints:
+- Current phase lacks real user samples and human labels.
+- Do not claim calibrated pass/fail scores.
+- Dense Holistic time-series matching is the primary MVP direction; keyframe scoring is a compressed/diagnostic branch.
+- Existing project logic separates candidate generation, selection, and visualization; do not reintroduce repeated Holistic runs.
+
+Tasks:
+1. Design preprocessing: coordinate normalization, scale alignment, left/right hand handling, visibility/missing-point logic.
+2. Design temporal alignment: DTW baseline, segmented DTW, and keyframe-anchor alignment, with when to use each.
+3. Design per-joint/per-group errors for hands, wrists, elbows/shoulders, torso, and face.
+4. Design component scores: total score, hand action score, posture score, rhythm/tempo score, completion/confidence score.
+5. Define diagnostic outputs: worst time ranges, worst joint groups, missing-data warnings, and visualization artifacts.
+6. Write a Chinese draft report to your owned path, clearly separating prototype metrics from future calibrated scoring.
+
+Return: changed files, commands run, key findings, blockers, and next recommendation.
+codex
+I’m using the signLanguage scoring/workflow skills because this task is specifically about the MVP scoring design in `/data/WYC/signLanguage`. I’ll first read the worker plan, current progress state, and inbox so the draft stays within the coordinator’s scope.
+exec
+/bin/bash -lc "sed -n '1,220p' .codex/tmux-workers/workplans/scoring-design.md" in /data/WYC/signLanguage
+ succeeded in 0ms:
+# Codex Tmux Worker Plan - scoring-design
+
+Created: 2026-05-20T17:16:24+08:00
+Session: signlanguage-scoring-workers
+Window: cw-scoring-design
+Working directory: /data/WYC/signLanguage
+Model: gpt-5.5
+Reasoning effort: xhigh
+
+## Task
+
+You are Worker scoring-design in a tmux-launched Codex process.
+
+Goal: design the first scoring mechanism for the signLanguage MVP.
+
+Working directory: /data/WYC/signLanguage
+
+Write scope:
+- Write only /data/WYC/signLanguage/work/reports/scoring_mechanism_design_20260520_draft.md
+- You may update your assigned progress/report files under /data/WYC/signLanguage/.codex/tmux-workers/
+
+Do not modify:
+- Source scripts
+- Existing worklogs
+- Existing generated artifacts
+- Other scoring report drafts
+
+Use these constraints:
+- Current phase lacks real user samples and human labels.
+- Do not claim calibrated pass/fail scores.
+- Dense Holistic time-series matching is the primary MVP direction; keyframe scoring is a compressed/diagnostic branch.
+- Existing project logic separates candidate generation, selection, and visualization; do not reintroduce repeated Holistic runs.
+
+Tasks:
+1. Design preprocessing: coordinate normalization, scale alignment, left/right hand handling, visibility/missing-point logic.
+2. Design temporal alignment: DTW baseline, segmented DTW, and keyframe-anchor alignment, with when to use each.
+3. Design per-joint/per-group errors for hands, wrists, elbows/shoulders, torso, and face.
+4. Design component scores: total score, hand action score, posture score, rhythm/tempo score, completion/confidence score.
+5. Define diagnostic outputs: worst time ranges, worst joint groups, missing-data warnings, and visualization artifacts.
+6. Write a Chinese draft report to your owned path, clearly separating prototype metrics from future calibrated scoring.
+
+Return: changed files, commands run, key findings, blockers, and next recommendation.
+
+## Write Scope
+
+- report:/data/WYC/signLanguage/work/reports/scoring_mechanism_design_20260520_draft.md
+
+## Owned Paths
+
+- /data/WYC/signLanguage/work/reports/scoring_mechanism_design_20260520_draft.md
+
+## Resources
+
+- cpu:scoring-design
+
+## Git Isolation
+
+- Shared working tree.
+
+## Inbox
+
+/data/WYC/signLanguage/.codex/tmux-workers/inbox/scoring-design
+
+## Background Job Registry
+
+/data/WYC/signLanguage/.codex/tmux-workers/jobs/scoring-design.json
+
+Register background jobs with:
+
+```bash
+python /home/wuyangcheng/.codex/skills/general/tmux-codex-parallel-workers/scripts/codex_tmux_manager.py --state-dir /data/WYC/signLanguage/.codex/tmux-workers --session signlanguage-scoring-workers job-add scoring-design --pid <PID> --name <job-name> --log <log-path> --command '<command>'
+```
+
+## Coordinator Notes
+
+None.
+
+## Required Completion Report
+
+- Changed files, if any
+- Commands run
+- Result or metric evidence
+- Blockers
+- Next recommended action
+
+exec
+/bin/bash -lc 'find .codex/tmux-workers/inbox/scoring-design -maxdepth 1 -type f -print | sort' in /data/WYC/signLanguage
+ succeeded in 0ms:
+exec
+/bin/bash -lc "sed -n '1,220p' /home/wuyangcheng/.codex/skills/new/signlanguage-scoring-autonomous/SKILL.md" in /data/WYC/signLanguage
+ succeeded in 0ms:
+---
+name: signlanguage-scoring-autonomous
+description: Autonomous follow-up workflow for /data/WYC/signLanguage scoring MVP exploration, including standard data collection design, dense Holistic template storage, keyframe selection, temporal alignment, per-joint error analysis, similarity scoring, reports, logs, and tmux Codex worker coordination.
+---
+
+# SignLanguage Scoring Autonomous
+
+## Mission
+
+Use this skill when working on `/data/WYC/signLanguage` to keep the standard-data and scoring-MVP line moving autonomously until it has a restartable loop:
+
+- standard data collection protocol
+- dense `Holistic` JSON storage convention
+- scoring mechanism design
+- offline sanity-check prototype
+- reports, worklogs, and global memory updates
+
+This skill specializes `long-running-autonomous-project-management` and must also follow `signlanguage-workflow`.
+
+## Current Constraint
+
+The project currently has no real user video stream samples or human score labels. This is not a blocker for phase 1, but it changes the claim:
+
+- Phase 1 may validate pipeline correctness with demo videos, pseudo-user variants, and negative sanity checks.
+- Phase 1 must not claim calibrated real-user scoring, pass/fail thresholds, or generalization.
+- Real-user samples are required before score-level calibration, grading bands, and front-end real-time scoring validation.
+
+## Required Operating Rules
+
+1. Use `/data/WYC/signLanguage` as the canonical project path.
+2. Use `/home/wuyangcheng/myenv` for `mediapipe`, `opencv`, plotting, and scoring scripts.
+3. Reuse cached raw `Holistic` JSON where possible.
+4. For expensive recognition, prefer long-lived worker reuse over repeated `Holistic` initialization.
+5. Keep the pipeline split:
+   - candidate generation: dense or step-dense raw `Holistic` JSON
+   - selection: keyframes from cached JSON
+   - scoring: temporal alignment, per-joint error, and similarity
+   - visualization/reporting: read cached JSON and scoring outputs
+6. Treat dense time-series matching as the primary scoring direction when storage pressure is acceptable.
+7. Treat keyframe scoring as a compressed or diagnostic route, not the only route.
+8. For autonomous mode, use `tmux-codex-parallel-workers` for independent side branches unless unavailable or unsuitable.
+9. Keep the coordinator responsible for final judgment, integration, and user-facing summaries.
+10. Do not overwrite historical reports; create date-stamped new docs or append progress sections.
+
+## Documentation Files
+
+Maintain these files during this autonomous line:
+
+- Project worklog: `/data/WYC/signLanguage/work/worklog_sign.md`
+- Global project memory: `/home/wuyangcheng/.codex/memories/projects/signLanguage/work_log.md`
+- Follow-up report: `/data/WYC/signLanguage/work/reports/scoring_mvp_followup_20260520.md`
+- Key phase summary: `/data/WYC/signLanguage/work/reports/scoring_mvp_phase_summary_20260520.md`
+- Worker schedule: `/data/WYC/signLanguage/.codex/tmux-workers/COORDINATOR_SCHEDULE.md`
+
+Every meaningful update must include a concrete timestamp with timezone, for example `2026-05-20 17:20:00 CST`.
+
+## Phase 1 Deliverables
+
+1. Standard collection protocol
+   - vocabulary/sample count recommendations
+   - camera, lighting, resolution, fps, background, and distance rules
+   - action start/end annotation rules
+   - raw video, dense JSON, keyframe, visualization, and metadata retention rules
+   - quality gates for hand coverage, pose stability, missing rate, and action completeness
+2. Standard-template data schema
+   - file layout
+   - metadata fields
+   - versioning and quality status
+   - future database mapping
+3. Scoring design
+   - normalization
+   - missing-keypoint handling
+   - temporal alignment: DTW / segmented DTW / keyframe-anchor alignment
+   - per-joint and per-group error metrics
+   - component scores and total score
+   - diagnostic output
+4. Prototype or minimal experiment
+   - use existing demo videos and cached `Holistic` JSON where possible
+   - generate pseudo-user variants if real user samples are absent
+   - include same-word self/perturbed sanity checks and different-word negative checks
+   - output JSON metrics and a Chinese analysis report
+
+## Scoring Claim Policy
+
+Use careful wording:
+
+- Allowed: "pipeline sanity check", "method prototype", "offline demo validation", "relative similarity".
+- Not allowed in phase 1: "real-user score is accurate", "pass/fail threshold is validated", "generalizes to users", "front-end real-time scoring has been proven".
+
+## Autonomous Interruption Rule
+
+User questions, corrections, or status requests are intermediate interactions. Answer them, then resume this autonomous scoring target unless the user explicitly says to stop, pause, or exit autonomous follow-up mode.
+
+exec
+/bin/bash -lc "sed -n '1,220p' /home/wuyangcheng/.codex/skills/new/signlanguage-workflow/SKILL.md" in /data/WYC/signLanguage
+ succeeded in 0ms:
+---
+name: signlanguage-workflow
+description: signLanguage project workflow for Holistic-based sampling, persistent workers, visualization, reporting, and memory updates. Use when working on the signLanguage project, especially sampling strategies, worker orchestration, visualizations, reports, or pipeline changes.
+---
+
+# SignLanguage Workflow
+
+## Overview
+
+Use this skill when working on the `signLanguage` project. It captures the current operating workflow for Holistic-based sampling, persistent worker execution, visualization, reporting, and log/memory updates.
+
+## Core Workflow
+
+1. Use `/home/wuyangcheng/myenv` for `mediapipe` / `opencv` work unless the user asks otherwise.
+2. Prefer persistent backend workers for expensive Holistic tasks. Keep workers alive in `tmux` when useful, and support both `video_path` and `frame_slices` requests through parameters.
+3. Keep the pipeline split into three layers:
+   - candidate generation: produce raw Holistic JSON cache
+   - selection: read the cached JSON and choose keyframes
+   - visualization: read the Holistic JSON and render overlays without rerunning Holistic
+4. For strategy comparison, keep timing definitions explicit:
+   - candidate generation time
+   - selection time
+   - combined sampling + Holistic time, when the stages overlap
+   - visualization time only if the user wants it
+5. When storage pressure is acceptable, dense Holistic time-series plus database-style matching is a valid alternative to keyframe selection.
+6. If Holistic initialization dominates, do not blindly maximize worker count. Prefer worker reuse, warm caches, or a smaller number of long-lived workers.
+7. After major workflow changes or report refreshes, update the project worklog and the relevant global memory entries.
+
+## Reference
+
+See [references/workflow.md](references/workflow.md) for the current report conventions, worker modes, and dense-matching notes.
+
+exec
+/bin/bash -lc "sed -n '1,220p' .codex/tmux-workers/progress/scoring-design.md 2>/dev/null || true" in /data/WYC/signLanguage
+ succeeded in 0ms:
+# scoring-design Progress
+
+Updated: 2026-05-20T17:16:24+08:00
+Status: launched
+Session: signlanguage-scoring-workers:cw-scoring-design
+Working directory: /data/WYC/signLanguage
+
+## Current Progress
+
+- Started with task plan: /data/WYC/signLanguage/.codex/tmux-workers/workplans/scoring-design.md
+- Inbox directory: /data/WYC/signLanguage/.codex/tmux-workers/inbox/scoring-design
+- Background job registry: /data/WYC/signLanguage/.codex/tmux-workers/jobs/scoring-design.json
+- Log file will be updated under this worker state directory.
+
+## Next
+
+- Worker should update this file when key milestones, blockers, or completion occur.
+
+codex
+The inbox is currently empty. I’ve confirmed the coordinator wants a design-only Chinese draft and no script/artifact changes, with dense Holistic matching as the primary route.
+exec
+/bin/bash -lc "date '+%Y-%m-%dT%H:%M:%S%z'" in /data/WYC/signLanguage
+ succeeded in 0ms:
+2026-05-20T17:16:51+0800
+
+2026-05-20T09:16:57.481487Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings
+2026-05-20T09:17:05.898740Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings
+exec
+/bin/bash -lc pwd in /data/WYC/signLanguage
+ succeeded in 0ms:
+/data/WYC/signLanguage
+
+exec
+/bin/bash -lc 'realpath .codex/tmux-workers/progress/scoring-design.md' in /data/WYC/signLanguage
+ succeeded in 0ms:
+/data/WYC/signLanguage/.codex/tmux-workers/progress/scoring-design.md
+
+exec
+/bin/bash -lc 'ls -ld /data/WYC/signLanguage /data/WYC/signLanguage/.codex /data/WYC/signLanguage/.codex/tmux-workers/progress' in /data/WYC/signLanguage
+ succeeded in 0ms:
+drwxrwxr-x 9 wuyangcheng wuyangcheng 4096 May 20 17:17 /data/WYC/signLanguage
+drwxrwxr-x 3 wuyangcheng wuyangcheng 4096 May 20 17:15 /data/WYC/signLanguage/.codex
+drwxrwxr-x 2 wuyangcheng wuyangcheng 4096 May 20 17:16 /data/WYC/signLanguage/.codex/tmux-workers/progress
+
+codex
+The patch tool refused the progress-file update even though the path resolves inside the workspace. I’m checking the local patch command and will still keep the worker progress/report files current within the assigned scope.
+exec
+/bin/bash -lc 'command -v apply_patch || true' in /data/WYC/signLanguage
+ succeeded in 0ms:
+/home/wuyangcheng/.codex/tmp/arg0/codex-arg0lHgnJT/apply_patch
+
+2026-05-20T09:17:31.597195Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings
+exec
+/bin/bash -lc 'git rev-parse --show-toplevel 2>/dev/null || true' in /data/WYC/signLanguage
+ succeeded in 0ms:
+/data/WYC/signLanguage
+
+exec
+/bin/bash -lc 'ls -la' in /data/WYC/signLanguage
+ succeeded in 0ms:
+total 40
+drwxrwxr-x  9 wuyangcheng wuyangcheng 4096 May 20 17:17 .
+drwx------  8 wuyangcheng wuyangcheng 4096 May 20 06:33 ..
+dr-xr-xr-x  2 wuyangcheng wuyangcheng   40 May 20 17:17 .agents
+drwxrwxr-x  3 wuyangcheng wuyangcheng 4096 May 20 17:15 .codex
+drwxrwxr-x  7 wuyangcheng wuyangcheng 4096 May 20 17:16 .git
+-rw-rw-r--  1 wuyangcheng wuyangcheng   45 Apr 28 18:59 .gitignore
+-rw-rw-r--  1 wuyangcheng wuyangcheng 1443 Apr 28 18:59 README.md
+drwxrwxr-x  3 wuyangcheng wuyangcheng 4096 Apr 28 18:36 data
+drwxrwxr-x  2 wuyangcheng wuyangcheng 4096 Apr 28 18:59 docs
+drwxrwxr-x  2 wuyangcheng wuyangcheng 4096 Apr  2 19:07 references
+drwxrwxr-x 11 wuyangcheng wuyangcheng 4096 May 20 16:26 work
+
+exec
+/bin/bash -lc "find . -maxdepth 3 -type f \\( -name '*scoring*' -o -name '*score*' -o -name '*workflow*' \\) -printf '%p\\n' | sort | sed -n '1,200p'" in /data/WYC/signLanguage
+ succeeded in 0ms:
+./work/reports/scoring_mvp_followup_20260520.md
+./work/reports/scoring_mvp_phase_summary_20260520.md
+
+exec
+/bin/bash -lc "find work/reports -maxdepth 1 -type f -printf '%f\\n' 2>/dev/null | sort | sed -n '1,160p'" in /data/WYC/signLanguage
+ succeeded in 0ms:
+20260428_todo_summary.docx
+20260428_todo_summary.md
+20260428_todo_summary_brief.docx
+20260428_todo_summary_brief.md
+20260429_dense_uniform_step4_report.docx
+20260429_dense_uniform_step4_report.md
+20260429_frame_slice_worker_benchmark.docx
+20260429_frame_slice_worker_benchmark.md
+20260429_holistic_timing_benchmark.docx
+20260429_holistic_timing_benchmark.md
+20260429_holistic_worker_benchmark.docx
+20260429_holistic_worker_benchmark.md
+20260429_parallel_sampling_strategies_summary.docx
+20260429_parallel_sampling_strategies_summary.md
+20260429_sampling_compare.docx
+20260429_sampling_compare.md
+20260429_sampling_compare_summary.docx
+20260429_sampling_compare_summary.md
+20260429_three_layer_sampling_summary.docx
+20260429_three_layer_sampling_summary.md
+scoring_mvp_followup_20260520.md
+scoring_mvp_phase_summary_20260520.md
+standard_data_collection_protocol_20260520_draft.md
+
+codex
+I found the existing phase reports and no existing draft at the owned output name. I’m reading only the scoring summary/follow-up and repo overview now to keep terminology consistent without touching the broader project artifacts.
+exec
+/bin/bash -lc "sed -n '1,260p' work/reports/scoring_mvp_followup_20260520.md" in /data/WYC/signLanguage
+ succeeded in 0ms:
+# 手语打分 MVP 自主探索跟进记录
+
+## 目标
+
+本轮自主探索目标是沿着已有 `MediaPipe Holistic`、常驻 worker、三层采样架构继续推进两个方向：
+
+- 建立标准数据采集方案，保证后续标准样本库和用户样本可复现、可质控、可比较。
+- 设计手语动作打分机制，覆盖关键帧选取、时序对齐、逐关节差异分析与相似度评分。
+
+## 当前约束
+
+- 当前还没有真实用户视频流样本，也没有人工评分标签。
+- 因此第一阶段只做“采集规范 + 数据结构 + 评分算法原型 + 离线 sanity check”。
+- 第一阶段不宣称真实用户评分准确性、不校准合格阈值、不证明跨用户泛化。
+
+## 工作原则
+
+- 项目路径：`/data/WYC/signLanguage`
+- Python 环境：`/home/wuyangcheng/myenv`
+- 识别结果优先复用 raw `Holistic` JSON 缓存。
+- 重型识别优先复用常驻 worker，避免重复支付 `Holistic` 初始化成本。
+- dense `Holistic` 时间序列匹配作为主路线，关键帧路线作为压缩版或诊断路线。
+
+## 阶段交付物
+
+- 派生 skill：`/home/wuyangcheng/.codex/skills/new/signlanguage-scoring-autonomous/SKILL.md`
+- 阶段总结：`/data/WYC/signLanguage/work/reports/scoring_mvp_phase_summary_20260520.md`
+- worker 调度：`/data/WYC/signLanguage/.codex/tmux-workers/COORDINATOR_SCHEDULE.md`
+- 项目工作日志：`/data/WYC/signLanguage/work/worklog_sign.md`
+- 全局记忆：`/home/wuyangcheng/.codex/memories/projects/signLanguage/work_log.md`
+
+### 2026-05-20 17:20:00 CST Update: autonomous scoring line started
+
+已正式启动 `signLanguage` 打分 MVP 自主探索线，并派生专用 skill `signlanguage-scoring-autonomous`。
+
+当前任务边界已经收敛为：
+
+- 第一阶段先完成标准采集方案、标准样本库字段设计、打分机制方案和离线原型验证。
+- 因为暂无真实用户视频流样本，原型实验使用现有 demo 视频、伪用户扰动样本和不同词汇负例做流程 sanity check。
+- 后续等真实用户样本和人工评分标签补齐后，再进入阈值校准、评分等级和前端实时闭环验证。
+
+下一步：
+
+- 启动 tmux Codex worker 做并行支线探索。
+- coordinator 负责整合 worker 结果，形成正式采集规范、打分机制设计和最小原型计划。
+
+exec
+/bin/bash -lc "sed -n '1,260p' work/reports/scoring_mvp_phase_summary_20260520.md" in /data/WYC/signLanguage
+ succeeded in 0ms:
+# 手语打分 MVP 阶段总结
+
+## 任务定义
+
+本阶段目标是为 `/data/WYC/signLanguage` 建立可继续迭代的手语打分 MVP 闭环：
+
+- 明确标准数据采集方案。
+- 明确标准样本库和 dense `Holistic` 序列存储规范。
+- 设计打分机制，包括关键帧选取、时序对齐、逐关节差异分析和相似度评分。
+- 在没有真实用户视频流样本的前提下，用 demo 视频完成离线 sanity check 原型设计。
+
+## 当前基础
+
+项目已有基础：
+
+- 已用 `MediaPipe Holistic` 跑通 demo 视频关键点识别。
+- 已确认性能瓶颈主要是 `Holistic` 初始化，而不是逐帧推理。
+- 已实现常驻 worker，并支持 `video_path` 和 `frame_slices` 两种请求模式。
+- 已完成三层关键帧采样重构：
+  - 候选生成层输出 raw `Holistic` JSON。
+  - 选择策略层只读缓存。
+  - 可视化层只读缓存，不重复跑识别。
+
+## 数据现状与限制
+
+当前可用数据主要是 demo 词汇视频：
+
+- 目录：`/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/`
+- 示例：`花.mp4`、`唱歌.mp4`、`跳.mp4` 等。
+
+当前缺失：
+
+- 真实用户视频流样本。
+- 同一词汇多名用户、多次录制样本。
+- 人工评分标签或专家标注。
+- 明确动作起止标签。
+
+因此，本阶段输出只能作为方法设计和流程验证，不能作为真实用户评分效果证明。
+
+## 标准数据采集方案方向
+
+后续采集规范应覆盖：
+
+- 每个词汇的标准样本数量、用户测试样本数量和复录次数。
+- 拍摄条件：正面视角、稳定机位、无遮挡上半身、统一光照、简洁背景、固定帧率和分辨率。
+- 动作标注：动作准备段、动作开始、动作结束、收尾段。
+- 保存内容：原视频、元信息 JSON、dense `Holistic` JSON、关键帧结果、质量控制报告和可视化抽检图。
+- 质量控制：双手覆盖率、pose 稳定性、关键点缺失率、动作时长、动作完整性。
+
+## 打分机制方向
+
+建议第一版打分机制采用“dense 序列主线 + 关键帧诊断支线”：
+
+- dense 主线：
+  - 标准样本和待测样本都保存 dense 或 step-dense `Holistic` 时间序列。
+  - 通过归一化、缺失处理、时序对齐和逐关节距离计算整体相似度。
+- 关键帧支线：
+  - 用 `uniform_select`、`two_stage_select`、`adaptive_select`、能量覆盖率筛选压缩序列。
+  - 用于生成可解释的关键帧对齐图和诊断报告。
+
+核心模块：
+
+- 坐标归一化：以肩宽、躯干尺度或 pose bounding box 归一化。
+- 缺失处理：区分真实动作缺失和模型检测失败，缺失过高时降低置信度。
+- 时序对齐：优先从 DTW 开始，再比较分段 DTW 和关键帧锚点对齐。
+- 逐关节误差：手指、手腕、肘肩、躯干、面部表情分别统计。
+- 评分输出：整体分、手部动作分、姿态稳定分、节奏分、完成度分和诊断提示。
+
+## 第一阶段验证口径
+
+由于没有真实用户样本，第一阶段只做离线 sanity check：
+
+- 同一视频自身对齐应得到高相似度。
+- 同一视频的截断、降采样、轻微扰动版本应得到中高相似度，并在诊断中暴露扰动位置。
+- 不同词汇之间应得到较低相似度或明显诊断差异。
+- 不输出正式 pass/fail 阈值。
+
+## 当前结论
+
+本阶段已启动，结论尚未完成。当前明确的是：
+
+- 缺少真实用户样本不阻塞方案设计和原型搭建。
+- 真实评分校准必须等用户样本和人工标签补齐。
+- dense `Holistic` 序列匹配是最直接的 MVP 主路线。
+
+## 下一步
+
+- 完成标准采集规范草案。
+- 完成评分机制设计草案。
+- 审计现有 demo 缓存，确定可直接复用的数据。
+- 设计最小评分原型脚本和离线 sanity check 输出格式。
+
+exec
+/bin/bash -lc "test -e work/reports/scoring_mechanism_design_20260520_draft.md && sed -n '1,220p' work/reports/scoring_mechanism_design_20260520_draft.md || true" in /data/WYC/signLanguage
+exec
+/bin/bash -lc 'find .codex/tmux-workers/inbox/scoring-design -maxdepth 1 -type f -print | sort' in /data/WYC/signLanguage
+ succeeded in 0ms:
+ succeeded in 0ms:
+exec
+/bin/bash -lc "sed -n '1,220p' README.md" in /data/WYC/signLanguage
+ succeeded in 0ms:
+# signLanguage
+
+手语打分与手语识别技术资料仓库。
+
+## 当前方向
+
+- 目标：围绕手语动作打分、关键点提取、模板匹配和可视化评测构建可复用技术链路。
+- 主线：先用 `MediaPipe Holistic` 做关键点级评测，再逐步补充时序建模、模板检索和误差分析。
+
+## 目录结构
+
+- `data/`: 示例词汇、视频与原始素材。
+- `references/`: 论文和外部资料。
+- `work/`: 当前技术文档、脚本、工作记录和生成物。
+- `work/past/`: 早期版本和工具脚本，保留作为历史实现。
+- `work/fonts/`: 本地字体资源。
+- `work/tools/`: 辅助工具。
+- `docs/`: 仓库级说明和索引。
+
+## 关键文件
+
+- `work/worklog_sign.md`: 项目工作日志。
+- `docs/project_index.md`: 项目结构与脚本索引。
+- `work/手语识别与翻译技术调研报告_20260402.md`: 调研报告。
+- `work/手语动作准确度评测方案_20260402.md`: 评测方案。
+- `work/手语识别技术路线推荐_20260402.md`: 技术路线建议。
+- `work/past/draw_architecture.py`: 架构图生成脚本。
+- `work/past/md2pdf.py`: Markdown 转 PDF 脚本。
+- `work/past/ascii_to_word.py`: ASCII 框图转 Word 流程脚本。
+- `work/past/parse_ascii_diagram_final.py`: ASCII 框图解析脚本。
+
+## 版本控制范围
+
+- 记录脚本、Markdown、论文资料和项目文档。
+- 忽略缓存类产物，如 `__pycache__` 和 Python 字节码。
+
+exec
+/bin/bash -lc "find data -maxdepth 4 -type f | sed -n '1,120p'" in /data/WYC/signLanguage
+ succeeded in 0ms:
+data/Demo词汇.docx
+data/Demo词汇视频/Demo词汇视频/朋友.mp4
+data/Demo词汇视频/Demo词汇视频/香蕉.mp4
+data/Demo词汇视频/Demo词汇视频/跳.mp4
+data/Demo词汇视频/Demo词汇视频/月亮.mp4
+data/Demo词汇视频/Demo词汇视频/汽车.mp4
+data/Demo词汇视频/Demo词汇视频/花.mp4
+data/Demo词汇视频/Demo词汇视频/虎.mp4
+data/Demo词汇视频/Demo词汇视频/唱歌.mp4
+data/Demo词汇视频/Demo词汇视频/指示.mp4
+data/Demo词汇视频/Demo词汇视频/谗（羡慕）.mp4
+
+exec
+/bin/bash -lc "find work -maxdepth 3 -type f \\( -name '*.json' -o -name '*holistic*' -o -name '*keyframe*' \\) -printf '%p\\n' | sort | sed -n '1,160p'" in /data/WYC/signLanguage
+ succeeded in 0ms:
+work/docs/holistic_worker_daemon.md
+work/generated/holistic_probe_20260428_full/holistic_probe_summary.json
+work/generated/holistic_probe_20260428_full/holistic_probe_summary.md
+work/generated/holistic_probe_20260428_single/holistic_probe_summary.json
+work/generated/holistic_probe_20260428_single/holistic_probe_summary.md
+work/generated/holistic_timing_benchmark_flower/holistic_timing_benchmark.json
+work/generated/holistic_timing_benchmark_flower/holistic_timing_benchmark.md
+work/generated/holistic_viz_20260428/visualization_summary.json
+work/generated/holistic_worker_benchmark_run1/holistic_worker_benchmark.json
+work/generated/holistic_worker_benchmark_run1/holistic_worker_benchmark.md
+work/generated/holistic_worker_frame_slice_benchmark_run2/holistic_worker_benchmark.json
+work/generated/holistic_worker_frame_slice_benchmark_run2/holistic_worker_benchmark.md
+work/generated/keyframe_sampling_adaptive_single/adaptive_sampling.json
+work/generated/keyframe_sampling_two_stage_single/two_stage_sampling.json
+work/generated/keyframe_sampling_uniform_single/uniform_sampling.json
+work/generated/keyframe_sampling_visuals_run2/combined_visual_summary.json
+work/generated/parallel_sampling_strategies_flower_run4/parallel_sampling_strategies.json
+work/generated/sign_data_profile/sign_data_profile.json
+work/reports/20260429_holistic_timing_benchmark.docx
+work/reports/20260429_holistic_timing_benchmark.md
+work/reports/20260429_holistic_worker_benchmark.docx
+work/reports/20260429_holistic_worker_benchmark.md
+work/scripts/__pycache__/benchmark_holistic_timing.cpython-310.pyc
+work/scripts/__pycache__/benchmark_holistic_worker.cpython-310.pyc
+work/scripts/__pycache__/benchmark_holistic_worker.cpython-313.pyc
+work/scripts/__pycache__/holistic_sampling_probe.cpython-310.pyc
+work/scripts/__pycache__/holistic_sampling_probe.cpython-313.pyc
+work/scripts/__pycache__/holistic_worker_daemon.cpython-310.pyc
+work/scripts/__pycache__/holistic_worker_daemon.cpython-313.pyc
+work/scripts/__pycache__/keyframe_sampling_common.cpython-310.pyc
+work/scripts/__pycache__/keyframe_sampling_common.cpython-313.pyc
+work/scripts/__pycache__/plot_holistic_probe_summary.cpython-310.pyc
+work/scripts/__pycache__/plot_holistic_probe_summary.cpython-313.pyc
+work/scripts/__pycache__/recommend_keyframes_from_probe.cpython-310.pyc
+work/scripts/__pycache__/recommend_keyframes_from_probe.cpython-313.pyc
+work/scripts/__pycache__/sample_keyframe_candidates.cpython-313.pyc
+work/scripts/__pycache__/sample_keyframes_adaptive.cpython-313.pyc
+work/scripts/__pycache__/sample_keyframes_dense_uniform.cpython-310.pyc
+work/scripts/__pycache__/sample_keyframes_dense_uniform.cpython-313.pyc
+work/scripts/__pycache__/sample_keyframes_two_stage.cpython-313.pyc
+work/scripts/__pycache__/sample_keyframes_uniform.cpython-313.pyc
+work/scripts/__pycache__/visualize_holistic_features.cpython-310.pyc
+work/scripts/__pycache__/visualize_holistic_features.cpython-313.pyc
+work/scripts/benchmark_holistic_timing.py
+work/scripts/benchmark_holistic_worker.py
+work/scripts/holistic_sampling_probe.py
+work/scripts/holistic_worker_daemon.py
+work/scripts/keyframe_sampling_common.py
+work/scripts/plot_holistic_probe_summary.py
+work/scripts/recommend_keyframes_from_probe.py
+work/scripts/sample_keyframe_candidates.py
+work/scripts/sample_keyframes_adaptive.py
+work/scripts/sample_keyframes_dense_uniform.py
+work/scripts/sample_keyframes_two_stage.py
+work/scripts/sample_keyframes_uniform.py
+work/scripts/visualize_holistic_features.py
+
+exec
+/bin/bash -lc "sed -n '1,240p' docs/project_index.md 2>/dev/null || true" in /data/WYC/signLanguage
+ succeeded in 0ms:
+# 项目索引
+
+## 仓库定位
+
+`signLanguage` 目前是一个以“手语打分 / 手语识别”为中心的资料与脚本仓库，包含以下几类内容：
+
+- 技术路线与调研文档
+- 文档生成和格式转换脚本
+- 手语素材与参考论文
+- 工作日志和阶段性产物
+
+## 主要脚本
+
+- `work/past/draw_architecture.py`: 生成手语识别系统架构图，并把图片插入 Markdown / Word。
+- `work/past/md2pdf.py`: 将 Markdown 报告转换为 PDF。
+- `work/past/ascii_to_word.py`: 将 Markdown 内的 ASCII 框图解析为图片并写回 Word 流程。
+- `work/past/parse_ascii_diagram_final.py`: ASCII 框图解析的最终版实现。
+- `work/past/draw_diagram.py`: 框图绘制工具。
+- `work/past/generate_pdf.py`: PDF 生成工具。
+- `work/past/md2latex.py`: Markdown 到 LaTeX 的转换脚本。
+- `work/past/ascii_diagram_v3.py`: ASCII 框图解析与绘制的早期版本。
+- `work/scripts/signlanguage_common.py`: DOCX 解析、视频探测等通用工具。
+- `work/scripts/profile_sign_data.py`: 手语资料结构化盘点脚本。
+- `work/scripts/holistic_sampling_probe.py`: Holistic 关键点采样探针脚本。
+- `work/scripts/plot_holistic_probe_summary.py`: Holistic 探针结果可视化和分析脚本。
+- `work/scripts/recommend_keyframes_from_probe.py`: 基于探针结果推荐关键帧和采样策略的脚本。
+- `work/scripts/visualize_holistic_features.py`: Holistic 特征检测结果可视化脚本，输出骨骼图、三联图和联系表。
+
+## 主要文档
+
+- `work/worklog_sign.md`: 当前项目日志，记录阶段目标与待办。
+- `work/手语识别与翻译技术调研报告_20260402.md`: 调研结论与背景资料。
+- `work/手语识别技术路线推荐_20260402.md`: 技术路线推荐。
+- `work/手语识别技术路线推荐_v2_20260402.md`: 技术路线推荐迭代版。
+- `work/手语动作准确度评测方案_20260402.md`: 评测方案。
+- `work/手语动作准确度评测技术路线_20260423.md`: 技术路线深化版。
+- `work/手语动作准确度评测技术路线_20260423_ppt.md`: 对应演示稿文本版。
+
+## 资料目录
+
+- `data/`: 示例词汇与视频素材。
+- `references/`: 论文与综述 PDF。
+
+## 维护原则
+
+- 新脚本优先放在 `work/` 下，历史版本放在 `work/past/`。
+- 技术文档优先使用 Markdown 作为可追踪源文件。
+- 生成的缓存与字节码不纳入版本控制。
+
+exec
+/bin/bash -lc "rg --files work | rg '(holistic|keyframe|sampling|select|visual|score|json|align)' | sed -n '1,200p'" in /data/WYC/signLanguage
+ succeeded in 0ms:
+work/logs/holistic_workers_20260429/worker_06.log
+work/logs/holistic_workers_20260429/worker_01.log
+work/logs/holistic_workers_20260429/worker_04.log
+work/logs/holistic_workers_20260429/worker_02.log
+work/logs/holistic_workers_20260429/worker_07.log
+work/logs/holistic_workers_20260429/worker_05.log
+work/logs/holistic_workers_20260429/worker_08.log
+work/logs/holistic_workers_20260429/worker_03.log
+work/logs/holistic_workers_20260429/worker_10.log
+work/logs/holistic_workers_20260429/worker_09.log
+work/docs/holistic_worker_daemon.md
+work/generated/holistic_timing_benchmark_flower/holistic_timing_benchmark.json
+work/generated/holistic_timing_benchmark_flower/holistic_timing_benchmark.md
+work/reports/20260429_holistic_timing_benchmark.md
+work/reports/20260429_three_layer_sampling_summary.docx
+work/reports/20260429_sampling_compare_summary.docx
+work/reports/20260429_holistic_worker_benchmark.md
+work/reports/20260429_parallel_sampling_strategies_summary.docx
+work/reports/20260429_three_layer_sampling_summary.md
+work/reports/20260429_sampling_compare.docx
+work/reports/20260429_sampling_compare_summary.md
+work/reports/20260429_holistic_worker_benchmark.docx
+work/reports/20260429_parallel_sampling_strategies_summary.md
+work/reports/20260429_sampling_compare.md
+work/reports/20260429_holistic_timing_benchmark.docx
+work/generated/parallel_sampling_strategies_run2/uniform/uniform_sampling.json
+work/generated/parallel_sampling_strategies_run2/uniform/uniform_sampling.md
+work/generated/parallel_sampling_strategies_run2/two_stage/two_stage_sampling.json
+work/generated/parallel_sampling_strategies_run2/two_stage/two_stage_sampling.md
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0016_skeleton.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0012_triptych.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_contact_sheet.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0000_skeleton.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0000_triptych.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0000_annotated.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0004_annotated.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0020_annotated.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0008_annotated.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_viz_summary.json
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0012_annotated.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_viz_summary.md
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0020_skeleton.png
+work/generated/parallel_sampling_strategies_run2/dense/dense_uniform_step4_sampling.md
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0004_triptych.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0004_skeleton.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0008_skeleton.png
+work/generated/parallel_sampling_strategies_run2/dense/dense_uniform_step4_sampling.json
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0012_skeleton.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0016_annotated.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0016_triptych.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0008_triptych.png
+work/generated/holistic_viz_20260428/唱歌/唱歌_f0020_triptych.png
+work/generated/parallel_sampling_strategies_run2/adaptive/adaptive_sampling.md
+work/generated/parallel_sampling_strategies_run2/adaptive/adaptive_sampling.json
+work/generated/parallel_sampling_strategies_three_layer_run1/candidate_cache/candidate_cache.json
+work/generated/holistic_viz_20260428/朋友/朋友_f0012_annotated.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0004_skeleton.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0020_skeleton.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0016_triptych.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0016_annotated.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0008_triptych.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0020_triptych.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0008_skeleton.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0000_annotated.png
+work/generated/holistic_viz_20260428/朋友/朋友_viz_summary.md
+work/generated/holistic_viz_20260428/朋友/朋友_f0004_annotated.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0008_annotated.png
+work/generated/holistic_viz_20260428/朋友/朋友_contact_sheet.png
+work/generated/holistic_viz_20260428/朋友/朋友_viz_summary.json
+work/generated/holistic_viz_20260428/朋友/朋友_f0000_skeleton.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0012_skeleton.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0020_annotated.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0004_triptych.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0012_triptych.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0016_skeleton.png
+work/generated/holistic_viz_20260428/朋友/朋友_f0000_triptych.png
+work/generated/holistic_viz_20260428/visualization_summary.json
+work/generated/parallel_sampling_strategies_three_layer_run1/candidate_cache/花/花_holistic_results.json
+work/generated/parallel_sampling_strategies_three_layer_run1/candidate_cache/candidate_generation.log
+work/generated/parallel_sampling_strategies_flower_run4/uniform/uniform.log
+work/generated/parallel_sampling_strategies_flower_run4/uniform/uniform_sampling.json
+work/generated/parallel_sampling_strategies_flower_run4/uniform/uniform_sampling.md
+work/generated/parallel_sampling_strategies_flower_run4/parallel_sampling_strategies.md
+work/generated/parallel_sampling_strategies_three_layer_run1/uniform/uniform.log
+work/generated/parallel_sampling_strategies_three_layer_run1/uniform/uniform_sampling.json
+work/generated/parallel_sampling_strategies_three_layer_run1/uniform/uniform_sampling.md
+work/generated/parallel_sampling_strategies_flower_run4/two_stage/two_stage_sampling.json
+work/generated/parallel_sampling_strategies_flower_run4/two_stage/two_stage_sampling.md
+work/generated/parallel_sampling_strategies_flower_run4/two_stage/two_stage.log
+work/generated/parallel_sampling_strategies_flower_run4/parallel_sampling_strategies.json
+work/generated/holistic_viz_20260428/花/花_f0008_skeleton.png
+work/generated/holistic_viz_20260428/花/花_f0020_annotated.png
+work/generated/holistic_viz_20260428/花/花_viz_summary.json
+work/generated/holistic_viz_20260428/花/花_f0000_skeleton.png
+work/generated/holistic_viz_20260428/花/花_f0004_annotated.png
+work/generated/holistic_viz_20260428/花/花_f0016_annotated.png
+work/generated/holistic_viz_20260428/花/花_contact_sheet.png
+work/generated/holistic_viz_20260428/花/花_f0012_triptych.png
+work/generated/holistic_viz_20260428/花/花_f0020_skeleton.png
+work/generated/holistic_viz_20260428/花/花_viz_summary.md
+work/generated/holistic_viz_20260428/花/花_f0008_triptych.png
+work/generated/holistic_viz_20260428/花/花_f0004_triptych.png
+work/generated/holistic_viz_20260428/花/花_f0016_triptych.png
+work/generated/holistic_viz_20260428/花/花_f0012_annotated.png
+work/generated/holistic_viz_20260428/花/花_f0000_triptych.png
+work/generated/holistic_viz_20260428/花/花_f0004_skeleton.png
+work/generated/holistic_viz_20260428/花/花_f0000_annotated.png
+work/generated/holistic_viz_20260428/花/花_f0012_skeleton.png
+work/generated/holistic_viz_20260428/花/花_f0020_triptych.png
+work/generated/holistic_viz_20260428/花/花_f0016_skeleton.png
+work/generated/holistic_viz_20260428/花/花_f0008_annotated.png
+work/generated/parallel_sampling_strategies_three_layer_run1/two_stage/two_stage_sampling.json
+work/generated/parallel_sampling_strategies_three_layer_run1/two_stage/two_stage_sampling.md
+work/generated/parallel_sampling_strategies_three_layer_run1/two_stage/two_stage.log
+work/generated/parallel_sampling_strategies_flower_run4/dense/dense.log
+work/generated/parallel_sampling_strategies_flower_run4/dense/dense_uniform_step4_sampling.md
+work/generated/parallel_sampling_strategies_flower_run4/dense/dense_uniform_step4_sampling.json
+work/generated/parallel_sampling_strategies_flower_run4/adaptive/adaptive_sampling.md
+work/generated/parallel_sampling_strategies_flower_run4/adaptive/adaptive_sampling.json
+work/generated/parallel_sampling_strategies_flower_run4/adaptive/adaptive.log
+work/generated/parallel_sampling_strategies_three_layer_run1/dense/dense.log
+work/generated/parallel_sampling_strategies_three_layer_run1/dense/dense_uniform_step4_sampling.md
+work/generated/parallel_sampling_strategies_three_layer_run1/dense/dense_uniform_step4_sampling.json
+work/generated/keyframe_sampling_adaptive_single/adaptive_sampling.md
+work/generated/keyframe_sampling_adaptive_single/adaptive_sampling.json
+work/generated/parallel_sampling_strategies_three_layer_run1/adaptive/adaptive_sampling.md
+work/generated/parallel_sampling_strategies_three_layer_run1/adaptive/adaptive_sampling.json
+work/generated/parallel_sampling_strategies_three_layer_run1/adaptive/adaptive.log
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0000_annotated.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0004_annotated.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0016_skeleton.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0004_triptych.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0000_skeleton.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0008_annotated.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0008_triptych.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_viz_summary.json
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0004_skeleton.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0008_skeleton.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0020_skeleton.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0020_triptych.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0012_skeleton.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0020_annotated.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_contact_sheet.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0016_annotated.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0016_triptych.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0000_triptych.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0012_annotated.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_f0012_triptych.png
+work/generated/holistic_viz_20260428/谗（羡慕）/谗（羡慕）_viz_summary.md
+work/generated/holistic_probe_20260428_full/唱歌/唱歌.json
+work/generated/holistic_probe_20260428_full/唱歌/唱歌_frames.jsonl
+work/generated/holistic_probe_20260428_full/唱歌/唱歌_frames.csv
+work/generated/holistic_viz_20260428/跳/跳_f0016_skeleton.png
+work/generated/holistic_viz_20260428/跳/跳_f0004_annotated.png
+work/generated/holistic_viz_20260428/跳/跳_contact_sheet.png
+work/generated/holistic_viz_20260428/跳/跳_f0012_skeleton.png
+work/generated/holistic_viz_20260428/跳/跳_f0008_skeleton.png
+work/generated/holistic_viz_20260428/跳/跳_f0000_triptych.png
+work/generated/holistic_viz_20260428/跳/跳_f0000_skeleton.png
+work/generated/holistic_viz_20260428/跳/跳_viz_summary.json
+work/generated/holistic_viz_20260428/跳/跳_f0020_annotated.png
+work/generated/holistic_viz_20260428/跳/跳_viz_summary.md
+work/generated/holistic_viz_20260428/跳/跳_f0004_triptych.png
+work/generated/holistic_viz_20260428/跳/跳_f0012_annotated.png
+work/generated/holistic_viz_20260428/跳/跳_f0000_annotated.png
+work/generated/holistic_viz_20260428/跳/跳_f0012_triptych.png
+work/generated/holistic_viz_20260428/跳/跳_f0004_skeleton.png
+work/generated/holistic_viz_20260428/跳/跳_f0016_triptych.png
+work/generated/holistic_viz_20260428/跳/跳_f0020_skeleton.png
+work/generated/holistic_viz_20260428/跳/跳_f0020_triptych.png
+work/generated/holistic_viz_20260428/跳/跳_f0008_triptych.png
+work/generated/holistic_viz_20260428/跳/跳_f0008_annotated.png
+work/generated/holistic_viz_20260428/跳/跳_f0016_annotated.png
+work/generated/holistic_probe_20260428_full/朋友/朋友.json
+work/generated/holistic_probe_20260428_full/朋友/朋友_frames.jsonl
+work/generated/holistic_probe_20260428_full/朋友/朋友_frames.csv
+work/generated/keyframe_sampling_visuals/uniform/花/花_f0096_sample.png
+work/generated/keyframe_sampling_visuals/uniform/花/花_f0048_sample.png
+work/generated/keyframe_sampling_visuals/uniform/花/花_f0106_sample.png
+work/generated/keyframe_sampling_visuals/uniform/花/花_sample_viz.md
+work/generated/keyframe_sampling_visuals/uniform/花/花_f0039_sample.png
+work/generated/keyframe_sampling_visuals/uniform/花/花_f0067_sample.png
+work/generated/keyframe_sampling_visuals/uniform/花/花_contact_sheet.png
+work/generated/keyframe_sampling_visuals/uniform/花/花_f0058_sample.png
+work/generated/keyframe_sampling_visuals/uniform/花/花_f0029_sample.png
+work/generated/keyframe_sampling_visuals/uniform/花/花_f0010_sample.png
+work/generated/holistic_probe_20260428_full/analysis/holistic_coverage_by_video.png
+work/generated/keyframe_sampling_visuals/uniform/花/花_sample_viz.json
+work/generated/holistic_probe_20260428_full/analysis/holistic_motion_by_video.png
+work/generated/keyframe_sampling_visuals/uniform/花/花_f0077_sample.png
+work/generated/keyframe_sampling_visuals/uniform/花/花_f0019_sample.png
+work/generated/keyframe_sampling_visuals/uniform/花/花_timeline.png
+work/generated/holistic_probe_20260428_full/analysis/holistic_probe_analysis.md
+work/generated/keyframe_sampling_visuals/uniform/花/花_f0000_sample.png
+work/generated/keyframe_sampling_visuals/uniform/花/花_f0087_sample.png
+work/generated/keyframe_sampling_visuals/uniform/uniform_sample_viz_summary.json
+work/generated/holistic_viz_20260428/汽车/汽车_viz_summary.md
+work/generated/holistic_viz_20260428/汽车/汽车_viz_summary.json
+work/generated/holistic_viz_20260428/汽车/汽车_f0020_skeleton.png
+work/generated/holistic_viz_20260428/汽车/汽车_f0004_triptych.png
+
+exec
+/bin/bash -lc 'find .codex/tmux-workers/inbox/scoring-design -maxdepth 1 -type f -print | sort' in /data/WYC/signLanguage
+ succeeded in 0ms:
+exec
+/bin/bash -lc "sed -n '1,220p' work/scripts/keyframe_sampling_common.py" in /data/WYC/signLanguage
+ succeeded in 0ms:
+#!/usr/bin/env python3
+"""
+关键帧采样策略公共工具。
+
+这个模块给三种采样方式复用：
+1. 全视频均匀采样
+2. 两阶段采样
+3. 自适应采样
+
+核心职责：
+- 读取视频元数据
+- 构造采样帧序列
+- 在选定帧上运行 MediaPipe Holistic
+- 汇总采样覆盖范围、尾部覆盖和基础关键点统计
+"""
+
+from __future__ import annotations
+
+import json
+import math
+import os
+import statistics
+import time
+import base64
+from datetime import datetime
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
+
+import numpy as np
+
+from signlanguage_common import probe_video_metadata
+
+
+DEFAULT_REPO_ROOT = Path("/data/WYC/signLanguage")
+DEFAULT_VIDEO_ROOT = DEFAULT_REPO_ROOT / "data" / "Demo词汇视频"
+
+
+def configure_headless() -> None:
+    """在服务器/无头环境里关闭 Qt/X11 依赖。"""
+
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    os.environ.setdefault("DISPLAY", "")
+
+
+def import_optional_backends():
+    """按需导入 OpenCV 和 MediaPipe。"""
+
+    cv2 = None
+    mp = None
+    try:
+        import cv2 as _cv2  # type: ignore
+
+        cv2 = _cv2
+    except Exception:
+        cv2 = None
+
+    try:
+        import mediapipe as _mp  # type: ignore
+
+        mp = _mp
+    except Exception:
+        mp = None
+
+    return cv2, mp
+
+
+def _mean_or_none(values: Sequence[float]) -> Optional[float]:
+    return float(statistics.mean(values)) if values else None
+
+
+def _bbox_from_landmarks(landmarks, width: int, height: int) -> Optional[Dict[str, float]]:
+    """把归一化关键点转成像素级包围框。"""
+
+    xs: List[float] = []
+    ys: List[float] = []
+    vis: List[float] = []
+    for lm in landmarks:
+        xs.append(float(lm.x) * width)
+        ys.append(float(lm.y) * height)
+        vis.append(float(getattr(lm, "visibility", 1.0)))
+    if not xs or not ys:
+        return None
+    return {
+        "x_min": min(xs),
+        "x_max": max(xs),
+        "y_min": min(ys),
+        "y_max": max(ys),
+        "visibility_mean": _mean_or_none(vis) or 0.0,
+    }
+
+
+def _landmark_presence(landmarks) -> bool:
+    return landmarks is not None and len(landmarks.landmark) > 0
+
+
+def _frame_motion(prev: Optional[Dict[str, Any]], current: Dict[str, Any]) -> Dict[str, float]:
+    """计算相邻关键帧之间的简单运动量。"""
+
+    if not prev:
+        return {"motion_energy": 0.0, "bbox_shift": 0.0}
+
+    total_energy = 0.0
+    total_shift = 0.0
+    for group in ["pose", "left_hand", "right_hand", "face"]:
+        prev_box = prev.get(group, {}).get("bbox")
+        curr_box = current.get(group, {}).get("bbox")
+        if not prev_box or not curr_box:
+            continue
+        dx = ((curr_box["x_min"] + curr_box["x_max"]) / 2) - ((prev_box["x_min"] + prev_box["x_max"]) / 2)
+        dy = ((curr_box["y_min"] + curr_box["y_max"]) / 2) - ((prev_box["y_min"] + prev_box["y_max"]) / 2)
+        total_shift += math.hypot(dx, dy)
+        total_energy += abs(dx) + abs(dy)
+    return {"motion_energy": total_energy, "bbox_shift": total_shift}
+
+
+def normalize_total_frames(meta: Dict[str, Any]) -> int:
+    """从元数据中推断总帧数。"""
+
+    frame_count = meta.get("frame_count")
+    if isinstance(frame_count, int) and frame_count > 0:
+        return frame_count
+
+    duration = meta.get("duration_sec")
+    fps = meta.get("fps")
+    if isinstance(duration, (int, float)) and isinstance(fps, (int, float)) and duration > 0 and fps > 0:
+        return max(1, int(round(duration * fps)))
+
+    return 1
+
+
+def normalized_video_duration(meta: Dict[str, Any], total_frames: int) -> float:
+    """从元数据推断总时长。"""
+
+    duration = meta.get("duration_sec")
+    fps = meta.get("fps")
+    if isinstance(duration, (int, float)) and duration > 0:
+        return float(duration)
+    if isinstance(fps, (int, float)) and fps > 0 and total_frames > 0:
+        return float(total_frames / fps)
+    return float(total_frames)
+
+
+def even_frame_indices(total_frames: int, count: int) -> List[int]:
+    """在整段视频上均匀取帧。"""
+
+    if total_frames <= 1:
+        return [0]
+
+    count = max(1, min(count, total_frames))
+    if count == 1:
+        return [0]
+    if count == total_frames:
+        return list(range(total_frames))
+
+    raw = [int(round(i * (total_frames - 1) / (count - 1))) for i in range(count)]
+    indices: List[int] = []
+    for idx in raw:
+        if idx not in indices:
+            indices.append(idx)
+    return indices
+
+
+def select_even_subsample(frame_indices: Sequence[int], target_count: int) -> List[int]:
+    """从已排序的帧序列里均匀抽取一个更小的子集。"""
+
+    if target_count <= 0:
+        return []
+    unique = [int(idx) for idx in frame_indices if int(idx) >= 0]
+    if not unique:
+        return []
+    if len(unique) <= target_count:
+        return list(dict.fromkeys(unique))
+
+    positions = even_frame_indices(len(unique), target_count)
+    selected: List[int] = []
+    for pos in positions:
+        if 0 <= pos < len(unique):
+            idx = int(unique[pos])
+            if idx not in selected:
+                selected.append(idx)
+    return selected
+
+
+def summarize_rows(meta: Dict[str, Any], total_frames: int, rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
+    """从一组已经完成 Holistic 评估的帧里汇总视频级统计。"""
+
+    processed = [dict(row) for row in rows]
+    fps = float(meta.get("fps") or 25.0)
+    first_sample_frame = processed[0]["frame_idx"] if processed else None
+    last_sample_frame = processed[-1]["frame_idx"] if processed else None
+    frame_span_ratio = None
+    tail_coverage_ratio = None
+    late_half_fraction = None
+    late_75_fraction = None
+
+    if processed and total_frames > 1:
+        frame_span_ratio = (last_sample_frame - first_sample_frame) / (total_frames - 1)
+        tail_coverage_ratio = last_sample_frame / (total_frames - 1)
+        late_half_fraction = sum(1 for r in processed if r["frame_idx"] >= 0.5 * (total_frames - 1)) / len(processed)
+        late_75_fraction = sum(1 for r in processed if r["frame_idx"] >= 0.75 * (total_frames - 1)) / len(processed)
+
+    motions = [float(r.get("motion_energy", 0.0)) for r in processed]
+    pose_ratio = (sum(1 for r in processed if r.get("pose_present")) / len(processed)) if processed else None
+    left_ratio = (sum(1 for r in processed if r.get("left_hand_present")) / len(processed)) if processed else None
+    right_ratio = (sum(1 for r in processed if r.get("right_hand_present")) / len(processed)) if processed else None
+    face_ratio = (sum(1 for r in processed if r.get("face_present")) / len(processed)) if processed else None
+
+    return {
+        "samples": len(processed),
+        "sampled_frame_indices": [r["frame_idx"] for r in processed],
+        "video_total_frames": total_frames,
+        "video_fps": fps,
+        "first_sample_frame": first_sample_frame,
+        "last_sample_frame": last_sample_frame,
+        "pose_presence_ratio": pose_ratio,
+        "left_hand_presence_ratio": left_ratio,
+        "right_hand_presence_ratio": right_ratio,
+        "face_presence_ratio": face_ratio,
+
+exec
+/bin/bash -lc "sed -n '1,220p' work/scripts/sample_keyframe_candidates.py" in /data/WYC/signLanguage
+ succeeded in 0ms:
+#!/usr/bin/env python3
+"""
+候选关键帧生成层。
+
+职责：
+- 先按短视频 / 长视频规则生成候选帧索引
+- 只做一次 Holistic 评估
+- 将候选结果落成缓存文件，供后续选择策略复用
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import time
+from datetime import datetime
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from pathlib import Path
+from typing import Any, Dict, Optional, Sequence
+
+from keyframe_sampling_common import (
+    DEFAULT_VIDEO_ROOT,
+    build_candidate_cache,
+    build_candidate_indices,
+    build_report,
+    configure_headless,
+    load_candidate_cache,
+    normalize_total_frames,
+    probe_video_metadata,
+    summarize_rows,
+)
+from signlanguage_common import find_demo_videos
+
+
+DEFAULT_OUTPUT_DIR = Path("/data/WYC/signLanguage/work/generated/keyframe_candidates")
+DEFAULT_CANDIDATE_STEP = 4
+DEFAULT_SHORT_VIDEO_THRESHOLD = 48
+
+
+def build_video_candidate(
+    video_path: Path,
+    candidate_step: int,
+    short_video_threshold: int,
+    workers: int,
+    output_dir: Path,
+) -> Dict[str, Any]:
+    """生成单视频的候选缓存。"""
+
+    started = time.perf_counter()
+    meta = probe_video_metadata(video_path)
+    total_frames = normalize_total_frames(meta)
+    candidate_indices, candidate_mode = build_candidate_indices(total_frames, candidate_step, short_video_threshold)
+    candidate_build_start = time.perf_counter()
+    result_dir = output_dir / video_path.stem
+    candidate_cache = build_candidate_cache(
+        video_path,
+        candidate_step=candidate_step,
+        short_video_full_threshold=short_video_threshold,
+        workers=workers,
+        result_dir=result_dir,
+    )
+    candidate_generation_sec = round(time.perf_counter() - candidate_build_start, 3)
+    candidate_cache["candidate_mode"] = candidate_mode
+    candidate_cache["candidate_frame_indices"] = candidate_indices
+    candidate_cache["candidate_summary"] = summarize_rows(meta, total_frames, candidate_cache["rows"])
+    candidate_cache["elapsed_sec"] = round(time.perf_counter() - started, 3)
+    candidate_cache["candidate_generation_sec"] = candidate_generation_sec
+    candidate_cache["candidate_result_file"] = candidate_cache.get("cache_summary", {}).get("holistic_result_file")
+    return candidate_cache
+
+
+def _build_report(payload: Dict[str, Any]) -> str:
+    row = payload["video_result"]
+    candidate = row["candidate_summary"]
+    cache_summary = row["cache_summary"]
+
+    lines = []
+    lines.append("# 候选关键帧生成层")
+    lines.append("")
+    lines.append(f"- 对象视频：`{payload.get('video_name')}`")
+    lines.append(f"- 候选步长：每 `{payload.get('candidate_step')}` 帧采 1 帧")
+    lines.append(f"- 短视频阈值：`{payload.get('short_video_threshold')}` 帧")
+    lines.append(f"- 候选模式：`{row.get('candidate_mode')}`")
+    lines.append("")
+    lines.append("## 结果")
+    lines.append("")
+    lines.append(f"- 候选帧数：{candidate.get('samples')}")
+    lines.append(f"- 候选索引：{', '.join(str(x) for x in row.get('candidate_frame_indices', []))}")
+    lines.append(f"- 候选缓存文件：{row.get('candidate_result_file')}")
+    lines.append(f"- 候选生成耗时：{row.get('candidate_generation_sec')}s")
+    lines.append(f"- Holistic 初始化耗时：{cache_summary.get('holistic_init_sec')}s")
+    lines.append(f"- Holistic 识别耗时：{cache_summary.get('holistic_eval_sec')}s")
+    lines.append(f"- Holistic 总墙钟耗时：{cache_summary.get('holistic_wall_sec')}s")
+    lines.append("")
+    lines.append("## 说明")
+    lines.append("")
+    lines.append("- 该层只负责生成候选缓存，不进行关键帧选择。")
+    lines.append("- 后续选择策略直接复用这里生成的候选缓存，避免重复跑 Holistic。")
+    lines.append("")
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    configure_headless()
+    started = time.perf_counter()
+
+    parser = argparse.ArgumentParser(description="候选关键帧生成层")
+    parser.add_argument("--video-root", default=str(DEFAULT_VIDEO_ROOT), help="视频目录")
+    parser.add_argument("--video", action="append", help="单个视频路径，可重复传入")
+    parser.add_argument("--candidate-step", type=int, default=DEFAULT_CANDIDATE_STEP, help="候选采样步长")
+    parser.add_argument(
+        "--short-video-threshold",
+        type=int,
+        default=DEFAULT_SHORT_VIDEO_THRESHOLD,
+        help="短视频阈值，低于该帧数时使用全量 dense 候选",
+    )
+    parser.add_argument("--workers", type=int, default=1, help="并行进程数，默认单进程以避免重复初始化")
+    parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR), help="输出目录")
+    args = parser.parse_args(argv)
+
+    video_root = Path(args.video_root)
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    if args.video:
+        videos = [Path(v) for v in args.video]
+    else:
+        videos = find_demo_videos(video_root)
+
+    worker_count = args.workers if args.workers and args.workers > 0 else 1
+    if len(videos) <= 1 or worker_count <= 1:
+        results = [build_video_candidate(video_path, args.candidate_step, args.short_video_threshold, worker_count, output_dir) for video_path in videos]
+    else:
+        results = [None] * len(videos)  # type: ignore[list-item]
+        with ProcessPoolExecutor(max_workers=min(worker_count, len(videos))) as executor:
+            futures = {
+                executor.submit(build_video_candidate, video_path, args.candidate_step, args.short_video_threshold, worker_count, output_dir): idx
+                for idx, video_path in enumerate(videos)
+            }
+            for future in as_completed(futures):
+                results[futures[future]] = future.result()
+        results = [row for row in results if row is not None]
+
+    payload = {
+        "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "elapsed_sec": round(time.perf_counter() - started, 3),
+        "candidate_step": args.candidate_step,
+        "short_video_threshold": args.short_video_threshold,
+        "output_dir": str(output_dir),
+        "videos": results,
+    }
+
+    json_path = output_dir / "candidate_cache.json"
+    md_path = output_dir / "candidate_cache.md"
+    json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    md_path.write_text(_build_report(payload), encoding="utf-8")
+    print(f"已生成候选缓存 JSON：{json_path}")
+    print(f"已生成候选缓存报告：{md_path}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+
+exec
+/bin/bash -lc "python -m json.tool work/generated/parallel_sampling_strategies_three_layer_run1/dense/dense_uniform_step4_sampling.json | sed -n '1,180p'" in /data/WYC/signLanguage
+ succeeded in 0ms:
+{
+    "generated_at": "2026-04-29T07:26:56",
+    "elapsed_sec": 0.033,
+    "video_name": "\u82b1.mp4",
+    "dense_step": 4,
+    "sample_budget": 12,
+    "candidate_cache": "/data/WYC/signLanguage/work/generated/parallel_sampling_strategies_three_layer_run1/candidate_cache/\u82b1/\u82b1_holistic_results.json",
+    "video_result": {
+        "video": "\u82b1.mp4",
+        "video_path": "/data/WYC/signLanguage/data/Demo\u8bcd\u6c47\u89c6\u9891/Demo\u8bcd\u6c47\u89c6\u9891/\u82b1.mp4",
+        "dense_step": 4,
+        "dense_frame_indices": [],
+        "selected_frame_indices": [
+            4,
+            32,
+            36,
+            40,
+            44,
+            56,
+            60,
+            68,
+            72,
+            84,
+            88,
+            96
+        ],
+        "dense_summary": {
+            "samples": 28,
+            "sampled_frame_indices": [
+                0,
+                4,
+                8,
+                12,
+                16,
+                20,
+                24,
+                28,
+                32,
+                36,
+                40,
+                44,
+                48,
+                52,
+                56,
+                60,
+                64,
+                68,
+                72,
+                76,
+                80,
+                84,
+                88,
+                92,
+                96,
+                100,
+                104,
+                106
+            ],
+            "video_total_frames": 107,
+            "video_fps": 29.44954128440367,
+            "first_sample_frame": 0,
+            "last_sample_frame": 106,
+            "pose_presence_ratio": 1.0,
+            "left_hand_presence_ratio": 0.0,
+            "right_hand_presence_ratio": 0.75,
+            "face_presence_ratio": 1.0,
+            "motion_energy_mean": 3.3024032626833235,
+            "motion_energy_max": 34.15413284301758,
+            "frame_span_ratio": 1.0,
+            "tail_coverage_ratio": 1.0,
+            "late_half_fraction": 0.5,
+            "late_75_fraction": 0.2857142857142857
+        },
+        "selected_summary": {
+            "samples": 12,
+            "sampled_frame_indices": [
+                4,
+                32,
+                36,
+                40,
+                44,
+                56,
+                60,
+                68,
+                72,
+                84,
+                88,
+                96
+            ],
+            "video_total_frames": 107,
+            "video_fps": 29.44954128440367,
+            "first_sample_frame": 4,
+            "last_sample_frame": 96,
+            "pose_presence_ratio": 1.0,
+            "left_hand_presence_ratio": 0.0,
+            "right_hand_presence_ratio": 0.9166666666666666,
+            "face_presence_ratio": 1.0,
+            "motion_energy_mean": 6.510766665140788,
+            "motion_energy_max": 34.15413284301758,
+            "frame_span_ratio": 0.8679245283018868,
+            "tail_coverage_ratio": 0.9056603773584906,
+            "late_half_fraction": 0.5833333333333334,
+            "late_75_fraction": 0.25
+        },
+        "dense_holistic_wall_sec": 0.0,
+        "dense_holistic_init_sec": 0.0,
+        "dense_holistic_eval_sec": 0.0,
+        "selection_sec": 0.0,
+        "candidate_generation_sec": 0.0,
+        "worker_count": 1,
+        "result_file": null,
+        "candidate_cache_file": "/data/WYC/signLanguage/work/generated/parallel_sampling_strategies_three_layer_run1/candidate_cache/\u82b1/\u82b1_holistic_results.json",
+        "processing_sec": 0.0,
+        "combined_sec": 0.0
+    }
+}
+
+exec
+/bin/bash -lc "python -m json.tool work/generated/parallel_sampling_strategies_three_layer_run1/candidate_cache/花/花_holistic_results.json | sed -n '1,180p'" in /data/WYC/signLanguage
+ succeeded in 190ms:
+0608162879944,
+                        "y": 0.4453502297401428,
+                        "z": -0.34003835916519165,
+                        "visibility": 0.9971429705619812,
+                        "presence": 0.0
+                    },
+                    {
+                        "x": 0.5813536047935486,
+                        "y": 0.4469621777534485,
+                        "z": -0.3401128947734833,
+                        "visibility": 0.9975799322128296,
+                        "presence": 0.0
+                    },
+                    {
+                        "x": 0.6227161884307861,
+                        "y": 0.457703173160553,
+                        "z": -0.46650221943855286,
+                        "visibility": 0.999541163444519,
+                        "presence": 0.0
+                    },
+                    {
+                        "x": 0.5991754531860352,
+                        "y": 0.4581785798072815,
+                        "z": -0.4664313793182373,
+                        "visibility": 0.9995132684707642,
+                        "presence": 0.0
+                    },
+                    {
+                        "x": 0.691167414188385,
+                        "y": 0.4899844527244568,
+                        "z": -0.21560853719711304,
+                        "visibility": 0.9984283447265625,
+                        "presence": 0.0
+                    },
+                    {
+                        "x": 0.5436562299728394,
+                        "y": 0.49428877234458923,
+                        "z": -0.22104404866695404,
+                        "visibility": 0.9988565444946289,
+                        "presence": 0.0
+                    },
+                    {
+                        "x": 0.7011281847953796,
+                        "y": 0.5416936874389648,
+                        "z": -0.1557846963405609,
+                        "visibility": 0.9315982460975647,
+                        "presence": 0.0
+                    },
+                    {
+                        "x": 0.5390506386756897,
+                        "y": 0.5478472113609314,
+                        "z": -0.16711291670799255,
+                        "visibility": 0.9656388759613037,
+                        "presence": 0.0
+                    },
+                    {
+
+exec
+/bin/bash -lc "sed -n '220,520p' work/scripts/keyframe_sampling_common.py" in /data/WYC/signLanguage
+ succeeded in 0ms:
+        "face_presence_ratio": face_ratio,
+        "motion_energy_mean": (sum(motions) / len(motions)) if motions else None,
+        "motion_energy_max": max(motions) if motions else None,
+        "frame_span_ratio": frame_span_ratio,
+        "tail_coverage_ratio": tail_coverage_ratio,
+        "late_half_fraction": late_half_fraction,
+        "late_75_fraction": late_75_fraction,
+    }
+
+
+def build_candidate_indices(total_frames: int, candidate_step: int, short_video_full_threshold: int = 48) -> Tuple[List[int], str]:
+    """构造候选帧索引。
+
+    短视频优先全量 dense 候选，长视频使用固定步长 dense 候选。
+    """
+
+    total_frames = max(1, int(total_frames))
+    candidate_step = max(1, int(candidate_step))
+    short_video_full_threshold = max(1, int(short_video_full_threshold))
+
+    if total_frames <= short_video_full_threshold:
+        return list(range(total_frames)), "full_dense"
+
+    indices = list(range(0, total_frames, candidate_step))
+    if total_frames > 1 and indices[-1] != total_frames - 1:
+        indices.append(total_frames - 1)
+    return sorted(dict.fromkeys(indices)), "step_dense"
+
+
+def build_candidate_cache(
+    video_path: Path,
+    candidate_step: int,
+    short_video_full_threshold: int = 48,
+    workers: int = 1,
+    result_dir: Optional[Path] = None,
+) -> Dict[str, Any]:
+    """生成候选层缓存，只做一次 Holistic。"""
+
+    meta = probe_video_metadata(video_path)
+    total_frames = normalize_total_frames(meta)
+    candidate_indices, candidate_mode = build_candidate_indices(total_frames, candidate_step, short_video_full_threshold)
+    worker_count = workers if workers and workers > 0 else 1
+    cache_eval = extract_holistic_rows(video_path, candidate_indices, result_dir=result_dir, workers=worker_count)
+    cache_summary = dict(cache_eval["summary"])
+    cache_summary["strategy"] = "candidate_cache"
+    cache_summary["candidate_mode"] = candidate_mode
+    cache_summary["candidate_step"] = candidate_step
+    cache_summary["short_video_full_threshold"] = short_video_full_threshold
+    return {
+        "video": video_path.name,
+        "video_path": str(video_path),
+        "candidate_step": candidate_step,
+        "short_video_full_threshold": short_video_full_threshold,
+        "candidate_mode": candidate_mode,
+        "candidate_frame_indices": candidate_indices,
+        "candidate_summary": summarize_rows(meta, total_frames, cache_eval["rows"]),
+        "cache_summary": cache_summary,
+        "candidate_result_file": cache_summary.get("holistic_result_file"),
+        "candidate_result_dir": str(result_dir) if result_dir is not None else None,
+        "rows": cache_eval["rows"],
+        "meta": meta,
+    }
+
+
+def load_candidate_cache(cache_path: Path) -> Dict[str, Any]:
+    """读取候选缓存文件。"""
+
+    payload = json.loads(Path(cache_path).read_text(encoding="utf-8"))
+    rows = payload.get("rows")
+    videos = payload.get("videos")
+    video_result = payload.get("video_result")
+    records = payload.get("records")
+    if not isinstance(rows, list) and not isinstance(videos, list) and not isinstance(video_result, dict) and not isinstance(records, list):
+        raise RuntimeError(f"候选缓存缺少 rows/videos/video_result：{cache_path}")
+    return payload
+
+
+def _normalize_candidate_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
+    """把不同历史格式的缓存条目统一成包含 rows 的结构。"""
+
+    normalized = dict(entry)
+    if isinstance(normalized.get("rows"), list):
+        return normalized
+    records = normalized.get("records")
+    if isinstance(records, list):
+        rows: List[Dict[str, Any]] = []
+        for record in records:
+            if not isinstance(record, dict):
+                continue
+            row = record.get("row")
+            if isinstance(row, dict):
+                rows.append(dict(row))
+        if rows:
+            normalized["rows"] = rows
+            if "sampled_frame_indices" not in normalized:
+                normalized["sampled_frame_indices"] = [int(row["frame_idx"]) for row in rows if "frame_idx" in row]
+            return normalized
+    return normalized
+
+
+def get_candidate_video_entry(cache_payload: Dict[str, Any], video_name: Optional[str] = None) -> Dict[str, Any]:
+    """从候选缓存顶层 payload 中提取单个视频的条目。"""
+
+    if isinstance(cache_payload.get("rows"), list):
+        return _normalize_candidate_entry(cache_payload)
+
+    if isinstance(cache_payload.get("records"), list):
+        return _normalize_candidate_entry(cache_payload)
+
+    if isinstance(cache_payload.get("video_result"), dict):
+        return _normalize_candidate_entry(cache_payload["video_result"])
+
+    videos = cache_payload.get("videos")
+    if not isinstance(videos, list) or not videos:
+        raise RuntimeError("候选缓存格式不正确，缺少 videos 或 rows")
+
+    if video_name is not None:
+        for row in videos:
+            if row.get("video") == video_name or row.get("video_path", "").endswith(video_name):
+                return _normalize_candidate_entry(row)
+        raise RuntimeError(f"候选缓存中未找到视频：{video_name}")
+
+    if len(videos) == 1:
+        return _normalize_candidate_entry(videos[0])
+
+    raise RuntimeError("候选缓存包含多个视频，请显式指定 video_name")
+
+
+def interior_frame_indices(start: int, end: int, count: int) -> List[int]:
+    """在一个区间内部均匀取帧，不包含端点。"""
+
+    if end - start <= 1 or count <= 0:
+        return []
+
+    span = end - start
+    raw = [int(round(start + (i + 1) * span / (count + 1))) for i in range(count)]
+    result: List[int] = []
+    for idx in raw:
+        idx = max(start + 1, min(end - 1, idx))
+        if idx not in result:
+            result.append(idx)
+    return result
+
+
+def _open_holistic():
+    """构造 Holistic 模型。"""
+
+    cv2, mp = import_optional_backends()
+    if cv2 is None or mp is None:
+        return cv2, mp, None
+    holistic = mp.solutions.holistic
+    return cv2, mp, holistic
+
+
+def encode_frame_payload(cv2, frame, image_format: str = "jpg", jpeg_quality: int = 95) -> Dict[str, Any]:
+    """把一帧编码成适合 JSON 传输的帧切片 payload。"""
+
+    fmt = image_format.lower().lstrip(".")
+    ext = f".{fmt}"
+    params: List[int] = []
+    if fmt in {"jpg", "jpeg"}:
+        params = [int(cv2.IMWRITE_JPEG_QUALITY), int(jpeg_quality)]
+    ok, buffer = cv2.imencode(ext, frame, params)
+    if not ok:
+        raise RuntimeError(f"无法将帧编码为 {ext}")
+    return {
+        "image_format": fmt,
+        "image_b64": base64.b64encode(buffer.tobytes()).decode("ascii"),
+    }
+
+
+def decode_frame_payload(cv2, payload: Dict[str, Any]):
+    """从 JSON 传输的帧切片 payload 中恢复图像帧。"""
+
+    image_b64 = payload.get("image_b64")
+    if not isinstance(image_b64, str) or not image_b64:
+        raise RuntimeError("帧切片缺少 image_b64")
+    try:
+        raw = base64.b64decode(image_b64.encode("ascii"), validate=True)
+    except Exception as exc:
+        raise RuntimeError(f"帧切片 base64 解码失败：{exc}") from exc
+
+    buffer = np.frombuffer(raw, dtype=np.uint8)
+    frame = cv2.imdecode(buffer, cv2.IMREAD_COLOR)
+    if frame is None:
+        raise RuntimeError("帧切片图像解码失败")
+    return frame
+
+
+def _chunk_sequence(values: Sequence[int], chunk_count: int) -> List[List[int]]:
+    """把一个已排序序列切成若干块。"""
+
+    items = [int(v) for v in values]
+    if not items:
+        return []
+    chunk_count = max(1, min(int(chunk_count), len(items)))
+    chunk_size = max(1, math.ceil(len(items) / chunk_count))
+    return [items[i:i + chunk_size] for i in range(0, len(items), chunk_size)]
+
+
+def _process_holistic_batch(args: Tuple[str, float, Sequence[int]]) -> Dict[str, Any]:
+    """在单个子进程里处理一批帧。"""
+
+    video_path_str, fps, frame_indices = args
+    video_path = Path(video_path_str)
+    cv2, mp, holistic_cls = _open_holistic()
+    if cv2 is None or mp is None or holistic_cls is None:
+        raise RuntimeError("需要安装 mediapipe 和 opencv-python 才能运行关键帧采样实验")
+
+    if hasattr(cv2, "setNumThreads"):
+        try:
+            cv2.setNumThreads(1)
+        except Exception:
+            pass
+
+    cap = cv2.VideoCapture(str(video_path))
+    if not cap.isOpened():
+        raise RuntimeError(f"无法打开视频：{video_path}")
+
+    batch_frames = [int(idx) for idx in frame_indices]
+    if not batch_frames:
+        cap.release()
+        return {"records": [], "init_sec": 0.0}
+    start_idx = batch_frames[0]
+    end_idx = batch_frames[-1]
+    targets = set(batch_frames)
+
+    records: List[Dict[str, Any]] = []
+    init_start = time.perf_counter()
+    with holistic_cls.Holistic(
+        static_image_mode=False,
+        model_complexity=1,
+        smooth_landmarks=True,
+        enable_segmentation=False,
+        refine_face_landmarks=True,
+        min_detection_confidence=0.5,
+        min_tracking_confidence=0.5,
+    ) as holistic:
+        init_sec = time.perf_counter() - init_start
+        cap.set(cv2.CAP_PROP_POS_FRAMES, start_idx)
+        frame_idx = start_idx
+        while frame_idx <= end_idx:
+            ok, frame = cap.read()
+            if not ok:
+                raise RuntimeError(f"无法读取帧：{video_path} @ {frame_idx}")
+            if frame_idx in targets:
+                row_start = time.perf_counter()
+                row, result = _process_frame(frame_idx, fps, frame, holistic, cv2)
+                frame_eval_sec = time.perf_counter() - row_start
+                records.append(
+                    {
+                        "frame_idx": frame_idx,
+                        "timestamp_sec": frame_idx / fps,
+                        "row": row,
+                        "result_data": _serialize_holistic_result(result),
+                        "frame_eval_sec": frame_eval_sec,
+                    }
+                )
+            frame_idx += 1
+
+    cap.release()
+    return {"records": records, "init_sec": init_sec}
+
+
+def _process_frame(frame_idx: int, fps: float, frame, holistic, cv2) -> Tuple[Dict[str, Any], Any]:
+    """处理单帧，返回帧级统计与原始 Holistic 结果。"""
+
+    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    result = holistic.process(rgb)
+
+    height, width = frame.shape[:2]
+    pose_landmarks = result.pose_landmarks.landmark if result.pose_landmarks else None
+    left_landmarks = result.left_hand_landmarks.landmark if result.left_hand_landmarks else None
+    right_landmarks = result.right_hand_landmarks.landmark if result.right_hand_landmarks else None
+    face_landmarks = result.face_landmarks.landmark if result.face_landmarks else None
+
+    row: Dict[str, Any] = {
+        "frame_idx": frame_idx,
+        "timestamp_sec": frame_idx / fps,
+        "pose_present": _landmark_presence(result.pose_landmarks),
+        "left_hand_present": _landmark_presence(result.left_hand_landmarks),
+        "right_hand_present": _landmark_presence(result.right_hand_landmarks),
+        "face_present": _landmark_presence(result.face_landmarks),
+        "pose": {},
+        "left_hand": {},
+        "right_hand": {},
+        "face": {},
+    }
+
+    if pose_landmarks:
+        row["pose"] = {
+            "bbox": _bbox_from_landmarks(pose_landmarks, width, height),
+            "visibility_mean": _mean_or_none([float(getattr(lm, "visibility", 1.0)) for lm in pose_landmarks]),
+        }
+    if left_landmarks:
+        row["left_hand"] = {
+            "bbox": _bbox_from_landmarks(left_landmarks, width, height),
+            "visibility_mean": _mean_or_none([float(getattr(lm, "visibility", 1.0)) for lm in left_landmarks]),
+        }
+    if right_landmarks:
+        row["right_hand"] = {
+
+exec
+/bin/bash -lc "sed -n '520,780p' work/scripts/keyframe_sampling_common.py" in /data/WYC/signLanguage
+ succeeded in 0ms:
+        row["right_hand"] = {
+            "bbox": _bbox_from_landmarks(right_landmarks, width, height),
+            "visibility_mean": _mean_or_none([float(getattr(lm, "visibility", 1.0)) for lm in right_landmarks]),
+        }
+    if face_landmarks:
+        row["face"] = {
+            "bbox": _bbox_from_landmarks(face_landmarks, width, height),
+            "visibility_mean": _mean_or_none([float(getattr(lm, "visibility", 1.0)) for lm in face_landmarks]),
+        }
+
+    return row, result
+
+
+def _build_row_from_frame(frame_idx: int, fps: float, frame, holistic, cv2) -> Dict[str, Any]:
+    """把单帧转换成统一的关键点统计结构。"""
+
+    row, _ = _process_frame(frame_idx, fps, frame, holistic, cv2)
+    return row
+
+
+def _serialize_landmark_list(landmarks) -> List[Dict[str, float]]:
+    """把 MediaPipe landmark 序列转成可落盘的结构。"""
+
+    if not landmarks:
+        return []
+    serialized: List[Dict[str, float]] = []
+    for lm in landmarks:
+        item: Dict[str, float] = {
+            "x": float(getattr(lm, "x", 0.0)),
+            "y": float(getattr(lm, "y", 0.0)),
+            "z": float(getattr(lm, "z", 0.0)),
+        }
+        if hasattr(lm, "visibility"):
+            item["visibility"] = float(getattr(lm, "visibility", 0.0))
+        if hasattr(lm, "presence"):
+            item["presence"] = float(getattr(lm, "presence", 0.0))
+        serialized.append(item)
+    return serialized
+
+
+def _serialize_holistic_result(result) -> Dict[str, Any]:
+    """把 Holistic 结果序列化，供后续统一渲染使用。"""
+
+    return {
+        "pose_landmarks": _serialize_landmark_list(result.pose_landmarks.landmark if result.pose_landmarks else None),
+        "left_hand_landmarks": _serialize_landmark_list(result.left_hand_landmarks.landmark if result.left_hand_landmarks else None),
+        "right_hand_landmarks": _serialize_landmark_list(result.right_hand_landmarks.landmark if result.right_hand_landmarks else None),
+        "face_landmarks": _serialize_landmark_list(result.face_landmarks.landmark if result.face_landmarks else None),
+    }
+
+
+def _render_visual_cache(
+    cv2,
+    video_path: Path,
+    fps: float,
+    total_frames: int,
+    visual_cache: List[Dict[str, Any]],
+    video_out: Path,
+) -> Dict[str, Any]:
+    """把缓存的帧和 Holistic 结果统一渲染成图片产物。"""
+
+    from PIL import Image, ImageDraw
+    from visualize_holistic_features import _concat_triptych, _label_frame, _load_font, _draw_text_overlay, _import_drawing_helpers
+
+    contact_images: List[np.ndarray] = []
+    frame_outputs: List[Dict[str, Any]] = []
+    viz_start = time.perf_counter()
+
+    _, face_connections, pose_connections, hand_connections, _ = _import_drawing_helpers()
+
+    def _draw_serialized_landmarks(
+        image: np.ndarray,
+        landmark_data: Sequence[Dict[str, Any]],
+        connections,
+        landmark_color: Tuple[int, int, int],
+        connection_color: Tuple[int, int, int],
+        circle_radius: int,
+        line_thickness: int,
+    ) -> np.ndarray:
+        """直接根据 JSON 中的坐标画点和连线，不依赖 MediaPipe 的绘图封装。"""
+
+        if not landmark_data:
+            return image.copy()
+
+        out = image.copy()
+        height, width = out.shape[:2]
+        points: List[Optional[Tuple[int, int]]] = []
+        for item in landmark_data:
+            try:
+                x = int(float(item.get("x", 0.0)) * width)
+                y = int(float(item.get("y", 0.0)) * height)
+            except Exception:
+                points.append(None)
+                continue
+            points.append((x, y))
+
+        for a, b in connections:
+            if a >= len(points) or b >= len(points):
+                continue
+            pa = points[a]
+            pb = points[b]
+            if pa is None or pb is None:
+                continue
+            cv2.line(out, pa, pb, connection_color, line_thickness, cv2.LINE_AA)
+
+        for point in points:
+            if point is None:
+                continue
+            cv2.circle(out, point, circle_radius, landmark_color, -1, cv2.LINE_AA)
+
+        return out
+
+    def _draw_timeline(video_name: str, total_frames_value: int, sampled_indices: Sequence[int], output_path: Path) -> None:
+        width = 1400
+        height = 220
+        margin_x = 80
+        img = Image.new("RGB", (width, height), (18, 18, 18))
+        draw = ImageDraw.Draw(img)
+        line_y = 120
+        draw.line((margin_x, line_y, width - margin_x, line_y), fill=(210, 210, 210), width=6)
+
+        if total_frames_value <= 1:
+            total_frames_value = 2
+
+        font = _load_font(28)
+        small_font = _load_font(22)
+        for frac, label in [(0.0, "0%"), (0.25, "25%"), (0.5, "50%"), (0.75, "75%"), (1.0, "100%")]:
+            x = int(margin_x + frac * (width - 2 * margin_x))
+            draw.line((x, line_y - 18, x, line_y + 18), fill=(140, 140, 140), width=3)
+            draw.text((x - 18, line_y + 28), label, fill=(230, 230, 230), font=small_font)
+
+        for idx in sampled_indices:
+            frac = idx / max(1, total_frames_value - 1)
+            x = int(margin_x + frac * (width - 2 * margin_x))
+            draw.line((x, line_y - 42, x, line_y + 42), fill=(89, 173, 255), width=5)
+            draw.ellipse((x - 8, line_y - 8, x + 8, line_y + 8), fill=(89, 173, 255))
+
+        draw.text((margin_x, 20), f"{video_name} 采样时间轴", fill=(255, 255, 255), font=font)
+        draw.text((margin_x, 168), f"总帧数：{total_frames_value}   采样帧数：{len(sampled_indices)}", fill=(220, 220, 220), font=small_font)
+        img.save(output_path)
+
+    def _make_contact_sheet(images: List[np.ndarray], cols: int = 2) -> Optional[np.ndarray]:
+        if not images:
+            return None
+        w = max(img.shape[1] for img in images)
+        h = max(img.shape[0] for img in images)
+        padded: List[np.ndarray] = []
+        for img in images:
+            canvas = np.zeros((h, w, 3), dtype=np.uint8)
+            canvas[:] = (24, 24, 24)
+            y0 = (h - img.shape[0]) // 2
+            x0 = (w - img.shape[1]) // 2
+            canvas[y0:y0 + img.shape[0], x0:x0 + img.shape[1]] = img
+            padded.append(canvas)
+
+        rows: List[np.ndarray] = []
+        for start in range(0, len(padded), cols):
+            row = padded[start:start + cols]
+            if len(row) < cols:
+                blank = np.zeros((h, w, 3), dtype=np.uint8)
+                blank[:] = (24, 24, 24)
+                row = row + [blank] * (cols - len(row))
+            rows.append(np.hstack(row))
+        return np.vstack(rows)
+
+    for item in visual_cache:
+        frame = item["frame"]
+        frame_idx = int(item["frame_idx"])
+        result_data = item["result_data"] or {}
+        pose_data = result_data.get("pose_landmarks") or []
+        left_hand_data = result_data.get("left_hand_landmarks") or []
+        right_hand_data = result_data.get("right_hand_landmarks") or []
+        face_data = result_data.get("face_landmarks") or []
+
+        annotated = frame.copy()
+        annotated = _draw_serialized_landmarks(
+            annotated,
+            face_data,
+            face_connections.FACEMESH_CONTOURS,
+            landmark_color=(120, 255, 120),
+            connection_color=(220, 220, 220),
+            circle_radius=1,
+            line_thickness=1,
+        )
+        annotated = _draw_serialized_landmarks(
+            annotated,
+            pose_data,
+            pose_connections.POSE_CONNECTIONS,
+            landmark_color=(80, 220, 255),
+            connection_color=(255, 255, 255),
+            circle_radius=2,
+            line_thickness=2,
+        )
+        annotated = _draw_serialized_landmarks(
+            annotated,
+            left_hand_data,
+            hand_connections.HAND_CONNECTIONS,
+            landmark_color=(255, 120, 80),
+            connection_color=(255, 255, 255),
+            circle_radius=2,
+            line_thickness=2,
+        )
+        annotated = _draw_serialized_landmarks(
+            annotated,
+            right_hand_data,
+            hand_connections.HAND_CONNECTIONS,
+            landmark_color=(255, 120, 80),
+            connection_color=(255, 255, 255),
+            circle_radius=2,
+            line_thickness=2,
+        )
+
+        skeleton = np.zeros((frame.shape[0], frame.shape[1], 3), dtype=np.uint8)
+        skeleton[:] = (18, 18, 18)
+        skeleton = _draw_serialized_landmarks(
+            skeleton,
+            face_data,
+            face_connections.FACEMESH_CONTOURS,
+            landmark_color=(120, 255, 120),
+            connection_color=(220, 220, 220),
+            circle_radius=1,
+            line_thickness=1,
+        )
+        skeleton = _draw_serialized_landmarks(
+            skeleton,
+            pose_data,
+            pose_connections.POSE_CONNECTIONS,
+            landmark_color=(80, 220, 255),
+            connection_color=(255, 255, 255),
+            circle_radius=2,
+            line_thickness=2,
+        )
+        skeleton = _draw_serialized_landmarks(
+            skeleton,
+            left_hand_data,
+            hand_connections.HAND_CONNECTIONS,
+            landmark_color=(255, 120, 80),
+            connection_color=(255, 255, 255),
+            circle_radius=2,
+            line_thickness=2,
+        )
+        skeleton = _draw_serialized_landmarks(
+            skeleton,
+            right_hand_data,
+            hand_connections.HAND_CONNECTIONS,
+            landmark_color=(255, 120, 80),
+            connection_color=(255, 255, 255),
+            circle_radius=2,
+            line_thickness=2,
+        )
+
+        triptych = _concat_triptych(
+            _label_frame(frame, "原图"),
+            _label_frame(annotated, "关键点图"),
+            _label_frame(skeleton, "骨骼图"),
+        )
+        triptych = _draw_text_overlay(
+            triptych,
+            f"视频={video_path.stem} | 帧={frame_idx} | 时间={frame_idx / fps:.2f}s | "
+            f"姿态={bool(pose_data)} | 左手={bool(left_hand_data)} | "
+            f"右手={bool(right_hand_data)} | 面部={bool(face_data)}",
+
+codex
+The code confirms the cache already stores dense or step-dense Holistic records with `result_data` landmark arrays and lightweight row summaries. I’m moving into report drafting; before writing, I’ll record that context milestone and keep the output limited to the owned draft plus worker state files.
+exec
+/bin/bash -lc "date '+%Y-%m-%dT%H:%M:%S%z'" in /data/WYC/signLanguage
+ succeeded in 0ms:
+2026-05-20T17:19:34+0800
+
+exec
+/bin/bash -lc 'find .codex/tmux-workers/inbox/scoring-design -maxdepth 1 -type f -print | sort' in /data/WYC/signLanguage
+ succeeded in 0ms:
+codex
+The progress file is mounted read-only in this sandbox, so I can’t update it despite the worker instruction. I’ll proceed with the owned draft report path under `work/reports/` and record the progress-file blocker in the final worker report.
+exec
+/bin/bash -lc "python - <<'PY'
+from pathlib import Path
+content = '''# 手语打分 MVP 第一版评分机制设计草案
+
+更新时间：2026-05-20 17:30:00 CST  
+适用项目："'`/data/WYC/signLanguage`  
+输出性质：方法设计草案 / 原型指标说明，不是已校准评分标准。
+
+## 1. 定位与边界
+
+本草案设计第一版手语动作打分机制，用于后续离线原型和 MVP 验证。当前阶段没有真实用户视频流样本，也没有人工评分标签，因此所有分数只能称为“原型相似度”或“流程 sanity check 指标”。本阶段不得声明真实用户打分准确、不得给出已验证的及格线、不得把 0-100 分解释为已校准等级。
+
+第一版主路线采用 dense 或 step-dense `MediaPipe Holistic` 时间序列匹配：标准样本与待测样本都先生成并保存原始 `Holistic` JSON，再在缓存上做归一化、时序对齐、逐关节误差和诊断输出。关键帧打分只作为压缩版或诊断支线，用于降低展示成本、解释差异位置，不能替代 dense 主线。
+
+现有工程已经拆分为候选生成、选择策略和可视化三层。评分模块应继续遵守该边界：
+
+- 候选生成层：负责从视频得到 dense / step-dense `Holistic` JSON 缓存。
+- 选择层：从缓存中选关键帧，不重新跑 `Holistic`。
+- 评分层：读取缓存中的 `result_data`、帧号、时间戳、可见性和 presence 信息，完成对齐和误差计算。
+- 可视化层：读取缓存和评分输出生成图，不重新跑 `Holistic`。
+
+## 2. 输入与基本数据结构
+
+建议第一版评分输入包括两类序列：
+
+- 标准模板序列 `template_sequence`：来自标准样本视频的 dense 或 step-dense `Holistic` JSON。
+- 待测序列 `candidate_sequence`：来自用户或伪用户样本的 dense 或 step-dense `Holistic` JSON。
+
+每帧至少需要保留：
+
+- `frame_idx`：原视频帧号。
+- `timestamp_sec`：时间戳。
+- `result_data.pose_landmarks`：姿态关键点。
+- `result_data.left_hand_landmarks`：左手关键点。
+- `result_data.right_hand_landmarks`：右手关键点。
+- `result_data.face_landmarks`：面部关键点。
+- `row.pose_present / left_hand_present / right_hand_present / face_present`：当前帧检测状态。
+- `row.*.visibility_mean` 与 bbox 摘要：用于质量诊断。
+- 视频元信息：`fps`、`total_frames`、分辨率、是否镜像、采样步长、动作起止标注版本。
+
+第一版不要求实时流式评分，优先做离线批处理。后续接入前端时，可以把相同机制拆成滑窗对齐和增量诊断。
+
+## 3. 预处理设计
+
+### 3.1 坐标统一
+
+`Holistic` 原始坐标通常是图像归一化坐标 `x/y` 和相对深度 `z`。评分前统一转换为身体坐标系，避免不同视频分辨率、人物大小和相机距离直接影响距离。
+
+建议流程：
+
+1. 读取每帧 pose、hand、face 原始 landmark。
+2. 以身体中心作为原点。优先使用左右肩中点；若肩不可用，使用左右髋中点；再退化到 pose bbox 中心。
+3. 以稳健身体尺度归一化。优先使用整段视频的肩宽中位数；肩宽不可用时使用肩-髋高度中位数；再退化到 pose bbox 对角线中位数。
+4. 可选做肩线水平校正。左右肩都稳定可见时，将肩线旋转到水平，以消除轻微相机倾斜；如果肩线不稳定则不旋转，避免引入抖动。
+5. `z` 坐标按同一身体尺度缩放，但第一版权重低于 `x/y`，因为单目深度噪声较大。
+
+尺度不要逐帧单独估计后立即使用，否则会把 pose 抖动引入手部轨迹。建议使用整段或动作有效区间的中位尺度，并对异常尺度做上下限裁剪。
+
+### 3.2 局部手型归一化
+
+手部动作同时包含“手在身体前的位置”和“手指形状”。第一版应拆成两类误差：
+
+- 全局手部位置：手腕、掌心、指尖相对身体坐标的位置，使用身体尺度归一化。
+- 局部手型：以手腕或掌心为局部原点，以掌宽或腕到中指 MCP 距离为局部尺度，比较手指骨架形状和方向。
+
+这样可以避免大臂位置错误被手型分数吞掉，也避免人物体型差异把手型距离放大。
+
+### 3.3 左右手处理
+
+默认采用严格左右手匹配：标准左手对待测左手，标准右手对待测右手。手语词汇中左右方向、主辅手关系可能有语义，因此第一版不应自动用“左右交换后误差更小”来给高分。
+
+需要在元数据中显式记录：
+
+- `camera_mirror`：视频是否自拍镜像或已经水平翻转。
+- `dominant_hand`：标准动作是否有主手要求。
+- `allow_handedness_swap`：某个词汇未来是否允许左右手互换。
+
+MVP 默认策略：
+
+- 如果元数据说明视频是镜像，则先统一反镜像映射，再进入评分。
+- 如果标准模板某手持续出现而待测同侧手缺失，计入完成度和对应手部误差。
+- 如果标准模板只有一只手参与而待测多出另一只手，先不直接判错，但记录“额外手部运动”诊断；未来由词汇级规则决定是否扣分。
+- 只有当词汇元数据明确允许左右互换时，才启用左右交换对齐的候选分支。
+
+### 3.4 可见性、缺失点与插值
+
+缺失处理要把“动作没做”和“模型没检测到”分开。建议保留三类 mask：
+
+- `template_visible[g, j, t]`：标准模板在时间 `t` 的组 `g`、关节 `j` 是否可用。
+- `candidate_visible[g, j, u]`：待测样本对应点是否可用。
+- `joint_weight[g, j, t]`：该点在该帧的有效权重，结合 visibility、presence 和词汇权重。
+
+判断规则：
+
+- pose：优先使用 landmark `visibility`，低于阈值的点降权或视为缺失。
+- hands：MediaPipe 手部 landmark 通常没有稳定 visibility，使用 `left_hand_present/right_hand_present`、landmark 数量、手部 bbox 合理性和相邻帧连续性判断。
+- face：FaceMesh 的 visibility 可能不可用或不可靠，第一版主要使用 face presence 和少量稳定区域，不把面部作为高权重扣分项。
+
+插值策略：
+
+- 1 到 2 个采样点的短缺口可线性插值，仅用于平滑轨迹和帮助 DTW 计算。
+- 长缺口不插值成真实动作，直接保留缺失 mask，并在 completion/confidence 中扣减。
+- 标准模板缺失点不参与误差主项，但会产生“标准模板质量不足”警告。
+- 待测样本在标准模板可见位置缺失时，计入完成度扣分和对应组缺失警告。
+- 双方都缺失时不贡献动作误差，但降低该时间段的信息量和置信度。
+
+### 3.5 平滑与异常值
+
+建议对归一化后的关键点做轻量平滑：
+
+- 对每个关键点的连续可见片段做中值滤波或一阶低通。
+- 对单帧跳变大、前后帧又恢复的点标记为 tracking spike，降低权重。
+- 不对动作峰值强行抹平，手语中的快速转折可能正是有效动作。
+
+## 4. 时序对齐设计
+
+评分前需要把标准模板时间轴 `t` 和待测时间轴 `u` 对齐。第一版同时保留三种方式，但用途不同。
+
+### 4.1 帧间代价函数
+
+DTW 和分段对齐都需要帧间代价。建议代价由多个组组成：
+
+```text
+cost(t, u) = sum_g weight_g * robust_distance(feature_g(template[t]), feature_g(candidate[u]))
+             + missing_penalty(t, u)
+```
+
+其中 `g` 包括右手、左手、双手关系、手腕轨迹、肘肩姿态、躯干和面部低权重项。距离使用 Huber 或裁剪均值，避免个别手指点飘移主导整帧。缺失惩罚只在标准可见、待测缺失时较高；标准缺失时主要转为模板质量警告。
+
+### 4.2 DTW baseline
+
+DTW 是第一版主基线。它适合当前缺少动作起止精确标注、用户速度可能不同的情况。
+
+建议设置：
+
+- 单调路径：时间只能向前，不允许回退。
+- 边界约束：首尾尽量覆盖动作有效区间，允许少量准备段/收尾段跳过。
+- 带宽约束：使用 Sakoe-Chiba band 或类似窗口，初始可设为较短序列长度的 15%-25%，避免路径过度扭曲。
+- 步长约束：限制连续水平/垂直移动次数，避免一个标准帧匹配过多用户帧。
+- 输出完整 path，用于后续节奏和差异定位。
+
+适用场景：
+
+- 第一版离线原型默认使用。
+- 标准样本和待测样本都是 dense / step-dense 序列。
+- 动作较短、阶段不复杂，或者还没有可靠关键帧锚点。
+
+风险：
+
+- 复杂多阶段动作中，DTW 可能用过度拉伸掩盖顺序或节奏错误。
+- 如果一段关键动作缺失，DTW 可能绕开缺失段而让总分偏高。
+
+因此 DTW 分数必须配合 completion、路径斜率异常和最差时间段诊断一起看。
+
+### 4.3 分段 DTW
+
+分段 DTW 在动作被拆成多个阶段后分别对齐，防止全局 DTW 把不同阶段互相错配。
+
+阶段来源可以按优先级使用：
+
+1. 人工动作起止和阶段标注：未来标准采集阶段应补充。
+2. 标准模板能量曲线：手腕、掌心和指尖速度峰值、停顿点、方向变化点。
+3. 关键帧锚点：由已有选择策略得到的关键动作帧。
+4. 均匀分段：没有更好信息时作为兜底，仅用于实验。
+
+适用场景：
+
+- 词汇动作包含明显准备、主动作、收尾，或多个连续子动作。
+- 需要单独诊断“哪一段做错”。
+- 全局 DTW path 出现长水平/垂直平台、异常折返式压缩或阶段错配。
+
+输出应包含每段的局部分数、局部缺失率、局部节奏偏差和最差帧范围。第一版可以先把分段 DTW作为诊断增强，不强制替代全局 DTW 总分。
+
+### 4.4 关键帧锚点对齐
+
+关键帧锚点对齐是压缩/诊断支线。它读取 dense 缓存后选出的关键帧，不重新跑 `Holistic`。
+
+基本做法：
+
+- 标准模板选出 `K` 个关键帧或阶段锚点。
+- 待测序列在同一阶段内寻找最相近帧，或用 DTW path 反查对应帧。
+- 输出锚点级误差、关键帧对比图和动作阶段提示。
+
+适用场景：
+
+- 前端或报告需要展示少量可解释帧。
+- 存储或计算受限，需要先用关键帧快速诊断。
+- dense DTW 已经完成，需要从 path 中抽取代表性错误帧。
+
+限制：
+
+- 关键帧可能漏掉过渡动作、节奏问题和短时手型错误。
+- 不应作为第一版唯一评分路线。
+
+## 5. 逐关节与分组误差
+
+第一版评分应先计算细粒度误差，再汇总成组件分。这样即使总分不校准，也能给出有用诊断。
+
+### 5.1 手部误差
+
+手部是主权重。建议拆成：
+
+- 手腕/掌心轨迹误差：手在身体坐标中的位置是否正确。
+- 指尖轨迹误差：拇指、食指、中指、无名指、小指尖位置是否正确。
+- 手型局部误差：局部坐标下 21 个手部点的距离。
+- 骨向量/关节角误差：相邻骨段方向是否接近，减少手大小差异影响。
+- 双手关系误差：左右手掌心距离、相对上下左右位置、是否接触或接近。
+
+手部总误差可记录为：
+
+```text
+E_hand = w_pos * E_palm_trajectory
+       + w_shape * E_local_shape
+       + w_angle * E_bone_direction
+       + w_relation * E_two_hand_relation
+       + w_missing * missing_hand_penalty
+```
+
+如果模板某一侧手长期不存在，该侧不进入主动作误差，但待测样本出现持续额外运动时输出警告。
+
+### 5.2 手腕误差
+
+手腕连接手部和手臂，是最重要的动作轨迹点之一。建议同时使用：
+
+- hand landmark 的 wrist 点：手部检测成功时精度更适合手型。
+- pose landmark 的 wrist 点：手部缺失时作为弱替代。
+
+当两者同时存在但相差过大时，记录 tracking inconsistency。手腕误差应参与手部动作分，也参与肘肩姿态分。
+
+### 5.3 肘、肩与上肢姿态误差
+
+上肢姿态主要反映动作方向、手臂伸展和身体前空间位置。建议使用 pose landmark：左右肩、左右肘、左右腕。
+
+指标：
+
+- 肩-肘、肘-腕骨向量方向差。
+- 肩-肘-腕夹角差。
+- 手腕相对肩线的位置。
+- 左右肩线稳定性和身体转动提示。
+
+该组权重低于手部，但对“手的位置对、手型对，但手臂姿势明显不对”的场景很关键。
+
+### 5.4 躯干误差
+
+躯干用于归一化和姿态稳定诊断，通常不应高权重扣分。建议指标：
+
+- 肩线角度差。
+- 躯干中心偏移。
+- 肩-髋方向或上身倾斜差。
+- 身体尺度和 bbox 稳定性。
+
+如果躯干剧烈偏移，更多解释为拍摄条件或站位问题，进入 posture 和 confidence，而不是直接当作手语动作错误。
+
+### 5.5 面部误差
+
+当前 demo 和第一版数据未必有可靠的表情标注。面部建议低权重、诊断优先：
+
+- face presence：面部是否持续可见。
+- 头部朝向近似：鼻尖、眼角、脸部 bbox 中心。
+- 嘴部开合或少量口型点：仅在词汇元数据标记“表情/口型重要”时提高权重。
+
+未标注表情要求前，不应因为 face mesh 噪声给动作主分大幅扣分。
+
+## 6. 组件分设计
+
+所有分数命名必须带 `prototype` 或在报告中明确“未校准”。建议输出 0-100 的相对分只是为了可读性，不代表真实考试分。
+
+### 6.1 误差到原型分的转换
+
+建议每个组件先输出原始误差，再输出原型相似度：
+
+```text
+score_component_prototype = 100 * exp(- E_component / tau_component)
+```
+
+`tau_component` 第一版可以使用固定经验值或标准样本自扰动实验估计；未来必须用真实用户样本和人工标签校准。报告中必须同时保留 `E_component`，避免只看一个伪校准分。
+
+### 6.2 总分
+
+第一版建议总分是组件加权和：
+
+```text
+total_score_prototype =
+    0.45 * hand_action_score_prototype
+  + 0.20 * posture_score_prototype
+  + 0.15 * rhythm_tempo_score_prototype
+  + 0.20 * completion_confidence_score_prototype
+```
+
+初始权重说明：
+
+- 手部动作 45%：手语动作的主体，含手型、手部轨迹和双手关系。
+- 姿态 20%：上肢和躯干辅助动作，避免只看手指。
+- 节奏/速度 15%：反映动作快慢、阶段时长和 DTW 形变。
+- 完成度/置信度 20%：反映是否拍全、关键点是否足够、动作是否被可靠观察。
+
+未来有标签后，应按词汇和任务目标重新学习或校准权重。对于高度依赖表情的词汇，可加入 face/expression 子权重；对于单手词汇，可降低非参与手权重。
+
+### 6.3 手部动作分
+
+组成：
+
+- 主手轨迹相似度。
+- 辅助手轨迹相似度。
+- 手型局部相似度。
+- 指尖/骨向量相似度。
+- 双手相对关系。
+- 手部缺失惩罚。
+
+输出字段建议：
+
+- `hand_action_score_prototype`
+- `left_hand_score_prototype`
+- `right_hand_score_prototype`
+- `hand_shape_error_mean`
+- `palm_trajectory_error_mean`
+- `two_hand_relation_error_mean`
+- `hand_missing_rate_template`
+- `hand_missing_rate_candidate`
+
+### 6.4 姿态分
+
+组成：
+
+- 肩、肘、腕方向和角度。
+- 手腕相对肩线位置。
+- 躯干中心和肩线倾斜。
+- pose visibility 和稳定性。
+
+输出字段建议：
+
+- `posture_score_prototype`
+- `arm_angle_error_mean`
+- `wrist_pose_error_mean`
+- `shoulder_line_error_mean`
+- `torso_stability_warning`
+
+### 6.5 节奏/速度分
+
+节奏不等于动作相似度。它从对齐 path 中计算：
+
+- 总时长比：待测动作有效时长 / 模板动作有效时长。
+- 分段时长比：各阶段是否过快或过慢。
+- DTW path 斜率：是否存在长时间停顿、跳过或过度拉伸。
+- 速度曲线相似度：手腕/掌心速度峰值位置是否接近。
+
+输出字段建议：
+
+- `rhythm_tempo_score_prototype`
+- `duration_ratio`
+- `phase_duration_ratios`
+- `dtw_warping_amount`
+- `long_pause_ranges`
+- `skipped_motion_ranges`
+
+### 6.6 完成度/置信度分
+
+完成度/置信度不是动作正确性本身，而是“这次结果是否足够可信”。建议由以下因素组成：
+
+- 动作有效区间是否覆盖标准模板的主要阶段。
+- 标准需要出现的手是否在待测样本中持续可见。
+- pose 是否足够稳定可用于归一化。
+- 关键帧/关键阶段是否有对应观测。
+- DTW path 是否覆盖完整，是否出现异常压缩。
+- 模板自身是否存在严重缺失。
+
+输出字段建议：
+
+- `completion_confidence_score_prototype`
+- `candidate_observed_ratio`
+- `template_quality_score`
+- `required_hand_coverage`
+- `normalization_confidence`
+- `alignment_confidence`
+- `warnings`
+
+如果置信度低，UI 或报告应提示“本次结果不适合解释为动作水平”，而不是简单显示低分。
+
+## 7. 诊断输出设计
+
+第一版的价值不只在总分，而在定位“哪里不像、哪个部位不像、是否因为看不清”。建议输出结构化 JSON 和可视化文件。
+
+### 7.1 最差时间范围
+
+从 DTW path 或分段 DTW 中聚合滑窗代价，输出前 N 个最差范围：
+
+- `template_start_frame / template_end_frame`
+- `candidate_start_frame / candidate_end_frame`
+- `template_time_sec / candidate_time_sec`
+- `dominant_error_groups`
+- `error_mean / error_p95`
+- `missing_rate`
+- `reason_tags`：如 `hand_shape_mismatch`、`right_hand_missing`、`tempo_too_fast`、`alignment_warped`
+
+窗口长度可先设置为 0.3-0.8 秒或 5-15 个采样点，后续按词汇时长调整。
+
+### 7.2 最差关节组与关节
+
+输出组级排序：
+
+- 右手局部手型。
+- 左手局部手型。
+- 右手腕轨迹。
+- 左手腕轨迹。
+- 双手相对关系。
+- 肘肩姿态。
+- 躯干稳定。
+- 面部/头部可见性。
+
+每组保留：
+
+- `mean_error`
+- `p95_error`
+- `visible_pair_count`
+- `candidate_missing_rate_when_template_visible`
+- `template_missing_rate`
+- `example_frames`
+
+对手部可进一步列出指尖或骨段，例如拇指、食指、中指、无名指、小指、掌心。
+
+### 7.3 缺失数据警告
+
+建议标准化 warning code：
+
+- `candidate_right_hand_missing_high`：待测右手缺失率过高。
+- `candidate_left_hand_missing_high`：待测左手缺失率过高。
+- `template_hand_missing_high`：标准模板手部缺失率过高，模板质量不足。
+- `pose_visibility_low`：pose 可见性低，归一化不可靠。
+- `face_not_visible`：面部不可见，仅作低权重提示。
+- `normalization_scale_unstable`：肩宽或躯干尺度抖动过大。
+- `camera_mirror_unknown`：镜像状态未知，左右手解释可能不可靠。
+- `alignment_path_degenerate`：DTW path 过度水平/垂直，节奏解释不可靠。
+- `action_incomplete`：动作有效区间疑似被截断。
+
+warning 不等于扣分项本身。它们用于解释为什么本次原型分不可靠，或为什么某一组件变低。
+
+### 7.4 可视化产物
+
+可视化应读取已有视频帧和缓存的 `Holistic` JSON，不重新执行识别。建议产物：
+
+- `alignment_path.png`：DTW path 热图，显示标准时间轴与待测时间轴映射。
+- `group_error_timeline.png`：按时间显示手部、姿态、节奏和缺失代价。
+- `joint_error_heatmap.png`：关节/关节组对时间的误差热力图。
+- `worst_ranges_contact_sheet.png`：最差时间段的标准/待测同步对比图。
+- `keyframe_anchor_compare.png`：关键帧锚点对比图，作为报告摘要。
+- `normalized_skeleton_overlay.png`：归一化后骨架叠加，用于检查尺度和左右映射。
+- `score_breakdown.json`：完整结构化评分和诊断。
+- `score_report.md`：面向人工检查的简版中文报告。
+
+## 8. 输出 JSON 草案
+
+第一版评分输出可以采用如下结构：
+
+```json
+{
+  "schema_version": "scoring_prototype_v0.1",
+  "generated_at": "2026-05-20T17:30:00+08:00",
+  "claim_level": "prototype_similarity_not_calibrated",
+  "template": {
+    "word": "花",
+    "source_json": ".../candidate_cache/花/花_holistic_results.json",
+    "fps": 29.45,
+    "sample_step": 4,
+    "quality_warnings": []
+  },
+  "candidate": {
+    "source_json": "...",
+    "fps": 29.45,
+    "sample_step": 4,
+    "quality_warnings": []
+  },
+  "alignment": {
+    "method": "dtw_baseline",
+    "path_length": 0,
+    "warping_amount": 0.0,
+    "alignment_confidence": 0.0
+  },
+  "scores": {
+    "total_score_prototype": 0.0,
+    "hand_action_score_prototype": 0.0,
+    "posture_score_prototype": 0.0,
+    "rhythm_tempo_score_prototype": 0.0,
+    "completion_confidence_score_prototype": 0.0
+  },
+  "errors": {
+    "hand_shape_error_mean": 0.0,
+    "palm_trajectory_error_mean": 0.0,
+    "arm_angle_error_mean": 0.0,
+    "duration_ratio": 1.0
+  },
+  "diagnostics": {
+    "worst_time_ranges": [],
+    "worst_joint_groups": [],
+    "missing_data_warnings": [],
+    "visualization_files": []
+  }
+}
+```
+
+注意：示例中的 0 值只是 schema 占位，不代表真实结果。
+
+## 9. 第一版离线验证口径
+
+在没有真实用户样本和人工标签前，建议只做以下 sanity check：
+
+- 同一视频自匹配：应该得到最低误差和最高原型相似度。
+- 同一视频降采样/轻微噪声/时间缩放：应该仍然相近，同时 rhythm 或局部误差能反映扰动。
+- 同一视频截断：completion/confidence 应明显下降，并输出动作不完整警告。
+- 不同词汇互匹配：多数情况下应比自匹配和轻扰动更差，并能定位手部轨迹或手型差异。
+- 手部遮挡模拟：hand missing warning 和完成度应下降，而不是静默给高分。
+
+这些测试只能证明流程和诊断方向是否合理，不能证明真实用户评分有效。
+
+## 10. 后续校准需求
+
+进入正式评分前必须补齐：
+
+- 每个词汇多条标准模板，覆盖不同标准示范者和自然速度变化。
+- 真实用户样本，包含初学者、熟练者、不同身高体型、不同拍摄设备。
+- 人工评分或专家分项标签，至少覆盖手型、位置、姿态、节奏和完成度。
+- 动作起止和阶段标注，用于分段 DTW 与节奏校准。
+- 词汇级元数据：单手/双手、主手、是否允许左右互换、表情/口型是否重要、关键阶段权重。
+
+校准后才能确定：
+
+- 组件权重是否合理。
+- `tau_component` 如何取值。
+- 0-100 分与人工评分的关系。
+- 及格线、等级线或学习建议是否可信。
+- 不同词汇是否需要不同阈值。
+
+## 11. 建议实现顺序
+
+1. 实现缓存读取和预处理模块，输入现有 dense / step-dense `Holistic` JSON，输出归一化序列和可见性 mask。
+2. 实现 DTW baseline，对齐后输出 path、原始误差和基础组件分。
+3. 实现诊断 JSON：最差时间段、最差关节组、缺失警告。
+4. 接入现有可视化缓存，生成 DTW path、误差时间线和关键帧对比图。
+5. 用 demo 视频做自匹配、扰动、截断和不同词汇负例 sanity check。
+6. 再加入分段 DTW 和关键帧锚点对齐，作为诊断增强。
+7. 等真实用户样本和人工标签可用后，再做权重、阈值和评分等级校准。
+
+## 12. 本草案的关键结论
+
+- 第一版评分主线应是 dense `Holistic` 时间序列匹配，关键帧路线只做压缩和诊断。
+- 评分前必须做身体尺度归一化、左右手元数据处理和缺失 mask，否则距离没有可比性。
+- DTW baseline 可以先跑通 MVP，但必须配合完成度、路径异常和最差区间诊断，避免过度对齐掩盖错误。
+- 总分只能是 prototype similarity，不是已校准 pass/fail 分数。
+- 诊断输出应优先服务人工检查：指出最差时间段、最差关节组、缺失原因和可视化证据。
+'"'''
+path = Path('work/reports/scoring_mechanism_design_20260520_draft.md')
+path.write_text(content, encoding='utf-8')
+print(path)
+print(len(content.splitlines()))
+PY" in /data/WYC/signLanguage
+ succeeded in 0ms:
+work/reports/scoring_mechanism_design_20260520_draft.md
+546
+
+codex
+The owned Chinese draft report is written under `work/reports/`. I’m validating the file, checking for queued coordinator messages again, and then I’ll try the assigned tmux worker report/progress files once more so the blocker is explicit if the mount remains read-only.
+exec
+/bin/bash -lc "sed -n '1,80p' work/reports/scoring_mechanism_design_20260520_draft.md" in /data/WYC/signLanguage
+ succeeded in 0ms:
+# 手语打分 MVP 第一版评分机制设计草案
+
+更新时间：2026-05-20 17:30:00 CST  
+适用项目：`/data/WYC/signLanguage`  
+输出性质：方法设计草案 / 原型指标说明，不是已校准评分标准。
+
+## 1. 定位与边界
+
+本草案设计第一版手语动作打分机制，用于后续离线原型和 MVP 验证。当前阶段没有真实用户视频流样本，也没有人工评分标签，因此所有分数只能称为“原型相似度”或“流程 sanity check 指标”。本阶段不得声明真实用户打分准确、不得给出已验证的及格线、不得把 0-100 分解释为已校准等级。
+
+第一版主路线采用 dense 或 step-dense `MediaPipe Holistic` 时间序列匹配：标准样本与待测样本都先生成并保存原始 `Holistic` JSON，再在缓存上做归一化、时序对齐、逐关节误差和诊断输出。关键帧打分只作为压缩版或诊断支线，用于降低展示成本、解释差异位置，不能替代 dense 主线。
+
+现有工程已经拆分为候选生成、选择策略和可视化三层。评分模块应继续遵守该边界：
+
+- 候选生成层：负责从视频得到 dense / step-dense `Holistic` JSON 缓存。
+- 选择层：从缓存中选关键帧，不重新跑 `Holistic`。
+- 评分层：读取缓存中的 `result_data`、帧号、时间戳、可见性和 presence 信息，完成对齐和误差计算。
+- 可视化层：读取缓存和评分输出生成图，不重新跑 `Holistic`。
+
+## 2. 输入与基本数据结构
+
+建议第一版评分输入包括两类序列：
+
+- 标准模板序列 `template_sequence`：来自标准样本视频的 dense 或 step-dense `Holistic` JSON。
+- 待测序列 `candidate_sequence`：来自用户或伪用户样本的 dense 或 step-dense `Holistic` JSON。
+
+每帧至少需要保留：
+
+- `frame_idx`：原视频帧号。
+- `timestamp_sec`：时间戳。
+- `result_data.pose_landmarks`：姿态关键点。
+- `result_data.left_hand_landmarks`：左手关键点。
+- `result_data.right_hand_landmarks`：右手关键点。
+- `result_data.face_landmarks`：面部关键点。
+- `row.pose_present / left_hand_present / right_hand_present / face_present`：当前帧检测状态。
+- `row.*.visibility_mean` 与 bbox 摘要：用于质量诊断。
+- 视频元信息：`fps`、`total_frames`、分辨率、是否镜像、采样步长、动作起止标注版本。
+
+第一版不要求实时流式评分，优先做离线批处理。后续接入前端时，可以把相同机制拆成滑窗对齐和增量诊断。
+
+## 3. 预处理设计
+
+### 3.1 坐标统一
+
+`Holistic` 原始坐标通常是图像归一化坐标 `x/y` 和相对深度 `z`。评分前统一转换为身体坐标系，避免不同视频分辨率、人物大小和相机距离直接影响距离。
+
+建议流程：
+
+1. 读取每帧 pose、hand、face 原始 landmark。
+2. 以身体中心作为原点。优先使用左右肩中点；若肩不可用，使用左右髋中点；再退化到 pose bbox 中心。
+3. 以稳健身体尺度归一化。优先使用整段视频的肩宽中位数；肩宽不可用时使用肩-髋高度中位数；再退化到 pose bbox 对角线中位数。
+4. 可选做肩线水平校正。左右肩都稳定可见时，将肩线旋转到水平，以消除轻微相机倾斜；如果肩线不稳定则不旋转，避免引入抖动。
+5. `z` 坐标按同一身体尺度缩放，但第一版权重低于 `x/y`，因为单目深度噪声较大。
+
+尺度不要逐帧单独估计后立即使用，否则会把 pose 抖动引入手部轨迹。建议使用整段或动作有效区间的中位尺度，并对异常尺度做上下限裁剪。
+
+### 3.2 局部手型归一化
+
+手部动作同时包含“手在身体前的位置”和“手指形状”。第一版应拆成两类误差：
+
+- 全局手部位置：手腕、掌心、指尖相对身体坐标的位置，使用身体尺度归一化。
+- 局部手型：以手腕或掌心为局部原点，以掌宽或腕到中指 MCP 距离为局部尺度，比较手指骨架形状和方向。
+
+这样可以避免大臂位置错误被手型分数吞掉，也避免人物体型差异把手型距离放大。
+
+### 3.3 左右手处理
+
+默认采用严格左右手匹配：标准左手对待测左手，标准右手对待测右手。手语词汇中左右方向、主辅手关系可能有语义，因此第一版不应自动用“左右交换后误差更小”来给高分。
+
+需要在元数据中显式记录：
+
+- `camera_mirror`：视频是否自拍镜像或已经水平翻转。
+- `dominant_hand`：标准动作是否有主手要求。
+- `allow_handedness_swap`：某个词汇未来是否允许左右手互换。
+
+MVP 默认策略：
+
+- 如果元数据说明视频是镜像，则先统一反镜像映射，再进入评分。
+- 如果标准模板某手持续出现而待测同侧手缺失，计入完成度和对应手部误差。
+- 如果标准模板只有一只手参与而待测多出另一只手，先不直接判错，但记录“额外手部运动”诊断；未来由词汇级规则决定是否扣分。
+
+exec
+/bin/bash -lc 'find .codex/tmux-workers/inbox/scoring-design -maxdepth 1 -type f -print | sort' in /data/WYC/signLanguage
+ succeeded in 0ms:
+exec
+/bin/bash -lc 'wc -l work/reports/scoring_mechanism_design_20260520_draft.md' in /data/WYC/signLanguage
+ succeeded in 0ms:
+546 work/reports/scoring_mechanism_design_20260520_draft.md
+
+exec
+/bin/bash -lc 'git status --short' in /data/WYC/signLanguage
+ succeeded in 0ms:
+ M work/worklog_sign.md
+?? .codex/
+?? work/generated/scoring_mvp_run1/
+?? work/reports/scoring_data_cache_audit_20260520_draft.md
+?? work/reports/scoring_mechanism_design_20260520_draft.md
+?? work/reports/scoring_mvp_followup_20260520.md
+?? work/reports/scoring_mvp_phase_summary_20260520.md
+?? work/reports/scoring_mvp_prototype_plan_20260520_draft.md
+?? work/reports/standard_data_collection_protocol_20260520_draft.md
+?? work/scripts/score_holistic_sequence_mvp.py
+?? work/summary_report.md
+?? "work/workEpoch1\346\261\207\346\212\245-wyc.docx"
+?? "work/\346\211\213\350\257\255\346\211\223\345\210\206\346\212\200\346\234\257\345\256\236\350\267\265workEpoch1.docx"
+
+exec
+/bin/bash -lc 'tail -n 80 work/reports/scoring_mechanism_design_20260520_draft.md' in /data/WYC/signLanguage
+ succeeded in 0ms:
+    "sample_step": 4,
+    "quality_warnings": []
+  },
+  "alignment": {
+    "method": "dtw_baseline",
+    "path_length": 0,
+    "warping_amount": 0.0,
+    "alignment_confidence": 0.0
+  },
+  "scores": {
+    "total_score_prototype": 0.0,
+    "hand_action_score_prototype": 0.0,
+    "posture_score_prototype": 0.0,
+    "rhythm_tempo_score_prototype": 0.0,
+    "completion_confidence_score_prototype": 0.0
+  },
+  "errors": {
+    "hand_shape_error_mean": 0.0,
+    "palm_trajectory_error_mean": 0.0,
+    "arm_angle_error_mean": 0.0,
+    "duration_ratio": 1.0
+  },
+  "diagnostics": {
+    "worst_time_ranges": [],
+    "worst_joint_groups": [],
+    "missing_data_warnings": [],
+    "visualization_files": []
+  }
+}
+```
+
+注意：示例中的 0 值只是 schema 占位，不代表真实结果。
+
+## 9. 第一版离线验证口径
+
+在没有真实用户样本和人工标签前，建议只做以下 sanity check：
+
+- 同一视频自匹配：应该得到最低误差和最高原型相似度。
+- 同一视频降采样/轻微噪声/时间缩放：应该仍然相近，同时 rhythm 或局部误差能反映扰动。
+- 同一视频截断：completion/confidence 应明显下降，并输出动作不完整警告。
+- 不同词汇互匹配：多数情况下应比自匹配和轻扰动更差，并能定位手部轨迹或手型差异。
+- 手部遮挡模拟：hand missing warning 和完成度应下降，而不是静默给高分。
+
+这些测试只能证明流程和诊断方向是否合理，不能证明真实用户评分有效。
+
+## 10. 后续校准需求
+
+进入正式评分前必须补齐：
+
+- 每个词汇多条标准模板，覆盖不同标准示范者和自然速度变化。
+- 真实用户样本，包含初学者、熟练者、不同身高体型、不同拍摄设备。
+- 人工评分或专家分项标签，至少覆盖手型、位置、姿态、节奏和完成度。
+- 动作起止和阶段标注，用于分段 DTW 与节奏校准。
+- 词汇级元数据：单手/双手、主手、是否允许左右互换、表情/口型是否重要、关键阶段权重。
+
+校准后才能确定：
+
+- 组件权重是否合理。
+- `tau_component` 如何取值。
+- 0-100 分与人工评分的关系。
+- 及格线、等级线或学习建议是否可信。
+- 不同词汇是否需要不同阈值。
+
+## 11. 建议实现顺序
+
+1. 实现缓存读取和预处理模块，输入现有 dense / step-dense `Holistic` JSON，输出归一化序列和可见性 mask。
+2. 实现 DTW baseline，对齐后输出 path、原始误差和基础组件分。
+3. 实现诊断 JSON：最差时间段、最差关节组、缺失警告。
+4. 接入现有可视化缓存，生成 DTW path、误差时间线和关键帧对比图。
+5. 用 demo 视频做自匹配、扰动、截断和不同词汇负例 sanity check。
+6. 再加入分段 DTW 和关键帧锚点对齐，作为诊断增强。
+7. 等真实用户样本和人工标签可用后，再做权重、阈值和评分等级校准。
+
+## 12. 本草案的关键结论
+
+- 第一版评分主线应是 dense `Holistic` 时间序列匹配，关键帧路线只做压缩和诊断。
+- 评分前必须做身体尺度归一化、左右手元数据处理和缺失 mask，否则距离没有可比性。
+- DTW baseline 可以先跑通 MVP，但必须配合完成度、路径异常和最差区间诊断，避免过度对齐掩盖错误。
+- 总分只能是 prototype similarity，不是已校准 pass/fail 分数。
+- 诊断输出应优先服务人工检查：指出最差时间段、最差关节组、缺失原因和可视化证据。
+
+exec
+/bin/bash -lc 'git status --short work/reports/scoring_mechanism_design_20260520_draft.md .codex/tmux-workers/progress/scoring-design.md .codex/tmux-workers/reports/scoring-design.md' in /data/WYC/signLanguage
+ succeeded in 0ms:
+?? .codex/tmux-workers/progress/scoring-design.md
+?? .codex/tmux-workers/reports/scoring-design.md
+?? work/reports/scoring_mechanism_design_20260520_draft.md
+
+exec
+/bin/bash -lc "stat -c '%n %s bytes %y' work/reports/scoring_mechanism_design_20260520_draft.md .codex/tmux-workers/progress/scoring-design.md 2>/dev/null || true" in /data/WYC/signLanguage
+ succeeded in 0ms:
+work/reports/scoring_mechanism_design_20260520_draft.md 23472 bytes 2026-05-20 17:22:40.799287822 +0800
+.codex/tmux-workers/progress/scoring-design.md 1426 bytes 2026-05-20 17:21:51.553695985 +0800
+
+exec
+/bin/bash -lc "sed -n '1,120p' .codex/tmux-workers/progress/scoring-design.md 2>/dev/null || true" in /data/WYC/signLanguage
+ succeeded in 0ms:
+# scoring-design Progress
+
+Updated: 2026-05-20T17:16:24+08:00
+Status: launched
+Session: signlanguage-scoring-workers:cw-scoring-design
+Working directory: /data/WYC/signLanguage
+
+## Current Progress
+
+- Started with task plan: /data/WYC/signLanguage/.codex/tmux-workers/workplans/scoring-design.md
+- Inbox directory: /data/WYC/signLanguage/.codex/tmux-workers/inbox/scoring-design
+- Background job registry: /data/WYC/signLanguage/.codex/tmux-workers/jobs/scoring-design.json
+- Log file will be updated under this worker state directory.
+
+## Next
+
+- Worker should update this file when key milestones, blockers, or completion occur.
+
+## Supervisor Capture - 2026-05-20T17:16:45+08:00
+
+- Target: signlanguage-scoring-workers:cw-scoring-design
+- State: running
+- Capture changed: True
+- Latest capture: /data/WYC/signLanguage/.codex/tmux-workers/captures/scoring-design/2026-05-20T17-16-45-08-00.txt
+
+## Supervisor Capture - 2026-05-20T17:16:53+08:00
+
+- Target: signlanguage-scoring-workers:cw-scoring-design
+- State: running
+- Capture changed: True
+- Latest capture: /data/WYC/signLanguage/.codex/tmux-workers/captures/scoring-design/2026-05-20T17-16-53-08-00.txt
+
+## Supervisor Capture - 2026-05-20T17:21:51+08:00
+
+- Target: signlanguage-scoring-workers:cw-scoring-design
+- State: running
+- Capture changed: True
+- Latest capture: /data/WYC/signLanguage/.codex/tmux-workers/captures/scoring-design/2026-05-20T17-21-51-08-00.txt
+
+exec
+/bin/bash -lc "sed -n '1,220p' .codex/tmux-workers/reports/scoring-design.md 2>/dev/null || true" in /data/WYC/signLanguage
+ succeeded in 0ms:
+# Codex Tmux Worker Report - scoring-design
+
+Created: 2026-05-20T17:16:24+08:00
+Task: You are Worker scoring-design in a tmux-launched Codex process.
+
+Goal: design the first scoring mechanism for the signLanguage MVP.
+
+Working directory: /data/WYC/signLanguage
+
+Write scope:
+- Write only /data/WYC/signLanguage/work/reports/scoring_mechanism_design_20260520_draft.md
+- You may update your assigned progress/report files under /data/WYC/signLanguage/.codex/tmux-workers/
+
+Do not modify:
+- Source scripts
+- Existing worklogs
+- Existing generated artifacts
+- Other scoring report drafts
+
+Use these constraints:
+- Current phase lacks real user samples and human labels.
+- Do not claim calibrated pass/fail scores.
+- Dense Holistic time-series matching is the primary MVP direction; keyframe scoring is a compressed/diagnostic branch.
+- Existing project logic separates candidate generation, selection, and visualization; do not reintroduce repeated Holistic runs.
+
+Tasks:
+1. Design preprocessing: coordinate normalization, scale alignment, left/right hand handling, visibility/missing-point logic.
+2. Design temporal alignment: DTW baseline, segmented DTW, and keyframe-anchor alignment, with when to use each.
+3. Design per-joint/per-group errors for hands, wrists, elbows/shoulders, torso, and face.
+4. Design component scores: total score, hand action score, posture score, rhythm/tempo score, completion/confidence score.
+5. Define diagnostic outputs: worst time ranges, worst joint groups, missing-data warnings, and visualization artifacts.
+6. Write a Chinese draft report to your owned path, clearly separating prototype metrics from future calibrated scoring.
+
+Return: changed files, commands run, key findings, blockers, and next recommendation.
+Session: signlanguage-scoring-workers:cw-scoring-design
+
+## Summary
+
+Pending worker updates.
+
+## Evidence
+
+Pending.
+
+## Completion
+
+Pending.
+
+exec
+/bin/bash -lc 'test -w .codex/tmux-workers/progress/scoring-design.md; echo $?' in /data/WYC/signLanguage
+ succeeded in 0ms:
+1
+
+exec
+/bin/bash -lc 'test -w .codex/tmux-workers/reports/scoring-design.md; echo $?' in /data/WYC/signLanguage
+ succeeded in 0ms:
+1
+
+exec
+/bin/bash -lc 'test -w work/reports/scoring_mechanism_design_20260520_draft.md; echo $?' in /data/WYC/signLanguage
+ succeeded in 0ms:
+0
+
+codex
+Changed files:
+- [scoring_mechanism_design_20260520_draft.md](/data/WYC/signLanguage/work/reports/scoring_mechanism_design_20260520_draft.md) new draft, 546 lines / 23,472 bytes.
+
+Commands run:
+- Read worker plan, scoring/workflow skills, existing phase/follow-up reports.
+- Inspected current cached Holistic JSON and keyframe/candidate scripts with `sed`, `rg --files`, `python -m json.tool`.
+- Checked inbox multiple times with `find .../inbox/scoring-design`; it stayed empty.
+- Wrote the owned Chinese draft report with Python.
+- Validated with `wc -l`, `sed`, `tail`, `git status --short`, and `test -w`.
+
+Key findings:
+- Current cache format already includes `result_data` landmarks plus row-level presence/visibility summaries, so scoring can consume cached Holistic output without rerunning recognition.
+- The draft keeps dense/step-dense Holistic time-series matching as the MVP scoring path, with keyframe alignment only as compression/diagnostics.
+- The report explicitly separates prototype similarity metrics from future calibrated pass/fail scoring.
+
+Blockers:
+- Could not update `.codex/tmux-workers/progress/scoring-design.md` or `.codex/tmux-workers/reports/scoring-design.md`; both are not writable from this sandbox. Python write raised `OSError: [Errno 30] Read-only file system`, and `test -w` returned `1`.
+- No tests were run because this was a design-document-only task.
+- No background jobs started.
+
+Next recommended action:
+- Implement the first offline prototype in this order: cache reader + normalization/missing masks, DTW baseline, score breakdown JSON, then self-match / perturbed / truncated / different-word sanity checks.
+tokens used
+112,844
+Changed files:
+- [scoring_mechanism_design_20260520_draft.md](/data/WYC/signLanguage/work/reports/scoring_mechanism_design_20260520_draft.md) new draft, 546 lines / 23,472 bytes.
+
+Commands run:
+- Read worker plan, scoring/workflow skills, existing phase/follow-up reports.
+- Inspected current cached Holistic JSON and keyframe/candidate scripts with `sed`, `rg --files`, `python -m json.tool`.
+- Checked inbox multiple times with `find .../inbox/scoring-design`; it stayed empty.
+- Wrote the owned Chinese draft report with Python.
+- Validated with `wc -l`, `sed`, `tail`, `git status --short`, and `test -w`.
+
+Key findings:
+- Current cache format already includes `result_data` landmarks plus row-level presence/visibility summaries, so scoring can consume cached Holistic output without rerunning recognition.
+- The draft keeps dense/step-dense Holistic time-series matching as the MVP scoring path, with keyframe alignment only as compression/diagnostics.
+- The report explicitly separates prototype similarity metrics from future calibrated pass/fail scoring.
+
+Blockers:
+- Could not update `.codex/tmux-workers/progress/scoring-design.md` or `.codex/tmux-workers/reports/scoring-design.md`; both are not writable from this sandbox. Python write raised `OSError: [Errno 30] Read-only file system`, and `test -w` returned `1`.
+- No tests were run because this was a design-document-only task.
+- No background jobs started.
+
+Next recommended action:
+- Implement the first offline prototype in this order: cache reader + normalization/missing masks, DTW baseline, score breakdown JSON, then self-match / perturbed / truncated / different-word sanity checks.
+[2026-05-20T17:23:45+08:00] worker exited status=0
