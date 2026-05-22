@@ -1,0 +1,245 @@
+{
+  "request_id": "web_20260523_010215_ab4961d9",
+  "generated_at": "2026-05-23T01:02:17",
+  "claim_policy": "prototype sanity check only; no calibrated real-user score or pass/fail threshold",
+  "target_word": "花",
+  "standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run2/all_demo_step4_worker_cache_v2/results/花/花_holistic_results.json",
+  "query_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_010215_ab4961d9/holistic/user_花_web_20260523_010215_ab4961d9_holistic_results.json",
+  "duration_sec": 3.0,
+  "capture_fps": 10.0,
+  "frame_count": 30,
+  "worker": {
+    "input_mode": "frame_slices",
+    "ingest_sec": 0.11,
+    "holistic_eval_sec": 1.547,
+    "request_total_sec": 1.846,
+    "samples": 30
+  },
+  "timing": {
+    "api_total_sec": 2.208
+  },
+  "score": {
+    "prototype_score": 65.88345027708338,
+    "dtw_distance": 0.011081081789893072,
+    "normalized_distance": 0.050073949188291896,
+    "path_length": 37,
+    "sequence_penalty": {
+      "length_ratio": 0.9333333333333333,
+      "length_penalty": 0.0,
+      "temporal_profile_factor": 0.962962962962963,
+      "presence_delta": {
+        "left_hand": 0.0,
+        "right_hand": 0.08333333333333337,
+        "pose": 0.0,
+        "face": 0.0
+      },
+      "presence_penalty": 0.0037333333333333355,
+      "motion_delta": {
+        "left_hand": 0.0,
+        "right_hand": 0.2508179042995408,
+        "left_hand_shape": 0.0,
+        "right_hand_shape": 0.20472426405463684,
+        "pose": 0.1227674920258903,
+        "face": 1.1701191082660916
+      },
+      "motion_penalty": 0.003657218302471644,
+      "roughness_delta": {
+        "left_hand": 0.0,
+        "right_hand": 0.19107474147171716,
+        "left_hand_shape": 0.0,
+        "right_hand_shape": 0.03205988955349636,
+        "pose": 0.10729448399313786,
+        "face": 1.274643892051468
+      },
+      "roughness_penalty": 0.006620046302897884,
+      "info_penalty": 0.0,
+      "endpoint_penalty": 0.0,
+      "confidence_warning_penalty": 0.0,
+      "semantic_delta_penalty": 0.02498226945969596,
+      "semantic_delta_detail": {
+        "right_hand_shape": 0.2855086624622345,
+        "right_hand": 0.06134366244077682
+      },
+      "total_sequence_penalty": 0.03899286739839882,
+      "standard_presence": {
+        "pose": 1.0,
+        "left_hand": 0.0,
+        "right_hand": 0.75,
+        "face": 1.0
+      },
+      "query_presence": {
+        "pose": 1.0,
+        "left_hand": 0.0,
+        "right_hand": 0.6666666666666666,
+        "face": 1.0
+      },
+      "standard_motion": {
+        "left_hand": 0.0,
+        "right_hand": 0.07481883615255355,
+        "left_hand_shape": 0.0,
+        "right_hand_shape": 0.1411814820021391,
+        "pose": 0.10811316553089353,
+        "face": 0.12829929328075163
+      },
+      "query_motion": {
+        "left_hand": 0.0,
+        "right_hand": 0.058199145635099786,
+        "left_hand_shape": 0.0,
+        "right_hand_shape": 0.17327874702842613,
+        "pose": 0.0956112211248998,
+        "face": 0.03974614962774875
+      },
+      "standard_roughness": {
+        "left_hand": 0.0,
+        "right_hand": 0.10454303910955787,
+        "left_hand_shape": 0.0,
+        "right_hand_shape": 0.23116488891996836,
+        "pose": 0.1775838531410465,
+        "face": 0.2105873410966104
+      },
+      "query_roughness": {
+        "left_hand": 0.0,
+        "right_hand": 0.08634256364570723,
+        "left_hand_shape": 0.0,
+        "right_hand_shape": 0.22386815336843333,
+        "pose": 0.15950649524373667,
+        "face": 0.058793536437276216
+      }
+    },
+    "group_mean_distance": {
+      "left_hand": 0.0,
+      "right_hand": 0.0,
+      "left_hand_shape": 0.0,
+      "right_hand_shape": 0.0,
+      "pose": 0.43665304385668585,
+      "face": 0.4465153760860285,
+      "missing": 0.36936936936936926,
+      "weighted": 0.011081081081081082,
+      "hand_side_swapped": 0.5405405405405406
+    },
+    "worst_alignment_points": [
+      {
+        "standard_frame_idx": 32,
+        "query_frame_idx": 10,
+        "standard_timestamp_sec": 1.0866043613707166,
+        "query_timestamp_sec": 1.0,
+        "weighted_distance": 0.019999999999999997,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.40507115489352974,
+        "face_distance": 0.4382673829896321,
+        "missing_penalty": 0.6666666666666666,
+        "hand_side_swapped": 1.0
+      },
+      {
+        "standard_frame_idx": 36,
+        "query_frame_idx": 11,
+        "standard_timestamp_sec": 1.222429906542056,
+        "query_timestamp_sec": 1.1,
+        "weighted_distance": 0.019999999999999997,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.3168951713649419,
+        "face_distance": 0.316142701118283,
+        "missing_penalty": 0.6666666666666666,
+        "hand_side_swapped": 1.0
+      },
+      {
+        "standard_frame_idx": 40,
+        "query_frame_idx": 12,
+        "standard_timestamp_sec": 1.3582554517133958,
+        "query_timestamp_sec": 1.2,
+        "weighted_distance": 0.019999999999999997,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.37952245239873666,
+        "face_distance": 0.38896087517611855,
+        "missing_penalty": 0.6666666666666666,
+        "hand_side_swapped": 1.0
+      },
+      {
+        "standard_frame_idx": 44,
+        "query_frame_idx": 13,
+        "standard_timestamp_sec": 1.4940809968847353,
+        "query_timestamp_sec": 1.3,
+        "weighted_distance": 0.019999999999999997,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.38156405105033925,
+        "face_distance": 0.4312454647249586,
+        "missing_penalty": 0.6666666666666666,
+        "hand_side_swapped": 1.0
+      },
+      {
+        "standard_frame_idx": 48,
+        "query_frame_idx": 14,
+        "standard_timestamp_sec": 1.6299065420560748,
+        "query_timestamp_sec": 1.4,
+        "weighted_distance": 0.019999999999999997,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.3782974282653138,
+        "face_distance": 0.4084763938041968,
+        "missing_penalty": 0.6666666666666666,
+        "hand_side_swapped": 1.0
+      }
+    ],
+    "semantic_profile": {
+      "word": "花",
+      "version": "semantic_weights_v1_20260523",
+      "description": "一手撮合、指尖朝上模仿花朵含苞的样子；手缓缓向上的同时，慢慢张开，模仿开花的样子；画面可以叠加一朵含苞的花朵，随着手张开的动作同时逐渐绽放",
+      "group_weights": {
+        "left_hand": 0.12,
+        "right_hand": 0.32,
+        "left_hand_shape": 0.18,
+        "right_hand_shape": 0.35,
+        "pose": 0.0,
+        "face": 0.0,
+        "missing": 0.03
+      },
+      "keypoint_weights": {
+        "hand": {
+          "4": 1.25,
+          "8": 1.8,
+          "12": 1.8,
+          "16": 1.55,
+          "20": 1.55,
+          "opening": 2.2,
+          "spread": 2.0
+        },
+        "pose": {
+          "15": 1.05,
+          "16": 1.05
+        },
+        "face": {}
+      },
+      "focus_groups": [
+        "right_hand_shape",
+        "left_hand_shape",
+        "right_hand",
+        "left_hand"
+      ],
+      "allow_hand_swap": true,
+      "semantic_notes": [
+        "重点是一手从撮合/含苞到张开，脸部基本不参与评分。",
+        "手指张开由 fingertip spread、tip-to-wrist、finger straightness 等相对特征刻画。"
+      ]
+    }
+  },
+  "artifacts": {
+    "result_dir": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_010215_ab4961d9",
+    "holistic_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_010215_ab4961d9/holistic/user_花_web_20260523_010215_ab4961d9_holistic_results.json",
+    "scoring_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_010215_ab4961d9/scoring_result.json",
+    "worker_stderr_log": "/data/WYC/signLanguage/work/logs/web_holistic_worker_20260523_004553.stderr.log"
+  }
+}

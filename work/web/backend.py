@@ -10,6 +10,7 @@ templates with the existing scoring MVP module.
 from __future__ import annotations
 
 import json
+import importlib
 import subprocess
 import sys
 import threading
@@ -31,7 +32,8 @@ WORK_DIR = REPO_ROOT / "work"
 SCRIPT_DIR = WORK_DIR / "scripts"
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 WORKER_SCRIPT = SCRIPT_DIR / "holistic_worker_daemon.py"
-TEMPLATE_ROOT = WORK_DIR / "generated/scoring_mvp_run2/all_demo_step4_worker_cache_v2/results"
+LEGACY_TEMPLATE_ROOT = WORK_DIR / "generated/scoring_mvp_run2/all_demo_step4_worker_cache_v2/results"
+DENSE_TEMPLATE_ROOT = WORK_DIR / "generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results"
 OUTPUT_ROOT = WORK_DIR / "generated/web_scoring_mvp"
 LOG_DIR = WORK_DIR / "logs"
 DEMO_VIDEO_ROOT = REPO_ROOT / "data/Demo词汇视频/Demo词汇视频"
@@ -41,7 +43,7 @@ DEFAULT_MODEL_COMPLEXITY = 1
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-from score_holistic_sequence_mvp import load_sequence, run_pair  # noqa: E402
+import score_holistic_sequence_mvp as scoring_mvp  # noqa: E402
 
 
 class ScoreRequest(BaseModel):
@@ -49,8 +51,71 @@ class ScoreRequest(BaseModel):
     fps: float = Field(default=5.0, gt=0.0, le=60.0)
     duration_sec: Optional[float] = Field(default=None, ge=0.0, le=30.0)
     frame_indices: Optional[List[int]] = None
+    frame_weights: Optional[List[float]] = None
     frames: List[Dict[str, Any]] = Field(default_factory=list)
     wait_for_ready_sec: float = Field(default=600.0, ge=0.0, le=900.0)
+
+
+class TemplateCacheRequest(BaseModel):
+    dense_step: int = Field(default=2, ge=1, le=20)
+    words: Optional[List[str]] = None
+    output_root: Optional[str] = None
+    force: bool = False
+    wait_for_ready_sec: float = Field(default=900.0, ge=0.0, le=1800.0)
+
+
+class ScoringModuleService:
+    def __init__(self, module: Any) -> None:
+        self._module = module
+        self._path = Path(module.__file__).resolve()
+        self._lock = threading.Lock()
+        self._mtime_ns = self._read_mtime_ns()
+        self._loaded_at = datetime.now().isoformat(timespec="seconds")
+        self._reload_count = 0
+        self._last_reload_error: Optional[str] = None
+
+    def _read_mtime_ns(self) -> int:
+        return self._path.stat().st_mtime_ns
+
+    def get(self, auto_reload: bool = True) -> Any:
+        if auto_reload:
+            self.reload_if_changed()
+        return self._module
+
+    def reload_if_changed(self) -> bool:
+        current_mtime = self._read_mtime_ns()
+        if current_mtime == self._mtime_ns:
+            return False
+        self.reload(force=True, expected_mtime_ns=current_mtime)
+        return True
+
+    def reload(self, force: bool = True, expected_mtime_ns: Optional[int] = None) -> Dict[str, Any]:
+        with self._lock:
+            current_mtime = expected_mtime_ns if expected_mtime_ns is not None else self._read_mtime_ns()
+            if not force and current_mtime == self._mtime_ns:
+                return self.snapshot()
+            try:
+                importlib.invalidate_caches()
+                self._module = importlib.reload(self._module)
+                self._path = Path(self._module.__file__).resolve()
+                self._mtime_ns = self._read_mtime_ns()
+                self._loaded_at = datetime.now().isoformat(timespec="seconds")
+                self._reload_count += 1
+                self._last_reload_error = None
+            except Exception as exc:
+                self._last_reload_error = str(exc)
+                raise
+            return self.snapshot()
+
+    def snapshot(self) -> Dict[str, Any]:
+        return {
+            "module": self._module.__name__,
+            "module_file": str(self._path),
+            "mtime_ns": self._mtime_ns,
+            "loaded_at": self._loaded_at,
+            "reload_count": self._reload_count,
+            "last_reload_error": self._last_reload_error,
+        }
 
 
 class HolisticWorkerService:
@@ -183,6 +248,7 @@ class HolisticWorkerService:
                     pass
 
 
+scoring_service = ScoringModuleService(scoring_mvp)
 worker_service = HolisticWorkerService(WORKER_SCRIPT)
 app = FastAPI(title="signLanguage Scoring MVP", version="0.1.0")
 app.add_middleware(
@@ -195,14 +261,26 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
+def _active_template_root() -> Path:
+    if DENSE_TEMPLATE_ROOT.exists() and any(item.is_dir() for item in DENSE_TEMPLATE_ROOT.iterdir()):
+        return DENSE_TEMPLATE_ROOT
+    return LEGACY_TEMPLATE_ROOT
+
+
+def _template_roots() -> List[Path]:
+    roots = [DENSE_TEMPLATE_ROOT, LEGACY_TEMPLATE_ROOT]
+    return [root for root in roots if root.exists()]
+
+
 def _template_path(word: str) -> Path:
-    direct = TEMPLATE_ROOT / word / f"{word}_holistic_results.json"
-    if direct.exists():
-        return direct
-    folder = TEMPLATE_ROOT / word
-    matches = sorted(folder.glob("*_holistic_results.json")) if folder.exists() else []
-    if matches:
-        return matches[0]
+    for root in _template_roots():
+        direct = root / word / f"{word}_holistic_results.json"
+        if direct.exists():
+            return direct
+        folder = root / word
+        matches = sorted(folder.glob("*_holistic_results.json")) if folder.exists() else []
+        if matches:
+            return matches[0]
     raise KeyError(word)
 
 
@@ -238,37 +316,80 @@ def _semantic_profile_item(word: str) -> Optional[Dict[str, Any]]:
         return None
 
 
+def _write_template_weight_manifest(template_json: Path, word: str) -> Optional[Path]:
+    try:
+        scoring = scoring_service.get(auto_reload=True)
+        seq = scoring.load_sequence(template_json, requested_mode="landmark", apply_sidecar_weights=False)
+        profile = scoring.load_semantic_profile(word, SEMANTIC_PROFILE_JSON)
+        weights = scoring.compute_semantic_frame_weight_values(seq, profile=profile, combine_stored=True)
+        top_indices = list(weights.argsort()[-min(12, len(weights)) :][::-1]) if len(weights) else []
+        frames = [
+            {
+                "frame_idx": int(feature.frame_idx),
+                "timestamp_sec": float(feature.timestamp_sec),
+                "semantic_frame_weight": float(weights[idx]) if idx < len(weights) else 1.0,
+                "source_frame_weight": float(feature.frame_weight),
+            }
+            for idx, feature in enumerate(seq.features)
+        ]
+        manifest = {
+            "generated_at": datetime.now().isoformat(timespec="seconds"),
+            "template_json": str(template_json),
+            "word": word,
+            "version": "semantic_dynamic_frame_weights_v1",
+            "strategy": "semantic_focus_motion_energy_density",
+            "semantic_profile": scoring._profile_summary(profile),
+            "records": len(seq.features),
+            "fps": seq.fps,
+            "total_frames": seq.total_frames,
+            "frame_weights": frames,
+            "top_weighted_frames": [frames[idx] for idx in top_indices],
+        }
+        manifest_path = template_json.parent / "semantic_frame_weights.json"
+        manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+        return manifest_path
+    except Exception:
+        return None
+
+
 def _list_templates() -> List[Dict[str, Any]]:
     templates: List[Dict[str, Any]] = []
-    if not TEMPLATE_ROOT.exists():
+    roots = _template_roots()
+    if not roots:
         return templates
-    for folder in sorted([item for item in TEMPLATE_ROOT.iterdir() if item.is_dir()], key=lambda p: p.name):
-        matches = sorted(folder.glob("*_holistic_results.json"))
-        if not matches:
+    words = sorted({folder.name for root in roots for folder in root.iterdir() if folder.is_dir()})
+    for word in words:
+        try:
+            template_json = _template_path(word)
+        except KeyError:
             continue
+        root = template_json.parent.parent
         count = None
         fps = None
         try:
-            payload = json.loads(matches[0].read_text(encoding="utf-8"))
+            payload = json.loads(template_json.read_text(encoding="utf-8"))
             count = len(payload.get("records") or [])
             fps = payload.get("fps")
         except Exception:
             pass
         item = {
-            "word": folder.name,
-            "label": folder.name,
-            "template_json": str(matches[0]),
+            "word": word,
+            "label": word,
+            "template_json": str(template_json),
+            "template_root": str(root),
             "records": count,
             "fps": fps,
         }
+        weight_manifest = template_json.parent / "semantic_frame_weights.json"
+        item["template_weight_manifest"] = str(weight_manifest) if weight_manifest.exists() else None
         try:
-            ref = _reference_video_path(folder.name)
+            ref = _reference_video_path(word)
             item["reference_video"] = str(ref)
-            item["reference_video_url"] = f"/api/reference-video/{folder.name}"
+            item["reference_video_url"] = f"/api/reference-video/{word}"
         except KeyError:
             item["reference_video"] = None
             item["reference_video_url"] = None
-        item["semantic_profile"] = _semantic_profile_item(folder.name)
+        item["semantic_profile"] = _semantic_profile_item(word)
         templates.append(item)
     return templates
 
@@ -305,9 +426,12 @@ def api_status() -> Dict[str, Any]:
         "service": "signLanguage scoring MVP",
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "claim_policy": "prototype similarity only; not a calibrated real-user score",
-        "template_root": str(TEMPLATE_ROOT),
+        "template_root": str(_active_template_root()),
+        "legacy_template_root": str(LEGACY_TEMPLATE_ROOT),
+        "dense_template_root": str(DENSE_TEMPLATE_ROOT),
         "output_root": str(OUTPUT_ROOT),
         "semantic_profile_json": str(SEMANTIC_PROFILE_JSON),
+        "scoring_module": scoring_service.snapshot(),
         "templates": _list_templates(),
         "worker": worker_service.snapshot(),
     }
@@ -316,6 +440,134 @@ def api_status() -> Dict[str, Any]:
 @app.get("/api/templates")
 def api_templates() -> Dict[str, Any]:
     return {"templates": _list_templates()}
+
+
+@app.post("/api/admin/reload-scoring")
+def api_reload_scoring() -> Dict[str, Any]:
+    return {
+        "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "scoring_module": scoring_service.reload(force=True),
+        "worker": worker_service.snapshot(),
+    }
+
+
+def _demo_videos_for_words(words: Optional[List[str]]) -> List[Path]:
+    available = sorted([item for item in DEMO_VIDEO_ROOT.glob("*.mp4") if item.is_file()], key=lambda p: p.stem)
+    if not words:
+        return available
+    wanted = {word.strip() for word in words if word and word.strip()}
+    return [path for path in available if path.stem in wanted]
+
+
+def _dense_frame_indices(video_path: Path, dense_step: int) -> Dict[str, Any]:
+    try:
+        import cv2  # type: ignore
+    except Exception as exc:
+        raise RuntimeError(f"OpenCV unavailable for template probing: {exc}") from exc
+    cap = cv2.VideoCapture(str(video_path))
+    if not cap.isOpened():
+        raise RuntimeError(f"cannot open video: {video_path}")
+    fps = float(cap.get(cv2.CAP_PROP_FPS) or 25.0)
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+    if total_frames <= 0:
+        cap.release()
+        raise RuntimeError(f"cannot read frame count: {video_path}")
+    raw_indices = list(range(0, total_frames, max(1, int(dense_step))))
+    if (total_frames - 1) not in raw_indices:
+        raw_indices.append(total_frames - 1)
+    valid_indices: List[int] = []
+    dropped_indices: List[int] = []
+    for idx in sorted(set(raw_indices)):
+        cap.set(cv2.CAP_PROP_POS_FRAMES, int(idx))
+        ok, _ = cap.read()
+        if ok:
+            valid_indices.append(int(idx))
+        else:
+            dropped_indices.append(int(idx))
+    cap.release()
+    if not valid_indices:
+        raise RuntimeError(f"no readable sampled frames: {video_path}")
+    return {
+        "fps": fps,
+        "total_frames": total_frames,
+        "frame_indices": valid_indices,
+        "dropped_frame_indices": dropped_indices,
+    }
+
+
+@app.post("/api/admin/build-template-cache")
+def api_build_template_cache(request: TemplateCacheRequest) -> Dict[str, Any]:
+    output_root = Path(request.output_root) if request.output_root else DENSE_TEMPLATE_ROOT
+    videos = _demo_videos_for_words(request.words)
+    if not videos:
+        raise HTTPException(status_code=404, detail="no matching demo videos")
+
+    output_root.mkdir(parents=True, exist_ok=True)
+    built: List[Dict[str, Any]] = []
+    started = time.perf_counter()
+    for video_path in videos:
+        word = video_path.stem
+        result_dir = output_root / word
+        result_file = result_dir / f"{word}_holistic_results.json"
+        if result_file.exists() and not request.force:
+            manifest_path = _write_template_weight_manifest(result_file, word)
+            try:
+                payload = json.loads(result_file.read_text(encoding="utf-8"))
+                built.append(
+                    {
+                        "word": word,
+                        "status": "skipped_existing",
+                        "result_file": str(result_file),
+                        "weight_manifest": str(manifest_path) if manifest_path else None,
+                        "records": len(payload.get("records") or []),
+                        "fps": payload.get("fps"),
+                    }
+                )
+                continue
+            except Exception:
+                pass
+
+        meta = _dense_frame_indices(video_path, request.dense_step)
+        worker_payload = {
+            "cmd": "process",
+            "request_id": f"dense_template_{word}_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+            "video_path": str(video_path),
+            "frame_indices": meta["frame_indices"],
+            "result_dir": str(result_dir),
+        }
+        try:
+            response = worker_service.request(worker_payload, timeout_sec=request.wait_for_ready_sec)
+        except TimeoutError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=f"{word}: {exc}") from exc
+
+        response_file = Path(response.get("result_file") or result_file)
+        manifest_path = _write_template_weight_manifest(response_file, word)
+        built.append(
+            {
+                "word": word,
+                "status": "built",
+                "result_file": response.get("result_file"),
+                "weight_manifest": str(manifest_path) if manifest_path else None,
+                "records": response.get("samples"),
+                "fps": meta["fps"],
+                "total_frames": meta["total_frames"],
+                "dropped_frame_indices": meta.get("dropped_frame_indices"),
+                "dense_step": request.dense_step,
+                "holistic_eval_sec": response.get("holistic_eval_sec"),
+                "request_total_sec": response.get("request_total_sec"),
+            }
+        )
+
+    return {
+        "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "output_root": str(output_root),
+        "dense_step": request.dense_step,
+        "elapsed_sec": round(time.perf_counter() - started, 3),
+        "items": built,
+        "active_template_root": str(_active_template_root()),
+    }
 
 
 @app.post("/api/score")
@@ -336,14 +588,19 @@ def api_score(request: ScoreRequest) -> Dict[str, Any]:
     frame_indices = request.frame_indices or list(range(len(request.frames)))
     if len(frame_indices) != len(request.frames):
         raise HTTPException(status_code=400, detail="frame_indices and frames length mismatch")
+    frame_weights = request.frame_weights
+    if frame_weights is not None and len(frame_weights) != len(request.frames):
+        raise HTTPException(status_code=400, detail="frame_weights and frames length mismatch")
+    total_frames = max(max([int(idx) for idx in frame_indices] or [0]) + 1, len(request.frames))
 
     worker_payload = {
         "cmd": "process_frames",
         "request_id": request_id,
         "video_stem": f"user_{request.target_word}_{request_id}",
         "fps": float(request.fps),
-        "total_frames": len(request.frames),
+        "total_frames": total_frames,
         "frame_indices": [int(idx) for idx in frame_indices],
+        "frame_weights": [float(value) for value in frame_weights] if frame_weights is not None else None,
         "frames": request.frames,
         "result_dir": str(holistic_dir),
     }
@@ -354,9 +611,10 @@ def api_score(request: ScoreRequest) -> Dict[str, Any]:
         result_file = worker_response.get("result_file")
         if not result_file:
             raise RuntimeError("worker response does not include result_file")
-        standard = load_sequence(standard_json, requested_mode="landmark")
-        query = load_sequence(Path(result_file), requested_mode="landmark")
-        score_result = run_pair(standard, query)
+        scoring = scoring_service.get(auto_reload=True)
+        standard = scoring.load_sequence(standard_json, requested_mode="landmark")
+        query = scoring.load_sequence(Path(result_file), requested_mode="landmark")
+        score_result = scoring.run_pair(standard, query)
     except TimeoutError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except Exception as exc:
@@ -373,6 +631,9 @@ def api_score(request: ScoreRequest) -> Dict[str, Any]:
         "duration_sec": request.duration_sec,
         "capture_fps": request.fps,
         "frame_count": len(request.frames),
+        "timeline_frame_count": total_frames,
+        "frame_indices": [int(idx) for idx in frame_indices],
+        "frame_weights": [float(value) for value in frame_weights] if frame_weights is not None else None,
         "worker": {
             "input_mode": worker_response.get("input_mode"),
             "ingest_sec": worker_response.get("ingest_sec"),
@@ -388,8 +649,15 @@ def api_score(request: ScoreRequest) -> Dict[str, Any]:
             "dtw_distance": score_result["dtw_distance"],
             "normalized_distance": score_result["normalized_distance"],
             "path_length": score_result["path_length"],
+            "path_weight_sum": score_result.get("path_weight_sum"),
+            "alignment_policy": score_result.get("alignment_policy"),
+            "action_window": score_result.get("action_window"),
+            "temporal_resample": score_result.get("temporal_resample"),
+            "score_scale": score_result.get("score_scale"),
             "sequence_penalty": score_result["sequence_penalty"],
             "group_mean_distance": score_result["group_mean_distance"],
+            "semantic_dtw": score_result.get("semantic_dtw"),
+            "frame_weight_summary": score_result.get("frame_weight_summary"),
             "worst_alignment_points": score_result["worst_alignment_points"][:5],
             "semantic_profile": score_result.get("semantic_profile"),
         },

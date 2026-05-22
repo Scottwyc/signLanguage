@@ -78,6 +78,13 @@ def _process_video_request(
     request_id = request.get("request_id") or f"req-{int(time.time() * 1000)}"
     video_path = Path(request["video_path"])
     raw_indices = request.get("frame_indices") or []
+    raw_weights = request.get("frame_weights") or []
+    weight_by_index: Dict[int, float] = {}
+    for idx, value in zip(raw_indices, raw_weights):
+        try:
+            weight_by_index[int(idx)] = max(0.05, float(value))
+        except (TypeError, ValueError):
+            continue
     frame_indices = sorted({int(idx) for idx in raw_indices if int(idx) >= 0})
 
     started = time.perf_counter()
@@ -101,6 +108,8 @@ def _process_video_request(
         row_start = time.perf_counter()
         row, result = _process_frame(frame_idx, fps, frame, holistic, cv2)
         frame_eval_sec = round(time.perf_counter() - row_start, 3)
+        frame_weight = float(weight_by_index.get(frame_idx, 1.0))
+        row["frame_weight"] = frame_weight
         row.update(_frame_motion(prev_row, row))
         prev_row = row
         processed.append(row)
@@ -112,6 +121,7 @@ def _process_video_request(
                 "row": row,
                 "result_data": _serialize_holistic_result(result),
                 "frame_eval_sec": frame_eval_sec,
+                "frame_weight": frame_weight,
             }
         )
 
@@ -127,6 +137,7 @@ def _process_video_request(
             "fps": frame_bundle["fps"],
             "total_frames": frame_bundle["total_frames"] or normalize_total_frames(meta),
             "sampled_frame_indices": frame_indices,
+            "frame_weights": [float(weight_by_index.get(idx, 1.0)) for idx in frame_indices],
             "generated_at": datetime.now().isoformat(timespec="seconds"),
             "static_image_mode": static_image_mode,
             "input_mode": "video",
@@ -174,6 +185,13 @@ def _process_frame_slice_request(
         total_frames_value = 0
 
     raw_indices = request.get("frame_indices") or []
+    raw_weights = request.get("frame_weights") or []
+    weight_by_index: Dict[int, float] = {}
+    for idx, value in zip(raw_indices, raw_weights):
+        try:
+            weight_by_index[int(idx)] = max(0.05, float(value))
+        except (TypeError, ValueError):
+            continue
     frame_pairs: List[Tuple[int, Dict[str, Any]]] = []
     for idx, payload in zip(raw_indices, raw_frames):
         frame_idx = int(idx)
@@ -212,6 +230,8 @@ def _process_frame_slice_request(
         row_start = time.perf_counter()
         row, result = _process_frame(frame_idx, row_fps, frame, holistic, cv2)
         frame_eval_sec = round(time.perf_counter() - row_start, 3)
+        frame_weight = float(weight_by_index.get(frame_idx, 1.0))
+        row["frame_weight"] = frame_weight
         row.update(_frame_motion(prev_row, row))
         prev_row = row
         processed.append(row)
@@ -223,6 +243,7 @@ def _process_frame_slice_request(
                 "row": row,
                 "result_data": _serialize_holistic_result(result),
                 "frame_eval_sec": frame_eval_sec,
+                "frame_weight": frame_weight,
             }
         )
 
@@ -238,6 +259,7 @@ def _process_frame_slice_request(
             "fps": fps,
             "total_frames": total_frames_value,
             "sampled_frame_indices": frame_indices,
+            "frame_weights": [float(weight_by_index.get(idx, 1.0)) for idx in frame_indices],
             "generated_at": datetime.now().isoformat(timespec="seconds"),
             "static_image_mode": static_image_mode,
             "input_mode": "frame_slices",

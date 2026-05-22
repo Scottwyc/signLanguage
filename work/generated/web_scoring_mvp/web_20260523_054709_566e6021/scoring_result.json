@@ -1,0 +1,855 @@
+{
+  "request_id": "web_20260523_054709_566e6021",
+  "generated_at": "2026-05-23T05:47:11",
+  "claim_policy": "prototype sanity check only; no calibrated real-user score or pass/fail threshold",
+  "target_word": "汽车",
+  "standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/汽车/汽车_holistic_results.json",
+  "query_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_054709_566e6021/holistic/user_汽车_web_20260523_054709_566e6021_holistic_results.json",
+  "duration_sec": 2.0,
+  "capture_fps": 18.0,
+  "frame_count": 20,
+  "timeline_frame_count": 36,
+  "frame_indices": [
+    0,
+    4,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    17,
+    18,
+    19,
+    22,
+    23,
+    24,
+    25,
+    26,
+    29,
+    30,
+    31,
+    35
+  ],
+  "frame_weights": [
+    0.4415,
+    1.0295,
+    1.1009,
+    1.4292,
+    1.5779,
+    1.4162,
+    1.2115,
+    1.1415,
+    1.2845,
+    1.3335,
+    1.1358,
+    1.0021,
+    1.164,
+    1.452,
+    1.7736,
+    1.3677,
+    1.106,
+    1.1302,
+    0.8974,
+    0.9161
+  ],
+  "worker": {
+    "input_mode": "frame_slices",
+    "ingest_sec": 0.072,
+    "holistic_eval_sec": 0.954,
+    "request_total_sec": 1.145,
+    "samples": 20
+  },
+  "timing": {
+    "api_total_sec": 1.989
+  },
+  "score": {
+    "prototype_score": 3.4127076741120055,
+    "dtw_distance": 0.2397577666285732,
+    "normalized_distance": 0.4053197004535295,
+    "path_length": 44,
+    "path_weight_sum": 42.438089597225186,
+    "alignment_policy": {
+      "mode": "full_sequence_with_action_window_diagnostics",
+      "used_action_window_for_scoring": false,
+      "reason": "long_or_context_sensitive_action_keep_full_sequence",
+      "word": "汽车",
+      "standard_full_length": 44,
+      "standard_action_length": 12,
+      "standard_action_ratio": 0.2727272727272727
+    },
+    "action_window": {
+      "standard": {
+        "start_index": 9,
+        "end_index": 20,
+        "length": 12,
+        "used": true,
+        "reason": "semantic_energy_window",
+        "energy_coverage": 0.7366661734341734,
+        "baseline_weight": 0.8218820691108704,
+        "active_threshold": 1.1950467264652251,
+        "peak_index": 10,
+        "peak_frame_idx": 20,
+        "peak_timestamp_sec": 0.7586206896551724,
+        "peak_weight": 1.710369348526001,
+        "contrast": 2.0810398630259876,
+        "discarded_prefix_frames": 9,
+        "discarded_suffix_frames": 23,
+        "start_frame_idx": 18,
+        "end_frame_idx": 40,
+        "start_timestamp_sec": 0.6827586206896552,
+        "end_timestamp_sec": 1.5172413793103448
+      },
+      "query": {
+        "start_index": 4,
+        "end_index": 11,
+        "length": 8,
+        "used": true,
+        "reason": "semantic_energy_window",
+        "energy_coverage": 0.704898530744344,
+        "baseline_weight": 0.8091707468032837,
+        "active_threshold": 1.1483050286769867,
+        "peak_index": 8,
+        "peak_frame_idx": 17,
+        "peak_timestamp_sec": 0.9444444444444444,
+        "peak_weight": 1.289225459098816,
+        "contrast": 3.1006756310715033,
+        "discarded_prefix_frames": 4,
+        "discarded_suffix_frames": 8,
+        "start_frame_idx": 11,
+        "end_frame_idx": 22,
+        "start_timestamp_sec": 0.6111111111111112,
+        "end_timestamp_sec": 1.2222222222222223
+      },
+      "used_for_scoring": false
+    },
+    "temporal_resample": {
+      "used": false,
+      "reason": "full_sequence_alignment_policy",
+      "ratio": 0.45454545454545453
+    },
+    "score_scale": {
+      "base_scale": 0.12,
+      "effective_scale": 0.12,
+      "reason": "default",
+      "standard_action_length": 44,
+      "query_contrast": 3.1006756310715033,
+      "noise_floor_distance": 0.0,
+      "short_action_subsample_tolerance": 0.0,
+      "semantic_phase_trim_tolerance": 0.0,
+      "visible_semantic_core_tolerance": 0.0,
+      "semantic_core_query_hand_presence": 0.85,
+      "score_distance": 0.4053197004535295
+    },
+    "sequence_penalty": {
+      "length_ratio": 0.45454545454545453,
+      "length_penalty": 0.025454545454545466,
+      "temporal_profile_factor": 0.0,
+      "hand_dynamic_scale": 1.55,
+      "presence_delta": {
+        "left_hand": 0.75,
+        "right_hand": 0.1681818181818182,
+        "pose": 0.0,
+        "face": 0.0
+      },
+      "presence_penalty": 0.03604078164825829,
+      "required_presence_penalty": 0.0,
+      "required_presence_detail": {},
+      "motion_delta": {
+        "left_hand": 3.0,
+        "right_hand": 1.500786880304074,
+        "left_hand_shape": 3.0,
+        "right_hand_shape": 0.9242052893385457,
+        "two_hand_relation": 3.0,
+        "pose": 0.5076257068981279,
+        "face": 0.3478058195072509
+      },
+      "motion_penalty": 0.0,
+      "dynamic_required_penalty": 0.0,
+      "dynamic_required_detail": {},
+      "roughness_delta": {
+        "left_hand": 3.0,
+        "right_hand": 1.6171904579355147,
+        "left_hand_shape": 3.0,
+        "right_hand_shape": 1.1093675396157734,
+        "two_hand_relation": 3.0,
+        "pose": 0.6014379798648729,
+        "face": 0.3155858084942995
+      },
+      "roughness_penalty": 0.0,
+      "info_penalty": 0.0,
+      "endpoint_penalty": 0.0,
+      "confidence_warning_penalty": 0.0,
+      "semantic_delta_penalty": 0.061874071816161454,
+      "semantic_delta_detail": {
+        "right_hand": 0.3479275746699627,
+        "right_hand_shape": 0.1743217306202578
+      },
+      "semantic_anchor_penalty": 0.04219253490599107,
+      "semantic_anchor_detail": {
+        "enabled": true,
+        "anchor_penalty_weight": 0.1,
+        "mean_anchor_distance": 0.3125372955999338,
+        "anchors": [
+          {
+            "target_phase": 0.1,
+            "standard_phase": 0.12208475917577744,
+            "query_phase": 0.12433790415525436,
+            "standard_frame_idx": 18.0,
+            "query_frame_idx": 11.0,
+            "phase_gap": 0.0022531449794769287,
+            "distance": 0.30356264128607574
+          },
+          {
+            "target_phase": 0.5,
+            "standard_phase": 0.4809340238571167,
+            "query_phase": 0.49848130345344543,
+            "standard_frame_idx": 28.0,
+            "query_frame_idx": 17.0,
+            "phase_gap": 0.017547279596328735,
+            "distance": 0.29790386487676174
+          },
+          {
+            "target_phase": 0.9,
+            "standard_phase": 0.8998289704322815,
+            "query_phase": 0.905755877494812,
+            "standard_frame_idx": 62.0,
+            "query_frame_idx": 26.0,
+            "phase_gap": 0.005926907062530518,
+            "distance": 0.339803738317757
+          }
+        ]
+      },
+      "total_sequence_penalty": 0.16556193382495626,
+      "standard_presence": {
+        "pose": 1.0,
+        "left_hand": 0.75,
+        "right_hand": 0.6818181818181818,
+        "face": 1.0
+      },
+      "query_presence": {
+        "pose": 1.0,
+        "left_hand": 0.0,
+        "right_hand": 0.85,
+        "face": 1.0
+      },
+      "standard_motion": {
+        "left_hand": 0.06394057252133886,
+        "right_hand": 0.06107490458008316,
+        "left_hand_shape": 0.08390361775333682,
+        "right_hand_shape": 0.08372730182276832,
+        "two_hand_relation": 0.05349645860217236,
+        "pose": 0.10437845949863278,
+        "face": 0.06229516737796583
+      },
+      "query_motion": {
+        "left_hand": 0.0,
+        "right_hand": 0.2742827226718267,
+        "left_hand_shape": 0.0,
+        "right_hand_shape": 0.21113347560167312,
+        "two_hand_relation": 0.0,
+        "pose": 0.17347445240930506,
+        "face": 0.08824889097166688
+      },
+      "standard_roughness": {
+        "left_hand": 0.07675504584417299,
+        "right_hand": 0.07714338980615139,
+        "left_hand_shape": 0.10844483812925992,
+        "right_hand_shape": 0.11130033984780312,
+        "two_hand_relation": 0.05051966268569231,
+        "pose": 0.15034370665394126,
+        "face": 0.09154179687833502
+      },
+      "query_roughness": {
+        "left_hand": 0.0,
+        "right_hand": 0.38912274975043076,
+        "left_hand_shape": 0.0,
+        "right_hand_shape": 0.3377148342820314,
+        "two_hand_relation": 0.0,
+        "pose": 0.2744207779566447,
+        "face": 0.12554660874108473
+      }
+    },
+    "group_mean_distance": {
+      "left_hand": 0.0064769468544985005,
+      "right_hand": 0.16471057893281726,
+      "left_hand_shape": 0.0054199874211727775,
+      "right_hand_shape": 0.19740599971372827,
+      "left_hand_motion": 0.0,
+      "right_hand_motion": 0.0,
+      "left_hand_shape_motion": 0.0,
+      "right_hand_shape_motion": 0.0,
+      "two_hand_relation": 0.0,
+      "two_hand_relation_motion": 0.0,
+      "pose": 0.5883003992631494,
+      "face": 0.43833454558793894,
+      "missing": 0.45548089342095827,
+      "base_weighted": 0.2394483513718417,
+      "semantic_phase_gap": 0.04377746116035249,
+      "semantic_phase_penalty": 0.0003094152567315545,
+      "weighted": 0.2397577666285732,
+      "hand_side_swapped": 0.019359046200324994
+    },
+    "frame_weight_summary": {
+      "standard_full": {
+        "count": 44,
+        "mean": 1.0,
+        "min": 0.8218820691108704,
+        "max": 1.710369348526001,
+        "top_frames": [
+          {
+            "rank": 1,
+            "frame_idx": 20,
+            "timestamp_sec": 0.7586206896551724,
+            "weight": 1.710369348526001,
+            "semantic_phase": 0.22778956592082977
+          },
+          {
+            "rank": 2,
+            "frame_idx": 18,
+            "timestamp_sec": 0.6827586206896552,
+            "weight": 1.590253472328186,
+            "semantic_phase": 0.12208475917577744
+          },
+          {
+            "rank": 3,
+            "frame_idx": 22,
+            "timestamp_sec": 0.8344827586206897,
+            "weight": 1.5142886638641357,
+            "semantic_phase": 0.3286479413509369
+          },
+          {
+            "rank": 4,
+            "frame_idx": 32,
+            "timestamp_sec": 1.2137931034482758,
+            "weight": 1.45880925655365,
+            "semantic_phase": 0.6048014760017395
+          },
+          {
+            "rank": 5,
+            "frame_idx": 34,
+            "timestamp_sec": 1.289655172413793,
+            "weight": 1.3734768629074097,
+            "semantic_phase": 0.6806272268295288
+          },
+          {
+            "rank": 6,
+            "frame_idx": 30,
+            "timestamp_sec": 1.1379310344827587,
+            "weight": 1.322114109992981,
+            "semantic_phase": 0.5322526693344116
+          },
+          {
+            "rank": 7,
+            "frame_idx": 76,
+            "timestamp_sec": 2.882758620689655,
+            "weight": 1.2524142265319824,
+            "semantic_phase": 0.9308916330337524
+          },
+          {
+            "rank": 8,
+            "frame_idx": 24,
+            "timestamp_sec": 0.9103448275862069,
+            "weight": 1.243641972541809,
+            "semantic_phase": 0.3997299075126648
+          }
+        ]
+      },
+      "query_full": {
+        "count": 20,
+        "mean": 1.0000001192092896,
+        "min": 0.41578856110572815,
+        "max": 1.289225459098816,
+        "top_frames": [
+          {
+            "rank": 1,
+            "frame_idx": 17,
+            "timestamp_sec": 0.9444444444444444,
+            "weight": 1.289225459098816,
+            "semantic_phase": 0.49848130345344543
+          },
+          {
+            "rank": 2,
+            "frame_idx": 14,
+            "timestamp_sec": 0.7777777777777778,
+            "weight": 1.2521328926086426,
+            "semantic_phase": 0.3961089253425598
+          },
+          {
+            "rank": 3,
+            "frame_idx": 18,
+            "timestamp_sec": 1.0,
+            "weight": 1.2491354942321777,
+            "semantic_phase": 0.6005212664604187
+          },
+          {
+            "rank": 4,
+            "frame_idx": 11,
+            "timestamp_sec": 0.6111111111111112,
+            "weight": 1.237685203552246,
+            "semantic_phase": 0.12433790415525436
+          },
+          {
+            "rank": 5,
+            "frame_idx": 13,
+            "timestamp_sec": 0.7222222222222222,
+            "weight": 1.212398648262024,
+            "semantic_phase": 0.3022574484348297
+          },
+          {
+            "rank": 6,
+            "frame_idx": 12,
+            "timestamp_sec": 0.6666666666666666,
+            "weight": 1.1953847408294678,
+            "semantic_phase": 0.21469995379447937
+          },
+          {
+            "rank": 7,
+            "frame_idx": 19,
+            "timestamp_sec": 1.0555555555555556,
+            "weight": 1.1566630601882935,
+            "semantic_phase": 0.6878585815429688
+          },
+          {
+            "rank": 8,
+            "frame_idx": 10,
+            "timestamp_sec": 0.5555555555555556,
+            "weight": 1.1438045501708984,
+            "semantic_phase": 0.039696648716926575
+          }
+        ]
+      },
+      "standard_action": {
+        "count": 12,
+        "mean": 1.3029985427856445,
+        "min": 0.9956885576248169,
+        "max": 1.710369348526001,
+        "top_frames": [
+          {
+            "rank": 1,
+            "frame_idx": 20,
+            "timestamp_sec": 0.7586206896551724,
+            "weight": 1.710369348526001,
+            "semantic_phase": 0.22778956592082977
+          },
+          {
+            "rank": 2,
+            "frame_idx": 18,
+            "timestamp_sec": 0.6827586206896552,
+            "weight": 1.590253472328186,
+            "semantic_phase": 0.12208475917577744
+          },
+          {
+            "rank": 3,
+            "frame_idx": 22,
+            "timestamp_sec": 0.8344827586206897,
+            "weight": 1.5142886638641357,
+            "semantic_phase": 0.3286479413509369
+          },
+          {
+            "rank": 4,
+            "frame_idx": 32,
+            "timestamp_sec": 1.2137931034482758,
+            "weight": 1.45880925655365,
+            "semantic_phase": 0.6048014760017395
+          },
+          {
+            "rank": 5,
+            "frame_idx": 34,
+            "timestamp_sec": 1.289655172413793,
+            "weight": 1.3734768629074097,
+            "semantic_phase": 0.6806272268295288
+          },
+          {
+            "rank": 6,
+            "frame_idx": 30,
+            "timestamp_sec": 1.1379310344827587,
+            "weight": 1.322114109992981,
+            "semantic_phase": 0.5322526693344116
+          },
+          {
+            "rank": 7,
+            "frame_idx": 24,
+            "timestamp_sec": 0.9103448275862069,
+            "weight": 1.243641972541809,
+            "semantic_phase": 0.3997299075126648
+          },
+          {
+            "rank": 8,
+            "frame_idx": 36,
+            "timestamp_sec": 1.3655172413793104,
+            "weight": 1.1373170614242554,
+            "semantic_phase": 0.7359422445297241
+          }
+        ]
+      },
+      "query_action": {
+        "count": 8,
+        "mean": 1.2063928842544556,
+        "min": 1.0585176944732666,
+        "max": 1.289225459098816,
+        "top_frames": [
+          {
+            "rank": 1,
+            "frame_idx": 17,
+            "timestamp_sec": 0.9444444444444444,
+            "weight": 1.289225459098816,
+            "semantic_phase": 0.49848130345344543
+          },
+          {
+            "rank": 2,
+            "frame_idx": 14,
+            "timestamp_sec": 0.7777777777777778,
+            "weight": 1.2521328926086426,
+            "semantic_phase": 0.3961089253425598
+          },
+          {
+            "rank": 3,
+            "frame_idx": 18,
+            "timestamp_sec": 1.0,
+            "weight": 1.2491354942321777,
+            "semantic_phase": 0.6005212664604187
+          },
+          {
+            "rank": 4,
+            "frame_idx": 11,
+            "timestamp_sec": 0.6111111111111112,
+            "weight": 1.237685203552246,
+            "semantic_phase": 0.12433790415525436
+          },
+          {
+            "rank": 5,
+            "frame_idx": 13,
+            "timestamp_sec": 0.7222222222222222,
+            "weight": 1.212398648262024,
+            "semantic_phase": 0.3022574484348297
+          },
+          {
+            "rank": 6,
+            "frame_idx": 12,
+            "timestamp_sec": 0.6666666666666666,
+            "weight": 1.1953847408294678,
+            "semantic_phase": 0.21469995379447937
+          },
+          {
+            "rank": 7,
+            "frame_idx": 19,
+            "timestamp_sec": 1.0555555555555556,
+            "weight": 1.1566630601882935,
+            "semantic_phase": 0.6878585815429688
+          },
+          {
+            "rank": 8,
+            "frame_idx": 22,
+            "timestamp_sec": 1.2222222222222223,
+            "weight": 1.0585176944732666,
+            "semantic_phase": 0.7540544271469116
+          }
+        ]
+      },
+      "standard_scoring": {
+        "count": 44,
+        "mean": 1.0,
+        "min": 0.8218820691108704,
+        "max": 1.710369348526001,
+        "top_frames": [
+          {
+            "rank": 1,
+            "frame_idx": 20,
+            "timestamp_sec": 0.7586206896551724,
+            "weight": 1.710369348526001,
+            "semantic_phase": 0.22778956592082977
+          },
+          {
+            "rank": 2,
+            "frame_idx": 18,
+            "timestamp_sec": 0.6827586206896552,
+            "weight": 1.590253472328186,
+            "semantic_phase": 0.12208475917577744
+          },
+          {
+            "rank": 3,
+            "frame_idx": 22,
+            "timestamp_sec": 0.8344827586206897,
+            "weight": 1.5142886638641357,
+            "semantic_phase": 0.3286479413509369
+          },
+          {
+            "rank": 4,
+            "frame_idx": 32,
+            "timestamp_sec": 1.2137931034482758,
+            "weight": 1.45880925655365,
+            "semantic_phase": 0.6048014760017395
+          },
+          {
+            "rank": 5,
+            "frame_idx": 34,
+            "timestamp_sec": 1.289655172413793,
+            "weight": 1.3734768629074097,
+            "semantic_phase": 0.6806272268295288
+          },
+          {
+            "rank": 6,
+            "frame_idx": 30,
+            "timestamp_sec": 1.1379310344827587,
+            "weight": 1.322114109992981,
+            "semantic_phase": 0.5322526693344116
+          },
+          {
+            "rank": 7,
+            "frame_idx": 76,
+            "timestamp_sec": 2.882758620689655,
+            "weight": 1.2524142265319824,
+            "semantic_phase": 0.9308916330337524
+          },
+          {
+            "rank": 8,
+            "frame_idx": 24,
+            "timestamp_sec": 0.9103448275862069,
+            "weight": 1.243641972541809,
+            "semantic_phase": 0.3997299075126648
+          }
+        ]
+      },
+      "query_scoring": {
+        "count": 20,
+        "mean": 1.0000001192092896,
+        "min": 0.41578856110572815,
+        "max": 1.289225459098816,
+        "top_frames": [
+          {
+            "rank": 1,
+            "frame_idx": 17,
+            "timestamp_sec": 0.9444444444444444,
+            "weight": 1.289225459098816,
+            "semantic_phase": 0.49848130345344543
+          },
+          {
+            "rank": 2,
+            "frame_idx": 14,
+            "timestamp_sec": 0.7777777777777778,
+            "weight": 1.2521328926086426,
+            "semantic_phase": 0.3961089253425598
+          },
+          {
+            "rank": 3,
+            "frame_idx": 18,
+            "timestamp_sec": 1.0,
+            "weight": 1.2491354942321777,
+            "semantic_phase": 0.6005212664604187
+          },
+          {
+            "rank": 4,
+            "frame_idx": 11,
+            "timestamp_sec": 0.6111111111111112,
+            "weight": 1.237685203552246,
+            "semantic_phase": 0.12433790415525436
+          },
+          {
+            "rank": 5,
+            "frame_idx": 13,
+            "timestamp_sec": 0.7222222222222222,
+            "weight": 1.212398648262024,
+            "semantic_phase": 0.3022574484348297
+          },
+          {
+            "rank": 6,
+            "frame_idx": 12,
+            "timestamp_sec": 0.6666666666666666,
+            "weight": 1.1953847408294678,
+            "semantic_phase": 0.21469995379447937
+          },
+          {
+            "rank": 7,
+            "frame_idx": 19,
+            "timestamp_sec": 1.0555555555555556,
+            "weight": 1.1566630601882935,
+            "semantic_phase": 0.6878585815429688
+          },
+          {
+            "rank": 8,
+            "frame_idx": 10,
+            "timestamp_sec": 0.5555555555555556,
+            "weight": 1.1438045501708984,
+            "semantic_phase": 0.039696648716926575
+          }
+        ]
+      }
+    },
+    "worst_alignment_points": [
+      {
+        "standard_frame_idx": 20,
+        "query_frame_idx": 11,
+        "standard_timestamp_sec": 0.7586206896551724,
+        "query_timestamp_sec": 0.6111111111111112,
+        "weighted_distance": 0.29810223719978374,
+        "temporal_weighted_distance": 0.4675924777984619,
+        "frame_pair_weight": 1.5685641050338743,
+        "standard_frame_weight": 1.710369348526001,
+        "query_frame_weight": 1.237685203552246,
+        "standard_semantic_phase": 0.22778956592082977,
+        "query_semantic_phase": 0.12433790415525436,
+        "semantic_phase_gap": 0.10345166176557541,
+        "semantic_phase_penalty": 0.0008417208619602287,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.23577144412286546,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.26674893673300887,
+        "pose_distance": 0.7426585266586304,
+        "face_distance": 0.4310167809209427,
+        "missing_penalty": 0.5327102803738317,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 18,
+        "query_frame_idx": 10,
+        "standard_timestamp_sec": 0.6827586206896552,
+        "query_timestamp_sec": 0.5555555555555556,
+        "weighted_distance": 0.3019117604038857,
+        "temporal_weighted_distance": 0.4396797716617584,
+        "frame_pair_weight": 1.4563187956809998,
+        "standard_frame_weight": 1.590253472328186,
+        "query_frame_weight": 1.1438045501708984,
+        "standard_semantic_phase": 0.12208475917577744,
+        "query_semantic_phase": 0.039696648716926575,
+        "semantic_phase_gap": 0.08238811045885086,
+        "semantic_phase_penalty": 0.0006189985584183063,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.2828224836363586,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.20909711813966222,
+        "pose_distance": 0.6692585019798885,
+        "face_distance": 0.528626941161682,
+        "missing_penalty": 0.5327102803738317,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 22,
+        "query_frame_idx": 12,
+        "standard_timestamp_sec": 0.8344827586206897,
+        "query_timestamp_sec": 0.6666666666666666,
+        "weighted_distance": 0.29025353646355095,
+        "temporal_weighted_distance": 0.41175875067710876,
+        "frame_pair_weight": 1.4186174869537351,
+        "standard_frame_weight": 1.5142886638641357,
+        "query_frame_weight": 1.1953847408294678,
+        "standard_semantic_phase": 0.3286479413509369,
+        "query_semantic_phase": 0.21469995379447937,
+        "semantic_phase_gap": 0.11394798755645752,
+        "semantic_phase_penalty": 0.0009590174187791294,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.208434190970404,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.26485222403990977,
+        "pose_distance": 0.5332068522684678,
+        "face_distance": 0.4010792999445214,
+        "missing_penalty": 0.5327102803738317,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 34,
+        "query_frame_idx": 22,
+        "standard_timestamp_sec": 1.289655172413793,
+        "query_timestamp_sec": 1.2222222222222223,
+        "weighted_distance": 0.306636884881125,
+        "temporal_weighted_distance": 0.392185240983963,
+        "frame_pair_weight": 1.2789891123771668,
+        "standard_frame_weight": 1.3734768629074097,
+        "query_frame_weight": 1.0585176944732666,
+        "standard_semantic_phase": 0.6806272268295288,
+        "query_semantic_phase": 0.7540544271469116,
+        "semantic_phase_gap": 0.07342720031738281,
+        "semantic_phase_penalty": 0.0005298823013629469,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.27221390838108017,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.2581195308589491,
+        "pose_distance": 0.692783883831714,
+        "face_distance": 0.4716177356262851,
+        "missing_penalty": 0.5327102803738317,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 30,
+        "query_frame_idx": 18,
+        "standard_timestamp_sec": 1.1379310344827587,
+        "query_timestamp_sec": 1.0,
+        "weighted_distance": 0.29268648281942544,
+        "temporal_weighted_distance": 0.38055697083473206,
+        "frame_pair_weight": 1.3002205252647399,
+        "standard_frame_weight": 1.322114109992981,
+        "query_frame_weight": 1.2491354942321777,
+        "standard_semantic_phase": 0.5322526693344116,
+        "query_semantic_phase": 0.6005212664604187,
+        "semantic_phase_gap": 0.06826859712600708,
+        "semantic_phase_penalty": 0.0004802538178695561,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.21378113526760117,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.2737430850081441,
+        "pose_distance": 0.6137444604943083,
+        "face_distance": 0.4445258883849597,
+        "missing_penalty": 0.5327102803738317,
+        "hand_side_swapped": 0.0
+      }
+    ],
+    "semantic_profile": {
+      "word": "汽车",
+      "version": "semantic_weights_v1_20260523",
+      "description": "双手模拟开车的动作，两手虚握，想象手心内是方向盘；双手左右转动，模拟转动方向盘的动作；画面可以叠加一个方向盘，随着双手的转动进行旋转",
+      "group_weights": {
+        "left_hand": 0.3,
+        "right_hand": 0.3,
+        "left_hand_shape": 0.17,
+        "right_hand_shape": 0.17,
+        "pose": 0.0,
+        "face": 0.0,
+        "missing": 0.06
+      },
+      "keypoint_weights": {
+        "hand": {
+          "4": 1.35,
+          "8": 1.35,
+          "12": 1.25,
+          "opening": 1.25
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "left_hand",
+        "right_hand",
+        "left_hand_shape",
+        "right_hand_shape"
+      ],
+      "allow_hand_swap": true,
+      "semantic_notes": [
+        "DOCX 语义是双手虚握并左右转动方向盘；评分只看双手位置、手形和双手协同转动。",
+        "脸、嘴和躯干相对位置不参与主距离。",
+        "动态重要帧由双手同步旋转/转向动作驱动。"
+      ],
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.18,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.14,
+        "description": "Use semantic energy progress, not frame index, to softly align start/mid/end action phases."
+      }
+    }
+  },
+  "artifacts": {
+    "result_dir": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_054709_566e6021",
+    "holistic_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_054709_566e6021/holistic/user_汽车_web_20260523_054709_566e6021_holistic_results.json",
+    "scoring_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_054709_566e6021/scoring_result.json",
+    "worker_stderr_log": "/data/WYC/signLanguage/work/logs/web_holistic_worker_20260523_022954.stderr.log"
+  }
+}

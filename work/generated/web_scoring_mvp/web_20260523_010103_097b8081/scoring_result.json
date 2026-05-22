@@ -1,0 +1,240 @@
+{
+  "request_id": "web_20260523_010103_097b8081",
+  "generated_at": "2026-05-23T01:01:05",
+  "claim_policy": "prototype sanity check only; no calibrated real-user score or pass/fail threshold",
+  "target_word": "香蕉",
+  "standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run2/all_demo_step4_worker_cache_v2/results/香蕉/香蕉_holistic_results.json",
+  "query_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_010103_097b8081/holistic/user_香蕉_web_20260523_010103_097b8081_holistic_results.json",
+  "duration_sec": 3.0,
+  "capture_fps": 10.0,
+  "frame_count": 30,
+  "worker": {
+    "input_mode": "frame_slices",
+    "ingest_sec": 0.112,
+    "holistic_eval_sec": 1.539,
+    "request_total_sec": 1.849,
+    "samples": 30
+  },
+  "timing": {
+    "api_total_sec": 2.186
+  },
+  "score": {
+    "prototype_score": 17.846127913857096,
+    "dtw_distance": 0.08416911959648132,
+    "normalized_distance": 0.20680603498646508,
+    "path_length": 40,
+    "sequence_penalty": {
+      "length_ratio": 0.7333333333333333,
+      "length_penalty": 0.0,
+      "temporal_profile_factor": 0.5185185185185184,
+      "presence_delta": {
+        "left_hand": 0.6424242424242423,
+        "right_hand": 0.31818181818181823,
+        "pose": 0.0,
+        "face": 0.0
+      },
+      "presence_penalty": 0.03494909090909091,
+      "motion_delta": {
+        "left_hand": 0.4783567509214429,
+        "right_hand": 0.8056563689308746,
+        "left_hand_shape": 0.07852624548221471,
+        "right_hand_shape": 0.06963427527247498,
+        "pose": 0.49502070293248607,
+        "face": 0.017990211645978825
+      },
+      "motion_penalty": 0.005614129197108549,
+      "roughness_delta": {
+        "left_hand": 0.7634289416063172,
+        "right_hand": 0.8795443449830288,
+        "left_hand_shape": 0.008209558572117612,
+        "right_hand_shape": 0.13545087254687457,
+        "pose": 0.6310286562654499,
+        "face": 0.1680654921256496
+      },
+      "roughness_penalty": 0.02656654702610012,
+      "info_penalty": 0.0,
+      "endpoint_penalty": 0.0,
+      "confidence_warning_penalty": 0.0,
+      "semantic_delta_penalty": 0.055507148257684165,
+      "semantic_delta_detail": {
+        "right_hand": 0.520745442325666,
+        "left_hand": 0.053804693371057505,
+        "right_hand_shape": 0.6342557429534096,
+        "left_hand_shape": 0.4458943683343273
+      },
+      "total_sequence_penalty": 0.12263691538998375,
+      "standard_presence": {
+        "pose": 1.0,
+        "left_hand": 0.9090909090909091,
+        "right_hand": 0.8181818181818182,
+        "face": 1.0
+      },
+      "query_presence": {
+        "pose": 1.0,
+        "left_hand": 0.26666666666666666,
+        "right_hand": 0.5,
+        "face": 1.0
+      },
+      "standard_motion": {
+        "left_hand": 0.08683367176471572,
+        "right_hand": 0.0660432456061244,
+        "left_hand_shape": 0.12074491028722964,
+        "right_hand_shape": 0.15662214474286884,
+        "pose": 0.10740852205171472,
+        "face": 0.0831080326544387
+      },
+      "query_motion": {
+        "left_hand": 0.14016060903668404,
+        "right_hand": 0.1479395025155761,
+        "left_hand_shape": 0.13061694179972014,
+        "right_hand_shape": 0.14608021114360203,
+        "pose": 0.17627119247255654,
+        "face": 0.08461850892816639
+      },
+      "standard_roughness": {
+        "left_hand": 0.10463744360539648,
+        "right_hand": 0.07075730684612479,
+        "left_hand_shape": 0.1889010388404131,
+        "right_hand_shape": 0.21990326845220157,
+        "pose": 0.1444673653692007,
+        "face": 0.1300293950829655
+      },
+      "query_roughness": {
+        "left_hand": 0.2246268406510353,
+        "right_hand": 0.17065203852123684,
+        "left_hand_shape": 0.18735577538609505,
+        "right_hand_shape": 0.19203370892339283,
+        "pose": 0.2716205779995237,
+        "face": 0.15384490741416812
+      }
+    },
+    "group_mean_distance": {
+      "left_hand": 0.0,
+      "right_hand": 0.00857672699669169,
+      "left_hand_shape": 0.0,
+      "right_hand_shape": 0.0056927884015981235,
+      "pose": 0.5100174044481934,
+      "face": 0.3949068477404072,
+      "missing": 0.4916666666666666,
+      "weighted": 0.08416911206589779,
+      "hand_side_swapped": 0.0
+    },
+    "worst_alignment_points": [
+      {
+        "standard_frame_idx": 81,
+        "query_frame_idx": 29,
+        "standard_timestamp_sec": 3.1609756097560977,
+        "query_timestamp_sec": 2.9,
+        "weighted_distance": 0.18964487991730092,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.3430690798676676,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.22771153606392494,
+        "pose_distance": 0.3056694865464183,
+        "face_distance": 0.29835338461212507,
+        "missing_penalty": 0.3333333333333333,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 40,
+        "query_frame_idx": 23,
+        "standard_timestamp_sec": 1.5609756097560976,
+        "query_timestamp_sec": 2.3,
+        "weighted_distance": 0.11211021657499534,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.7161534840151091,
+        "face_distance": 0.5454773739571603,
+        "missing_penalty": 0.6666666666666666,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 4,
+        "query_frame_idx": 19,
+        "standard_timestamp_sec": 0.15609756097560976,
+        "query_timestamp_sec": 1.9,
+        "weighted_distance": 0.10662956853111791,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.6663294108889507,
+        "face_distance": 0.5332096085486078,
+        "missing_penalty": 0.6666666666666666,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 44,
+        "query_frame_idx": 24,
+        "standard_timestamp_sec": 1.7170731707317073,
+        "query_timestamp_sec": 2.4,
+        "weighted_distance": 0.10003005762402992,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.6063338571881508,
+        "face_distance": 0.4755836537241253,
+        "missing_penalty": 0.6666666666666666,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 4,
+        "query_frame_idx": 4,
+        "standard_timestamp_sec": 0.15609756097560976,
+        "query_timestamp_sec": 0.4,
+        "weighted_distance": 0.09986605669838144,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.6048429396822554,
+        "face_distance": 0.28267374071155393,
+        "missing_penalty": 0.6666666666666666,
+        "hand_side_swapped": 0.0
+      }
+    ],
+    "semantic_profile": {
+      "word": "香蕉",
+      "version": "semantic_weights_v1_20260523",
+      "description": "左手竖着的食指表示香蕉；右手从左手食指上往下做剥皮动作；画面可以叠加一根真实未剥皮的香蕉，并随着右手的动作，香蕉皮慢慢被剥开",
+      "group_weights": {
+        "left_hand": 0.24000000000000002,
+        "right_hand": 0.3,
+        "left_hand_shape": 0.14,
+        "right_hand_shape": 0.16,
+        "pose": 0.11000000000000001,
+        "face": 0.0,
+        "missing": 0.05
+      },
+      "keypoint_weights": {
+        "hand": {
+          "8": 1.9,
+          "index": 1.8,
+          "4": 1.3
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "right_hand",
+        "left_hand",
+        "right_hand_shape",
+        "left_hand_shape"
+      ],
+      "allow_hand_swap": true,
+      "semantic_notes": [
+        "由 DOCX 动作说明中的手/脸/身体语义自动选择组权重。",
+        "手部关键语义优先用相对手形特征和重点指尖/拇指节点刻画。"
+      ]
+    }
+  },
+  "artifacts": {
+    "result_dir": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_010103_097b8081",
+    "holistic_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_010103_097b8081/holistic/user_香蕉_web_20260523_010103_097b8081_holistic_results.json",
+    "scoring_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_010103_097b8081/scoring_result.json",
+    "worker_stderr_log": "/data/WYC/signLanguage/work/logs/web_holistic_worker_20260523_004553.stderr.log"
+  }
+}

@@ -1,0 +1,240 @@
+{
+  "request_id": "web_20260523_010145_82035a51",
+  "generated_at": "2026-05-23T01:01:48",
+  "claim_policy": "prototype sanity check only; no calibrated real-user score or pass/fail threshold",
+  "target_word": "香蕉",
+  "standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run2/all_demo_step4_worker_cache_v2/results/香蕉/香蕉_holistic_results.json",
+  "query_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_010145_82035a51/holistic/user_香蕉_web_20260523_010145_82035a51_holistic_results.json",
+  "duration_sec": 3.0,
+  "capture_fps": 10.0,
+  "frame_count": 30,
+  "worker": {
+    "input_mode": "frame_slices",
+    "ingest_sec": 0.109,
+    "holistic_eval_sec": 1.646,
+    "request_total_sec": 1.953,
+    "samples": 30
+  },
+  "timing": {
+    "api_total_sec": 2.346
+  },
+  "score": {
+    "prototype_score": 20.752871808827138,
+    "dtw_distance": 0.09736518263816833,
+    "normalized_distance": 0.1886982658154922,
+    "path_length": 40,
+    "sequence_penalty": {
+      "length_ratio": 0.7333333333333333,
+      "length_penalty": 0.0,
+      "temporal_profile_factor": 0.5185185185185184,
+      "presence_delta": {
+        "left_hand": 0.4757575757575757,
+        "right_hand": 0.18484848484848493,
+        "pose": 0.0,
+        "face": 0.0
+      },
+      "presence_penalty": 0.02374909090909091,
+      "motion_delta": {
+        "left_hand": 0.13057473741160874,
+        "right_hand": 0.6184871805648708,
+        "left_hand_shape": 0.5109543737778542,
+        "right_hand_shape": 0.3267387144585291,
+        "pose": 0.3131898521885987,
+        "face": 0.28049119577534715
+      },
+      "motion_penalty": 0.004863013834664447,
+      "roughness_delta": {
+        "left_hand": 0.22458810390915476,
+        "right_hand": 0.7398857894983351,
+        "left_hand_shape": 0.49953595345665897,
+        "right_hand_shape": 0.40546886985617536,
+        "pose": 0.47887541016007695,
+        "face": 0.30336553098424585
+      },
+      "roughness_penalty": 0.02282443686381781,
+      "info_penalty": 0.0,
+      "endpoint_penalty": 0.0,
+      "confidence_warning_penalty": 0.0,
+      "semantic_delta_penalty": 0.039896541569750685,
+      "semantic_delta_detail": {
+        "right_hand": 0.07861563339829444,
+        "left_hand": 0.5245850542438184,
+        "right_hand_shape": 0.13371627920208184,
+        "left_hand_shape": 0.4892824407726157
+      },
+      "total_sequence_penalty": 0.09133308317732386,
+      "standard_presence": {
+        "pose": 1.0,
+        "left_hand": 0.9090909090909091,
+        "right_hand": 0.8181818181818182,
+        "face": 1.0
+      },
+      "query_presence": {
+        "pose": 1.0,
+        "left_hand": 0.43333333333333335,
+        "right_hand": 0.6333333333333333,
+        "face": 1.0
+      },
+      "standard_motion": {
+        "left_hand": 0.08683367176471572,
+        "right_hand": 0.0660432456061244,
+        "left_hand_shape": 0.12074491028722964,
+        "right_hand_shape": 0.15662214474286884,
+        "pose": 0.10740852205171472,
+        "face": 0.0831080326544387
+      },
+      "query_motion": {
+        "left_hand": 0.07619219938559192,
+        "right_hand": 0.12266966514289379,
+        "left_hand_shape": 0.07239761150309018,
+        "right_hand_shape": 0.21718572080135345,
+        "pose": 0.14694813343471494,
+        "face": 0.06275639585861616
+      },
+      "standard_roughness": {
+        "left_hand": 0.10463744360539648,
+        "right_hand": 0.07075730684612479,
+        "left_hand_shape": 0.1889010388404131,
+        "right_hand_shape": 0.21990326845220157,
+        "pose": 0.1444673653692007,
+        "face": 0.1300293950829655
+      },
+      "query_roughness": {
+        "left_hand": 0.08356900326907635,
+        "right_hand": 0.14839538517925474,
+        "left_hand_shape": 0.11458813305944204,
+        "right_hand_shape": 0.3299061440759235,
+        "pose": 0.23326902650296688,
+        "face": 0.09597832759443138
+      }
+    },
+    "group_mean_distance": {
+      "left_hand": 0.019384372974335214,
+      "right_hand": 0.010852447436746194,
+      "left_hand_shape": 0.07029750152081188,
+      "right_hand_shape": 0.01995395451677619,
+      "pose": 0.49020837755521224,
+      "face": 0.43907748078647646,
+      "missing": 0.44999999999999973,
+      "weighted": 0.0973651882115355,
+      "hand_side_swapped": 0.05
+    },
+    "worst_alignment_points": [
+      {
+        "standard_frame_idx": 72,
+        "query_frame_idx": 26,
+        "standard_timestamp_sec": 2.8097560975609754,
+        "query_timestamp_sec": 2.6,
+        "weighted_distance": 0.286487380997186,
+        "left_hand_distance": 0.17175114103776648,
+        "right_hand_distance": 0.22480856494151286,
+        "left_hand_shape_distance": 0.5050309225993849,
+        "right_hand_shape_distance": 0.412246372763075,
+        "pose_distance": 0.3741889896332941,
+        "face_distance": 0.32408134071337175,
+        "missing_penalty": 0.0,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 68,
+        "query_frame_idx": 25,
+        "standard_timestamp_sec": 2.653658536585366,
+        "query_timestamp_sec": 2.5,
+        "weighted_distance": 0.26344288573295055,
+        "left_hand_distance": 0.1399349969214635,
+        "right_hand_distance": 0.20928933252833493,
+        "left_hand_shape_distance": 0.4864180879660974,
+        "right_hand_shape_distance": 0.3859118079079725,
+        "pose_distance": 0.33842968302517834,
+        "face_distance": 0.3259133477435005,
+        "missing_penalty": 0.0,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 64,
+        "query_frame_idx": 24,
+        "standard_timestamp_sec": 2.497560975609756,
+        "query_timestamp_sec": 2.4,
+        "weighted_distance": 0.16078808406980696,
+        "left_hand_distance": 0.14262607371041042,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.49727701724902235,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.3661125208888972,
+        "face_distance": 0.33661978580909474,
+        "missing_penalty": 0.3333333333333333,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 76,
+        "query_frame_idx": 27,
+        "standard_timestamp_sec": 2.9658536585365853,
+        "query_timestamp_sec": 2.7,
+        "weighted_distance": 0.1585550460175673,
+        "left_hand_distance": 0.11950660423865651,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.5326060445319939,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.35129043726494513,
+        "face_distance": 0.3178756252577184,
+        "missing_penalty": 0.3333333333333333,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 81,
+        "query_frame_idx": 29,
+        "standard_timestamp_sec": 3.1609756097560977,
+        "query_timestamp_sec": 2.9,
+        "weighted_distance": 0.13147396074056716,
+        "left_hand_distance": 0.129580184090877,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.3809155728692191,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.276180633549085,
+        "face_distance": 0.3569712574771561,
+        "missing_penalty": 0.3333333333333333,
+        "hand_side_swapped": 1.0
+      }
+    ],
+    "semantic_profile": {
+      "word": "香蕉",
+      "version": "semantic_weights_v1_20260523",
+      "description": "左手竖着的食指表示香蕉；右手从左手食指上往下做剥皮动作；画面可以叠加一根真实未剥皮的香蕉，并随着右手的动作，香蕉皮慢慢被剥开",
+      "group_weights": {
+        "left_hand": 0.24000000000000002,
+        "right_hand": 0.3,
+        "left_hand_shape": 0.14,
+        "right_hand_shape": 0.16,
+        "pose": 0.11000000000000001,
+        "face": 0.0,
+        "missing": 0.05
+      },
+      "keypoint_weights": {
+        "hand": {
+          "8": 1.9,
+          "index": 1.8,
+          "4": 1.3
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "right_hand",
+        "left_hand",
+        "right_hand_shape",
+        "left_hand_shape"
+      ],
+      "allow_hand_swap": true,
+      "semantic_notes": [
+        "由 DOCX 动作说明中的手/脸/身体语义自动选择组权重。",
+        "手部关键语义优先用相对手形特征和重点指尖/拇指节点刻画。"
+      ]
+    }
+  },
+  "artifacts": {
+    "result_dir": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_010145_82035a51",
+    "holistic_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_010145_82035a51/holistic/user_香蕉_web_20260523_010145_82035a51_holistic_results.json",
+    "scoring_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260523_010145_82035a51/scoring_result.json",
+    "worker_stderr_log": "/data/WYC/signLanguage/work/logs/web_holistic_worker_20260523_004553.stderr.log"
+  }
+}

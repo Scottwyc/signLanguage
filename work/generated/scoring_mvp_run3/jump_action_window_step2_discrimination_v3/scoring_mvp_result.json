@@ -1,0 +1,2978 @@
+{
+  "generated_at": "2026-05-23T01:45:39",
+  "claim_policy": "prototype sanity check only; no calibrated real-user score or pass/fail threshold",
+  "feature_mode": "landmark",
+  "semantic_profile": {
+    "word": "跳",
+    "version": "semantic_weights_v1_20260523",
+    "description": "右手两根手指模拟人的两条腿，左手模拟地面；右手食、中指向上弹跳时，要先弯曲后伸直，并且动作较为迅速；画面可以在右手两根手指上叠加一个小人，双腿正好与右手的食指、中指重合，左手位置叠加一块平地，小人双腿随着右手食、中指的状态运动",
+    "group_weights": {
+      "left_hand": 0.18,
+      "right_hand": 0.34,
+      "left_hand_shape": 0.07,
+      "right_hand_shape": 0.36,
+      "pose": 0.0,
+      "face": 0.0,
+      "missing": 0.05
+    },
+    "keypoint_weights": {
+      "hand": {
+        "8": 1.9,
+        "12": 1.9,
+        "5": 1.35,
+        "9": 1.35,
+        "index": 1.8,
+        "middle": 1.8
+      },
+      "pose": {
+        "15": 1.1,
+        "16": 1.1
+      },
+      "face": {}
+    },
+    "focus_groups": [
+      "right_hand_shape",
+      "right_hand",
+      "left_hand"
+    ],
+    "allow_hand_swap": true,
+    "semantic_notes": [
+      "由 DOCX 动作说明中的手/脸/身体语义自动选择组权重。",
+      "手部关键语义优先用相对手形特征和重点指尖/拇指节点刻画。"
+    ]
+  },
+  "standard": {
+    "source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json",
+    "length": 19,
+    "fps": 14.682539682539682,
+    "total_frames": 37,
+    "presence_ratio": {
+      "pose": 1.0,
+      "left_hand": 0.8421052631578947,
+      "right_hand": 0.8947368421052632,
+      "face": 1.0
+    }
+  },
+  "query": {
+    "source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json",
+    "length": 19,
+    "fps": 14.682539682539682,
+    "total_frames": 37,
+    "presence_ratio": {
+      "pose": 1.0,
+      "left_hand": 0.8421052631578947,
+      "right_hand": 0.8947368421052632,
+      "face": 1.0
+    }
+  },
+  "main_result": {
+    "standard_length": 9,
+    "query_length": 9,
+    "standard_full_length": 19,
+    "query_full_length": 19,
+    "action_window": {
+      "standard": {
+        "start_index": 3,
+        "end_index": 11,
+        "length": 9,
+        "used": true,
+        "reason": "semantic_energy_window",
+        "energy_coverage": 0.8581721987087643,
+        "baseline_weight": 0.6899811625480652,
+        "active_threshold": 1.0964240074157716,
+        "peak_index": 8,
+        "peak_frame_idx": 16,
+        "peak_timestamp_sec": 1.0897297297297297,
+        "peak_weight": 1.4956797361373901,
+        "contrast": 2.167710971432787,
+        "discarded_prefix_frames": 3,
+        "discarded_suffix_frames": 7,
+        "start_frame_idx": 6,
+        "end_frame_idx": 22,
+        "start_timestamp_sec": 0.4086486486486487,
+        "end_timestamp_sec": 1.4983783783783784
+      },
+      "query": {
+        "start_index": 3,
+        "end_index": 11,
+        "length": 9,
+        "used": true,
+        "reason": "semantic_energy_window",
+        "energy_coverage": 0.8581721987087643,
+        "baseline_weight": 0.6899811625480652,
+        "active_threshold": 1.0964240074157716,
+        "peak_index": 8,
+        "peak_frame_idx": 16,
+        "peak_timestamp_sec": 1.0897297297297297,
+        "peak_weight": 1.4956797361373901,
+        "contrast": 2.167710971432787,
+        "discarded_prefix_frames": 3,
+        "discarded_suffix_frames": 7,
+        "start_frame_idx": 6,
+        "end_frame_idx": 22,
+        "start_timestamp_sec": 0.4086486486486487,
+        "end_timestamp_sec": 1.4983783783783784
+      }
+    },
+    "path_length": 9,
+    "raw_path_length": 9,
+    "path_weight_sum": 11.264770746231079,
+    "trim_tolerance": {
+      "enabled": false,
+      "reason": "length_ratio_out_of_range"
+    },
+    "dtw_distance": 0.0,
+    "normalized_distance": 0.0,
+    "prototype_score": 100.0,
+    "sequence_penalty": {
+      "length_ratio": 1.0,
+      "length_penalty": 0.0,
+      "temporal_profile_factor": 1.0,
+      "presence_delta": {
+        "left_hand": 0.0,
+        "right_hand": 0.0,
+        "pose": 0.0,
+        "face": 0.0
+      },
+      "presence_penalty": 0.0,
+      "motion_delta": {
+        "left_hand": 0.0,
+        "right_hand": 0.0,
+        "left_hand_shape": 0.0,
+        "right_hand_shape": 0.0,
+        "pose": 0.0,
+        "face": 0.0
+      },
+      "motion_penalty": 0.0,
+      "roughness_delta": {
+        "left_hand": 0.0,
+        "right_hand": 0.0,
+        "left_hand_shape": 0.0,
+        "right_hand_shape": 0.0,
+        "pose": 0.0,
+        "face": 0.0
+      },
+      "roughness_penalty": 0.0,
+      "info_penalty": 0.0,
+      "endpoint_penalty": 0.0,
+      "confidence_warning_penalty": 0.0,
+      "semantic_delta_penalty": 0.0,
+      "semantic_delta_detail": {
+        "right_hand_shape": 0.0,
+        "right_hand": 0.0,
+        "left_hand": 0.0
+      },
+      "total_sequence_penalty": 0.0,
+      "standard_presence": {
+        "pose": 1.0,
+        "left_hand": 0.8888888888888888,
+        "right_hand": 1.0,
+        "face": 1.0
+      },
+      "query_presence": {
+        "pose": 1.0,
+        "left_hand": 0.8888888888888888,
+        "right_hand": 1.0,
+        "face": 1.0
+      },
+      "standard_motion": {
+        "left_hand": 0.10142662686606248,
+        "right_hand": 0.07627341023180634,
+        "left_hand_shape": 0.07689094667633374,
+        "right_hand_shape": 0.13561891997233033,
+        "pose": 0.12315624766051769,
+        "face": 0.05515065375948325
+      },
+      "query_motion": {
+        "left_hand": 0.10142662686606248,
+        "right_hand": 0.07627341023180634,
+        "left_hand_shape": 0.07689094667633374,
+        "right_hand_shape": 0.13561891997233033,
+        "pose": 0.12315624766051769,
+        "face": 0.05515065375948325
+      },
+      "standard_roughness": {
+        "left_hand": 0.16139836981892586,
+        "right_hand": 0.11468312410371644,
+        "left_hand_shape": 0.1184068750590086,
+        "right_hand_shape": 0.22863650428397314,
+        "pose": 0.18584132407392775,
+        "face": 0.11532837192394904
+      },
+      "query_roughness": {
+        "left_hand": 0.16139836981892586,
+        "right_hand": 0.11468312410371644,
+        "left_hand_shape": 0.1184068750590086,
+        "right_hand_shape": 0.22863650428397314,
+        "pose": 0.18584132407392775,
+        "face": 0.11532837192394904
+      }
+    },
+    "group_mean_distance": {
+      "left_hand": 0.0,
+      "right_hand": 0.0,
+      "left_hand_shape": 0.0,
+      "right_hand_shape": 0.0,
+      "pose": 0.0,
+      "face": 0.0,
+      "missing": 0.0,
+      "weighted": 0.0,
+      "hand_side_swapped": 0.0
+    },
+    "frame_weight_summary": {
+      "standard_full": {
+        "count": 19,
+        "mean": 1.0,
+        "min": 0.6899811625480652,
+        "max": 1.4956797361373901,
+        "top_frames": [
+          {
+            "rank": 1,
+            "frame_idx": 16,
+            "timestamp_sec": 1.0897297297297297,
+            "weight": 1.4956797361373901
+          },
+          {
+            "rank": 2,
+            "frame_idx": 6,
+            "timestamp_sec": 0.4086486486486487,
+            "weight": 1.4024536609649658
+          },
+          {
+            "rank": 3,
+            "frame_idx": 8,
+            "timestamp_sec": 0.5448648648648649,
+            "weight": 1.394613265991211
+          },
+          {
+            "rank": 4,
+            "frame_idx": 14,
+            "timestamp_sec": 0.9535135135135135,
+            "weight": 1.3801387548446655
+          },
+          {
+            "rank": 5,
+            "frame_idx": 18,
+            "timestamp_sec": 1.225945945945946,
+            "weight": 1.287479281425476
+          },
+          {
+            "rank": 6,
+            "frame_idx": 20,
+            "timestamp_sec": 1.3621621621621622,
+            "weight": 1.137839913368225
+          },
+          {
+            "rank": 7,
+            "frame_idx": 10,
+            "timestamp_sec": 0.6810810810810811,
+            "weight": 1.1197068691253662
+          },
+          {
+            "rank": 8,
+            "frame_idx": 4,
+            "timestamp_sec": 0.2724324324324324,
+            "weight": 1.0420973300933838
+          }
+        ]
+      },
+      "query_full": {
+        "count": 19,
+        "mean": 1.0,
+        "min": 0.6899811625480652,
+        "max": 1.4956797361373901,
+        "top_frames": [
+          {
+            "rank": 1,
+            "frame_idx": 16,
+            "timestamp_sec": 1.0897297297297297,
+            "weight": 1.4956797361373901
+          },
+          {
+            "rank": 2,
+            "frame_idx": 6,
+            "timestamp_sec": 0.4086486486486487,
+            "weight": 1.4024536609649658
+          },
+          {
+            "rank": 3,
+            "frame_idx": 8,
+            "timestamp_sec": 0.5448648648648649,
+            "weight": 1.394613265991211
+          },
+          {
+            "rank": 4,
+            "frame_idx": 14,
+            "timestamp_sec": 0.9535135135135135,
+            "weight": 1.3801387548446655
+          },
+          {
+            "rank": 5,
+            "frame_idx": 18,
+            "timestamp_sec": 1.225945945945946,
+            "weight": 1.287479281425476
+          },
+          {
+            "rank": 6,
+            "frame_idx": 20,
+            "timestamp_sec": 1.3621621621621622,
+            "weight": 1.137839913368225
+          },
+          {
+            "rank": 7,
+            "frame_idx": 10,
+            "timestamp_sec": 0.6810810810810811,
+            "weight": 1.1197068691253662
+          },
+          {
+            "rank": 8,
+            "frame_idx": 4,
+            "timestamp_sec": 0.2724324324324324,
+            "weight": 1.0420973300933838
+          }
+        ]
+      },
+      "standard_action": {
+        "count": 9,
+        "mean": 1.2516411542892456,
+        "min": 1.006697177886963,
+        "max": 1.4956797361373901,
+        "top_frames": [
+          {
+            "rank": 1,
+            "frame_idx": 16,
+            "timestamp_sec": 1.0897297297297297,
+            "weight": 1.4956797361373901
+          },
+          {
+            "rank": 2,
+            "frame_idx": 6,
+            "timestamp_sec": 0.4086486486486487,
+            "weight": 1.4024536609649658
+          },
+          {
+            "rank": 3,
+            "frame_idx": 8,
+            "timestamp_sec": 0.5448648648648649,
+            "weight": 1.394613265991211
+          },
+          {
+            "rank": 4,
+            "frame_idx": 14,
+            "timestamp_sec": 0.9535135135135135,
+            "weight": 1.3801387548446655
+          },
+          {
+            "rank": 5,
+            "frame_idx": 18,
+            "timestamp_sec": 1.225945945945946,
+            "weight": 1.287479281425476
+          },
+          {
+            "rank": 6,
+            "frame_idx": 20,
+            "timestamp_sec": 1.3621621621621622,
+            "weight": 1.137839913368225
+          },
+          {
+            "rank": 7,
+            "frame_idx": 10,
+            "timestamp_sec": 0.6810810810810811,
+            "weight": 1.1197068691253662
+          },
+          {
+            "rank": 8,
+            "frame_idx": 12,
+            "timestamp_sec": 0.8172972972972974,
+            "weight": 1.0401620864868164
+          }
+        ]
+      },
+      "query_action": {
+        "count": 9,
+        "mean": 1.2516411542892456,
+        "min": 1.006697177886963,
+        "max": 1.4956797361373901,
+        "top_frames": [
+          {
+            "rank": 1,
+            "frame_idx": 16,
+            "timestamp_sec": 1.0897297297297297,
+            "weight": 1.4956797361373901
+          },
+          {
+            "rank": 2,
+            "frame_idx": 6,
+            "timestamp_sec": 0.4086486486486487,
+            "weight": 1.4024536609649658
+          },
+          {
+            "rank": 3,
+            "frame_idx": 8,
+            "timestamp_sec": 0.5448648648648649,
+            "weight": 1.394613265991211
+          },
+          {
+            "rank": 4,
+            "frame_idx": 14,
+            "timestamp_sec": 0.9535135135135135,
+            "weight": 1.3801387548446655
+          },
+          {
+            "rank": 5,
+            "frame_idx": 18,
+            "timestamp_sec": 1.225945945945946,
+            "weight": 1.287479281425476
+          },
+          {
+            "rank": 6,
+            "frame_idx": 20,
+            "timestamp_sec": 1.3621621621621622,
+            "weight": 1.137839913368225
+          },
+          {
+            "rank": 7,
+            "frame_idx": 10,
+            "timestamp_sec": 0.6810810810810811,
+            "weight": 1.1197068691253662
+          },
+          {
+            "rank": 8,
+            "frame_idx": 12,
+            "timestamp_sec": 0.8172972972972974,
+            "weight": 1.0401620864868164
+          }
+        ]
+      }
+    },
+    "semantic_profile": {
+      "word": "跳",
+      "version": "semantic_weights_v1_20260523",
+      "description": "右手两根手指模拟人的两条腿，左手模拟地面；右手食、中指向上弹跳时，要先弯曲后伸直，并且动作较为迅速；画面可以在右手两根手指上叠加一个小人，双腿正好与右手的食指、中指重合，左手位置叠加一块平地，小人双腿随着右手食、中指的状态运动",
+      "group_weights": {
+        "left_hand": 0.18,
+        "right_hand": 0.34,
+        "left_hand_shape": 0.07,
+        "right_hand_shape": 0.36,
+        "pose": 0.0,
+        "face": 0.0,
+        "missing": 0.05
+      },
+      "keypoint_weights": {
+        "hand": {
+          "8": 1.9,
+          "12": 1.9,
+          "5": 1.35,
+          "9": 1.35,
+          "index": 1.8,
+          "middle": 1.8
+        },
+        "pose": {
+          "15": 1.1,
+          "16": 1.1
+        },
+        "face": {}
+      },
+      "focus_groups": [
+        "right_hand_shape",
+        "right_hand",
+        "left_hand"
+      ],
+      "allow_hand_swap": true,
+      "semantic_notes": [
+        "由 DOCX 动作说明中的手/脸/身体语义自动选择组权重。",
+        "手部关键语义优先用相对手形特征和重点指尖/拇指节点刻画。"
+      ]
+    },
+    "alignment_path": [
+      {
+        "standard_frame_idx": 6,
+        "query_frame_idx": 6,
+        "standard_timestamp_sec": 0.4086486486486487,
+        "query_timestamp_sec": 0.4086486486486487,
+        "distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.4024536609649658,
+        "standard_frame_weight": 1.4024536609649658,
+        "query_frame_weight": 1.4024536609649658
+      },
+      {
+        "standard_frame_idx": 8,
+        "query_frame_idx": 8,
+        "standard_timestamp_sec": 0.5448648648648649,
+        "query_timestamp_sec": 0.5448648648648649,
+        "distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.394613265991211,
+        "standard_frame_weight": 1.394613265991211,
+        "query_frame_weight": 1.394613265991211
+      },
+      {
+        "standard_frame_idx": 10,
+        "query_frame_idx": 10,
+        "standard_timestamp_sec": 0.6810810810810811,
+        "query_timestamp_sec": 0.6810810810810811,
+        "distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.1197068691253662,
+        "standard_frame_weight": 1.1197068691253662,
+        "query_frame_weight": 1.1197068691253662
+      },
+      {
+        "standard_frame_idx": 12,
+        "query_frame_idx": 12,
+        "standard_timestamp_sec": 0.8172972972972974,
+        "query_timestamp_sec": 0.8172972972972974,
+        "distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.0401620864868164,
+        "standard_frame_weight": 1.0401620864868164,
+        "query_frame_weight": 1.0401620864868164
+      },
+      {
+        "standard_frame_idx": 14,
+        "query_frame_idx": 14,
+        "standard_timestamp_sec": 0.9535135135135135,
+        "query_timestamp_sec": 0.9535135135135135,
+        "distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.3801387548446655,
+        "standard_frame_weight": 1.3801387548446655,
+        "query_frame_weight": 1.3801387548446655
+      },
+      {
+        "standard_frame_idx": 16,
+        "query_frame_idx": 16,
+        "standard_timestamp_sec": 1.0897297297297297,
+        "query_timestamp_sec": 1.0897297297297297,
+        "distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.4956797361373901,
+        "standard_frame_weight": 1.4956797361373901,
+        "query_frame_weight": 1.4956797361373901
+      },
+      {
+        "standard_frame_idx": 18,
+        "query_frame_idx": 18,
+        "standard_timestamp_sec": 1.225945945945946,
+        "query_timestamp_sec": 1.225945945945946,
+        "distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.287479281425476,
+        "standard_frame_weight": 1.287479281425476,
+        "query_frame_weight": 1.287479281425476
+      },
+      {
+        "standard_frame_idx": 20,
+        "query_frame_idx": 20,
+        "standard_timestamp_sec": 1.3621621621621622,
+        "query_timestamp_sec": 1.3621621621621622,
+        "distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.137839913368225,
+        "standard_frame_weight": 1.137839913368225,
+        "query_frame_weight": 1.137839913368225
+      },
+      {
+        "standard_frame_idx": 22,
+        "query_frame_idx": 22,
+        "standard_timestamp_sec": 1.4983783783783784,
+        "query_timestamp_sec": 1.4983783783783784,
+        "distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.006697177886963,
+        "standard_frame_weight": 1.006697177886963,
+        "query_frame_weight": 1.006697177886963
+      }
+    ],
+    "worst_alignment_points": [
+      {
+        "standard_frame_idx": 6,
+        "query_frame_idx": 6,
+        "standard_timestamp_sec": 0.4086486486486487,
+        "query_timestamp_sec": 0.4086486486486487,
+        "weighted_distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.4024536609649658,
+        "standard_frame_weight": 1.4024536609649658,
+        "query_frame_weight": 1.4024536609649658,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.0,
+        "face_distance": 0.0,
+        "missing_penalty": 0.0,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 8,
+        "query_frame_idx": 8,
+        "standard_timestamp_sec": 0.5448648648648649,
+        "query_timestamp_sec": 0.5448648648648649,
+        "weighted_distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.394613265991211,
+        "standard_frame_weight": 1.394613265991211,
+        "query_frame_weight": 1.394613265991211,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.0,
+        "face_distance": 0.0,
+        "missing_penalty": 0.0,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 10,
+        "query_frame_idx": 10,
+        "standard_timestamp_sec": 0.6810810810810811,
+        "query_timestamp_sec": 0.6810810810810811,
+        "weighted_distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.1197068691253662,
+        "standard_frame_weight": 1.1197068691253662,
+        "query_frame_weight": 1.1197068691253662,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.0,
+        "face_distance": 0.0,
+        "missing_penalty": 0.0,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 12,
+        "query_frame_idx": 12,
+        "standard_timestamp_sec": 0.8172972972972974,
+        "query_timestamp_sec": 0.8172972972972974,
+        "weighted_distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.0401620864868164,
+        "standard_frame_weight": 1.0401620864868164,
+        "query_frame_weight": 1.0401620864868164,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.0,
+        "face_distance": 0.0,
+        "missing_penalty": 0.0,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 14,
+        "query_frame_idx": 14,
+        "standard_timestamp_sec": 0.9535135135135135,
+        "query_timestamp_sec": 0.9535135135135135,
+        "weighted_distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.3801387548446655,
+        "standard_frame_weight": 1.3801387548446655,
+        "query_frame_weight": 1.3801387548446655,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.0,
+        "face_distance": 0.0,
+        "missing_penalty": 0.0,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 16,
+        "query_frame_idx": 16,
+        "standard_timestamp_sec": 1.0897297297297297,
+        "query_timestamp_sec": 1.0897297297297297,
+        "weighted_distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.4956797361373901,
+        "standard_frame_weight": 1.4956797361373901,
+        "query_frame_weight": 1.4956797361373901,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.0,
+        "face_distance": 0.0,
+        "missing_penalty": 0.0,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 18,
+        "query_frame_idx": 18,
+        "standard_timestamp_sec": 1.225945945945946,
+        "query_timestamp_sec": 1.225945945945946,
+        "weighted_distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.287479281425476,
+        "standard_frame_weight": 1.287479281425476,
+        "query_frame_weight": 1.287479281425476,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.0,
+        "face_distance": 0.0,
+        "missing_penalty": 0.0,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 20,
+        "query_frame_idx": 20,
+        "standard_timestamp_sec": 1.3621621621621622,
+        "query_timestamp_sec": 1.3621621621621622,
+        "weighted_distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.137839913368225,
+        "standard_frame_weight": 1.137839913368225,
+        "query_frame_weight": 1.137839913368225,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.0,
+        "face_distance": 0.0,
+        "missing_penalty": 0.0,
+        "hand_side_swapped": 0.0
+      },
+      {
+        "standard_frame_idx": 22,
+        "query_frame_idx": 22,
+        "standard_timestamp_sec": 1.4983783783783784,
+        "query_timestamp_sec": 1.4983783783783784,
+        "weighted_distance": 0.0,
+        "temporal_weighted_distance": 0.0,
+        "frame_pair_weight": 1.006697177886963,
+        "standard_frame_weight": 1.006697177886963,
+        "query_frame_weight": 1.006697177886963,
+        "left_hand_distance": 0.0,
+        "right_hand_distance": 0.0,
+        "left_hand_shape_distance": 0.0,
+        "right_hand_shape_distance": 0.0,
+        "pose_distance": 0.0,
+        "face_distance": 0.0,
+        "missing_penalty": 0.0,
+        "hand_side_swapped": 0.0
+      }
+    ]
+  },
+  "sanity_results": [],
+  "discrimination_suite": {
+    "positive_threshold": 75.0,
+    "negative_threshold": 50.0,
+    "required_margin": 15.0,
+    "min_positive_score": 70.10813951609424,
+    "max_negative_score": 45.75874298193249,
+    "margin": 24.349396534161748,
+    "gate_pass": false,
+    "cases": [
+      {
+        "case_id": "self",
+        "case_type": "target_positive_variant",
+        "expected": "high",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json::self",
+        "query_length": 19,
+        "prototype_score": 100.0,
+        "dtw_distance": 0.0,
+        "normalized_distance": 0.0,
+        "sequence_penalty": {
+          "length_ratio": 1.0,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 1.0,
+          "presence_delta": {
+            "left_hand": 0.0,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.0,
+          "motion_delta": {
+            "left_hand": 0.0,
+            "right_hand": 0.0,
+            "left_hand_shape": 0.0,
+            "right_hand_shape": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "motion_penalty": 0.0,
+          "roughness_delta": {
+            "left_hand": 0.0,
+            "right_hand": 0.0,
+            "left_hand_shape": 0.0,
+            "right_hand_shape": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "roughness_penalty": 0.0,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.0,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.0,
+            "right_hand": 0.0,
+            "left_hand": 0.0
+          },
+          "total_sequence_penalty": 0.0,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.0,
+          "right_hand": 0.0,
+          "left_hand_shape": 0.0,
+          "right_hand_shape": 0.0,
+          "pose": 0.0,
+          "face": 0.0,
+          "missing": 0.0,
+          "weighted": 0.0,
+          "hand_side_swapped": 0.0
+        }
+      },
+      {
+        "case_id": "subsample_even",
+        "case_type": "target_positive_variant",
+        "expected": "high",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json::subsample_even",
+        "query_length": 10,
+        "prototype_score": 70.26322347096708,
+        "dtw_distance": 0.027525764663536123,
+        "normalized_distance": 0.0423505993231146,
+        "sequence_penalty": {
+          "length_ratio": 0.6666666666666666,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 0.3703703703703703,
+          "presence_delta": {
+            "left_hand": 0.05555555555555547,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.0013999999999999978,
+          "motion_delta": {
+            "left_hand": 0.4426224666604632,
+            "right_hand": 0.3279290921529855,
+            "left_hand_shape": 0.11085275915910732,
+            "right_hand_shape": 0.027637058147482345,
+            "pose": 0.034760625740644285,
+            "face": 0.47039993324004425
+          },
+          "motion_penalty": 0.0019340460130104584,
+          "roughness_delta": {
+            "left_hand": 0.5899530253770313,
+            "right_hand": 0.2110985331763165,
+            "left_hand_shape": 0.2075766192885091,
+            "right_hand_shape": 0.0962414473652989,
+            "pose": 0.0282867996669009,
+            "face": 0.6004233263976431
+          },
+          "roughness_penalty": 0.007992044953223726,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.003498743693344295,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.028777772933244704,
+            "right_hand": 0.022842705622315405,
+            "left_hand": 0.02147547248750925
+          },
+          "total_sequence_penalty": 0.014824834659578477,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8333333333333334,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.06511559523642063,
+            "right_hand": 0.10591320842504501,
+            "left_hand_shape": 0.06881232745945454,
+            "right_hand_shape": 0.13191940560936927,
+            "pose": 0.1275160476565361,
+            "face": 0.08833608664572239
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.0894271582365036,
+            "right_hand": 0.09283923916518688,
+            "left_hand_shape": 0.09619287773966789,
+            "right_hand_shape": 0.20764871686697006,
+            "pose": 0.19117610529065132,
+            "face": 0.06322162225842476
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.01149349370695588,
+          "right_hand": 0.008846114205428381,
+          "left_hand_shape": 0.028221045774700082,
+          "right_hand_shape": 0.04047704860652562,
+          "pose": 0.029591235291858354,
+          "face": 0.009089301942386484,
+          "missing": 0.0780409252772038,
+          "weighted": 0.025525764663536125,
+          "hand_side_swapped": 0.0
+        }
+      },
+      {
+        "case_id": "trim_start_20pct",
+        "case_type": "target_positive_variant",
+        "expected": "high",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json::trim_start_20pct",
+        "query_length": 15,
+        "prototype_score": 70.10813951609424,
+        "dtw_distance": 0.02380395377094016,
+        "normalized_distance": 0.042615754291487146,
+        "sequence_penalty": {
+          "length_ratio": 0.7777777777777778,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 0.6172839506172839,
+          "presence_delta": {
+            "left_hand": 0.11111111111111116,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.002800000000000001,
+          "motion_delta": {
+            "left_hand": 0.2468664488110011,
+            "right_hand": 0.018444000168641086,
+            "left_hand_shape": 0.16703219346489187,
+            "right_hand_shape": 0.09237456453030875,
+            "pose": 0.009088967401451976,
+            "face": 0.2358057770864643
+          },
+          "motion_penalty": 0.0014761422471724032,
+          "roughness_delta": {
+            "left_hand": 0.12841535396715734,
+            "right_hand": 0.0037419389786317874,
+            "left_hand_shape": 0.0572732543364712,
+            "right_hand_shape": 0.2856951053564117,
+            "pose": 0.13312918471948337,
+            "face": 0.10014760945754796
+          },
+          "roughness_penalty": 0.007696547485416671,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.006839110787957907,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.04600653424859047,
+            "right_hand": 0.04629494622349739,
+            "left_hand": 0.059367012977600095
+          },
+          "total_sequence_penalty": 0.01881180052054698,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 1.0,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.07921717191735904,
+            "right_hand": 0.07769511205454667,
+            "left_hand_shape": 0.06504761179288228,
+            "right_hand_shape": 0.12364356716473897,
+            "pose": 0.1242816261947155,
+            "face": 0.06984337248528998
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.14193587899208068,
+            "right_hand": 0.11511344015598297,
+            "left_hand_shape": 0.11181030720472336,
+            "right_hand_shape": 0.1717935860157013,
+            "pose": 0.21231891661882402,
+            "face": 0.12748691141605378
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.008121387622741609,
+          "right_hand": 0.0072055204707842406,
+          "left_hand_shape": 0.023820375945029466,
+          "right_hand_shape": 0.034481242697371614,
+          "pose": 0.023855893943368324,
+          "face": 0.010161796048056528,
+          "missing": 0.03623106703148388,
+          "weighted": 0.01980395377094016,
+          "hand_side_swapped": 0.0
+        }
+      },
+      {
+        "case_id": "trim_end_20pct",
+        "case_type": "target_positive_variant",
+        "expected": "high",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json::trim_end_20pct",
+        "query_length": 15,
+        "prototype_score": 80.62648073565182,
+        "dtw_distance": 0.01137434687774182,
+        "normalized_distance": 0.02584116543927499,
+        "sequence_penalty": {
+          "length_ratio": 0.7777777777777778,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 0.6172839506172839,
+          "presence_delta": {
+            "left_hand": 0.031746031746031744,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.0007999999999999998,
+          "motion_delta": {
+            "left_hand": 0.1905387507502163,
+            "right_hand": 0.052552345362866314,
+            "left_hand_shape": 0.24301197899077115,
+            "right_hand_shape": 0.0013301212589188587,
+            "pose": 0.0072740794665988595,
+            "face": 0.12029663033689163
+          },
+          "motion_penalty": 0.0010749144250150962,
+          "roughness_delta": {
+            "left_hand": 0.10847184487665786,
+            "right_hand": 0.11046276863752026,
+            "left_hand_shape": 0.2982350064766678,
+            "right_hand_shape": 0.052508634645765724,
+            "pose": 0.1489290757636543,
+            "face": 0.14817212053791845
+          },
+          "roughness_penalty": 0.00568016918045542,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.006911734956062653,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.0611516311764717,
+            "right_hand": 0.03550607748329639,
+            "left_hand": 0.0519918754696846
+          },
+          "total_sequence_penalty": 0.01446681856153317,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8571428571428571,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.08381315097212791,
+            "right_hand": 0.07236344708750646,
+            "left_hand_shape": 0.06028108298778534,
+            "right_hand_shape": 0.13543851735691229,
+            "pose": 0.12226292490959167,
+            "face": 0.06221341947093606
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.14479700848460197,
+            "right_hand": 0.12808919250965117,
+            "left_hand_shape": 0.0878471415489912,
+            "right_hand_shape": 0.24096806943416596,
+            "pose": 0.21570176631212234,
+            "face": 0.13376372456550598
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.0,
+          "right_hand": 0.0011926868121854063,
+          "left_hand_shape": 0.0,
+          "right_hand_shape": 0.006200022735509977,
+          "pose": 0.008245164772711193,
+          "face": 0.0017766165543214633,
+          "missing": 0.04330793210773238,
+          "weighted": 0.004802918306313249,
+          "hand_side_swapped": 0.0
+        }
+      },
+      {
+        "case_id": "trim_both_10pct",
+        "case_type": "target_positive_variant",
+        "expected": "high",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json::trim_both_10pct",
+        "query_length": 15,
+        "prototype_score": 80.62632559242954,
+        "dtw_distance": 0.011374577784565678,
+        "normalized_distance": 0.025841396346098847,
+        "sequence_penalty": {
+          "length_ratio": 0.7777777777777778,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 0.6172839506172839,
+          "presence_delta": {
+            "left_hand": 0.031746031746031744,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.0007999999999999998,
+          "motion_delta": {
+            "left_hand": 0.1905387507502163,
+            "right_hand": 0.052552345362866314,
+            "left_hand_shape": 0.24301197899077115,
+            "right_hand_shape": 0.0013301212589188587,
+            "pose": 0.0072740794665988595,
+            "face": 0.12029663033689163
+          },
+          "motion_penalty": 0.0010749144250150962,
+          "roughness_delta": {
+            "left_hand": 0.10847184487665786,
+            "right_hand": 0.11046276863752026,
+            "left_hand_shape": 0.2982350064766678,
+            "right_hand_shape": 0.052508634645765724,
+            "pose": 0.1489290757636543,
+            "face": 0.14817212053791845
+          },
+          "roughness_penalty": 0.00568016918045542,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.006911734956062653,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.0611516311764717,
+            "right_hand": 0.03550607748329639,
+            "left_hand": 0.0519918754696846
+          },
+          "total_sequence_penalty": 0.01446681856153317,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8571428571428571,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.08381315097212791,
+            "right_hand": 0.07236344708750646,
+            "left_hand_shape": 0.06028108298778534,
+            "right_hand_shape": 0.13543851735691229,
+            "pose": 0.12226292490959167,
+            "face": 0.06221341947093606
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.14479700848460197,
+            "right_hand": 0.12808919250965117,
+            "left_hand_shape": 0.0878471415489912,
+            "right_hand_shape": 0.24096806943416596,
+            "pose": 0.21570176631212234,
+            "face": 0.13376372456550598
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.0,
+          "right_hand": 0.001192744152224544,
+          "left_hand_shape": 0.0,
+          "right_hand_shape": 0.006200320810027677,
+          "pose": 0.008245561170211304,
+          "face": 0.0017767019675764073,
+          "missing": 0.04331001419541597,
+          "weighted": 0.004803149213137107,
+          "hand_side_swapped": 0.0
+        }
+      },
+      {
+        "case_id": "amplitude_0.85",
+        "case_type": "target_positive_variant",
+        "expected": "high",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json::amplitude_0.85",
+        "query_length": 19,
+        "prototype_score": 88.17850030427068,
+        "dtw_distance": 0.0033921114298984477,
+        "normalized_distance": 0.015096841609484893,
+        "sequence_penalty": {
+          "length_ratio": 1.0,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 1.0,
+          "presence_delta": {
+            "left_hand": 0.0,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.0,
+          "motion_delta": {
+            "left_hand": 0.1623450768382594,
+            "right_hand": 0.16228789556679615,
+            "left_hand_shape": 0.0,
+            "right_hand_shape": 0.0,
+            "pose": 0.16237575177812086,
+            "face": 0.0
+          },
+          "motion_penalty": 0.0021099999580899346,
+          "roughness_delta": {
+            "left_hand": 0.16240959002981753,
+            "right_hand": 0.1623652406839812,
+            "left_hand_shape": 0.0,
+            "right_hand_shape": 0.0,
+            "pose": 0.16242401864750175,
+            "face": 0.0
+          },
+          "roughness_penalty": 0.008021601263602471,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.0015731289578940384,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.0,
+            "right_hand": 0.0195288872346282,
+            "left_hand": 0.0180467639118433
+          },
+          "total_sequence_penalty": 0.011704730179586445,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.0862126372133692,
+            "right_hand": 0.06483239855151623,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.10468281200155616,
+            "face": 0.05515065375948325
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.1371886245906353,
+            "right_hand": 0.09748065139033965,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.15796512684651784,
+            "face": 0.11532837192394904
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.0005899424946959413,
+          "right_hand": 0.0005899434852909505,
+          "left_hand_shape": 0.0,
+          "right_hand_shape": 0.0,
+          "pose": 0.0006501305657286414,
+          "face": 0.0,
+          "missing": 0.061706819917085085,
+          "weighted": 0.0033921114298984477,
+          "hand_side_swapped": 0.09256022987562763
+        }
+      },
+      {
+        "case_id": "amplitude_1.15",
+        "case_type": "target_positive_variant",
+        "expected": "high",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json::amplitude_1.15",
+        "query_length": 19,
+        "prototype_score": 89.26849956399754,
+        "dtw_distance": 0.0033353865266809624,
+        "normalized_distance": 0.013622581053537803,
+        "sequence_penalty": {
+          "length_ratio": 1.0,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 1.0,
+          "presence_delta": {
+            "left_hand": 0.0,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.0,
+          "motion_delta": {
+            "left_hand": 0.13963345240603545,
+            "right_hand": 0.1395911332468083,
+            "left_hand_shape": 0.0,
+            "right_hand_shape": 0.0,
+            "pose": 0.1396560266198399,
+            "face": 0.0
+          },
+          "motion_penalty": 0.00181487516842503,
+          "roughness_delta": {
+            "left_hand": 0.13968123892167938,
+            "right_hand": 0.13964833816845645,
+            "left_hand_shape": 0.0,
+            "right_hand_shape": 0.0,
+            "pose": 0.1396917502414803,
+            "face": 0.0
+          },
+          "roughness_penalty": 0.00689919050840186,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.0015731288500299508,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.0,
+            "right_hand": 0.019528885930776594,
+            "left_hand": 0.018046762607991693
+          },
+          "total_sequence_penalty": 0.01028719452685684,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.1166406199336052,
+            "right_hand": 0.08771442098077387,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.14162967260926962,
+            "face": 0.05515065375948325
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.1856081373989582,
+            "right_hand": 0.13188559774841582,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.21371751385075705,
+            "face": 0.11532837192394904
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.0005075654746198582,
+          "right_hand": 0.0005075702234079966,
+          "left_hand_shape": 0.0,
+          "right_hand_shape": 0.0,
+          "pose": 0.0005590818111271438,
+          "face": 0.0,
+          "missing": 0.061429017305813384,
+          "weighted": 0.0033353865266809624,
+          "hand_side_swapped": 0.09214352595872008
+        }
+      },
+      {
+        "case_id": "fake_reverse_time",
+        "case_type": "synthetic_fake_action",
+        "expected": "low",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json::fake_reverse_time",
+        "query_length": 19,
+        "prototype_score": 8.715038342282128,
+        "dtw_distance": 0.1087077332965271,
+        "normalized_distance": 0.29281441289428695,
+        "sequence_penalty": {
+          "length_ratio": 1.0,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 1.0,
+          "presence_delta": {
+            "left_hand": 0.11111111111111105,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.0027999999999999982,
+          "motion_delta": {
+            "left_hand": 0.07056051012118958,
+            "right_hand": 0.2573983887333745,
+            "left_hand_shape": 0.11790580755881991,
+            "right_hand_shape": 0.07274130190161171,
+            "pose": 0.05723513347029653,
+            "face": 0.34996913063439694
+          },
+          "motion_penalty": 0.0033664154801214766,
+          "roughness_delta": {
+            "left_hand": 0.012592386441347239,
+            "right_hand": 0.16311616358945916,
+            "left_hand_shape": 0.1931458404522885,
+            "right_hand_shape": 0.004687779510938984,
+            "pose": 0.03871288916587227,
+            "face": 0.102534937202416
+          },
+          "roughness_penalty": 0.0069287237903684,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.04651914509856619,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.12449239522870377,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.9288506480950549,
+            "right_hand": 0.8458259752552848,
+            "left_hand": 0.8919809013935307
+          },
+          "total_sequence_penalty": 0.18410667959775984,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.7777777777777778,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.10884918794035911,
+            "right_hand": 0.09869361633900553,
+            "left_hand_shape": 0.0865254495292902,
+            "right_hand_shape": 0.14585922239348292,
+            "pose": 0.1304166279733181,
+            "face": 0.07830198953161016
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.15937747061252594,
+            "right_hand": 0.13501964349831855,
+            "left_hand_shape": 0.14365591357151666,
+            "right_hand_shape": 0.2297112877879824,
+            "pose": 0.19318079948425293,
+            "face": 0.12779186705925635
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.10255205036158631,
+          "right_hand": 0.05303129676481246,
+          "left_hand_shape": 0.20772148245746258,
+          "right_hand_shape": 0.13432099974939465,
+          "pose": 0.1548130683712871,
+          "face": 0.10060764982713571,
+          "missing": 0.1864331929920178,
+          "weighted": 0.1087077332965271,
+          "hand_side_swapped": 0.3264362061408094
+        }
+      },
+      {
+        "case_id": "fake_shuffle_frames",
+        "case_type": "synthetic_fake_action",
+        "expected": "low",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json::fake_shuffle_frames",
+        "query_length": 19,
+        "prototype_score": 4.021658646890497,
+        "dtw_distance": 0.11987874157538726,
+        "normalized_distance": 0.3856170923668358,
+        "sequence_penalty": {
+          "length_ratio": 1.0,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 1.0,
+          "presence_delta": {
+            "left_hand": 0.0,
+            "right_hand": 0.11111111111111116,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.005288888888888892,
+          "motion_delta": {
+            "left_hand": 1.140498038937825,
+            "right_hand": 0.9445038911611919,
+            "left_hand_shape": 1.0208223891110906,
+            "right_hand_shape": 0.6521461870158497,
+            "pose": 0.8173297713409288,
+            "face": 1.4158263449824957
+          },
+          "motion_penalty": 0.020816279114177397,
+          "roughness_delta": {
+            "left_hand": 1.3239004808165824,
+            "right_hand": 1.1724250720805387,
+            "left_hand_shape": 1.2415370422704093,
+            "right_hand_shape": 0.6894591499834821,
+            "pose": 0.9925974536778103,
+            "face": 1.3207046814097176
+          },
+          "roughness_penalty": 0.09234375231069826,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.05447037698544579,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.09281905349223818,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.7876101942348096,
+            "right_hand": 0.8350717916174276,
+            "left_hand": 0.08872206360101699
+          },
+          "total_sequence_penalty": 0.26573835079144853,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 0.8888888888888888,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.31750838706890744,
+            "right_hand": 0.19629707311590514,
+            "left_hand_shape": 0.2135865514477094,
+            "right_hand_shape": 0.2604336868971586,
+            "pose": 0.27900701481848955,
+            "face": 0.2275265888310969
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.6068191155791283,
+            "right_hand": 0.37062833458185196,
+            "left_hand_shape": 0.41004387736320497,
+            "right_hand_shape": 0.45568894147872924,
+            "pose": 0.501613186938422,
+            "face": 0.4323016330599785
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.1327755366346856,
+          "right_hand": 0.09979332142670053,
+          "left_hand_shape": 0.16130359819905615,
+          "right_hand_shape": 0.12770752652535763,
+          "pose": 0.17986655444204358,
+          "face": 0.12677195111143935,
+          "missing": 0.09566908546006064,
+          "weighted": 0.11987874157538726,
+          "hand_side_swapped": 0.08532464937855526
+        }
+      },
+      {
+        "case_id": "fake_static_hold",
+        "case_type": "synthetic_fake_action",
+        "expected": "low",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json::fake_static_hold",
+        "query_length": 19,
+        "prototype_score": 45.75874298193249,
+        "dtw_distance": 0.05799198810244857,
+        "normalized_distance": 0.09381447709131324,
+        "sequence_penalty": {
+          "length_ratio": 0.47368421052631576,
+          "length_penalty": 0.014736842105263173,
+          "temporal_profile_factor": 0.0,
+          "presence_delta": {
+            "left_hand": 0.11111111111111116,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.002800000000000001,
+          "motion_delta": {
+            "left_hand": 3.0,
+            "right_hand": 3.0,
+            "left_hand_shape": 3.0,
+            "right_hand_shape": 3.0,
+            "pose": 3.0,
+            "face": 3.0
+          },
+          "motion_penalty": 0.0,
+          "roughness_delta": {
+            "left_hand": 3.0,
+            "right_hand": 3.0,
+            "left_hand_shape": 3.0,
+            "right_hand_shape": 3.0,
+            "pose": 3.0,
+            "face": 3.0
+          },
+          "roughness_penalty": 0.0,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.018285646883601493,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.13615762442350388,
+            "right_hand": 0.1301926076412201,
+            "left_hand": 0.12031178027391433
+          },
+          "total_sequence_penalty": 0.03582248898886467,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 1.0,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.0,
+            "right_hand": 0.0,
+            "left_hand_shape": 0.0,
+            "right_hand_shape": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.0,
+            "right_hand": 0.0,
+            "left_hand_shape": 0.0,
+            "right_hand_shape": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.0317532421953014,
+          "right_hand": 0.030954122451132705,
+          "left_hand_shape": 0.022681596507400616,
+          "right_hand_shape": 0.10975086081173675,
+          "pose": 0.05414546104926036,
+          "face": 0.047797752668992124,
+          "missing": 0.013079624523318973,
+          "weighted": 0.05799198810244857,
+          "hand_side_swapped": 0.0
+        }
+      },
+      {
+        "case_id": "fake_random_landmarks",
+        "case_type": "synthetic_fake_action",
+        "expected": "low",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json::fake_random_landmarks",
+        "query_length": 19,
+        "prototype_score": 0.00045059258056272743,
+        "dtw_distance": 0.8865736052331986,
+        "normalized_distance": 1.4772140618128704,
+        "sequence_penalty": {
+          "length_ratio": 1.0,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 1.0,
+          "presence_delta": {
+            "left_hand": 0.0,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.0,
+          "motion_delta": {
+            "left_hand": 2.8371941190120356,
+            "right_hand": 3.0,
+            "left_hand_shape": 3.0,
+            "right_hand_shape": 2.4916106502606157,
+            "pose": 2.534369465738126,
+            "face": 3.0
+          },
+          "motion_penalty": 0.0659418693878997,
+          "roughness_delta": {
+            "left_hand": 2.9120600824771854,
+            "right_hand": 3.0,
+            "left_hand_shape": 3.0,
+            "right_hand_shape": 2.5185577310330705,
+            "pose": 2.672281800425079,
+            "face": 3.0
+          },
+          "roughness_penalty": 0.2527809018116909,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.21220854460225724,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.0597091407778239,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.28056391477584836,
+            "right_hand": 0.5345492405727916,
+            "left_hand": 0.5142491558935471
+          },
+          "total_sequence_penalty": 0.5906404565796717,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 1.7327369792120797,
+            "right_hand": 1.6142646223306656,
+            "left_hand_shape": 1.7099195889064245,
+            "right_hand_shape": 1.6394820362329483,
+            "pose": 1.5539737194776535,
+            "face": 1.7680351585149765
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 2.9706066449483237,
+            "right_hand": 2.8199938365391324,
+            "left_hand_shape": 2.9804648558298745,
+            "right_hand_shape": 2.8386765207563127,
+            "pose": 2.691020590918405,
+            "face": 3.1319637639181956
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.7638823248379986,
+          "right_hand": 0.682221049441187,
+          "left_hand_shape": 1.5399329721091806,
+          "right_hand_shape": 1.1122677595484014,
+          "pose": 1.2688885522390179,
+          "face": 1.2602738801020577,
+          "missing": 0.1781585693457689,
+          "weighted": 0.8865736052331986,
+          "hand_side_swapped": 0.5458227075991087
+        }
+      },
+      {
+        "case_id": "fake_random_walk",
+        "case_type": "synthetic_fake_action",
+        "expected": "low",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json::fake_random_walk",
+        "query_length": 19,
+        "prototype_score": 4.9490300169821e-07,
+        "dtw_distance": 1.5786816075103074,
+        "normalized_distance": 2.2948889082879553,
+        "sequence_penalty": {
+          "length_ratio": 1.0,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 1.0,
+          "presence_delta": {
+            "left_hand": 0.0,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.0,
+          "motion_delta": {
+            "left_hand": 1.220484502452047,
+            "right_hand": 1.5247521023678257,
+            "left_hand_shape": 1.485644438038248,
+            "right_hand_shape": 0.9676356050968065,
+            "pose": 1.0707386571286355,
+            "face": 1.7525261163420613
+          },
+          "motion_penalty": 0.029761171343598916,
+          "roughness_delta": {
+            "left_hand": 1.1395580613456835,
+            "right_hand": 1.5054705896908738,
+            "left_hand_shape": 1.4491356411802816,
+            "right_hand_shape": 0.7874360552897661,
+            "pose": 1.0187742514942932,
+            "face": 1.31085412342312
+          },
+          "roughness_penalty": 0.10468020800078527,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.5193341876973446,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.06243173373591901,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.514227163109766,
+            "right_hand": 0.38090147906885735,
+            "left_hand": 0.43222088346027343
+          },
+          "total_sequence_penalty": 0.7162073007776478,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.3439564009507497,
+            "right_hand": 0.3507597967982292,
+            "left_hand_shape": 0.3400314897298813,
+            "right_hand_shape": 0.35707347467541695,
+            "pose": 0.35950426384806633,
+            "face": 0.3186497427523136
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.5046448782086372,
+            "right_hand": 0.5171441776411874,
+            "left_hand_shape": 0.5046718865633011,
+            "right_hand_shape": 0.5026066303253174,
+            "pose": 0.5149198344775608,
+            "face": 0.4280631457056318
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 2.1325178936222153,
+          "right_hand": 2.1139245676861695,
+          "left_hand_shape": 1.435401257648362,
+          "right_hand_shape": 1.0345822341665887,
+          "pose": 0.9469171055947581,
+          "face": 1.1939125764035354,
+          "missing": 0.06332682619307994,
+          "weighted": 1.5786816075103074,
+          "hand_side_swapped": 0.09499023928961993
+        }
+      },
+      {
+        "case_id": "other_demo_唱歌",
+        "case_type": "other_demo_action",
+        "expected": "low",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/唱歌/唱歌_holistic_results.json",
+        "query_length": 27,
+        "prototype_score": 6.589155703161935,
+        "dtw_distance": 0.21746347036245284,
+        "normalized_distance": 0.3263693956275381,
+        "sequence_penalty": {
+          "length_ratio": 0.8888888888888888,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 0.8641975308641974,
+          "presence_delta": {
+            "left_hand": 0.01388888888888884,
+            "right_hand": 0.125,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.006299999999999998,
+          "motion_delta": {
+            "left_hand": 0.4099223489199548,
+            "right_hand": 0.8528593162981599,
+            "left_hand_shape": 1.7639002152022125,
+            "right_hand_shape": 0.8126321521101284,
+            "pose": 0.5515286672373254,
+            "face": 1.100038029586626
+          },
+          "motion_penalty": 0.01684707241109682,
+          "roughness_delta": {
+            "left_hand": 0.137959599588351,
+            "right_hand": 0.8648055206956429,
+            "left_hand_shape": 1.8803901964817347,
+            "right_hand_shape": 0.6633840085198988,
+            "pose": 0.3883146886109513,
+            "face": 1.0262182874288965
+          },
+          "roughness_penalty": 0.0565916774797406,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.02916717537424781,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.33029004037380216,
+            "right_hand": 0.10927211046218871,
+            "left_hand": 0.15155332684516906
+          },
+          "total_sequence_penalty": 0.10890592526508525,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.875,
+            "right_hand": 0.875,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.15287024825811385,
+            "right_hand": 0.17909846206506094,
+            "left_hand_shape": 0.44915383160114286,
+            "right_hand_shape": 0.30578772847851116,
+            "pose": 0.2138610886675971,
+            "face": 0.16588844917714596
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.1852886900305748,
+            "right_hand": 0.2724576063454151,
+            "left_hand_shape": 0.776838481426239,
+            "right_hand_shape": 0.44395779073238373,
+            "pose": 0.27406931420167285,
+            "face": 0.3220020653679967
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.36638813383387814,
+          "right_hand": 0.08253942021907225,
+          "left_hand_shape": 0.4972617266463913,
+          "right_hand_shape": 0.21073977766298504,
+          "pose": 0.4129679576729427,
+          "face": 0.1098410053347945,
+          "missing": 0.2105112514789645,
+          "weighted": 0.21521347036245284,
+          "hand_side_swapped": 0.1184765925698377
+        }
+      },
+      {
+        "case_id": "other_demo_指示",
+        "case_type": "other_demo_action",
+        "expected": "low",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/指示/指示_holistic_results.json",
+        "query_length": 30,
+        "prototype_score": 3.412929268503996,
+        "dtw_distance": 0.32809368555546986,
+        "normalized_distance": 0.40531190885040974,
+        "sequence_penalty": {
+          "length_ratio": 0.8888888888888888,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 0.8641975308641974,
+          "presence_delta": {
+            "left_hand": 0.13888888888888884,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.0034999999999999988,
+          "motion_delta": {
+            "left_hand": 1.3059682555486682,
+            "right_hand": 0.43417948695881137,
+            "left_hand_shape": 1.3018173689089236,
+            "right_hand_shape": 0.14856913923070308,
+            "pose": 0.07217734563394682,
+            "face": 0.23905223976017193
+          },
+          "motion_penalty": 0.011392444205493941,
+          "roughness_delta": {
+            "left_hand": 1.6137763983096582,
+            "right_hand": 0.20113440631895396,
+            "left_hand_shape": 1.5085325327672348,
+            "right_hand_shape": 0.2525918198866147,
+            "pose": 0.3812137221880471,
+            "face": 0.3907663567628991
+          },
+          "roughness_penalty": 0.045597308052784176,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.016728471036661755,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.1367229640483856,
+            "right_hand": 0.12125191986560821,
+            "left_hand": 0.08169149756431579
+          },
+          "total_sequence_penalty": 0.07721822329493987,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.75,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.027404588414356112,
+            "right_hand": 0.11779732150690896,
+            "left_hand_shape": 0.020844382466748357,
+            "right_hand_shape": 0.15735742769071034,
+            "pose": 0.1145734079182148,
+            "face": 0.07007081001730901
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.03205984582503637,
+            "right_hand": 0.09376992657780647,
+            "left_hand_shape": 0.026117796699206035,
+            "right_hand_shape": 0.2943656990925471,
+            "pose": 0.12690385493139425,
+            "face": 0.07799170368040602
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.448259217192691,
+          "right_hand": 0.24118108109318478,
+          "left_hand_shape": 0.7361247177305087,
+          "right_hand_shape": 0.28766863242134877,
+          "pose": 0.37969521854624083,
+          "face": 0.27384652624983596,
+          "missing": 0.1663204195256306,
+          "weighted": 0.32609368555546986,
+          "hand_side_swapped": 0.38299492522649137
+        }
+      },
+      {
+        "case_id": "other_demo_月亮",
+        "case_type": "other_demo_action",
+        "expected": "low",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/月亮/月亮_holistic_results.json",
+        "query_length": 47,
+        "prototype_score": 5.861249261740591,
+        "dtw_distance": 0.2791929243491153,
+        "normalized_distance": 0.3404168904626888,
+        "sequence_penalty": {
+          "length_ratio": 0.6923076923076923,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 0.4273504273504273,
+          "presence_delta": {
+            "left_hand": 0.11111111111111116,
+            "right_hand": 0.07692307692307687,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.00646153846153846,
+          "motion_delta": {
+            "left_hand": 0.3971440577222226,
+            "right_hand": 0.7331652769956689,
+            "left_hand_shape": 1.4136612427432604,
+            "right_hand_shape": 0.7184328759755338,
+            "pose": 0.025492533945224567,
+            "face": 0.8700368373969782
+          },
+          "motion_penalty": 0.007247374432817818,
+          "roughness_delta": {
+            "left_hand": 0.24382458735674922,
+            "right_hand": 0.5341367308546315,
+            "left_hand_shape": 1.588807803080898,
+            "right_hand_shape": 0.641425744382781,
+            "pose": 0.10579330706385513,
+            "face": 0.500005697636447
+          },
+          "roughness_penalty": 0.02304459367469405,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.024470459544523197,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.20205779969692228,
+            "right_hand": 0.15473090708255766,
+            "left_hand": 0.15813889354467392
+          },
+          "total_sequence_penalty": 0.06122396611357352,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 1.0,
+            "right_hand": 0.9230769230769231,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.1509279857079188,
+            "right_hand": 0.15888341346924956,
+            "left_hand_shape": 0.3164081786138316,
+            "right_hand_shape": 0.2782888446341861,
+            "pose": 0.12633875447014967,
+            "face": 0.13178324326872826
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.20599137449806387,
+            "right_hand": 0.19571712762117385,
+            "left_hand_shape": 0.5803355554288084,
+            "right_hand_shape": 0.434313327819109,
+            "pose": 0.16717478091066534,
+            "face": 0.19021029634909195
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.18003793857989575,
+          "right_hand": 0.18990308490315475,
+          "left_hand_shape": 0.27160301092375333,
+          "right_hand_shape": 0.4103185843146006,
+          "pose": 0.3290076705721419,
+          "face": 0.14251704523799846,
+          "missing": 0.2544582930102346,
+          "weighted": 0.27642369357988456,
+          "hand_side_swapped": 0.16569275664020816
+        }
+      },
+      {
+        "case_id": "other_demo_朋友",
+        "case_type": "other_demo_action",
+        "expected": "low",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/朋友/朋友_holistic_results.json",
+        "query_length": 28,
+        "prototype_score": 0.4166375137453493,
+        "dtw_distance": 0.3647093648679308,
+        "normalized_distance": 0.657685067136115,
+        "sequence_penalty": {
+          "length_ratio": 1.0,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 1.0,
+          "presence_delta": {
+            "left_hand": 0.11111111111111116,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.002800000000000001,
+          "motion_delta": {
+            "left_hand": 1.0394699078248153,
+            "right_hand": 0.43908571453697026,
+            "left_hand_shape": 0.3443804643438074,
+            "right_hand_shape": 1.1757925401563005,
+            "pose": 0.8152626768238154,
+            "face": 0.6916937899544818
+          },
+          "motion_penalty": 0.019594641832784282,
+          "roughness_delta": {
+            "left_hand": 1.21352457655565,
+            "right_hand": 0.4191755000072491,
+            "left_hand_shape": 0.4566942043147417,
+            "right_hand_shape": 1.304824499197661,
+            "pose": 0.7533261377564356,
+            "face": 1.0395201662117417
+          },
+          "roughness_penalty": 0.08195265324058879,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.1096574368018119,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.0789709703929991,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.38926117473389166,
+            "right_hand": 0.7008237943869973,
+            "left_hand": 0.6554157986678575
+          },
+          "total_sequence_penalty": 0.2929757022681841,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 1.0,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.0358040890423581,
+            "right_hand": 0.0491322495508939,
+            "left_hand_shape": 0.1085431114770472,
+            "right_hand_shape": 0.43972570449113846,
+            "pose": 0.05444373330101371,
+            "face": 0.0275655064615421
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.04788893541055066,
+            "right_hand": 0.07538009434938431,
+            "left_hand_shape": 0.18700410638536727,
+            "right_hand_shape": 0.8432610886437553,
+            "pose": 0.08744080471140998,
+            "face": 0.04071827977895737
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.25579160486486685,
+          "right_hand": 0.28307545965557723,
+          "left_hand_shape": 0.7434930908850316,
+          "right_hand_shape": 0.46887271467862857,
+          "pose": 0.32932675638061126,
+          "face": 0.23988630549103854,
+          "missing": 0.03165052126200151,
+          "weighted": 0.3647093648679308,
+          "hand_side_swapped": 0.5678770602933345
+        }
+      },
+      {
+        "case_id": "other_demo_汽车",
+        "case_type": "other_demo_action",
+        "expected": "low",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/汽车/汽车_holistic_results.json",
+        "query_length": 44,
+        "prototype_score": 1.1953871395964797,
+        "dtw_distance": 0.4918517309036267,
+        "normalized_distance": 0.5312040104256971,
+        "sequence_penalty": {
+          "length_ratio": 0.75,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 0.5555555555555556,
+          "presence_delta": {
+            "left_hand": 0.11111111111111116,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.002800000000000001,
+          "motion_delta": {
+            "left_hand": 0.1706721319521427,
+            "right_hand": 0.06404956237871685,
+            "left_hand_shape": 0.045908587430572315,
+            "right_hand_shape": 0.4039946609797059,
+            "pose": 0.10166456873268388,
+            "face": 0.2758947571861378
+          },
+          "motion_penalty": 0.0027937432504581052,
+          "roughness_delta": {
+            "left_hand": 0.3175772292902193,
+            "right_hand": 0.03827320476178436,
+            "left_hand_shape": 0.2521712354097705,
+            "right_hand_shape": 0.694763853844957,
+            "pose": 0.02748684875155007,
+            "face": 0.055982106140594956
+          },
+          "roughness_penalty": 0.01783592091757827,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.015922615354034036,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.1291423812508583,
+            "right_hand": 0.10479799062013626,
+            "left_hand": 0.09979131519794464
+          },
+          "total_sequence_penalty": 0.039352279522070405,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 1.0,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.08549689128994942,
+            "right_hand": 0.08132514763962138,
+            "left_hand_shape": 0.07343630662018602,
+            "right_hand_shape": 0.09051242284476757,
+            "pose": 0.11124137518080798,
+            "face": 0.0727042935111306
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.1174563530832529,
+            "right_hand": 0.11037301309406758,
+            "left_hand_shape": 0.09199307411909104,
+            "right_hand_shape": 0.11408350542187691,
+            "pose": 0.18079998567700387,
+            "face": 0.1090439960360527
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.3871236173231105,
+          "right_hand": 0.5389136022973359,
+          "left_hand_shape": 0.5589566720540249,
+          "right_hand_shape": 0.5297480882887858,
+          "pose": 0.3619116793072923,
+          "face": 0.5123686789526924,
+          "missing": 0.12205152353256152,
+          "weighted": 0.4888517309036267,
+          "hand_side_swapped": 0.10492101553009663
+        }
+      },
+      {
+        "case_id": "other_demo_花",
+        "case_type": "other_demo_action",
+        "expected": "low",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/花/花_holistic_results.json",
+        "query_length": 53,
+        "prototype_score": 33.026657290030634,
+        "dtw_distance": 0.061896020214481935,
+        "normalized_distance": 0.13294261847353742,
+        "sequence_penalty": {
+          "length_ratio": 0.6,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 0.22222222222222215,
+          "presence_delta": {
+            "left_hand": 0.8888888888888888,
+            "right_hand": 0.0,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.022399999999999996,
+          "motion_delta": {
+            "left_hand": 3.0,
+            "right_hand": 0.03582313796859725,
+            "left_hand_shape": 3.0,
+            "right_hand_shape": 0.5456052225583106,
+            "pose": 0.555994305683176,
+            "face": 0.11701575437547906
+          },
+          "motion_penalty": 0.005325543039057302,
+          "roughness_delta": {
+            "left_hand": 3.0,
+            "right_hand": 0.10397812353013304,
+            "left_hand_shape": 3.0,
+            "right_hand_shape": 0.7008727234022364,
+            "pose": 0.4206375568799699,
+            "face": 0.1363087097723681
+          },
+          "roughness_penalty": 0.02190629789563994,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.021414757324358238,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.18331505227282655,
+            "right_hand": 0.12082461118698119
+          },
+          "total_sequence_penalty": 0.07104659825905547,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.0,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.0,
+            "right_hand": 0.07358589994588069,
+            "left_hand_shape": 0.0,
+            "right_hand_shape": 0.2341036895023925,
+            "pose": 0.07058767269232444,
+            "face": 0.06200931187985199
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.0,
+            "right_hand": 0.12726062049086279,
+            "left_hand_shape": 0.0,
+            "right_hand_shape": 0.46092092303129345,
+            "pose": 0.12199428878151454,
+            "face": 0.10061970605658224
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.09421605923648992,
+          "right_hand": 0.0,
+          "left_hand_shape": 0.28446786277417596,
+          "right_hand_shape": 0.0,
+          "pose": 0.23825549817532263,
+          "face": 0.09644647998198645,
+          "missing": 0.5004875831544288,
+          "weighted": 0.061896020214481935,
+          "hand_side_swapped": 1.0
+        }
+      },
+      {
+        "case_id": "other_demo_虎",
+        "case_type": "other_demo_action",
+        "expected": "low",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/虎/虎_holistic_results.json",
+        "query_length": 54,
+        "prototype_score": 5.741873975818569,
+        "dtw_distance": 0.2571872454259159,
+        "normalized_distance": 0.3428861462778082,
+        "sequence_penalty": {
+          "length_ratio": 0.6,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 0.22222222222222215,
+          "presence_delta": {
+            "left_hand": 0.15555555555555556,
+            "right_hand": 0.06666666666666665,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.007093333333333332,
+          "motion_delta": {
+            "left_hand": 0.02510434592858747,
+            "right_hand": 1.1562711739601088,
+            "left_hand_shape": 0.573023023594376,
+            "right_hand_shape": 0.15531957880806427,
+            "pose": 0.9553850819961599,
+            "face": 1.3074861304477006
+          },
+          "motion_penalty": 0.0027426535635338444,
+          "roughness_delta": {
+            "left_hand": 0.6298772615561917,
+            "right_hand": 1.2060161786576122,
+            "left_hand_shape": 0.6154981302207634,
+            "right_hand_shape": 0.38224567621750294,
+            "pose": 0.9272569403943518,
+            "face": 0.9830983611095871
+          },
+          "roughness_penalty": 0.014864686319079645,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.06099822763594546,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.4921896590378924,
+            "right_hand": 0.5002866496862777,
+            "left_hand": 0.20073162615299223
+          },
+          "total_sequence_penalty": 0.08569890085189227,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.7333333333333333,
+            "right_hand": 0.9333333333333333,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.1040076483041048,
+            "right_hand": 0.242619335030516,
+            "left_hand_shape": 0.13645273307338357,
+            "right_hand_shape": 0.11609460366889834,
+            "pose": 0.320325751389776,
+            "face": 0.20415440567636065
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.08592326535532872,
+            "right_hand": 0.3832930292934179,
+            "left_hand_shape": 0.21920623940726122,
+            "right_hand_shape": 0.15597318448126316,
+            "pose": 0.46987904207064557,
+            "face": 0.30840823670419365
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.3346909510385804,
+          "right_hand": 0.27697289717158746,
+          "left_hand_shape": 0.2268370813264679,
+          "right_hand_shape": 0.2026350426163491,
+          "pose": 0.7390098909293511,
+          "face": 0.3698942598895511,
+          "missing": 0.2788975633178682,
+          "weighted": 0.2571872454259159,
+          "hand_side_swapped": 0.7176892255866296
+        }
+      },
+      {
+        "case_id": "other_demo_谗_羡慕",
+        "case_type": "other_demo_action",
+        "expected": "low",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/谗（羡慕）/谗（羡慕）_holistic_results.json",
+        "query_length": 32,
+        "prototype_score": 3.6225892897909264,
+        "dtw_distance": 0.1884009654154916,
+        "normalized_distance": 0.39815773708963464,
+        "sequence_penalty": {
+          "length_ratio": 1.0,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 1.0,
+          "presence_delta": {
+            "left_hand": 0.0,
+            "right_hand": 0.33333333333333337,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.015866666666666668,
+          "motion_delta": {
+            "left_hand": 0.13067488373997194,
+            "right_hand": 0.7135944145608087,
+            "left_hand_shape": 0.6403747748005286,
+            "right_hand_shape": 0.46043435587001147,
+            "pose": 0.1817040758463004,
+            "face": 0.44386808580506626
+          },
+          "motion_penalty": 0.011918154559327775,
+          "roughness_delta": {
+            "left_hand": 0.02667863111687008,
+            "right_hand": 0.4435013338734,
+            "left_hand_shape": 0.4660462732540328,
+            "right_hand_shape": 0.49274445613255075,
+            "pose": 0.1196544597198692,
+            "face": 0.1667913121378547
+          },
+          "roughness_penalty": 0.03473236579308185,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.05531931891198923,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.09192026574307749,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.5232245628220311,
+            "right_hand": 0.8207309780947117,
+            "left_hand": 0.6131952908876795
+          },
+          "total_sequence_penalty": 0.20975677167414303,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 0.6666666666666666,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.08898992153505485,
+            "right_hand": 0.15580222010612488,
+            "left_hand_shape": 0.1459665900717179,
+            "right_hand_shape": 0.2149822123348713,
+            "pose": 0.14771619532257318,
+            "face": 0.08602056722156703
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.1657649129629135,
+            "right_hand": 0.1787497028708458,
+            "left_hand_shape": 0.1887621246278286,
+            "right_hand_shape": 0.3742964118719101,
+            "pose": 0.20947582806859696,
+            "face": 0.13627950714102813
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.3267352970960596,
+          "right_hand": 0.11249251845133489,
+          "left_hand_shape": 0.2959833254116737,
+          "right_hand_shape": 0.16519261065711735,
+          "pose": 0.4335326418224772,
+          "face": 0.12995811165833218,
+          "missing": 0.2230596609873531,
+          "weighted": 0.1884009654154916,
+          "hand_side_swapped": 0.10469506145148043
+        }
+      },
+      {
+        "case_id": "other_demo_香蕉",
+        "case_type": "other_demo_action",
+        "expected": "low",
+        "query_source": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/香蕉/香蕉_holistic_results.json",
+        "query_length": 42,
+        "prototype_score": 8.09293692936,
+        "dtw_distance": 0.24813605491629975,
+        "normalized_distance": 0.3017014186486263,
+        "sequence_penalty": {
+          "length_ratio": 0.75,
+          "length_penalty": 0.0,
+          "temporal_profile_factor": 0.5555555555555556,
+          "presence_delta": {
+            "left_hand": 0.11111111111111116,
+            "right_hand": 0.16666666666666663,
+            "pose": 0.0,
+            "face": 0.0
+          },
+          "presence_penalty": 0.010733333333333334,
+          "motion_delta": {
+            "left_hand": 0.12791330014367916,
+            "right_hand": 0.04049126540884533,
+            "left_hand_shape": 0.9462435633486852,
+            "right_hand_shape": 0.29636035056367227,
+            "pose": 0.0033466353957685956,
+            "face": 0.12354567225310426
+          },
+          "motion_penalty": 0.0029127527764194394,
+          "roughness_delta": {
+            "left_hand": 0.46095381362083304,
+            "right_hand": 0.5514337185777867,
+            "left_hand_shape": 0.9686809666073871,
+            "right_hand_shape": 0.07699111866264173,
+            "pose": 0.1552875733120975,
+            "face": 0.4417842804141752
+          },
+          "roughness_penalty": 0.01931580222732235,
+          "info_penalty": 0.0,
+          "endpoint_penalty": 0.0,
+          "confidence_warning_penalty": 0.0,
+          "semantic_delta_penalty": 0.020603475395251408,
+          "semantic_delta_detail": {
+            "right_hand_shape": 0.17752596735954285,
+            "right_hand": 0.12229863107204436,
+            "left_hand": 0.13342598229646682
+          },
+          "total_sequence_penalty": 0.05356536373232654,
+          "standard_presence": {
+            "pose": 1.0,
+            "left_hand": 0.8888888888888888,
+            "right_hand": 1.0,
+            "face": 1.0
+          },
+          "query_presence": {
+            "pose": 1.0,
+            "left_hand": 1.0,
+            "right_hand": 0.8333333333333334,
+            "face": 1.0
+          },
+          "standard_motion": {
+            "left_hand": 0.10142662686606248,
+            "right_hand": 0.07627341023180634,
+            "left_hand_shape": 0.07689094667633374,
+            "right_hand_shape": 0.13561891997233033,
+            "pose": 0.12315624766051769,
+            "face": 0.05515065375948325
+          },
+          "query_motion": {
+            "left_hand": 0.08923629082908685,
+            "right_hand": 0.07324272638652474,
+            "left_hand_shape": 0.19822982004420323,
+            "right_hand_shape": 0.1824358026497066,
+            "pose": 0.12274444340304895,
+            "face": 0.06241620763797651
+          },
+          "standard_roughness": {
+            "left_hand": 0.16139836981892586,
+            "right_hand": 0.11468312410371644,
+            "left_hand_shape": 0.1184068750590086,
+            "right_hand_shape": 0.22863650428397314,
+            "pose": 0.18584132407392775,
+            "face": 0.11532837192394904
+          },
+          "query_roughness": {
+            "left_hand": 0.10175408348441124,
+            "right_hand": 0.06602922299255927,
+            "left_hand_shape": 0.31210247725248336,
+            "right_hand_shape": 0.21168668940663338,
+            "pose": 0.15909718461334704,
+            "face": 0.07410755027085543
+          }
+        },
+        "group_mean_distance": {
+          "left_hand": 0.19193414627005118,
+          "right_hand": 0.2211423426509808,
+          "left_hand_shape": 0.4191238380129069,
+          "right_hand_shape": 0.2633471250239863,
+          "pose": 0.28668574570982747,
+          "face": 0.20062080211081748,
+          "missing": 0.2251175683363719,
+          "weighted": 0.24513605491629975,
+          "hand_side_swapped": 0.6336180221762129
+        }
+      }
+    ]
+  }
+}

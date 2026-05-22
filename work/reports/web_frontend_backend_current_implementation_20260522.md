@@ -1,8 +1,8 @@
 # 手语打分网页前后端设计与当前实现报告
 
-更新时间：2026-05-23 00:20:00 CST  
+更新时间：2026-05-23 02:35:00 CST  
 项目路径：`/data/WYC/signLanguage`  
-报告范围：当前 `5080` 单服务运行态、浏览器帧上传格式、历史多前端代理方案、未来后端池扩展方案
+报告范围：当前 `5080` 单服务运行态、浏览器帧上传格式、评分模块热重载、历史多前端代理方案、未来后端池扩展方案
 
 ## 1. 当前设计结论
 
@@ -12,6 +12,7 @@
 - `5081/5082/5083`：历史对比前端代理，当前 tmux 会话已关闭。
 - 当前 `5080` 页面已同步 v4 交互：摄像头开关、默认隐藏参考视频、3 秒倒计时、左侧大视频区和右侧窄结果区。
 - 隐藏参考视频时会保留参考开启时的用户视频宽度，只隐藏右侧参考块，避免用户视频过高导致按钮和提示文本被挤出首屏。
+- 评分算法和 Holistic worker 已进一步解耦：`5080` 后端进程内新增 `ScoringModuleService`，评分脚本变更时可热重载 `score_holistic_sequence_mvp.py`，不需要重启常驻 `holistic_worker_daemon.py`。
 - 如后续继续做页面 AB 对比，可再启动独立前端代理端口，并把评分请求转发到 `http://127.0.0.1:5080`。
 
 因此，当前运行态只有一个 tmux 后端和一个 Holistic worker；启动或重启历史前端代理不是必要条件。
@@ -45,7 +46,7 @@ Windows 浏览器
   v
 score_holistic_sequence_mvp.py
   |
-  | DTW + 分组误差 + sequence penalty
+  | 语义权重 + 动态帧权重 + 混合时序对齐 + 分组误差
   v
 结构化评分结果返回前端
 ```
@@ -133,6 +134,7 @@ navigator.mediaDevices.getUserMedia({
   "fps": 5,
   "duration_sec": 3,
   "frame_indices": [0, 1, 2, 3, 4],
+  "frame_weights": [1.0, 1.3, 1.8, 1.2, 0.8],
   "frames": [
     {
       "image_format": "jpg",
@@ -193,11 +195,12 @@ GET /api/reference-video/{word}
 - 提供 `/api/status`、`/api/templates`、`/api/reference-video/{word}`、`/api/score`。
 - 把前端帧请求转为 worker 的 `process_frames` 请求。
 - 读取模板库并调用现有评分逻辑。
+- 评分前检查评分脚本 mtime，如发生变化则热重载打分模块；这一步不重启 Holistic worker。
 
 模板库：
 
 ```text
-/data/WYC/signLanguage/work/generated/scoring_mvp_run2/all_demo_step4_worker_cache_v2/results/
+/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/
 ```
 
 后端给 worker 的内部请求：
@@ -210,6 +213,7 @@ GET /api/reference-video/{word}
   "fps": 5,
   "total_frames": 15,
   "frame_indices": [0, 1, 2],
+  "frame_weights": [1.0, 1.4, 1.9],
   "frames": [
     {
       "image_format": "jpg",
@@ -234,6 +238,7 @@ worker 在启动时初始化一次 `MediaPipe Holistic`。收到 `process_frames
 2. 用 OpenCV 恢复图像。
 3. 调用常驻 Holistic 逐帧提取 pose、hand、face raw landmarks。
 4. 写出用户本次 raw Holistic JSON。
+5. 如果请求带有 `frame_weights`，同步写入每帧记录，供评分阶段合并浏览器侧采样能量先验。
 
 评分模块：
 
@@ -243,15 +248,21 @@ worker 在启动时初始化一次 `MediaPipe Holistic`。收到 `process_frames
 
 评分阶段读取标准模板 JSON 和用户 JSON，执行：
 
-- raw landmark 特征整理。
-- 身体尺度归一化。
-- mask 缺失处理。
-- DTW 时序对齐。
-- 分组平均距离。
-- sequence penalty。
+- raw landmark 特征整理、身体尺度归一化和 mask 缺失处理。
+- 文本语义 profile 加权，突出目标词的重要手/手形/手臂特征。
+- 模板侧 `semantic_frame_weights.json` 与用户侧 `frame_weights` 合并为动态逐帧权重。
+- 按标准模板动作长度选择混合对齐策略：`花` 等长动作使用完整序列语义加权 DTW，并保留动作窗口诊断；`跳` 等短促动作使用语义动作窗口 DTW。
+- 输出分组平均距离、sequence penalty、`action_window`、`alignment_policy` 和 `frame_weight_summary`。
 - `prototype_score`。
 
 当前分数仍是 demo-only prototype similarity，不是正式用户评分阈值。
+
+评分模块热重载：
+
+- 自动热重载：`/api/score` 每次评分前检查 `/data/WYC/signLanguage/work/scripts/score_holistic_sequence_mvp.py` 的 mtime，检测到变化时执行 `importlib.reload`。
+- 手动热重载：`POST /api/admin/reload-scoring`。
+- 状态查看：`GET /api/status` 的 `scoring_module` 字段包含 `module_file`、`loaded_at`、`reload_count` 和 `last_reload_error`。
+- 该机制只重载打分模块，不触碰 `HolisticWorkerService`、不重启 `holistic_worker_daemon.py`。
 
 ## 9. 后端返回内容
 
@@ -264,6 +275,9 @@ worker 在启动时初始化一次 `MediaPipe Holistic`。收到 `process_frames
 | `score.normalized_distance` | 归一化距离 |
 | `worker.holistic_eval_sec` | Holistic 处理耗时 |
 | `frame_count` | 上传帧数 |
+| `score.alignment_policy` | 当前采用完整序列还是动作窗口评分 |
+| `score.action_window` | 标准/用户动作窗口诊断 |
+| `score.frame_weight_summary` | 动态帧权重摘要 |
 | `score.group_mean_distance` | 分组平均距离表 |
 | `score.sequence_penalty` | 序列惩罚表 |
 | `artifacts.result_dir` | 服务端结果目录 |
@@ -288,7 +302,8 @@ worker 在启动时初始化一次 `MediaPipe Holistic`。收到 `process_frames
 2. 默认直接更新 `5080` 静态页面，不重启 `5080` 后端进程。
 3. 需要 AB 对比时再新增 `static_vN/` 和 `backend_vN.py`，选择一个新端口。
 4. 新前端只做代理，不创建 `HolisticWorkerService`。
-5. 只有评分代码、模板库、worker 协议变化时，才考虑重启 `5080`。
+5. 只改评分算法脚本时，不重启 `5080`；通过自动 mtime 检测或 `POST /api/admin/reload-scoring` 重载评分模块。
+6. 只有后端框架、模板库构建逻辑、worker 协议或 worker 代码变化时，才考虑重启 `5080`。
 
 当前 tmux 会话：
 
@@ -329,9 +344,10 @@ signlanguage-web     -> 5080 shared scoring backend + current frontend
 - `5081/5082/5083` 当前不再监听。
 - 当前只剩 `signlanguage-web` 一个 tmux 会话。
 - 当前只有一个 `holistic_worker_daemon.py` 进程，属于 `5080`。
-- `5080/api/status` 返回 worker `ready`，模板数 `10`。
+- `5080/api/status` 返回模板数 `10`，并包含 `scoring_module` 热重载状态。
+- `POST /api/admin/reload-scoring` 已验证可用，`reload_count` 从 `0` 增至 `1`，worker 状态保持不变。
 
-当前 `5080` worker 状态为 ready。本次重启后 Holistic 初始化时间显示约 `390.501s`，因此后续更应避免为了前端页面改版重启共享后端。
+2026-05-23 02:30 CST 已完成一次结构性重启以加载热重载能力；后续只调整评分脚本时不再需要重启 Holistic 后端。
 
 ## 13. 当前关键文件
 

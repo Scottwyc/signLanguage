@@ -5,6 +5,9 @@ const state = {
   referenceVisible: false,
 };
 
+const MOTION_SIG_WIDTH = 32;
+const MOTION_SIG_HEIGHT = 24;
+
 const els = {
   workerStatus: document.getElementById("workerStatus"),
   cameraStatus: document.getElementById("cameraStatus"),
@@ -169,6 +172,74 @@ async function toggleCamera() {
   await openCamera();
 }
 
+function buildMotionSignature(ctx, width, height) {
+  const image = ctx.getImageData(0, 0, width, height).data;
+  const bins = new Float32Array(MOTION_SIG_WIDTH * MOTION_SIG_HEIGHT);
+  const counts = new Uint16Array(MOTION_SIG_WIDTH * MOTION_SIG_HEIGHT);
+  for (let y = 0; y < height; y += 2) {
+    const by = Math.min(MOTION_SIG_HEIGHT - 1, Math.floor((y / height) * MOTION_SIG_HEIGHT));
+    for (let x = 0; x < width; x += 2) {
+      const bx = Math.min(MOTION_SIG_WIDTH - 1, Math.floor((x / width) * MOTION_SIG_WIDTH));
+      const src = (y * width + x) * 4;
+      const gray = 0.299 * image[src] + 0.587 * image[src + 1] + 0.114 * image[src + 2];
+      const dst = by * MOTION_SIG_WIDTH + bx;
+      bins[dst] += gray / 255;
+      counts[dst] += 1;
+    }
+  }
+  for (let i = 0; i < bins.length; i += 1) {
+    bins[i] = counts[i] ? bins[i] / counts[i] : 0;
+  }
+  return bins;
+}
+
+function signatureMotion(prev, curr) {
+  if (!prev || !curr || prev.length !== curr.length) return 0;
+  let total = 0;
+  for (let i = 0; i < curr.length; i += 1) {
+    total += Math.abs(curr[i] - prev[i]);
+  }
+  return total / curr.length;
+}
+
+function normalizeFrameWeights(values) {
+  if (!values.length) return [];
+  const positive = values.filter((value) => Number.isFinite(value) && value > 0);
+  const baseline = positive.length ? positive.reduce((sum, value) => sum + value, 0) / positive.length : 1;
+  const withFloor = values.map((value) => Math.max(0, Number(value) || 0) + baseline * 0.2);
+  const mean = withFloor.reduce((sum, value) => sum + value, 0) / withFloor.length || 1;
+  const clipped = withFloor.map((value) => Math.max(0.45, Math.min(2.75, value / mean)));
+  const clippedMean = clipped.reduce((sum, value) => sum + value, 0) / clipped.length || 1;
+  return clipped.map((value) => Number((value / clippedMean).toFixed(4)));
+}
+
+function selectEnergyCoverageFrames(candidates, targetFrames) {
+  const count = candidates.length;
+  const target = Math.max(1, Math.min(targetFrames, count));
+  if (target >= count) {
+    return candidates.map((item, idx) => ({ ...item, uploadWeight: item.frameWeight, uploadRank: idx }));
+  }
+
+  const selected = new Set();
+  const coverageCount = Math.max(2, Math.min(target, Math.ceil(target * 0.45)));
+  for (let i = 0; i < coverageCount; i += 1) {
+    const idx = Math.round((i * (count - 1)) / Math.max(coverageCount - 1, 1));
+    selected.add(idx);
+  }
+
+  const ranked = candidates
+    .map((item, idx) => ({ idx, score: item.energySmooth }))
+    .sort((a, b) => b.score - a.score);
+  for (const item of ranked) {
+    if (selected.size >= target) break;
+    selected.add(item.idx);
+  }
+
+  return Array.from(selected)
+    .sort((a, b) => a - b)
+    .map((idx, rank) => ({ ...candidates[idx], uploadWeight: candidates[idx].frameWeight, uploadRank: rank }));
+}
+
 function captureOneFrame(frameWidth) {
   const video = els.preview;
   const srcWidth = video.videoWidth || 640;
@@ -178,12 +249,16 @@ function captureOneFrame(frameWidth) {
   const canvas = els.canvas;
   canvas.width = width;
   canvas.height = height;
-  const ctx = canvas.getContext("2d", { willReadFrequently: false });
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
   ctx.drawImage(video, 0, 0, width, height);
+  const signature = buildMotionSignature(ctx, width, height);
   const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
   return {
-    image_format: "jpg",
-    image_b64: dataUrl.split(",", 2)[1],
+    frame: {
+      image_format: "jpg",
+      image_b64: dataUrl.split(",", 2)[1],
+    },
+    signature,
   };
 }
 
@@ -192,15 +267,17 @@ async function recordFrames() {
   state.busy = true;
   els.recordBtn.disabled = true;
   els.progressBar.style.width = "0%";
+  els.progressBar.style.opacity = "1";
   setScorePending();
 
   const durationSec = Number(els.durationSec.value || 3);
-  const fps = Number(els.captureFps.value || 5);
-  const frameWidth = Number(els.frameWidth.value || 480);
-  const targetFrames = Math.max(1, Math.round(durationSec * fps));
-  const intervalMs = 1000 / fps;
-  const frames = [];
-  const frameIndices = [];
+  const uploadFps = Number(els.captureFps.value || 5);
+  const frameWidth = Number(els.frameWidth.value || 960);
+  const targetFrames = Math.max(1, Math.min(90, Math.round(durationSec * uploadFps)));
+  const candidateFps = Math.max(uploadFps, Math.min(18, uploadFps * 2));
+  const candidateFrames = Math.max(targetFrames, Math.round(durationSec * candidateFps));
+  const intervalMs = 1000 / candidateFps;
+  const candidates = [];
 
   try {
     await runCountdown(3);
@@ -210,27 +287,56 @@ async function recordFrames() {
     return;
   }
 
-  setLog(`正在采集 ${durationSec}s，目标 ${targetFrames} 帧...`);
-  for (let i = 0; i < targetFrames; i += 1) {
-    const frame = captureOneFrame(frameWidth);
-    frames.push(frame);
-    frameIndices.push(i);
-    els.progressBar.style.width = `${Math.round(((i + 1) / targetFrames) * 100)}%`;
-    if (i + 1 < targetFrames) {
+  setLog(`正在高频采集 ${durationSec}s，候选 ${candidateFrames} 帧，上传目标 ${targetFrames} 帧...`);
+  let prevSignature = null;
+  for (let i = 0; i < candidateFrames; i += 1) {
+    const captured = captureOneFrame(frameWidth);
+    const motion = signatureMotion(prevSignature, captured.signature);
+    prevSignature = captured.signature;
+    candidates.push({
+      candidateIndex: i,
+      frame: captured.frame,
+      energy: motion,
+      energySmooth: motion,
+      frameWeight: 1.0,
+    });
+    els.progressBar.style.width = `${Math.round(((i + 1) / candidateFrames) * 100)}%`;
+    if (i + 1 < candidateFrames) {
       await new Promise((resolve) => setTimeout(resolve, intervalMs));
     }
   }
 
-  setLog(`已采集 ${frames.length} 帧，正在发送到远端 Holistic 后端...`);
+  const energies = candidates.map((item, idx) => {
+    const left = candidates[Math.max(0, idx - 1)].energy;
+    const mid = item.energy;
+    const right = candidates[Math.min(candidates.length - 1, idx + 1)].energy;
+    return 0.25 * left + 0.5 * mid + 0.25 * right;
+  });
+  const weights = normalizeFrameWeights(energies);
+  for (let i = 0; i < candidates.length; i += 1) {
+    candidates[i].energySmooth = energies[i];
+    candidates[i].frameWeight = weights[i] || 1.0;
+  }
+
+  const selected = selectEnergyCoverageFrames(candidates, targetFrames);
+  const frames = selected.map((item) => item.frame);
+  const frameIndices = selected.map((item) => item.candidateIndex);
+  const frameWeights = selected.map((item) => item.uploadWeight);
+
+  const peakWeight = frameWeights.length ? Math.max(...frameWeights) : 1;
+  setLog(`候选 ${candidates.length} 帧中选取 ${frames.length} 帧，峰值权重 ${formatNumber(peakWeight, 2)}，正在发送到远端 Holistic 后端...`);
+  els.progressBar.style.width = "0%";
+  els.progressBar.style.opacity = "0.35";
   try {
     const resp = await fetch("/api/score", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         target_word: els.targetWord.value,
-        fps,
+        fps: candidateFps,
         duration_sec: durationSec,
         frame_indices: frameIndices,
+        frame_weights: frameWeights,
         frames,
         wait_for_ready_sec: 600,
       }),
@@ -240,6 +346,8 @@ async function recordFrames() {
       throw new Error(data.detail || `HTTP ${resp.status}`);
     }
     renderResult(data);
+    els.progressBar.style.width = "0%";
+    els.progressBar.style.opacity = "1";
     setLog(`打分完成。结果目录：${data.artifacts?.result_dir || "--"}`);
   } catch (err) {
     setLog(`打分失败：${err.message || err}`);
@@ -247,6 +355,7 @@ async function recordFrames() {
     els.resultNote.textContent = "查看后端日志或确认 Holistic worker 已就绪。";
   } finally {
     state.busy = false;
+    els.progressBar.style.opacity = "1";
     await refreshStatus();
   }
 }
