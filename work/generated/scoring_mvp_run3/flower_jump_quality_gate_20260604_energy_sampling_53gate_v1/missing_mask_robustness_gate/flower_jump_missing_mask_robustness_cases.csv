@@ -1,0 +1,13 @@
+word,variant,kind,passed,score,min_score,max_score,capture_quality_status,capture_quality_reason,semantic_floor_reason,required_presence_penalty,query_left_presence,query_right_presence,query_pose_presence,query_face_presence,rationale
+花,drop_face,positive,True,100.0,70.0,,score_valid,score_valid,query_not_short_core_capture,0.0,0.0,0.7547169811320755,1.0,0.0,面部不是花/跳核心语义。
+花,drop_pose,positive,True,100.0,70.0,,score_valid,score_valid,query_not_short_core_capture,0.0,0.0,0.7547169811320755,0.0,1.0,坐姿或躯干不完整不应主导手部语义评分。
+花,drop_pose_face,positive,True,100.0,70.0,,score_valid,score_valid,query_not_short_core_capture,0.0,0.0,0.7547169811320755,0.0,0.0,只保留手部语义时应仍可打出正常/边界分。
+花,drop_left_noncore_hand,positive,True,100.0,65.0,,score_valid,score_valid,query_not_short_core_capture,0.0,0.0,0.7547169811320755,1.0,1.0,花的核心是开花手的张开动作，非核心手缺失不应严重扣分。
+花,drop_right_core_hand,negative,True,1.170588026599594,,45.0,needs_recapture,flower_core_hand_presence_low,query_not_short_core_capture,0.0,0.0,0.0,1.0,1.0,开花手缺失时不能被当作正确花动作。
+花,drop_both_hands,negative,True,1.170588026599594,,35.0,needs_recapture,flower_core_hand_presence_low,query_not_short_core_capture,0.0,0.0,0.0,1.0,1.0,双手缺失时必须低分或建议重采。
+跳,drop_face,positive,True,100.0,70.0,,score_valid,score_valid,used,0.0,0.8421052631578947,0.8947368421052632,1.0,0.0,面部不是花/跳核心语义。
+跳,drop_pose,positive,True,100.0,70.0,,score_valid,score_valid,used,0.0,0.8421052631578947,0.8947368421052632,0.0,1.0,坐姿或躯干不完整不应主导手部语义评分。
+跳,drop_pose_face,positive,True,100.0,70.0,,score_valid,score_valid,used,0.0,0.8421052631578947,0.8947368421052632,0.0,0.0,只保留手部语义时应仍可打出正常/边界分。
+跳,drop_left_ground_hand,negative,True,3.0372067823352493,,45.0,needs_recapture,jump_two_hand_presence_low,insufficient_two_hand_presence,0.1336888888888889,0.0,0.8947368421052632,1.0,1.0,跳需要左手地面，左手缺失不能通过。
+跳,drop_right_jumping_hand,negative,True,0.7714394079701198,,45.0,needs_recapture,jump_two_hand_presence_low,insufficient_two_hand_presence,0.16728888888888885,0.8421052631578947,0.0,1.0,1.0,跳需要右手两指小人，右手缺失不能通过。
+跳,drop_both_hands,negative,True,0.12453567658137939,,35.0,needs_recapture,jump_two_hand_presence_low,insufficient_two_hand_presence,0.2232888888888889,0.0,0.0,1.0,1.0,双手关系完全缺失时必须低分或建议重采。

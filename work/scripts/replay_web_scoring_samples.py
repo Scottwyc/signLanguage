@@ -14,7 +14,7 @@ import json
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Dict, Iterable, List, Optional, Sequence
 
 from score_holistic_sequence_mvp import (
     DEFAULT_SEMANTIC_PROFILE_JSON,
@@ -28,6 +28,7 @@ from score_holistic_sequence_mvp import (
 REPO_ROOT = Path("/data/WYC/signLanguage")
 DEFAULT_WEB_ROOT = REPO_ROOT / "work/generated/web_scoring_mvp"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "work/generated/scoring_mvp_run3/web_replay_current"
+DEFAULT_TEMPLATE_ROOT = REPO_ROOT / "work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results"
 
 
 def _load_json(path: Path) -> Dict[str, Any]:
@@ -52,12 +53,44 @@ def _iter_result_paths(web_root: Path) -> List[Path]:
     return sorted(web_root.glob("web_*/scoring_result.json"), key=_request_sort_key)
 
 
-def replay_one(path: Path, semantic_profile_json: Path) -> Dict[str, Any]:
+def filter_result_paths(
+    paths: Iterable[Path],
+    *,
+    request_ids: Optional[Sequence[str]] = None,
+    since_request_id: str = "",
+    latest: int = 0,
+) -> List[Path]:
+    selected = sorted(paths, key=_request_sort_key)
+    request_id_set = {str(item) for item in (request_ids or []) if str(item)}
+    if request_id_set:
+        selected = [path for path in selected if path.parent.name in request_id_set]
+    if since_request_id:
+        selected = [path for path in selected if path.parent.name > since_request_id]
+    if latest > 0:
+        selected = selected[-latest:]
+    return selected
+
+
+def _template_path(template_root: Optional[Path], word: str, fallback: Path) -> tuple[Path, str]:
+    if template_root is None:
+        return fallback, "saved_standard_json"
+    direct = template_root / word / f"{word}_holistic_results.json"
+    if direct.exists():
+        return direct, "template_root"
+    folder = template_root / word
+    matches = sorted(folder.glob("*_holistic_results.json")) if folder.exists() else []
+    if matches:
+        return matches[0], "template_root"
+    return fallback, "saved_standard_json_fallback"
+
+
+def replay_one(path: Path, semantic_profile_json: Path, template_root: Optional[Path] = None) -> Dict[str, Any]:
     stored = _load_json(path)
     request_id = str(stored.get("request_id") or path.parent.name)
     target_word = str(stored.get("target_word") or "")
     old_score = (((stored.get("score") or {}).get("prototype_score")))
-    standard_json = Path(stored.get("standard_json") or "")
+    saved_standard_json = Path(stored.get("standard_json") or "")
+    standard_json, standard_source = _template_path(template_root, target_word, saved_standard_json)
     query_json = Path(stored.get("query_json") or "")
     row: Dict[str, Any] = {
         "request_id": request_id,
@@ -69,6 +102,8 @@ def replay_one(path: Path, semantic_profile_json: Path) -> Dict[str, Any]:
         "old_score": float(old_score) if old_score is not None else None,
         "old_band": _score_band(float(old_score) if old_score is not None else None),
         "standard_json": str(standard_json),
+        "saved_standard_json": str(saved_standard_json),
+        "standard_source": standard_source,
         "query_json": str(query_json),
         "error": "",
     }
@@ -76,7 +111,7 @@ def replay_one(path: Path, semantic_profile_json: Path) -> Dict[str, Any]:
         standard = load_sequence(standard_json, requested_mode="landmark")
         query = load_sequence(query_json, requested_mode="landmark")
         profile = load_semantic_profile(target_word, semantic_profile_json)
-        result = run_pair(standard, query, semantic_profile=profile)
+        result = run_pair(standard, query, semantic_profile=profile, enable_cross_check=False)
         query_presence = _presence_ratio(query)
         row.update(
             {
@@ -164,7 +199,18 @@ def build_markdown(payload: Dict[str, Any]) -> str:
     lines.append(f"- 生成时间：`{payload['generated_at']}`")
     lines.append(f"- Web 样本根目录：`{payload['web_root']}`")
     lines.append(f"- 语义 profile：`{payload['semantic_profile_json']}`")
-    lines.append("- 口径：复查已保存网页/API 帧切片样本，不重新运行浏览器采集。")
+    filters = payload.get("filters") or {}
+    if any(filters.values()):
+        lines.append(
+            f"- 样本过滤：latest=`{filters.get('latest') or 0}`，"
+            f"since_request_id=`{filters.get('since_request_id') or ''}`，"
+            f"request_ids=`{', '.join(filters.get('request_ids') or []) or '-'}`"
+        )
+    if payload.get("template_root"):
+        lines.append(f"- 标准库覆盖：`{payload['template_root']}`")
+        lines.append("- 口径：query 复用保存的网页/API Holistic JSON，standard 改用当前标准库，模拟当前后端在线评分。")
+    else:
+        lines.append("- 口径：复用保存的 `standard_json/query_json`，不重新运行浏览器采集。")
     lines.append("- 分段：`normal_like >= 75`，`60 <= borderline < 75`，`low < 60`；这仍不是正式用户阈值。")
     lines.append("")
     lines.append("## 总览")
@@ -217,12 +263,21 @@ def build_markdown(payload: Dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def write_outputs(rows: Sequence[Dict[str, Any]], output_dir: Path, web_root: Path, semantic_profile_json: Path) -> Dict[str, Any]:
+def write_outputs(
+    rows: Sequence[Dict[str, Any]],
+    output_dir: Path,
+    web_root: Path,
+    semantic_profile_json: Path,
+    template_root: Optional[Path] = None,
+    filters: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
     output_dir.mkdir(parents=True, exist_ok=True)
     payload = {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "web_root": str(web_root),
         "semantic_profile_json": str(semantic_profile_json),
+        "template_root": str(template_root) if template_root is not None else "",
+        "filters": filters or {},
         "summary": summarize(rows),
         "rows": list(rows),
     }
@@ -247,12 +302,28 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument("--web-root", default=str(DEFAULT_WEB_ROOT))
     parser.add_argument("--semantic-profile-json", default=str(DEFAULT_SEMANTIC_PROFILE_JSON))
     parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
+    parser.add_argument(
+        "--template-root",
+        default="",
+        help="可选：用指定标准库替换历史 scoring_result.json 里的 standard_json，模拟当前后端评分。",
+    )
+    parser.add_argument("--latest", type=int, default=0, help="只回放排序后的最近 N 条样本。")
+    parser.add_argument("--since-request-id", default="", help="只回放 request_id 字典序大于该值的样本。")
+    parser.add_argument("--request-ids", nargs="*", default=[], help="只回放指定 request_id。")
     args = parser.parse_args(argv)
 
     web_root = Path(args.web_root)
     semantic_profile_json = Path(args.semantic_profile_json)
-    rows = [replay_one(path, semantic_profile_json) for path in _iter_result_paths(web_root)]
-    payload = write_outputs(rows, Path(args.output_dir), web_root, semantic_profile_json)
+    template_root = Path(args.template_root) if args.template_root else None
+    paths = filter_result_paths(
+        _iter_result_paths(web_root),
+        request_ids=args.request_ids,
+        since_request_id=args.since_request_id,
+        latest=args.latest,
+    )
+    filters = {"latest": args.latest, "since_request_id": args.since_request_id, "request_ids": list(args.request_ids)}
+    rows = [replay_one(path, semantic_profile_json, template_root=template_root) for path in paths]
+    payload = write_outputs(rows, Path(args.output_dir), web_root, semantic_profile_json, template_root=template_root, filters=filters)
     print(f"已生成网页回放 JSON：{payload['json_path']}")
     print(f"已生成网页回放报告：{payload['md_path']}")
     print(f"已生成网页回放 CSV：{payload['csv_path']}")

@@ -1,0 +1,319 @@
+{
+  "generated_at": "2026-06-03T01:51:59",
+  "claim_policy": "combined engineering quality gate; not calibrated real-user scoring",
+  "web_root": "/data/WYC/signLanguage/work/generated/web_scoring_mvp",
+  "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+  "semantic_profile_json": "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+  "backend_url": "http://127.0.0.1:5080",
+  "web_filters": {
+    "latest": 0,
+    "since_request_id": "",
+    "request_ids": []
+  },
+  "runs": [
+    {
+      "name": "web_regression",
+      "command": [
+        "/home/wuyangcheng/myenv/bin/python",
+        "/data/WYC/signLanguage/work/scripts/run_flower_jump_web_regression.py",
+        "--web-root",
+        "/data/WYC/signLanguage/work/generated/web_scoring_mvp",
+        "--semantic-profile-json",
+        "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+        "--template-root",
+        "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+        "--output-dir",
+        "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/web_regression",
+        "--backend-url",
+        "http://127.0.0.1:5080"
+      ],
+      "started_at": "2026-06-03T01:47:18",
+      "finished_at": "2026-06-03T01:50:44",
+      "returncode": 1,
+      "stdout": "已生成花/跳网页回归 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/web_regression/flower_jump_web_regression.json\n已生成花/跳网页回归报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/web_regression/flower_jump_web_regression.md\n回归状态：FAIL\n- backend_ready: PASS (url=http://127.0.0.1:5080/api/status, worker=ready, reload_error=-, error=-)\n- replay_no_errors: PASS (samples=168, errors=0)\n- diagnostics_no_errors: PASS (samples=149, errors=0)\n- effective_rate_total: PASS (rate=96.1%, threshold=95.0%)\n- effective_rate_花: FAIL (rate=94.6%, reliable=92, normal_or_borderline=87, low=5)\n- effective_rate_跳: PASS (rate=100.0%, reliable=37, normal_or_borderline=37, low=0)\n- jump_effective_low_zero: PASS (effective_low=0)\n- flower_effective_low_bounded: PASS (effective_low=5, max=5, diagnoses={'flower_core_hand_presence_low': 1, 'flower_opening_guard_failed': 4})\n- flower_effective_low_explained: FAIL (allowed=['flower_opening_guard_failed'], observed={'flower_core_hand_presence_low': 1, 'flower_opening_guard_failed': 4})\n",
+      "stderr": ""
+    },
+    {
+      "name": "discrimination_gate",
+      "command": [
+        "/home/wuyangcheng/myenv/bin/python",
+        "/data/WYC/signLanguage/work/scripts/run_flower_jump_discrimination_gate.py",
+        "--template-root",
+        "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+        "--semantic-profile-json",
+        "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+        "--output-dir",
+        "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/discrimination_gate",
+        "--backend-url",
+        "http://127.0.0.1:5080",
+        "--positive-threshold",
+        "75.0",
+        "--negative-threshold",
+        "50.0"
+      ],
+      "started_at": "2026-06-03T01:50:44",
+      "finished_at": "2026-06-03T01:51:20",
+      "returncode": 0,
+      "stdout": "已生成花/跳离线判别 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/discrimination_gate/flower_jump_discrimination_gate.json\n已生成花/跳离线判别报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/discrimination_gate/flower_jump_discrimination_gate.md\n已生成花/跳离线判别 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/discrimination_gate/flower_jump_discrimination_cases.csv\n综合状态：PASS\n- 花: PASS min_pos=80.311 max_neg=32.047 margin=48.263 top_neg=other_demo_谗_羡慕\n- 跳: PASS min_pos=76.823 max_neg=31.418 margin=45.406 top_neg=fake_static_hold\n",
+      "stderr": ""
+    },
+    {
+      "name": "pose_robustness_gate",
+      "command": [
+        "/home/wuyangcheng/myenv/bin/python",
+        "/data/WYC/signLanguage/work/scripts/run_flower_jump_pose_robustness_gate.py",
+        "--template-root",
+        "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+        "--semantic-profile-json",
+        "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+        "--output-dir",
+        "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/pose_robustness_gate",
+        "--backend-url",
+        "http://127.0.0.1:5080",
+        "--min-score",
+        "70.0"
+      ],
+      "started_at": "2026-06-03T01:51:20",
+      "finished_at": "2026-06-03T01:51:37",
+      "returncode": 0,
+      "stdout": "已生成花/跳姿态鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/pose_robustness_gate/flower_jump_pose_robustness_gate.json\n已生成花/跳姿态鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/pose_robustness_gate/flower_jump_pose_robustness_gate.md\n已生成花/跳姿态鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/pose_robustness_gate/flower_jump_pose_robustness_cases.csv\n综合状态：PASS\n- 花: PASS min_score=80.446 weakest=hand_jitter_small\n- 跳: PASS min_score=93.015 weakest=hand_jitter_small\n",
+      "stderr": ""
+    },
+    {
+      "name": "frame_count_robustness_gate",
+      "command": [
+        "/home/wuyangcheng/myenv/bin/python",
+        "/data/WYC/signLanguage/work/scripts/run_flower_jump_frame_count_robustness_gate.py",
+        "--template-root",
+        "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+        "--semantic-profile-json",
+        "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+        "--output-dir",
+        "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/frame_count_robustness_gate",
+        "--backend-url",
+        "http://127.0.0.1:5080",
+        "--min-score",
+        "70.0",
+        "--flower-min-valid-frames",
+        "12",
+        "--jump-min-valid-frames",
+        "6"
+      ],
+      "started_at": "2026-06-03T01:51:37",
+      "finished_at": "2026-06-03T01:51:59",
+      "returncode": 0,
+      "stdout": "已生成花/跳帧数鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/frame_count_robustness_gate/flower_jump_frame_count_robustness_gate.json\n已生成花/跳帧数鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/frame_count_robustness_gate/flower_jump_frame_count_robustness_gate.md\n已生成花/跳帧数鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/frame_count_robustness_gate/flower_jump_frame_count_robustness_cases.csv\n综合状态：PASS\n- 花: PASS min_score=78.482 weakest=uniform_12f\n- 跳: PASS min_score=70.488 weakest=drop_every_3_keep_ends\n",
+      "stderr": ""
+    }
+  ],
+  "subgates": [
+    {
+      "name": "web_regression",
+      "returncode": 1,
+      "passed": false,
+      "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/web_regression/flower_jump_web_regression.json",
+      "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/web_regression/flower_jump_web_regression.md",
+      "parse_error": ""
+    },
+    {
+      "name": "discrimination_gate",
+      "returncode": 0,
+      "passed": true,
+      "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/discrimination_gate/flower_jump_discrimination_gate.json",
+      "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/discrimination_gate/flower_jump_discrimination_gate.md",
+      "parse_error": ""
+    },
+    {
+      "name": "pose_robustness_gate",
+      "returncode": 0,
+      "passed": true,
+      "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/pose_robustness_gate/flower_jump_pose_robustness_gate.json",
+      "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/pose_robustness_gate/flower_jump_pose_robustness_gate.md",
+      "parse_error": ""
+    },
+    {
+      "name": "frame_count_robustness_gate",
+      "returncode": 0,
+      "passed": true,
+      "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/frame_count_robustness_gate/flower_jump_frame_count_robustness_gate.json",
+      "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_v2/frame_count_robustness_gate/flower_jump_frame_count_robustness_gate.md",
+      "parse_error": ""
+    }
+  ],
+  "web_summary": {
+    "passed": false,
+    "samples": 168,
+    "replay_errors": 0,
+    "diagnostics_samples": 149,
+    "diagnostics_errors": 0,
+    "effective_reliable": 129,
+    "effective_normal_or_borderline": 124,
+    "effective_low": 5,
+    "effective_rate": 0.9612403100775194,
+    "by_word_effective": {
+      "花": {
+        "reliable_samples": 92,
+        "normal_or_borderline": 87,
+        "low": 5,
+        "needs_recapture": 1,
+        "semantic_mismatch": 4,
+        "normal_or_borderline_rate": 0.9456521739130435,
+        "score_mean": 75.16145750731366,
+        "score_median": 78.50029483871853
+      },
+      "跳": {
+        "reliable_samples": 37,
+        "normal_or_borderline": 37,
+        "low": 0,
+        "needs_recapture": 19,
+        "semantic_mismatch": 0,
+        "normal_or_borderline_rate": 1.0,
+        "score_mean": 76.67744087924144,
+        "score_median": 75.32524082818409
+      }
+    },
+    "gates": [
+      {
+        "name": "backend_ready",
+        "passed": true,
+        "detail": "url=http://127.0.0.1:5080/api/status, worker=ready, reload_error=-, error=-"
+      },
+      {
+        "name": "replay_no_errors",
+        "passed": true,
+        "detail": "samples=168, errors=0"
+      },
+      {
+        "name": "diagnostics_no_errors",
+        "passed": true,
+        "detail": "samples=149, errors=0"
+      },
+      {
+        "name": "effective_rate_total",
+        "passed": true,
+        "detail": "rate=96.1%, threshold=95.0%"
+      },
+      {
+        "name": "effective_rate_花",
+        "passed": false,
+        "detail": "rate=94.6%, reliable=92, normal_or_borderline=87, low=5"
+      },
+      {
+        "name": "effective_rate_跳",
+        "passed": true,
+        "detail": "rate=100.0%, reliable=37, normal_or_borderline=37, low=0"
+      },
+      {
+        "name": "jump_effective_low_zero",
+        "passed": true,
+        "detail": "effective_low=0"
+      },
+      {
+        "name": "flower_effective_low_bounded",
+        "passed": true,
+        "detail": "effective_low=5, max=5, diagnoses={'flower_core_hand_presence_low': 1, 'flower_opening_guard_failed': 4}"
+      },
+      {
+        "name": "flower_effective_low_explained",
+        "passed": false,
+        "detail": "allowed=['flower_opening_guard_failed'], observed={'flower_core_hand_presence_low': 1, 'flower_opening_guard_failed': 4}"
+      }
+    ]
+  },
+  "discrimination_summary": {
+    "passed": true,
+    "rows": [
+      {
+        "word": "花",
+        "passed": true,
+        "min_positive_score": 80.3106069532393,
+        "max_negative_score": 32.04715880330705,
+        "margin": 48.26344814993225,
+        "top_negative": "other_demo_谗_羡慕",
+        "weakest_positive": "amplitude_0.85"
+      },
+      {
+        "word": "跳",
+        "passed": true,
+        "min_positive_score": 76.82346596456401,
+        "max_negative_score": 31.41784198959613,
+        "margin": 45.40562397496788,
+        "top_negative": "fake_static_hold",
+        "weakest_positive": "amplitude_0.85"
+      }
+    ]
+  },
+  "pose_summary": {
+    "passed": true,
+    "rows": [
+      {
+        "word": "花",
+        "passed": true,
+        "min_observed_score": 80.4462357333833,
+        "weakest_variant": "hand_jitter_small",
+        "min_required_score": 70.0
+      },
+      {
+        "word": "跳",
+        "passed": true,
+        "min_observed_score": 93.01528912326975,
+        "weakest_variant": "hand_jitter_small",
+        "min_required_score": 70.0
+      }
+    ]
+  },
+  "frame_summary": {
+    "passed": true,
+    "rows": [
+      {
+        "word": "花",
+        "passed": true,
+        "min_observed_score": 78.4818526190181,
+        "weakest_variant": "uniform_12f",
+        "min_required_score": 70.0,
+        "min_valid_frames": 12,
+        "diagnostic_min_score": 32.28396780860696,
+        "diagnostic_weakest_variant": "uniform_8f"
+      },
+      {
+        "word": "跳",
+        "passed": true,
+        "min_observed_score": 70.48794764598692,
+        "weakest_variant": "drop_every_3_keep_ends",
+        "min_required_score": 70.0,
+        "min_valid_frames": 6,
+        "diagnostic_min_score": null,
+        "diagnostic_weakest_variant": ""
+      }
+    ]
+  },
+  "marker_status": {
+    "command": [
+      "/home/wuyangcheng/myenv/bin/python",
+      "/data/WYC/signLanguage/work/scripts/manage_web_sample_marker.py",
+      "status"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"marker_last_request_id\": \"web_20260602_233348_53e3df5d\",\n  \"new_summary\": {\n    \"count\": 0,\n    \"first_request_id\": \"\",\n    \"last_request_id\": \"\",\n    \"by_word\": {}\n  },\n  \"target_summary\": {\n    \"count\": 0,\n    \"first_request_id\": \"\",\n    \"last_request_id\": \"\",\n    \"by_word\": {}\n  },\n  \"diagnosed_request_ids\": [],\n  \"regression_report\": null,\n  \"md_path\": null\n}\n",
+    "stderr": "",
+    "payload": {
+      "marker_last_request_id": "web_20260602_233348_53e3df5d",
+      "new_summary": {
+        "count": 0,
+        "first_request_id": "",
+        "last_request_id": "",
+        "by_word": {}
+      },
+      "target_summary": {
+        "count": 0,
+        "first_request_id": "",
+        "last_request_id": "",
+        "by_word": {}
+      },
+      "diagnosed_request_ids": [],
+      "regression_report": null,
+      "md_path": null
+    }
+  },
+  "passed": false
+}

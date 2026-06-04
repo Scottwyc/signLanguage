@@ -1,0 +1,1794 @@
+{
+  "generated_at": "2026-06-03T11:38:54",
+  "ready_to_complete": false,
+  "readiness_summary": {
+    "runtime_ready": true,
+    "algorithm_ready": true,
+    "real_sample_ready": false,
+    "ready_to_complete": false,
+    "runtime_gates": [
+      "backend_ready",
+      "watcher_online",
+      "marker_available"
+    ],
+    "algorithm_gates": [
+      "combined_quality_gate_passed"
+    ],
+    "real_sample_gates": [
+      "fresh_real_webcam_target_samples_diagnosed"
+    ],
+    "missing_runtime_gates": [],
+    "missing_algorithm_gates": [],
+    "missing_real_sample_gates": [
+      "fresh_real_webcam_target_samples_diagnosed"
+    ],
+    "completion_blocker": "fresh_real_webcam_target_samples_diagnosed",
+    "status_explanation": "算法质量门和运行态已就绪，仍缺 marker 后真实网页摄像头花/跳样本诊断。"
+  },
+  "backend_status": {
+    "ok": true,
+    "url": "http://127.0.0.1:5080/api/status",
+    "payload": {
+      "service": "signLanguage scoring MVP",
+      "generated_at": "2026-06-03T11:38:54",
+      "claim_policy": "prototype similarity only; not a calibrated real-user score",
+      "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+      "legacy_template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run2/all_demo_step4_worker_cache_v2/results",
+      "dense_template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+      "output_root": "/data/WYC/signLanguage/work/generated/web_scoring_mvp",
+      "semantic_profile_json": "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+      "scoring_module": {
+        "module": "score_holistic_sequence_mvp",
+        "module_file": "/data/WYC/signLanguage/work/scripts/score_holistic_sequence_mvp.py",
+        "mtime_ns": 1780443339931440061,
+        "loaded_at": "2026-06-03T08:12:15",
+        "reload_count": 13,
+        "last_reload_error": null
+      },
+      "templates": [
+        {
+          "word": "唱歌",
+          "label": "唱歌",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/唱歌/唱歌_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 27,
+          "fps": 25.0,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/唱歌/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/唱歌.mp4",
+          "reference_video_url": "/api/reference-video/唱歌",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "头部左右晃动，模仿真实唱歌时的样子；双手拇指和食指同时从喉部两边向外移出，表示；从喉部发出声音；嘴巴张开，模仿唱歌时的样子；画面可以顺着双手拇指和食指的移动，叠加流动的音符",
+            "group_weights": {
+              "left_hand": 0.2,
+              "right_hand": 0.2,
+              "left_hand_shape": 0.1,
+              "right_hand_shape": 0.1,
+              "pose": 0.14,
+              "face": 0.21,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "left_hand",
+              "right_hand",
+              "face",
+              "pose"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "指示",
+          "label": "指示",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/指示/指示_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 30,
+          "fps": 22.3062381852552,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/指示/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/指示.mp4",
+          "reference_video_url": "/api/reference-video/指示",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "左手拇指模拟人头，右手食指表示另一个人的食指，正在左右指挥前面这个人；画面可以在左手拇指上叠加表情和头发，模拟真的的头",
+            "group_weights": {
+              "left_hand": 0.24,
+              "right_hand": 0.36,
+              "left_hand_shape": 0.14,
+              "right_hand_shape": 0.21,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "right_hand",
+              "right_hand_shape",
+              "left_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "月亮",
+          "label": "月亮",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/月亮/月亮_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 47,
+          "fps": 25.0,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/月亮/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/月亮.mp4",
+          "reference_video_url": "/api/reference-video/月亮",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "双手向两边移动的过程中，两根手指的距离需要逐渐变窄，模拟弯月两边窄、中间宽的形状；画面可以在双手运动的过程中，出现于两手间出现一轮弯月",
+            "group_weights": {
+              "left_hand": 0.24,
+              "right_hand": 0.24,
+              "left_hand_shape": 0.24,
+              "right_hand_shape": 0.24,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.04
+            },
+            "focus_groups": [
+              "left_hand_shape",
+              "right_hand_shape",
+              "left_hand",
+              "right_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "朋友",
+          "label": "朋友",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/朋友/朋友_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 28,
+          "fps": 25.0,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/朋友/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/朋友.mp4",
+          "reference_video_url": "/api/reference-video/朋友",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "两根大拇指模拟两个人的头；两个人的头互相碰两下，象征亲密，表示朋友；画面可以在两根拇指上叠加笑脸和头发，模拟人头",
+            "group_weights": {
+              "left_hand": 0.29999999999999993,
+              "right_hand": 0.29999999999999993,
+              "left_hand_shape": 0.16999999999999998,
+              "right_hand_shape": 0.16999999999999998,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.06
+            },
+            "focus_groups": [
+              "left_hand",
+              "right_hand",
+              "left_hand_shape",
+              "right_hand_shape"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "汽车",
+          "label": "汽车",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/汽车/汽车_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 44,
+          "fps": 26.363636363636363,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/汽车/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/汽车.mp4",
+          "reference_video_url": "/api/reference-video/汽车",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "双手模拟开车的动作，两手虚握，想象手心内是方向盘；双手左右转动，模拟转动方向盘的动作；画面可以叠加一个方向盘，随着双手的转动进行旋转",
+            "group_weights": {
+              "left_hand": 0.29999999999999993,
+              "right_hand": 0.29999999999999993,
+              "left_hand_shape": 0.16999999999999998,
+              "right_hand_shape": 0.16999999999999998,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.06
+            },
+            "focus_groups": [
+              "left_hand",
+              "right_hand",
+              "left_hand_shape",
+              "right_hand_shape"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "花",
+          "label": "花",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/花/花_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 53,
+          "fps": 29.44954128440367,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/花/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/花.mp4",
+          "reference_video_url": "/api/reference-video/花",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "一手撮合、指尖朝上模仿花朵含苞的样子；手缓缓向上的同时，慢慢张开，模仿开花的样子；画面可以叠加一朵含苞的花朵，随着手张开的动作同时逐渐绽放",
+            "group_weights": {
+              "left_hand": 0.08,
+              "right_hand": 0.34,
+              "left_hand_shape": 0.1,
+              "right_hand_shape": 0.44,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.04
+            },
+            "focus_groups": [
+              "right_hand_shape",
+              "right_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "虎",
+          "label": "虎",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/虎/虎_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 54,
+          "fps": 28.205128205128204,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/虎/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/虎.mp4",
+          "reference_video_url": "/api/reference-video/虎",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "左手中、无名、小指和右手食指在前额比出一个“王”字，模仿老虎额头上的“王”字花纹；随后双手五指弯曲、指尖朝下，向前下方按动一下，模仿老虎的兽爪，需要坚定有力。；画面上可以在完成第一个动作后，于人物前额生成一个“王”字花纹，并在第二个动作完成的过程中，随着双手动作出现兽爪留痕",
+            "group_weights": {
+              "left_hand": 0.24,
+              "right_hand": 0.24,
+              "left_hand_shape": 0.2,
+              "right_hand_shape": 0.2,
+              "pose": 0.03,
+              "face": 0.04,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "left_hand_shape",
+              "right_hand_shape",
+              "left_hand",
+              "right_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "谗（羡慕）",
+          "label": "谗（羡慕）",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/谗（羡慕）/谗（羡慕）_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 32,
+          "fps": 26.571428571428573,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/谗（羡慕）/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/谗（羡慕）.mp4",
+          "reference_video_url": "/api/reference-video/谗（羡慕）",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "一手伸食指，熊嘴角处向下滑动，模仿口水从嘴角流出的样子；舌头从嘴巴里微伸出来，模仿馋嘴时舔嘴唇的样子；画面可以顺着向下的食指，叠加从嘴角流出的口水",
+            "group_weights": {
+              "left_hand": 0.1,
+              "right_hand": 0.24,
+              "left_hand_shape": 0.05,
+              "right_hand_shape": 0.12,
+              "pose": 0.0,
+              "face": 0.44,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "face",
+              "right_hand",
+              "right_hand_shape"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "跳",
+          "label": "跳",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 19,
+          "fps": 14.682539682539682,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/跳.mp4",
+          "reference_video_url": "/api/reference-video/跳",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "右手两根手指模拟人的两条腿，左手模拟地面；右手食、中指向上弹跳时，要先弯曲后伸直，并且动作较为迅速；画面可以在右手两根手指上叠加一个小人，双腿正好与右手的食指、中指重合，左手位置叠加一块平地，小人双腿随着右手食、中指的状态运动",
+            "group_weights": {
+              "left_hand": 0.2136363636363636,
+              "right_hand": 0.299090909090909,
+              "left_hand_shape": 0.1068181818181818,
+              "right_hand_shape": 0.3204545454545454,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.06
+            },
+            "focus_groups": [
+              "two_hand_relation",
+              "right_hand_shape",
+              "right_hand",
+              "left_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "香蕉",
+          "label": "香蕉",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/香蕉/香蕉_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 42,
+          "fps": 25.625,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/香蕉/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/香蕉.mp4",
+          "reference_video_url": "/api/reference-video/香蕉",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "左手竖着的食指表示香蕉；右手从左手食指上往下做剥皮动作；画面可以叠加一根真实未剥皮的香蕉，并随着右手的动作，香蕉皮慢慢被剥开",
+            "group_weights": {
+              "left_hand": 0.25999999999999995,
+              "right_hand": 0.33999999999999997,
+              "left_hand_shape": 0.14999999999999997,
+              "right_hand_shape": 0.19999999999999996,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "right_hand",
+              "left_hand",
+              "right_hand_shape",
+              "left_hand_shape"
+            ],
+            "allow_hand_swap": true
+          }
+        }
+      ],
+      "worker": {
+        "status": "ready",
+        "started_at": "2026-05-23T06:56:27",
+        "ready_at": "2026-05-23T07:00:48",
+        "ready_payload": {
+          "type": "ready",
+          "pid": 811485,
+          "started_at": "2026-05-23T07:00:48",
+          "holistic_init_sec": 260.122,
+          "model_complexity": 1,
+          "static_image_mode": true
+        },
+        "error": null,
+        "stderr_log": "/data/WYC/signLanguage/work/logs/web_holistic_worker_20260523_065627.stderr.log",
+        "process": {
+          "pid": 811485,
+          "returncode": null
+        }
+      }
+    },
+    "error": ""
+  },
+  "watch_status": {
+    "ok": true,
+    "url": "work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_role_21gate_v1/browser_evidence_gate/fixtures/watch_status.json",
+    "payload": {
+      "generated_at": "2026-06-03T11:38:53",
+      "event": "diagnose_done",
+      "watcher_pid": 1,
+      "status": {
+        "checked_at": "2026-06-03T11:38:53",
+        "marker_last_request_id": "fixture_marker",
+        "new_summary": {
+          "count": 2,
+          "first_request_id": "web_20260602_233343_899e6970",
+          "last_request_id": "web_20260602_233348_53e3df5d",
+          "by_word": {
+            "花": 1,
+            "跳": 1
+          }
+        },
+        "target_summary": {
+          "count": 2,
+          "first_request_id": "web_20260602_233343_899e6970",
+          "last_request_id": "web_20260602_233348_53e3df5d",
+          "by_word": {
+            "花": 1,
+            "跳": 1
+          }
+        },
+        "target_request_ids": [
+          "web_20260602_233343_899e6970",
+          "web_20260602_233348_53e3df5d"
+        ]
+      },
+      "latest_diagnosis": {
+        "generated_at": "2026-06-03T11:38:53",
+        "web_root": "",
+        "diagnosed_request_ids": [
+          "web_20260602_233343_899e6970",
+          "web_20260602_233348_53e3df5d"
+        ],
+        "regression_returncode": 0,
+        "confusion_returncode": 0,
+        "visual_returncode": 0
+      }
+    },
+    "error": ""
+  },
+  "marker_status": {
+    "command": [
+      "/home/wuyangcheng/myenv/bin/python",
+      "/data/WYC/signLanguage/work/scripts/manage_web_sample_marker.py",
+      "status"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"marker_last_request_id\": \"web_20260602_233348_53e3df5d\",\n  \"new_summary\": {\n    \"count\": 0,\n    \"first_request_id\": \"\",\n    \"last_request_id\": \"\",\n    \"by_word\": {}\n  },\n  \"target_summary\": {\n    \"count\": 0,\n    \"first_request_id\": \"\",\n    \"last_request_id\": \"\",\n    \"by_word\": {}\n  },\n  \"diagnosed_request_ids\": [],\n  \"regression_report\": null,\n  \"semantic_diagnostics_report\": null,\n  \"confusion_report\": null,\n  \"md_path\": null\n}\n",
+    "stderr": "",
+    "payload": {
+      "marker_last_request_id": "web_20260602_233348_53e3df5d",
+      "new_summary": {
+        "count": 0,
+        "first_request_id": "",
+        "last_request_id": "",
+        "by_word": {}
+      },
+      "target_summary": {
+        "count": 0,
+        "first_request_id": "",
+        "last_request_id": "",
+        "by_word": {}
+      },
+      "diagnosed_request_ids": [],
+      "regression_report": null,
+      "semantic_diagnostics_report": null,
+      "confusion_report": null,
+      "md_path": null
+    }
+  },
+  "web_root": "work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_role_21gate_v1/browser_evidence_gate/fixtures/uniform_frame_weights",
+  "browser_capture_evidence": {
+    "request_ids": [
+      "web_20260602_233343_899e6970",
+      "web_20260602_233348_53e3df5d"
+    ],
+    "passed": false,
+    "sample_evidence_passed": false,
+    "allow_legacy_browser_evidence": false,
+    "required_words": [
+      "花",
+      "跳"
+    ],
+    "observed_words": [],
+    "required_words_covered": false,
+    "missing_required_words": [
+      "花",
+      "跳"
+    ],
+    "rows": [
+      {
+        "request_id": "web_20260602_233343_899e6970",
+        "path": "work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_role_21gate_v1/browser_evidence_gate/fixtures/uniform_frame_weights/web_20260602_233343_899e6970/scoring_result.json",
+        "exists": true,
+        "passed": false,
+        "reason": "source_metadata_missing",
+        "target_word": "花",
+        "client_source": "",
+        "worker_mode": "frame_slices",
+        "frame_count": 53,
+        "min_required_frames": 12,
+        "timeline_frame_count": 105,
+        "duration_sec": 5.3,
+        "capture_fps": 10.0,
+        "has_frame_weights": true,
+        "nonuniform_frame_weights": false,
+        "has_frame_indices": true,
+        "explicit_source_ok": false,
+        "weighted_source_ok": false,
+        "legacy_source_ok": false,
+        "diagnostic_compatible": false,
+        "completion_source_ok": false,
+        "evidence_level": "none"
+      },
+      {
+        "request_id": "web_20260602_233348_53e3df5d",
+        "path": "work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_role_21gate_v1/browser_evidence_gate/fixtures/uniform_frame_weights/web_20260602_233348_53e3df5d/scoring_result.json",
+        "exists": true,
+        "passed": false,
+        "reason": "source_metadata_missing",
+        "target_word": "跳",
+        "client_source": "",
+        "worker_mode": "frame_slices",
+        "frame_count": 19,
+        "min_required_frames": 6,
+        "timeline_frame_count": 37,
+        "duration_sec": 1.9,
+        "capture_fps": 10.0,
+        "has_frame_weights": true,
+        "nonuniform_frame_weights": false,
+        "has_frame_indices": true,
+        "explicit_source_ok": false,
+        "weighted_source_ok": false,
+        "legacy_source_ok": false,
+        "diagnostic_compatible": false,
+        "completion_source_ok": false,
+        "evidence_level": "none"
+      }
+    ]
+  },
+  "allow_legacy_browser_evidence": false,
+  "quality_gate_json": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/flower_jump_quality_gate.json",
+  "quality_gate_md": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/flower_jump_quality_gate.md",
+  "quality_summary": {
+    "generated_at": "2026-06-03T11:38:37",
+    "claim_policy": "combined engineering quality gate; not calibrated real-user scoring",
+    "web_root": "/data/WYC/signLanguage/work/generated/web_scoring_mvp",
+    "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+    "semantic_profile_json": "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+    "backend_url": "http://127.0.0.1:5080",
+    "web_filters": {
+      "latest": 0,
+      "since_request_id": "",
+      "request_ids": []
+    },
+    "runs": [
+      {
+        "name": "web_regression",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_web_regression.py",
+          "--web-root",
+          "/data/WYC/signLanguage/work/generated/web_scoring_mvp",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/web_regression",
+          "--backend-url",
+          "http://127.0.0.1:5080"
+        ],
+        "started_at": "2026-06-03T11:23:23",
+        "finished_at": "2026-06-03T11:27:41",
+        "returncode": 0,
+        "stdout": "已生成花/跳网页回归 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/web_regression/flower_jump_web_regression.json\n已生成花/跳网页回归报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/web_regression/flower_jump_web_regression.md\n回归状态：PASS\n- backend_ready: PASS (url=http://127.0.0.1:5080/api/status, worker=ready, reload_error=-, error=-)\n- replay_no_errors: PASS (samples=168, errors=0)\n- diagnostics_no_errors: PASS (samples=149, errors=0)\n- effective_rate_total: PASS (rate=96.9%, threshold=95.0%)\n- effective_rate_花: PASS (rate=95.6%, reliable=91, normal_or_borderline=87, low=4)\n- effective_rate_跳: PASS (rate=100.0%, reliable=37, normal_or_borderline=37, low=0)\n- jump_effective_low_zero: PASS (effective_low=0)\n- flower_effective_low_bounded: PASS (effective_low=4, max=5, diagnoses={'flower_opening_guard_failed': 4})\n- flower_effective_low_explained: PASS (allowed=['flower_opening_guard_failed'], observed={'flower_opening_guard_failed': 4})\n",
+        "stderr": ""
+      },
+      {
+        "name": "web_confusion_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_web_confusion_gate.py",
+          "--web-root",
+          "/data/WYC/signLanguage/work/generated/web_scoring_mvp",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/web_confusion_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080",
+          "--min-target-score",
+          "60.0",
+          "--max-cross-score",
+          "55.0",
+          "--min-margin",
+          "15.0",
+          "--min-eligible-per-word",
+          "1"
+        ],
+        "started_at": "2026-06-03T11:27:41",
+        "finished_at": "2026-06-03T11:30:55",
+        "returncode": 0,
+        "stdout": "已生成花/跳网页交叉混淆 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/web_confusion_gate/flower_jump_web_confusion_gate.json\n已生成花/跳网页交叉混淆报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/web_confusion_gate/flower_jump_web_confusion_gate.md\n已生成花/跳网页交叉混淆 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/web_confusion_gate/flower_jump_web_confusion_cases.csv\n综合状态：PASS\n- backend_ready: PASS (worker=ready, reload_error=-, error=-)\n- no_errors: PASS (errors=0, samples=149)\n- all_eligible_pass: PASS (eligible=124, pass=124, fail=0)\n- eligible_花: PASS (eligible=87, min=1, samples=93)\n- confusion_pass_花: PASS (pass=87, fail=0, other_score_max=8.218, margin_min=59.840)\n- eligible_跳: PASS (eligible=37, min=1, samples=56)\n- confusion_pass_跳: PASS (pass=37, fail=0, other_score_max=41.535, margin_min=29.317)\n",
+        "stderr": ""
+      },
+      {
+        "name": "synthetic_confusion_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_synthetic_confusion_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/synthetic_confusion_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080",
+          "--min-target-score",
+          "70.0",
+          "--max-cross-score",
+          "55.0",
+          "--min-margin",
+          "15.0"
+        ],
+        "started_at": "2026-06-03T11:30:55",
+        "finished_at": "2026-06-03T11:31:34",
+        "returncode": 0,
+        "stdout": "已生成花/跳合成混淆鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/synthetic_confusion_robustness_gate/flower_jump_synthetic_confusion_robustness_gate.json\n已生成花/跳合成混淆鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/synthetic_confusion_robustness_gate/flower_jump_synthetic_confusion_robustness_gate.md\n已生成花/跳合成混淆鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/synthetic_confusion_robustness_gate/flower_jump_synthetic_confusion_robustness_cases.csv\n综合状态：PASS\n- 花: PASS cases=10 target_min=76.727 cross_max=8.506 margin_min=70.776\n- 跳: PASS cases=10 target_min=70.708 cross_max=25.551 margin_min=55.428\n",
+        "stderr": ""
+      },
+      {
+        "name": "discrimination_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_discrimination_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/discrimination_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080",
+          "--positive-threshold",
+          "75.0",
+          "--negative-threshold",
+          "50.0"
+        ],
+        "started_at": "2026-06-03T11:31:34",
+        "finished_at": "2026-06-03T11:32:19",
+        "returncode": 0,
+        "stdout": "已生成花/跳离线判别 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/discrimination_gate/flower_jump_discrimination_gate.json\n已生成花/跳离线判别报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/discrimination_gate/flower_jump_discrimination_gate.md\n已生成花/跳离线判别 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/discrimination_gate/flower_jump_discrimination_cases.csv\n综合状态：PASS\n- 花: PASS min_pos=80.311 max_neg=33.735 margin=46.575 top_neg=other_demo_谗_羡慕\n- 跳: PASS min_pos=76.823 max_neg=31.418 margin=45.406 top_neg=fake_static_hold\n",
+        "stderr": ""
+      },
+      {
+        "name": "pose_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_pose_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/pose_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080",
+          "--min-score",
+          "70.0"
+        ],
+        "started_at": "2026-06-03T11:32:19",
+        "finished_at": "2026-06-03T11:32:43",
+        "returncode": 0,
+        "stdout": "已生成花/跳姿态鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/pose_robustness_gate/flower_jump_pose_robustness_gate.json\n已生成花/跳姿态鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/pose_robustness_gate/flower_jump_pose_robustness_gate.md\n已生成花/跳姿态鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/pose_robustness_gate/flower_jump_pose_robustness_cases.csv\n综合状态：PASS\n- 花: PASS min_score=80.446 weakest=hand_jitter_small\n- 跳: PASS min_score=93.015 weakest=hand_jitter_small\n",
+        "stderr": ""
+      },
+      {
+        "name": "framing_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_framing_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/framing_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080",
+          "--min-score",
+          "70.0"
+        ],
+        "started_at": "2026-06-03T11:32:43",
+        "finished_at": "2026-06-03T11:33:06",
+        "returncode": 0,
+        "stdout": "已生成花/跳取景鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/framing_robustness_gate/flower_jump_framing_robustness_gate.json\n已生成花/跳取景鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/framing_robustness_gate/flower_jump_framing_robustness_gate.md\n已生成花/跳取景鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/framing_robustness_gate/flower_jump_framing_robustness_cases.csv\n综合状态：PASS\n- 花: PASS positive_min=79.448 weakest=global_zoom_out_0.75 diagnostic_min=77.954\n- 跳: PASS positive_min=70.708 weakest=framing_shift_zoom_out diagnostic_min=70.509\n",
+        "stderr": ""
+      },
+      {
+        "name": "depth_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_depth_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/depth_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080",
+          "--min-score",
+          "70.0"
+        ],
+        "started_at": "2026-06-03T11:33:06",
+        "finished_at": "2026-06-03T11:33:36",
+        "returncode": 0,
+        "stdout": "已生成花/跳深度鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/depth_robustness_gate/flower_jump_depth_robustness_gate.json\n已生成花/跳深度鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/depth_robustness_gate/flower_jump_depth_robustness_gate.md\n已生成花/跳深度鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/depth_robustness_gate/flower_jump_depth_robustness_cases.csv\n综合状态：PASS\n- 花: PASS positive_min=73.923 weakest=global_z_scale_0.50 diagnostic_min=13.117\n- 跳: PASS positive_min=70.469 weakest=global_z_scale_0.50 diagnostic_min=30.536\n",
+        "stderr": ""
+      },
+      {
+        "name": "edge_clipping_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_edge_clipping_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/edge_clipping_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080"
+        ],
+        "started_at": "2026-06-03T11:33:36",
+        "finished_at": "2026-06-03T11:33:52",
+        "returncode": 0,
+        "stdout": "已生成花/跳画面边缘裁切鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/edge_clipping_robustness_gate/flower_jump_edge_clipping_robustness_gate.json\n已生成花/跳画面边缘裁切鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/edge_clipping_robustness_gate/flower_jump_edge_clipping_robustness_gate.md\n已生成花/跳画面边缘裁切鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/edge_clipping_robustness_gate/flower_jump_edge_clipping_robustness_cases.csv\n综合状态：PASS\n- 花: PASS positive_min=76.689 negative_max=11.133\n- 跳: PASS positive_min=78.545 negative_max=10.489\n",
+        "stderr": ""
+      },
+      {
+        "name": "mirror_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_mirror_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/mirror_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080"
+        ],
+        "started_at": "2026-06-03T11:33:52",
+        "finished_at": "2026-06-03T11:34:02",
+        "returncode": 0,
+        "stdout": "mirror robustness gate: PASS\nJSON: work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/mirror_robustness_gate/flower_jump_mirror_robustness_gate.json\nMD: work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/mirror_robustness_gate/flower_jump_mirror_robustness_gate.md\nCSV: work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/mirror_robustness_gate/flower_jump_mirror_robustness_gate.csv\n",
+        "stderr": ""
+      },
+      {
+        "name": "hand_role_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_hand_role_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_role_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080",
+          "--min-score",
+          "70.0",
+          "--max-role-swap-score",
+          "50.0"
+        ],
+        "started_at": "2026-06-03T11:34:02",
+        "finished_at": "2026-06-03T11:34:12",
+        "returncode": 0,
+        "stdout": "已生成花/跳手角色鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_role_robustness_gate/flower_jump_hand_role_robustness_gate.json\n已生成花/跳手角色鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_role_robustness_gate/flower_jump_hand_role_robustness_gate.md\n已生成花/跳手角色鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_role_robustness_gate/flower_jump_hand_role_robustness_cases.csv\n综合状态：PASS\n- 花: PASS positive_min=80.533 weakest=mirror_x role_swap_max=-\n- 跳: PASS positive_min=80.843 weakest=mirror_x role_swap_max=36.324\n",
+        "stderr": ""
+      },
+      {
+        "name": "frame_count_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_frame_count_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/frame_count_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080",
+          "--min-score",
+          "70.0",
+          "--flower-min-valid-frames",
+          "12",
+          "--jump-min-valid-frames",
+          "6"
+        ],
+        "started_at": "2026-06-03T11:34:12",
+        "finished_at": "2026-06-03T11:34:39",
+        "returncode": 0,
+        "stdout": "已生成花/跳帧数鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/frame_count_robustness_gate/flower_jump_frame_count_robustness_gate.json\n已生成花/跳帧数鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/frame_count_robustness_gate/flower_jump_frame_count_robustness_gate.md\n已生成花/跳帧数鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/frame_count_robustness_gate/flower_jump_frame_count_robustness_cases.csv\n综合状态：PASS\n- 花: PASS min_score=78.482 weakest=uniform_12f\n- 跳: PASS min_score=70.488 weakest=drop_every_3_keep_ends\n",
+        "stderr": ""
+      },
+      {
+        "name": "frame_weight_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_frame_weight_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/frame_weight_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080",
+          "--min-score",
+          "70.0"
+        ],
+        "started_at": "2026-06-03T11:34:39",
+        "finished_at": "2026-06-03T11:35:00",
+        "returncode": 0,
+        "stdout": "已生成花/跳 frame_weights 鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/frame_weight_robustness_gate/flower_jump_frame_weight_robustness_gate.json\n已生成花/跳 frame_weights 鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/frame_weight_robustness_gate/flower_jump_frame_weight_robustness_gate.md\n已生成花/跳 frame_weights 鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/frame_weight_robustness_gate/flower_jump_frame_weight_robustness_cases.csv\n综合状态：PASS\n- 花: PASS positive_min=99.161 weakest=back_loaded_broad_emphasis diagnostic_min=99.347\n- 跳: PASS positive_min=76.297 weakest=back_loaded_broad_emphasis diagnostic_min=10.120\n",
+        "stderr": ""
+      },
+      {
+        "name": "coordinate_precision_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_coordinate_precision_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/coordinate_precision_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080",
+          "--min-score",
+          "70.0"
+        ],
+        "started_at": "2026-06-03T11:35:00",
+        "finished_at": "2026-06-03T11:35:23",
+        "returncode": 0,
+        "stdout": "已生成花/跳坐标精度鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/coordinate_precision_robustness_gate/flower_jump_coordinate_precision_robustness_gate.json\n已生成花/跳坐标精度鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/coordinate_precision_robustness_gate/flower_jump_coordinate_precision_robustness_gate.md\n已生成花/跳坐标精度鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/coordinate_precision_robustness_gate/flower_jump_coordinate_precision_robustness_cases.csv\n综合状态：PASS\n- 花: PASS positive_min=80.805 weakest=hand_xy_quantize_1_128 diagnostic_min=78.075\n- 跳: PASS positive_min=96.833 weakest=hand_xy_quantize_1_128 diagnostic_min=84.267\n",
+        "stderr": ""
+      },
+      {
+        "name": "motion_blur_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_motion_blur_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/motion_blur_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080",
+          "--min-score",
+          "70.0"
+        ],
+        "started_at": "2026-06-03T11:35:23",
+        "finished_at": "2026-06-03T11:35:53",
+        "returncode": 0,
+        "stdout": "已生成花/跳运动模糊鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/motion_blur_robustness_gate/flower_jump_motion_blur_robustness_gate.json\n已生成花/跳运动模糊鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/motion_blur_robustness_gate/flower_jump_motion_blur_robustness_gate.md\n已生成花/跳运动模糊鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/motion_blur_robustness_gate/flower_jump_motion_blur_robustness_cases.csv\n综合状态：PASS\n- 花: PASS positive_min=79.074 weakest=hand_motion_amplitude_0.85 diagnostic_min=10.092\n- 跳: PASS positive_min=75.662 weakest=hand_motion_amplitude_0.85 diagnostic_min=70.351\n",
+        "stderr": ""
+      },
+      {
+        "name": "landmark_noise_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_landmark_noise_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/landmark_noise_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080",
+          "--min-score",
+          "70.0"
+        ],
+        "started_at": "2026-06-03T11:35:53",
+        "finished_at": "2026-06-03T11:36:33",
+        "returncode": 0,
+        "stdout": "已生成花/跳 landmark 噪声鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/landmark_noise_robustness_gate/flower_jump_landmark_noise_robustness_gate.json\n已生成花/跳 landmark 噪声鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/landmark_noise_robustness_gate/flower_jump_landmark_noise_robustness_gate.md\n已生成花/跳 landmark 噪声鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/landmark_noise_robustness_gate/flower_jump_landmark_noise_robustness_cases.csv\n综合状态：PASS\n- 花: PASS positive_min=76.064 weakest=hand_noise_0.010_seed2 diagnostic_min=11.118\n- 跳: PASS positive_min=72.810 weakest=hand_noise_0.010_seed1 diagnostic_min=8.825\n",
+        "stderr": ""
+      },
+      {
+        "name": "hand_shape_scale_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_hand_shape_scale_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_shape_scale_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080",
+          "--min-score",
+          "70.0"
+        ],
+        "started_at": "2026-06-03T11:36:33",
+        "finished_at": "2026-06-03T11:37:02",
+        "returncode": 0,
+        "stdout": "已生成花/跳手形尺度鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_shape_scale_robustness_gate/flower_jump_hand_shape_scale_robustness_gate.json\n已生成花/跳手形尺度鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_shape_scale_robustness_gate/flower_jump_hand_shape_scale_robustness_gate.md\n已生成花/跳手形尺度鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_shape_scale_robustness_gate/flower_jump_hand_shape_scale_robustness_cases.csv\n综合状态：PASS\n- 花: PASS positive_min=80.339 weakest=right_hand_aspect_x0.85_y1.20 diagnostic_min=76.902\n- 跳: PASS positive_min=86.403 weakest=right_hand_aspect_x0.85_y1.20 diagnostic_min=69.697\n",
+        "stderr": ""
+      },
+      {
+        "name": "hand_orientation_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_hand_orientation_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_orientation_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080",
+          "--min-score",
+          "70.0"
+        ],
+        "started_at": "2026-06-03T11:37:02",
+        "finished_at": "2026-06-03T11:37:32",
+        "returncode": 0,
+        "stdout": "已生成花/跳手部旋转鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_orientation_robustness_gate/flower_jump_hand_orientation_robustness_gate.json\n已生成花/跳手部旋转鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_orientation_robustness_gate/flower_jump_hand_orientation_robustness_gate.md\n已生成花/跳手部旋转鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_orientation_robustness_gate/flower_jump_hand_orientation_robustness_cases.csv\n综合状态：PASS\n- 花: PASS positive_min=81.336 weakest=both_hands_rotate_pos20deg diagnostic_min=81.162\n- 跳: PASS positive_min=84.409 weakest=both_hands_rotate_neg20deg diagnostic_min=81.149\n",
+        "stderr": ""
+      },
+      {
+        "name": "missing_mask_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_missing_mask_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/missing_mask_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080"
+        ],
+        "started_at": "2026-06-03T11:37:32",
+        "finished_at": "2026-06-03T11:37:43",
+        "returncode": 0,
+        "stdout": "已生成花/跳缺失 mask 鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/missing_mask_robustness_gate/flower_jump_missing_mask_robustness_gate.json\n已生成花/跳缺失 mask 鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/missing_mask_robustness_gate/flower_jump_missing_mask_robustness_gate.md\n已生成花/跳缺失 mask 鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/missing_mask_robustness_gate/flower_jump_missing_mask_robustness_cases.csv\n综合状态：PASS\n- 花: PASS positive_min=100.000 negative_max=1.171\n- 跳: PASS positive_min=100.000 negative_max=3.037\n",
+        "stderr": ""
+      },
+      {
+        "name": "temporal_padding_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_temporal_padding_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/temporal_padding_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080"
+        ],
+        "started_at": "2026-06-03T11:37:43",
+        "finished_at": "2026-06-03T11:38:06",
+        "returncode": 0,
+        "stdout": "已生成花/跳时序 padding 鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/temporal_padding_robustness_gate/flower_jump_temporal_padding_robustness_gate.json\n已生成花/跳时序 padding 鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/temporal_padding_robustness_gate/flower_jump_temporal_padding_robustness_gate.md\n已生成花/跳时序 padding 鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/temporal_padding_robustness_gate/flower_jump_temporal_padding_robustness_cases.csv\n综合状态：PASS\n- 花: PASS positive_min=97.862 static_max=1.460\n- 跳: PASS positive_min=79.124 static_max=31.418\n",
+        "stderr": ""
+      },
+      {
+        "name": "action_crop_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_action_crop_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/action_crop_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080"
+        ],
+        "started_at": "2026-06-03T11:38:06",
+        "finished_at": "2026-06-03T11:38:18",
+        "returncode": 0,
+        "stdout": "已生成花/跳录制起止裁剪鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/action_crop_robustness_gate/flower_jump_action_crop_robustness_gate.json\n已生成花/跳录制起止裁剪鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/action_crop_robustness_gate/flower_jump_action_crop_robustness_gate.md\n已生成花/跳录制起止裁剪鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/action_crop_robustness_gate/flower_jump_action_crop_robustness_cases.csv\n综合状态：PASS\n- 花: PASS positive_min=97.958 missing_core_max=41.949\n- 跳: PASS positive_min=80.750 missing_core_max=45.000\n",
+        "stderr": ""
+      },
+      {
+        "name": "phase_order_robustness_gate",
+        "command": [
+          "/home/wuyangcheng/myenv/bin/python",
+          "/data/WYC/signLanguage/work/scripts/run_flower_jump_phase_order_robustness_gate.py",
+          "--template-root",
+          "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "--semantic-profile-json",
+          "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+          "--output-dir",
+          "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/phase_order_robustness_gate",
+          "--backend-url",
+          "http://127.0.0.1:5080"
+        ],
+        "started_at": "2026-06-03T11:38:18",
+        "finished_at": "2026-06-03T11:38:37",
+        "returncode": 0,
+        "stdout": "已生成花/跳相位顺序鲁棒性 JSON：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/phase_order_robustness_gate/flower_jump_phase_order_robustness_gate.json\n已生成花/跳相位顺序鲁棒性报告：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/phase_order_robustness_gate/flower_jump_phase_order_robustness_gate.md\n已生成花/跳相位顺序鲁棒性 CSV：work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/phase_order_robustness_gate/flower_jump_phase_order_robustness_cases.csv\n综合状态：PASS\n- 花: PASS positive_min=79.410 disordered_max=33.723\n- 跳: PASS positive_min=69.389 disordered_max=45.000\n",
+        "stderr": ""
+      }
+    ],
+    "subgates": [
+      {
+        "name": "web_regression",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/web_regression/flower_jump_web_regression.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/web_regression/flower_jump_web_regression.md",
+        "parse_error": ""
+      },
+      {
+        "name": "web_confusion_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/web_confusion_gate/flower_jump_web_confusion_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/web_confusion_gate/flower_jump_web_confusion_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "synthetic_confusion_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/synthetic_confusion_robustness_gate/flower_jump_synthetic_confusion_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/synthetic_confusion_robustness_gate/flower_jump_synthetic_confusion_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "discrimination_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/discrimination_gate/flower_jump_discrimination_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/discrimination_gate/flower_jump_discrimination_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "pose_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/pose_robustness_gate/flower_jump_pose_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/pose_robustness_gate/flower_jump_pose_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "framing_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/framing_robustness_gate/flower_jump_framing_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/framing_robustness_gate/flower_jump_framing_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "depth_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/depth_robustness_gate/flower_jump_depth_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/depth_robustness_gate/flower_jump_depth_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "edge_clipping_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/edge_clipping_robustness_gate/flower_jump_edge_clipping_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/edge_clipping_robustness_gate/flower_jump_edge_clipping_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "mirror_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/mirror_robustness_gate/flower_jump_mirror_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/mirror_robustness_gate/flower_jump_mirror_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "hand_role_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_role_robustness_gate/flower_jump_hand_role_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_role_robustness_gate/flower_jump_hand_role_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "frame_count_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/frame_count_robustness_gate/flower_jump_frame_count_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/frame_count_robustness_gate/flower_jump_frame_count_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "frame_weight_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/frame_weight_robustness_gate/flower_jump_frame_weight_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/frame_weight_robustness_gate/flower_jump_frame_weight_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "coordinate_precision_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/coordinate_precision_robustness_gate/flower_jump_coordinate_precision_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/coordinate_precision_robustness_gate/flower_jump_coordinate_precision_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "motion_blur_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/motion_blur_robustness_gate/flower_jump_motion_blur_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/motion_blur_robustness_gate/flower_jump_motion_blur_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "landmark_noise_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/landmark_noise_robustness_gate/flower_jump_landmark_noise_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/landmark_noise_robustness_gate/flower_jump_landmark_noise_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "hand_shape_scale_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_shape_scale_robustness_gate/flower_jump_hand_shape_scale_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_shape_scale_robustness_gate/flower_jump_hand_shape_scale_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "hand_orientation_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_orientation_robustness_gate/flower_jump_hand_orientation_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/hand_orientation_robustness_gate/flower_jump_hand_orientation_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "missing_mask_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/missing_mask_robustness_gate/flower_jump_missing_mask_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/missing_mask_robustness_gate/flower_jump_missing_mask_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "temporal_padding_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/temporal_padding_robustness_gate/flower_jump_temporal_padding_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/temporal_padding_robustness_gate/flower_jump_temporal_padding_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "action_crop_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/action_crop_robustness_gate/flower_jump_action_crop_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/action_crop_robustness_gate/flower_jump_action_crop_robustness_gate.md",
+        "parse_error": ""
+      },
+      {
+        "name": "phase_order_robustness_gate",
+        "returncode": 0,
+        "passed": true,
+        "json_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/phase_order_robustness_gate/flower_jump_phase_order_robustness_gate.json",
+        "md_path": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/phase_order_robustness_gate/flower_jump_phase_order_robustness_gate.md",
+        "parse_error": ""
+      }
+    ],
+    "web_summary": {
+      "passed": true,
+      "samples": 168,
+      "replay_errors": 0,
+      "diagnostics_samples": 149,
+      "diagnostics_errors": 0,
+      "effective_reliable": 128,
+      "effective_normal_or_borderline": 124,
+      "effective_low": 4,
+      "effective_rate": 0.96875,
+      "by_word_effective": {
+        "花": {
+          "reliable_samples": 91,
+          "normal_or_borderline": 87,
+          "low": 4,
+          "needs_recapture": 2,
+          "semantic_mismatch": 4,
+          "normal_or_borderline_rate": 0.9560439560439561,
+          "score_mean": 75.7748189388841,
+          "score_median": 78.53756029727911
+        },
+        "跳": {
+          "reliable_samples": 37,
+          "normal_or_borderline": 37,
+          "low": 0,
+          "needs_recapture": 19,
+          "semantic_mismatch": 0,
+          "normal_or_borderline_rate": 1.0,
+          "score_mean": 76.67744087924144,
+          "score_median": 75.32524082818409
+        }
+      },
+      "gates": [
+        {
+          "name": "backend_ready",
+          "passed": true,
+          "detail": "url=http://127.0.0.1:5080/api/status, worker=ready, reload_error=-, error=-"
+        },
+        {
+          "name": "replay_no_errors",
+          "passed": true,
+          "detail": "samples=168, errors=0"
+        },
+        {
+          "name": "diagnostics_no_errors",
+          "passed": true,
+          "detail": "samples=149, errors=0"
+        },
+        {
+          "name": "effective_rate_total",
+          "passed": true,
+          "detail": "rate=96.9%, threshold=95.0%"
+        },
+        {
+          "name": "effective_rate_花",
+          "passed": true,
+          "detail": "rate=95.6%, reliable=91, normal_or_borderline=87, low=4"
+        },
+        {
+          "name": "effective_rate_跳",
+          "passed": true,
+          "detail": "rate=100.0%, reliable=37, normal_or_borderline=37, low=0"
+        },
+        {
+          "name": "jump_effective_low_zero",
+          "passed": true,
+          "detail": "effective_low=0"
+        },
+        {
+          "name": "flower_effective_low_bounded",
+          "passed": true,
+          "detail": "effective_low=4, max=5, diagnoses={'flower_opening_guard_failed': 4}"
+        },
+        {
+          "name": "flower_effective_low_explained",
+          "passed": true,
+          "detail": "allowed=['flower_opening_guard_failed'], observed={'flower_opening_guard_failed': 4}"
+        }
+      ]
+    },
+    "confusion_summary": {
+      "passed": true,
+      "samples": 149,
+      "errors": 0,
+      "eligible": 124,
+      "pass": 124,
+      "fail": 0,
+      "by_word": {
+        "花": {
+          "samples": 93,
+          "eligible": 87,
+          "pass": 87,
+          "fail": 0,
+          "other_score_max": 8.218210923939253,
+          "margin_min": 59.8400486902559,
+          "margin_mean": 75.49162748166675
+        },
+        "跳": {
+          "samples": 56,
+          "eligible": 37,
+          "pass": 37,
+          "fail": 0,
+          "other_score_max": 41.535445754362634,
+          "margin_min": 29.317381407765133,
+          "margin_mean": 54.89422493029219
+        }
+      }
+    },
+    "synthetic_confusion_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "samples": 10,
+          "pass": 10,
+          "fail": 0,
+          "target_score_min": 76.72671442419572,
+          "cross_score_max": 8.506239347833402,
+          "margin_min": 70.77629865567694,
+          "weakest_variant": "hand_noise_0.010_seed1"
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "samples": 10,
+          "pass": 10,
+          "fail": 0,
+          "target_score_min": 70.70780472658087,
+          "cross_score_max": 25.550951969608953,
+          "margin_min": 55.42839070303376,
+          "weakest_variant": "framing_shift_zoom_out"
+        }
+      ]
+    },
+    "discrimination_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "min_positive_score": 80.3106069532393,
+          "max_negative_score": 33.73548684956497,
+          "margin": 46.57512010367433,
+          "top_negative": "other_demo_谗_羡慕",
+          "weakest_positive": "amplitude_0.85"
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "min_positive_score": 76.82346596456401,
+          "max_negative_score": 31.41784198959613,
+          "margin": 45.40562397496788,
+          "top_negative": "fake_static_hold",
+          "weakest_positive": "amplitude_0.85"
+        }
+      ]
+    },
+    "pose_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "min_observed_score": 80.4462357333833,
+          "weakest_variant": "hand_jitter_small",
+          "min_required_score": 70.0
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "min_observed_score": 93.01528912326975,
+          "weakest_variant": "hand_jitter_small",
+          "min_required_score": 70.0
+        }
+      ]
+    },
+    "framing_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 79.44772639641164,
+          "weakest_positive_variant": "global_zoom_out_0.75",
+          "weakest_diagnostic_score": 77.9541408868657,
+          "weakest_diagnostic_variant": "extreme_zoom_out_0.60_diag",
+          "min_required_score": 70.0
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 70.70780472658087,
+          "weakest_positive_variant": "framing_shift_zoom_out",
+          "weakest_diagnostic_score": 70.50926554093947,
+          "weakest_diagnostic_variant": "extreme_zoom_out_0.60_diag",
+          "min_required_score": 70.0
+        }
+      ]
+    },
+    "depth_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 73.92305318852812,
+          "weakest_positive_variant": "global_z_scale_0.50",
+          "weakest_diagnostic_score": 13.117406671425453,
+          "weakest_diagnostic_variant": "hand_z_noise_0.20_diagnostic",
+          "min_required_score": 70.0
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 70.46895751687171,
+          "weakest_positive_variant": "global_z_scale_0.50",
+          "weakest_diagnostic_score": 30.53602829326094,
+          "weakest_diagnostic_variant": "hand_z_noise_0.10_diagnostic",
+          "min_required_score": 70.0
+        }
+      ]
+    },
+    "edge_clipping_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 76.68938541124663,
+          "weakest_positive_variant": "right_opening_wrist_edge_clip",
+          "strongest_negative_score": 11.133053406826672,
+          "strongest_negative_variant": "right_opening_all_tips_edge_clip"
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 78.5453980517561,
+          "weakest_positive_variant": "right_jumper_ring_pinky_edge_clip",
+          "strongest_negative_score": 10.48934298351643,
+          "strongest_negative_variant": "left_ground_wrist_edge_clip"
+        }
+      ]
+    },
+    "mirror_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 80.53327362034945,
+          "weakest_positive_variant": "mirror_x",
+          "weakest_diagnostic_score": 82.2666496201218,
+          "weakest_diagnostic_variant": "swap_labels_diagnostic"
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 80.84336698034281,
+          "weakest_positive_variant": "mirror_x",
+          "weakest_diagnostic_score": 31.053413106173423,
+          "weakest_diagnostic_variant": "mirror_x_swap_labels_diagnostic"
+        }
+      ]
+    },
+    "hand_role_summary": {
+      "passed": true,
+      "accepted_negative_quality": [
+        "needs_recapture",
+        "semantic_mismatch"
+      ],
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 80.53327362034945,
+          "weakest_positive_variant": "mirror_x",
+          "strongest_negative_score": null,
+          "strongest_negative_variant": ""
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 80.84336698034281,
+          "weakest_positive_variant": "mirror_x",
+          "strongest_negative_score": 36.323802327629835,
+          "strongest_negative_variant": "role_swap_negative"
+        }
+      ]
+    },
+    "frame_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "min_observed_score": 78.4818526190181,
+          "weakest_variant": "uniform_12f",
+          "min_required_score": 70.0,
+          "min_valid_frames": 12,
+          "diagnostic_min_score": 32.28396780860696,
+          "diagnostic_weakest_variant": "uniform_8f"
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "min_observed_score": 70.48794764598692,
+          "weakest_variant": "drop_every_3_keep_ends",
+          "min_required_score": 70.0,
+          "min_valid_frames": 6,
+          "diagnostic_min_score": null,
+          "diagnostic_weakest_variant": ""
+        }
+      ]
+    },
+    "frame_weight_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 99.16071140496838,
+          "weakest_positive_variant": "back_loaded_broad_emphasis",
+          "weakest_diagnostic_score": 99.34720289351527,
+          "weakest_diagnostic_variant": "inverted_dynamic_diagnostic",
+          "min_required_score": 70.0
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 76.29746265418424,
+          "weakest_positive_variant": "back_loaded_broad_emphasis",
+          "weakest_diagnostic_score": 10.119992771119058,
+          "weakest_diagnostic_variant": "inverted_dynamic_diagnostic",
+          "min_required_score": 70.0
+        }
+      ]
+    },
+    "coordinate_precision_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 80.80519258829806,
+          "weakest_positive_variant": "hand_xy_quantize_1_128",
+          "weakest_diagnostic_score": 78.0748753904513,
+          "weakest_diagnostic_variant": "severe_hand_xy_quantize_1_32_diagnostic",
+          "min_required_score": 70.0
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 96.83294063985286,
+          "weakest_positive_variant": "hand_xy_quantize_1_128",
+          "weakest_diagnostic_score": 84.26719977020728,
+          "weakest_diagnostic_variant": "severe_hand_xy_quantize_1_32_diagnostic",
+          "min_required_score": 70.0
+        }
+      ]
+    },
+    "motion_blur_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 79.07358319073138,
+          "weakest_positive_variant": "hand_motion_amplitude_0.85",
+          "weakest_diagnostic_score": 10.091633623725397,
+          "weakest_diagnostic_variant": "hand_motion_blur_5tap_heavy_diagnostic",
+          "min_required_score": 70.0
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 75.6623475856492,
+          "weakest_positive_variant": "hand_motion_amplitude_0.85",
+          "weakest_diagnostic_score": 70.35108202836624,
+          "weakest_diagnostic_variant": "hand_motion_amplitude_0.55_diagnostic",
+          "min_required_score": 70.0
+        }
+      ]
+    },
+    "landmark_noise_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 76.06387425110546,
+          "weakest_positive_variant": "hand_noise_0.010_seed2",
+          "weakest_diagnostic_score": 11.118048512053429,
+          "weakest_diagnostic_variant": "severe_shuffle_diagnostic",
+          "min_required_score": 70.0
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 72.81038924469712,
+          "weakest_positive_variant": "hand_noise_0.010_seed1",
+          "weakest_diagnostic_score": 8.825454076815657,
+          "weakest_diagnostic_variant": "severe_point_dropout_0.25_diagnostic",
+          "min_required_score": 70.0
+        }
+      ]
+    },
+    "hand_shape_scale_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 80.33895935168508,
+          "weakest_positive_variant": "right_hand_aspect_x0.85_y1.20",
+          "weakest_diagnostic_score": 76.90191415910786,
+          "weakest_diagnostic_variant": "both_hands_aspect_x0.55_y1.60_diagnostic",
+          "min_required_score": 70.0
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 86.40336234621985,
+          "weakest_positive_variant": "right_hand_aspect_x0.85_y1.20",
+          "weakest_diagnostic_score": 69.69697506149942,
+          "weakest_diagnostic_variant": "both_hands_uniform_scale_0.55_diagnostic",
+          "min_required_score": 70.0
+        }
+      ]
+    },
+    "hand_orientation_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 81.33620337346339,
+          "weakest_positive_variant": "both_hands_rotate_pos20deg",
+          "weakest_diagnostic_score": 81.16235185951308,
+          "weakest_diagnostic_variant": "both_hands_rotate_pos45deg_diagnostic",
+          "min_required_score": 70.0
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 84.40906235517706,
+          "weakest_positive_variant": "both_hands_rotate_neg20deg",
+          "weakest_diagnostic_score": 81.14884161391808,
+          "weakest_diagnostic_variant": "both_hands_rotate_pos45deg_diagnostic",
+          "min_required_score": 70.0
+        }
+      ]
+    },
+    "missing_mask_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 100.0,
+          "weakest_positive_variant": "drop_face",
+          "strongest_negative_score": 1.170588026599594,
+          "strongest_negative_variant": "drop_right_core_hand"
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 100.0,
+          "weakest_positive_variant": "drop_face",
+          "strongest_negative_score": 3.0372067823352493,
+          "strongest_negative_variant": "drop_left_ground_hand"
+        }
+      ]
+    },
+    "temporal_padding_summary": {
+      "passed": true,
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 97.86201597273582,
+          "weakest_positive_variant": "suffix_hold_25pct",
+          "strongest_negative_score": 1.4603590369052721,
+          "strongest_negative_variant": "static_hold_mid"
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 79.12441289536835,
+          "weakest_positive_variant": "slow_repeat_each_2x",
+          "strongest_negative_score": 31.41784198959613,
+          "strongest_negative_variant": "static_hold_mid"
+        }
+      ]
+    },
+    "phase_order_summary": {
+      "passed": true,
+      "accepted_negative_quality": [
+        "needs_recapture",
+        "semantic_mismatch"
+      ],
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 79.41015226303263,
+          "weakest_positive_variant": "ordered_jitter",
+          "strongest_negative_score": 33.72280062587298,
+          "strongest_negative_variant": "scramble_three_phases"
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 69.38869717884872,
+          "weakest_positive_variant": "ordered_jitter",
+          "strongest_negative_score": 45.0,
+          "strongest_negative_variant": "swap_halves"
+        }
+      ]
+    },
+    "action_crop_summary": {
+      "passed": true,
+      "accepted_negative_quality": [
+        "needs_recapture",
+        "semantic_mismatch"
+      ],
+      "rows": [
+        {
+          "word": "花",
+          "passed": true,
+          "weakest_positive_score": 97.9580586148597,
+          "weakest_positive_variant": "trim_end_15pct",
+          "strongest_negative_score": 41.949044317291886,
+          "strongest_negative_variant": "early_60pct_missing_bloom",
+          "diagnostic_lowest_score": 81.2094209336237,
+          "diagnostic_lowest_variant": "late_half_diagnostic",
+          "diagnostic_highest_score": 81.2094209336237,
+          "diagnostic_highest_variant": "late_half_diagnostic"
+        },
+        {
+          "word": "跳",
+          "passed": true,
+          "weakest_positive_score": 80.75032033844313,
+          "weakest_positive_variant": "trim_start_15pct",
+          "strongest_negative_score": 45.0,
+          "strongest_negative_variant": "early_half_missing_landing",
+          "diagnostic_lowest_score": 82.53791978591207,
+          "diagnostic_lowest_variant": "keyframes_6_diagnostic",
+          "diagnostic_highest_score": 82.53791978591207,
+          "diagnostic_highest_variant": "keyframes_6_diagnostic"
+        }
+      ]
+    },
+    "marker_status": {
+      "command": [
+        "/home/wuyangcheng/myenv/bin/python",
+        "/data/WYC/signLanguage/work/scripts/manage_web_sample_marker.py",
+        "status"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"marker_last_request_id\": \"web_20260602_233348_53e3df5d\",\n  \"new_summary\": {\n    \"count\": 0,\n    \"first_request_id\": \"\",\n    \"last_request_id\": \"\",\n    \"by_word\": {}\n  },\n  \"target_summary\": {\n    \"count\": 0,\n    \"first_request_id\": \"\",\n    \"last_request_id\": \"\",\n    \"by_word\": {}\n  },\n  \"diagnosed_request_ids\": [],\n  \"regression_report\": null,\n  \"semantic_diagnostics_report\": null,\n  \"confusion_report\": null,\n  \"md_path\": null\n}\n",
+      "stderr": "",
+      "payload": {
+        "marker_last_request_id": "web_20260602_233348_53e3df5d",
+        "new_summary": {
+          "count": 0,
+          "first_request_id": "",
+          "last_request_id": "",
+          "by_word": {}
+        },
+        "target_summary": {
+          "count": 0,
+          "first_request_id": "",
+          "last_request_id": "",
+          "by_word": {}
+        },
+        "diagnosed_request_ids": [],
+        "regression_report": null,
+        "semantic_diagnostics_report": null,
+        "confusion_report": null,
+        "md_path": null
+      }
+    },
+    "passed": true
+  },
+  "gates": [
+    {
+      "name": "backend_ready",
+      "passed": true,
+      "detail": "worker=ready, pid=811485, reload_count=13, last_reload_error=None"
+    },
+    {
+      "name": "watcher_online",
+      "passed": true,
+      "detail": "event=diagnose_done, watcher_pid=1, generated_at=2026-06-03T11:38:53"
+    },
+    {
+      "name": "marker_available",
+      "passed": true,
+      "detail": "last_request_id=web_20260602_233348_53e3df5d, marker_after_new=0, target_new=0"
+    },
+    {
+      "name": "combined_quality_gate_passed",
+      "passed": true,
+      "detail": "quality_gate=work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_role_21gate_v1/flower_jump_quality_gate.json, subgates=[('web_regression', True), ('web_confusion_gate', True), ('synthetic_confusion_robustness_gate', True), ('discrimination_gate', True), ('pose_robustness_gate', True), ('framing_robustness_gate', True), ('depth_robustness_gate', True), ('edge_clipping_robustness_gate', True), ('mirror_robustness_gate', True), ('hand_role_robustness_gate', True), ('frame_count_robustness_gate', True), ('frame_weight_robustness_gate', True), ('coordinate_precision_robustness_gate', True), ('motion_blur_robustness_gate', True), ('landmark_noise_robustness_gate', True), ('hand_shape_scale_robustness_gate', True), ('hand_orientation_robustness_gate', True), ('missing_mask_robustness_gate', True), ('temporal_padding_robustness_gate', True), ('action_crop_robustness_gate', True), ('phase_order_robustness_gate', True)]"
+    },
+    {
+      "name": "fresh_real_webcam_target_samples_diagnosed",
+      "passed": false,
+      "detail": "marker_after_target_count=0, latest_diagnosis={'generated_at': '2026-06-03T11:38:53', 'web_root': '', 'diagnosed_request_ids': ['web_20260602_233343_899e6970', 'web_20260602_233348_53e3df5d'], 'regression_returncode': 0, 'confusion_returncode': 0, 'visual_returncode': 0}, browser_capture_evidence={'request_ids': ['web_20260602_233343_899e6970', 'web_20260602_233348_53e3df5d'], 'passed': False, 'sample_evidence_passed': False, 'allow_legacy_browser_evidence': False, 'required_words': ['花', '跳'], 'observed_words': [], 'required_words_covered': False, 'missing_required_words': ['花', '跳'], 'rows': [{'request_id': 'web_20260602_233343_899e6970', 'path': 'work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_role_21gate_v1/browser_evidence_gate/fixtures/uniform_frame_weights/web_20260602_233343_899e6970/scoring_result.json', 'exists': True, 'passed': False, 'reason': 'source_metadata_missing', 'target_word': '花', 'client_source': '', 'worker_mode': 'frame_slices', 'frame_count': 53, 'min_required_frames': 12, 'timeline_frame_count': 105, 'duration_sec': 5.3, 'capture_fps': 10.0, 'has_frame_weights': True, 'nonuniform_frame_weights': False, 'has_frame_indices': True, 'explicit_source_ok': False, 'weighted_source_ok': False, 'legacy_source_ok': False, 'diagnostic_compatible': False, 'completion_source_ok': False, 'evidence_level': 'none'}, {'request_id': 'web_20260602_233348_53e3df5d', 'path': 'work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_role_21gate_v1/browser_evidence_gate/fixtures/uniform_frame_weights/web_20260602_233348_53e3df5d/scoring_result.json', 'exists': True, 'passed': False, 'reason': 'source_metadata_missing', 'target_word': '跳', 'client_source': '', 'worker_mode': 'frame_slices', 'frame_count': 19, 'min_required_frames': 6, 'timeline_frame_count': 37, 'duration_sec': 1.9, 'capture_fps': 10.0, 'has_frame_weights': True, 'nonuniform_frame_weights': False, 'has_frame_indices': True, 'explicit_source_ok': False, 'weighted_source_ok': False, 'legacy_source_ok': False, 'diagnostic_compatible': False, 'completion_source_ok': False, 'evidence_level': 'none'}]}"
+    }
+  ]
+}

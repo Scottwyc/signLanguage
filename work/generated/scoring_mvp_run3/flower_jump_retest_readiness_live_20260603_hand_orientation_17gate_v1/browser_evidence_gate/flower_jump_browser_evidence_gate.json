@@ -1,0 +1,128 @@
+{
+  "generated_at": "2026-06-03T10:36:04",
+  "passed": true,
+  "fixture_root": "work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/fixtures",
+  "watch_status_json": "work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/fixtures/watch_status.json",
+  "request_ids": [
+    "web_20260602_233343_899e6970",
+    "web_20260602_233348_53e3df5d"
+  ],
+  "cases": [
+    {
+      "name": "legacy_frame_slice_only",
+      "passed": true,
+      "expected_ready": false,
+      "actual_ready": false,
+      "expected_evidence_passed": false,
+      "actual_evidence_passed": false,
+      "row_levels": [
+        "legacy_frame_slice_metadata"
+      ],
+      "row_reasons": [
+        "legacy_frame_slice_metadata_not_completion_evidence"
+      ],
+      "row_pass_values": [
+        false,
+        false
+      ],
+      "checks": {
+        "audit_command_returned": true,
+        "ready_matches": true,
+        "evidence_passed_matches": true,
+        "all_rows_expected_pass": true,
+        "levels_match": true,
+        "reasons_match": true
+      },
+      "audit_json": "work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/legacy_frame_slice_only/flower_jump_goal_readiness_audit.json",
+      "stdout": "已生成目标完成度审计 JSON：work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/legacy_frame_slice_only/flower_jump_goal_readiness_audit.json\n已生成目标完成度审计报告：work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/legacy_frame_slice_only/flower_jump_goal_readiness_audit.md\n目标完成状态：NOT_READY\n- backend_ready: PASS (worker=ready, pid=811485, reload_count=13, last_reload_error=None)\n- watcher_online: PASS (event=diagnose_done, watcher_pid=1, generated_at=2026-06-03T10:36:02)\n- marker_available: PASS (last_request_id=web_20260602_233348_53e3df5d, marker_after_new=0, target_new=0)\n- combined_quality_gate_passed: PASS (quality_gate=work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_orientation_17gate_v1/flower_jump_quality_gate.json, subgates=[('web_regression', True), ('web_confusion_gate', True), ('synthetic_confusion_robustness_gate', True), ('discrimination_gate', True), ('pose_robustness_gate', True), ('framing_robustness_gate', True), ('depth_robustness_gate', True), ('edge_clipping_robustness_gate', True), ('mirror_robustness_gate', True), ('frame_count_robustness_gate', True), ('landmark_noise_robustness_gate', True), ('hand_shape_scale_robustness_gate', True), ('hand_orientation_robustness_gate', True), ('missing_mask_robustness_gate', True), ('temporal_padding_robustness_gate', True), ('action_crop_robustness_gate', True), ('phase_order_robustness_gate', True)])\n- fresh_real_webcam_target_samples_diagnosed: MISSING (marker_after_target_count=0, latest_diagnosis={'generated_at': '2026-06-03T10:36:02', 'web_root': '', 'diagnosed_request_ids': ['web_20260602_233343_899e6970', 'web_20260602_233348_53e3df5d'], 'regression_returncode': 0, 'confusion_returncode': 0, 'visual_returncode': 0}, browser_capture_evidence={'request_ids': ['web_20260602_233343_899e6970', 'web_20260602_233348_53e3df5d'], 'passed': False, 'sample_evidence_passed': False, 'allow_legacy_browser_evidence': False, 'required_words': ['花', '跳'], 'observed_words': [], 'required_words_covered': False, 'missing_required_words': ['花', '跳'], 'rows': [{'request_id': 'web_20260602_233343_899e6970', 'path': 'work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/fixtures/legacy_frame_slice_only/web_20260602_233343_899e6970/scoring_result.json', 'exists': True, 'passed': False, 'reason': 'legacy_frame_slice_metadata_not_completion_evidence', 'target_word': '花', 'client_source': '', 'worker_mode': 'frame_slices', 'frame_count': 53, 'min_required_frames': 12, 'timeline_frame_count': 105, 'duration_sec': 5.3, 'capture_fps': 10.0, 'has_frame_weights': False, 'nonuniform_frame_weights': False, 'has_frame_indices': True, 'explicit_source_ok': False, 'weighted_source_ok': False, 'legacy_source_ok': True, 'diagnostic_compatible': True, 'completion_source_ok': False, 'evidence_level': 'legacy_frame_slice_metadata'}, {'request_id': 'web_20260602_233348_53e3df5d', 'path': 'work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/fixtures/legacy_frame_slice_only/web_20260602_233348_53e3df5d/scoring_result.json', 'exists': True, 'passed': False, 'reason': 'legacy_frame_slice_metadata_not_completion_evidence', 'target_word': '跳', 'client_source': '', 'worker_mode': 'frame_slices', 'frame_count': 19, 'min_required_frames': 6, 'timeline_frame_count': 37, 'duration_sec': 1.9, 'capture_fps': 10.0, 'has_frame_weights': False, 'nonuniform_frame_weights': False, 'has_frame_indices': True, 'explicit_source_ok': False, 'weighted_source_ok': False, 'legacy_source_ok': True, 'diagnostic_compatible': True, 'completion_source_ok': False, 'evidence_level': 'legacy_frame_slice_metadata'}]})\n",
+      "stderr": ""
+    },
+    {
+      "name": "strong_nonuniform_frame_weights",
+      "passed": true,
+      "expected_ready": true,
+      "actual_ready": true,
+      "expected_evidence_passed": true,
+      "actual_evidence_passed": true,
+      "row_levels": [
+        "strong_nonuniform_frame_weights"
+      ],
+      "row_reasons": [
+        "strong_nonuniform_frame_weights"
+      ],
+      "row_pass_values": [
+        true,
+        true
+      ],
+      "checks": {
+        "audit_command_returned": true,
+        "ready_matches": true,
+        "evidence_passed_matches": true,
+        "all_rows_expected_pass": true,
+        "levels_match": true,
+        "reasons_match": true
+      },
+      "audit_json": "work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/strong_nonuniform_frame_weights/flower_jump_goal_readiness_audit.json",
+      "stdout": "已生成目标完成度审计 JSON：work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/strong_nonuniform_frame_weights/flower_jump_goal_readiness_audit.json\n已生成目标完成度审计报告：work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/strong_nonuniform_frame_weights/flower_jump_goal_readiness_audit.md\n目标完成状态：READY_TO_COMPLETE\n- backend_ready: PASS (worker=ready, pid=811485, reload_count=13, last_reload_error=None)\n- watcher_online: PASS (event=diagnose_done, watcher_pid=1, generated_at=2026-06-03T10:36:02)\n- marker_available: PASS (last_request_id=web_20260602_233348_53e3df5d, marker_after_new=0, target_new=0)\n- combined_quality_gate_passed: PASS (quality_gate=work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_orientation_17gate_v1/flower_jump_quality_gate.json, subgates=[('web_regression', True), ('web_confusion_gate', True), ('synthetic_confusion_robustness_gate', True), ('discrimination_gate', True), ('pose_robustness_gate', True), ('framing_robustness_gate', True), ('depth_robustness_gate', True), ('edge_clipping_robustness_gate', True), ('mirror_robustness_gate', True), ('frame_count_robustness_gate', True), ('landmark_noise_robustness_gate', True), ('hand_shape_scale_robustness_gate', True), ('hand_orientation_robustness_gate', True), ('missing_mask_robustness_gate', True), ('temporal_padding_robustness_gate', True), ('action_crop_robustness_gate', True), ('phase_order_robustness_gate', True)])\n- fresh_real_webcam_target_samples_diagnosed: PASS (marker_after_target_count=0, latest_diagnosis={'generated_at': '2026-06-03T10:36:02', 'web_root': '', 'diagnosed_request_ids': ['web_20260602_233343_899e6970', 'web_20260602_233348_53e3df5d'], 'regression_returncode': 0, 'confusion_returncode': 0, 'visual_returncode': 0}, browser_capture_evidence={'request_ids': ['web_20260602_233343_899e6970', 'web_20260602_233348_53e3df5d'], 'passed': True, 'sample_evidence_passed': True, 'allow_legacy_browser_evidence': False, 'required_words': ['花', '跳'], 'observed_words': ['花', '跳'], 'required_words_covered': True, 'missing_required_words': [], 'rows': [{'request_id': 'web_20260602_233343_899e6970', 'path': 'work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/fixtures/strong_nonuniform_frame_weights/web_20260602_233343_899e6970/scoring_result.json', 'exists': True, 'passed': True, 'reason': 'strong_nonuniform_frame_weights', 'target_word': '花', 'client_source': '', 'worker_mode': 'frame_slices', 'frame_count': 53, 'min_required_frames': 12, 'timeline_frame_count': 105, 'duration_sec': 5.3, 'capture_fps': 10.0, 'has_frame_weights': True, 'nonuniform_frame_weights': True, 'has_frame_indices': True, 'explicit_source_ok': False, 'weighted_source_ok': True, 'legacy_source_ok': False, 'diagnostic_compatible': False, 'completion_source_ok': True, 'evidence_level': 'strong_nonuniform_frame_weights'}, {'request_id': 'web_20260602_233348_53e3df5d', 'path': 'work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/fixtures/strong_nonuniform_frame_weights/web_20260602_233348_53e3df5d/scoring_result.json', 'exists': True, 'passed': True, 'reason': 'strong_nonuniform_frame_weights', 'target_word': '跳', 'client_source': '', 'worker_mode': 'frame_slices', 'frame_count': 19, 'min_required_frames': 6, 'timeline_frame_count': 37, 'duration_sec': 1.9, 'capture_fps': 10.0, 'has_frame_weights': True, 'nonuniform_frame_weights': True, 'has_frame_indices': True, 'explicit_source_ok': False, 'weighted_source_ok': True, 'legacy_source_ok': False, 'diagnostic_compatible': False, 'completion_source_ok': True, 'evidence_level': 'strong_nonuniform_frame_weights'}]})\n",
+      "stderr": ""
+    },
+    {
+      "name": "uniform_frame_weights",
+      "passed": true,
+      "expected_ready": false,
+      "actual_ready": false,
+      "expected_evidence_passed": false,
+      "actual_evidence_passed": false,
+      "row_levels": [
+        "none"
+      ],
+      "row_reasons": [
+        "source_metadata_missing"
+      ],
+      "row_pass_values": [
+        false,
+        false
+      ],
+      "checks": {
+        "audit_command_returned": true,
+        "ready_matches": true,
+        "evidence_passed_matches": true,
+        "all_rows_expected_pass": true,
+        "levels_match": true,
+        "reasons_match": true
+      },
+      "audit_json": "work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/uniform_frame_weights/flower_jump_goal_readiness_audit.json",
+      "stdout": "已生成目标完成度审计 JSON：work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/uniform_frame_weights/flower_jump_goal_readiness_audit.json\n已生成目标完成度审计报告：work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/uniform_frame_weights/flower_jump_goal_readiness_audit.md\n目标完成状态：NOT_READY\n- backend_ready: PASS (worker=ready, pid=811485, reload_count=13, last_reload_error=None)\n- watcher_online: PASS (event=diagnose_done, watcher_pid=1, generated_at=2026-06-03T10:36:02)\n- marker_available: PASS (last_request_id=web_20260602_233348_53e3df5d, marker_after_new=0, target_new=0)\n- combined_quality_gate_passed: PASS (quality_gate=work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_orientation_17gate_v1/flower_jump_quality_gate.json, subgates=[('web_regression', True), ('web_confusion_gate', True), ('synthetic_confusion_robustness_gate', True), ('discrimination_gate', True), ('pose_robustness_gate', True), ('framing_robustness_gate', True), ('depth_robustness_gate', True), ('edge_clipping_robustness_gate', True), ('mirror_robustness_gate', True), ('frame_count_robustness_gate', True), ('landmark_noise_robustness_gate', True), ('hand_shape_scale_robustness_gate', True), ('hand_orientation_robustness_gate', True), ('missing_mask_robustness_gate', True), ('temporal_padding_robustness_gate', True), ('action_crop_robustness_gate', True), ('phase_order_robustness_gate', True)])\n- fresh_real_webcam_target_samples_diagnosed: MISSING (marker_after_target_count=0, latest_diagnosis={'generated_at': '2026-06-03T10:36:02', 'web_root': '', 'diagnosed_request_ids': ['web_20260602_233343_899e6970', 'web_20260602_233348_53e3df5d'], 'regression_returncode': 0, 'confusion_returncode': 0, 'visual_returncode': 0}, browser_capture_evidence={'request_ids': ['web_20260602_233343_899e6970', 'web_20260602_233348_53e3df5d'], 'passed': False, 'sample_evidence_passed': False, 'allow_legacy_browser_evidence': False, 'required_words': ['花', '跳'], 'observed_words': [], 'required_words_covered': False, 'missing_required_words': ['花', '跳'], 'rows': [{'request_id': 'web_20260602_233343_899e6970', 'path': 'work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/fixtures/uniform_frame_weights/web_20260602_233343_899e6970/scoring_result.json', 'exists': True, 'passed': False, 'reason': 'source_metadata_missing', 'target_word': '花', 'client_source': '', 'worker_mode': 'frame_slices', 'frame_count': 53, 'min_required_frames': 12, 'timeline_frame_count': 105, 'duration_sec': 5.3, 'capture_fps': 10.0, 'has_frame_weights': True, 'nonuniform_frame_weights': False, 'has_frame_indices': True, 'explicit_source_ok': False, 'weighted_source_ok': False, 'legacy_source_ok': False, 'diagnostic_compatible': False, 'completion_source_ok': False, 'evidence_level': 'none'}, {'request_id': 'web_20260602_233348_53e3df5d', 'path': 'work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/fixtures/uniform_frame_weights/web_20260602_233348_53e3df5d/scoring_result.json', 'exists': True, 'passed': False, 'reason': 'source_metadata_missing', 'target_word': '跳', 'client_source': '', 'worker_mode': 'frame_slices', 'frame_count': 19, 'min_required_frames': 6, 'timeline_frame_count': 37, 'duration_sec': 1.9, 'capture_fps': 10.0, 'has_frame_weights': True, 'nonuniform_frame_weights': False, 'has_frame_indices': True, 'explicit_source_ok': False, 'weighted_source_ok': False, 'legacy_source_ok': False, 'diagnostic_compatible': False, 'completion_source_ok': False, 'evidence_level': 'none'}]})\n",
+      "stderr": ""
+    },
+    {
+      "name": "strong_client_source",
+      "passed": true,
+      "expected_ready": true,
+      "actual_ready": true,
+      "expected_evidence_passed": true,
+      "actual_evidence_passed": true,
+      "row_levels": [
+        "strong_client_source"
+      ],
+      "row_reasons": [
+        "strong_client_source"
+      ],
+      "row_pass_values": [
+        true,
+        true
+      ],
+      "checks": {
+        "audit_command_returned": true,
+        "ready_matches": true,
+        "evidence_passed_matches": true,
+        "all_rows_expected_pass": true,
+        "levels_match": true,
+        "reasons_match": true
+      },
+      "audit_json": "work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/strong_client_source/flower_jump_goal_readiness_audit.json",
+      "stdout": "已生成目标完成度审计 JSON：work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/strong_client_source/flower_jump_goal_readiness_audit.json\n已生成目标完成度审计报告：work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/strong_client_source/flower_jump_goal_readiness_audit.md\n目标完成状态：READY_TO_COMPLETE\n- backend_ready: PASS (worker=ready, pid=811485, reload_count=13, last_reload_error=None)\n- watcher_online: PASS (event=diagnose_done, watcher_pid=1, generated_at=2026-06-03T10:36:02)\n- marker_available: PASS (last_request_id=web_20260602_233348_53e3df5d, marker_after_new=0, target_new=0)\n- combined_quality_gate_passed: PASS (quality_gate=work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260603_hand_orientation_17gate_v1/flower_jump_quality_gate.json, subgates=[('web_regression', True), ('web_confusion_gate', True), ('synthetic_confusion_robustness_gate', True), ('discrimination_gate', True), ('pose_robustness_gate', True), ('framing_robustness_gate', True), ('depth_robustness_gate', True), ('edge_clipping_robustness_gate', True), ('mirror_robustness_gate', True), ('frame_count_robustness_gate', True), ('landmark_noise_robustness_gate', True), ('hand_shape_scale_robustness_gate', True), ('hand_orientation_robustness_gate', True), ('missing_mask_robustness_gate', True), ('temporal_padding_robustness_gate', True), ('action_crop_robustness_gate', True), ('phase_order_robustness_gate', True)])\n- fresh_real_webcam_target_samples_diagnosed: PASS (marker_after_target_count=0, latest_diagnosis={'generated_at': '2026-06-03T10:36:02', 'web_root': '', 'diagnosed_request_ids': ['web_20260602_233343_899e6970', 'web_20260602_233348_53e3df5d'], 'regression_returncode': 0, 'confusion_returncode': 0, 'visual_returncode': 0}, browser_capture_evidence={'request_ids': ['web_20260602_233343_899e6970', 'web_20260602_233348_53e3df5d'], 'passed': True, 'sample_evidence_passed': True, 'allow_legacy_browser_evidence': False, 'required_words': ['花', '跳'], 'observed_words': ['花', '跳'], 'required_words_covered': True, 'missing_required_words': [], 'rows': [{'request_id': 'web_20260602_233343_899e6970', 'path': 'work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/fixtures/strong_client_source/web_20260602_233343_899e6970/scoring_result.json', 'exists': True, 'passed': True, 'reason': 'strong_client_source', 'target_word': '花', 'client_source': 'browser_camera', 'worker_mode': 'frame_slices', 'frame_count': 53, 'min_required_frames': 12, 'timeline_frame_count': 105, 'duration_sec': 5.3, 'capture_fps': 10.0, 'has_frame_weights': False, 'nonuniform_frame_weights': False, 'has_frame_indices': True, 'explicit_source_ok': True, 'weighted_source_ok': False, 'legacy_source_ok': False, 'diagnostic_compatible': False, 'completion_source_ok': True, 'evidence_level': 'strong_client_source'}, {'request_id': 'web_20260602_233348_53e3df5d', 'path': 'work/generated/scoring_mvp_run3/flower_jump_retest_readiness_live_20260603_hand_orientation_17gate_v1/browser_evidence_gate/fixtures/strong_client_source/web_20260602_233348_53e3df5d/scoring_result.json', 'exists': True, 'passed': True, 'reason': 'strong_client_source', 'target_word': '跳', 'client_source': 'browser_camera', 'worker_mode': 'frame_slices', 'frame_count': 19, 'min_required_frames': 6, 'timeline_frame_count': 37, 'duration_sec': 1.9, 'capture_fps': 10.0, 'has_frame_weights': False, 'nonuniform_frame_weights': False, 'has_frame_indices': True, 'explicit_source_ok': True, 'weighted_source_ok': False, 'legacy_source_ok': False, 'diagnostic_compatible': False, 'completion_source_ok': True, 'evidence_level': 'strong_client_source'}]})\n",
+      "stderr": ""
+    }
+  ]
+}

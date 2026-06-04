@@ -1,0 +1,150 @@
+{
+  "generated_at": "2026-06-03T05:31:53",
+  "web_root": "/data/WYC/signLanguage/work/generated/web_scoring_mvp",
+  "semantic_profile_json": "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+  "words": [
+    "花"
+  ],
+  "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+  "filters": {
+    "latest": 0,
+    "latest_per_word": 1,
+    "since_request_id": "",
+    "request_ids": [
+      "web_20260602_233343_899e6970"
+    ]
+  },
+  "summary": {
+    "samples": 1,
+    "errors": 0,
+    "bands": {
+      "normal_like": 1
+    },
+    "diagnoses": {
+      "flower_core_accepted": 1
+    },
+    "triage_priority": {
+      "normal": 1
+    },
+    "capture_quality": {
+      "score_valid": 1
+    },
+    "effective": {
+      "reliable_samples": 1,
+      "normal_or_borderline": 1,
+      "low": 0,
+      "needs_recapture": 0,
+      "semantic_mismatch": 0,
+      "normal_or_borderline_rate": 1.0,
+      "score_mean": 76.89925771288746,
+      "score_median": 76.89925771288746
+    },
+    "score_mean": 76.89925771288746,
+    "score_median": 76.89925771288746,
+    "by_word": {
+      "花": {
+        "samples": 1,
+        "bands": {
+          "normal_like": 1
+        },
+        "diagnoses": {
+          "flower_core_accepted": 1
+        },
+        "triage_priority": {
+          "normal": 1
+        },
+        "capture_quality": {
+          "score_valid": 1
+        },
+        "effective": {
+          "reliable_samples": 1,
+          "normal_or_borderline": 1,
+          "low": 0,
+          "needs_recapture": 0,
+          "semantic_mismatch": 0,
+          "normal_or_borderline_rate": 1.0,
+          "score_mean": 76.89925771288746,
+          "score_median": 76.89925771288746
+        },
+        "score_mean": 76.89925771288746,
+        "score_median": 76.89925771288746,
+        "score_min": 76.89925771288746,
+        "score_max": 76.89925771288746,
+        "semantic_core_presence_mean": 1.0,
+        "semantic_core_presence_full_mean": 0.7924528301886793,
+        "semantic_core_presence_window_mean": 1.0,
+        "two_hand_presence_mean": 0.0,
+        "left_hand_presence_mean": 0.0,
+        "right_hand_presence_mean": 0.7924528301886793
+      }
+    }
+  },
+  "rows": [
+    {
+      "request_id": "web_20260602_233343_899e6970",
+      "generated_at": "2026-06-02T23:33:47",
+      "target_word": "花",
+      "frame_count": 53,
+      "timeline_frame_count": 105,
+      "capture_fps": 10.0,
+      "standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/花/花_holistic_results.json",
+      "saved_standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/花/花_holistic_results.json",
+      "standard_source": "template_root",
+      "query_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260602_233343_899e6970/holistic/user_花_web_20260602_233343_899e6970_holistic_results.json",
+      "error": "",
+      "score": 76.89925771288746,
+      "band": "normal_like",
+      "diagnosis": "flower_core_accepted",
+      "triage_priority": "normal",
+      "sample_advice": "开花核心段可评分；继续保持手部完整入画和清晰张开动态。",
+      "dtw_distance": 0.029509025311807786,
+      "normalized_distance": 0.038087724511943075,
+      "score_distance": 0.038087724511943075,
+      "alignment_mode": "full_sequence_with_action_window_diagnostics",
+      "used_action_window": false,
+      "score_scale_reason": "visible_semantic_core_scale",
+      "capture_quality_status": "score_valid",
+      "capture_quality_reason": "score_valid",
+      "capture_quality_message": "核心语义可评分。",
+      "capture_quality_reliable": true,
+      "semantic_core_presence": 1.0,
+      "semantic_core_presence_full": 0.7924528301886793,
+      "semantic_core_presence_window": 1.0,
+      "semantic_core_guard_passed": true,
+      "semantic_floor_reason": "query_not_short_core_capture",
+      "semantic_floor_source": "short_visible_core",
+      "semantic_floor_score": 0.0,
+      "semantic_floor_used": false,
+      "semantic_floor_direction_cosine": null,
+      "semantic_floor_vertical_score": null,
+      "semantic_floor_amplitude_ratio": null,
+      "semantic_floor_horizontal_to_vertical": null,
+      "semantic_floor_relation_presence": null,
+      "semantic_floor_query_segment_start": null,
+      "semantic_floor_query_segment_end": null,
+      "semantic_floor_query_segment_coverage": null,
+      "semantic_floor_fallback_from_reason": null,
+      "semantic_floor_fallback_from_direction_cosine": null,
+      "jump_two_finger_shape_mean": null,
+      "jump_two_finger_shape_range": null,
+      "jump_two_finger_shape_valid_count": null,
+      "flower_opening_passed": true,
+      "flower_opening_score": 0.8732175809144974,
+      "flower_opening_hand": "right_hand_shape",
+      "left_hand_presence": 0.0,
+      "right_hand_presence": 0.7924528301886793,
+      "two_hand_presence": 0.0,
+      "pose_presence": 1.0,
+      "face_presence": 1.0,
+      "presence_penalty": 0.0017795431976166832,
+      "required_presence_penalty": 0.0,
+      "semantic_delta_penalty": 0.014475519286287137,
+      "semantic_anchor_penalty": 0.005884829721362231,
+      "group_left_hand": 0.0,
+      "group_right_hand": 0.0,
+      "group_left_hand_shape": 0.0,
+      "group_right_hand_shape": 0.0,
+      "group_two_hand_relation": 0.0
+    }
+  ]
+}

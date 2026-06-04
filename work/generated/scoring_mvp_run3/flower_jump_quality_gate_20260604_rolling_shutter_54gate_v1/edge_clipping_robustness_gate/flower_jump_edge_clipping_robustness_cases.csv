@@ -1,0 +1,15 @@
+word,variant,kind,passed,score,min_score,max_score,capture_quality_status,capture_quality_reason,semantic_floor_reason,required_presence_penalty,query_left_presence,query_right_presence,query_pose_presence,query_face_presence,rationale
+花,face_edge_out_of_frame,positive,True,100.0,70.0,,score_valid,score_valid,query_not_short_core_capture,0.0,0.0,0.7547169811320755,1.0,0.0,脸部出画面边缘，双手核心仍完整。
+花,upper_body_edge_out_of_frame,positive,True,100.0,70.0,,score_valid,score_valid,query_not_short_core_capture,0.0,0.0,0.7547169811320755,0.0,0.0,上半身/脸部关键点不可见，但手部动作完整。
+花,left_noncore_hand_edge_clip,positive,True,100.0,70.0,,score_valid,score_valid,query_not_short_core_capture,0.0,0.0,0.7547169811320755,1.0,1.0,非核心手靠近画面边缘，部分点不可见。
+花,right_opening_wrist_edge_clip,positive,True,76.68938541124663,70.0,,score_valid,score_valid,query_not_short_core_capture,0.0,0.0,0.7547169811320755,1.0,1.0,开花手腕部边缘点不可见，但指尖张开过程仍可见。
+花,right_opening_outer_tips_edge_clip,positive,True,97.8126787480812,70.0,,score_valid,score_valid,query_not_short_core_capture,0.0,0.0,0.7547169811320755,1.0,1.0,开花手最外侧指尖边缘点不可见，核心开合仍保留。
+花,right_opening_all_tips_edge_clip,negative,True,11.133053406826672,,45.0,semantic_mismatch,flower_opening_guard_failed,query_not_short_core_capture,0.0,0.0,0.7547169811320755,1.0,1.0,开花手全部指尖出画面，无法验证张开/绽放核心。
+花,right_opening_outer_half_edge_clip,negative,True,10.688076519375532,,45.0,semantic_mismatch,flower_opening_guard_failed,query_not_short_core_capture,0.0,0.0,0.7547169811320755,1.0,1.0,开花手外半部分被画面裁掉，核心手形不可靠。
+跳,face_edge_out_of_frame,positive,True,100.0,70.0,,score_valid,score_valid,used,0.0,0.8421052631578947,0.8947368421052632,1.0,0.0,脸部出画面边缘，双手核心仍完整。
+跳,upper_body_edge_out_of_frame,positive,True,100.0,70.0,,score_valid,score_valid,used,0.0,0.8421052631578947,0.8947368421052632,0.0,0.0,上半身/脸部关键点不可见，但手部动作完整。
+跳,left_ground_tips_edge_clip,positive,True,82.3015873015873,70.0,,score_valid,score_valid,used,0.0,0.8421052631578947,0.8947368421052632,1.0,1.0,左手地面部分指尖靠近边缘，但地面关系仍可见。
+跳,right_jumper_ring_pinky_edge_clip,positive,True,78.5453980517561,70.0,,score_valid,score_valid,used,0.032088888888888875,0.8421052631578947,0.8947368421052632,1.0,1.0,右手非核心无名指/小指边缘点不可见，食指/中指小人仍可见。
+跳,right_jumper_wrist_edge_clip,positive,True,82.3015873015873,70.0,,score_valid,score_valid,used,0.0,0.8421052631578947,0.8947368421052632,1.0,1.0,右手腕部边缘点不可见，但食指/中指跳跃核心仍保留。
+跳,left_ground_wrist_edge_clip,negative,True,10.48934298351643,,45.0,semantic_mismatch,missing_relation_delta,missing_relation_delta,0.0020888888888888815,0.8421052631578947,0.8947368421052632,1.0,1.0,左手地面支点出画面，双手关系不可靠。
+跳,right_jumper_index_middle_tips_edge_clip,negative,True,10.010180441908066,,45.0,semantic_mismatch,missing_relation_delta,missing_relation_delta,0.0167111111111111,0.8421052631578947,0.8947368421052632,1.0,1.0,右手食指/中指小人的关键指尖出画面，跳跃语义缺失。

@@ -45,6 +45,7 @@ GROUP_WEIGHTS = {
 SCORE_SCALE = 0.12
 DEFAULT_REPO_ROOT = Path("/data/WYC/signLanguage")
 DEFAULT_SEMANTIC_PROFILE_JSON = DEFAULT_REPO_ROOT / "work/generated/scoring_semantic_profiles/sign_semantic_weights.json"
+DEFAULT_DENSE_TEMPLATE_ROOT = DEFAULT_REPO_ROOT / "work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results"
 BASE_GROUPS = ["left_hand", "right_hand", "pose", "face"]
 HAND_GROUPS = ["left_hand", "right_hand", "left_hand_shape", "right_hand_shape"]
 HAND_SHAPE_GROUPS = ["left_hand_shape", "right_hand_shape"]
@@ -78,6 +79,23 @@ FAKE_VARIANTS = [
     "fake_random_landmarks",
     "fake_random_walk",
 ]
+LANDMARK_XY_VISIBLE_MIN = -0.15
+LANDMARK_XY_VISIBLE_MAX = 1.15
+LANDMARK_Z_VISIBLE_MIN = -1.0
+LANDMARK_Z_VISIBLE_MAX = 1.0
+LANDMARK_ZERO_MISSING_EPS = 1e-7
+HAND_DEGENERATE_VISIBLE_MIN_POINTS = 8
+HAND_DEGENERATE_XY_SPAN_MIN = 0.012
+FRAME_WEIGHT_MIN = 0.05
+FRAME_WEIGHT_RAW_MAX = 10.0
+DEFAULT_FPS = 25.0
+FPS_MIN = 1.0
+FPS_MAX = 240.0
+TOTAL_FRAMES_MAX = 10_000_000
+FRAME_INDEX_MIN_LIMIT = 10_000
+FRAME_INDEX_RECORD_MULTIPLIER = 1_000
+TIMESTAMP_MIN_LIMIT_SEC = 60.0
+TIMESTAMP_DURATION_MULTIPLIER = 10.0
 
 
 @dataclass
@@ -232,6 +250,9 @@ def _landmark_array(
     items: Sequence[Dict[str, Any]],
     indices: Optional[Sequence[int]] = None,
     expected_count: Optional[int] = None,
+    xy_bounds: Optional[Tuple[float, float]] = None,
+    z_bounds: Optional[Tuple[float, float]] = None,
+    zero_missing_eps: Optional[float] = None,
 ) -> Tuple[np.ndarray, np.ndarray]:
     if indices is not None:
         selected = list(indices)
@@ -244,20 +265,170 @@ def _landmark_array(
     for idx in selected:
         if 0 <= idx < len(items):
             lm = items[idx]
-            coords.append([float(lm.get("x", 0.0)), float(lm.get("y", 0.0)), float(lm.get("z", 0.0))])
-            mask.append(1.0)
+            try:
+                point = [float(lm.get("x", 0.0)), float(lm.get("y", 0.0)), float(lm.get("z", 0.0))]
+            except (TypeError, ValueError):
+                point = [0.0, 0.0, 0.0]
+                visible = False
+            else:
+                visible = bool(np.isfinite(point).all())
+                if visible and xy_bounds is not None:
+                    low, high = xy_bounds
+                    visible = low <= point[0] <= high and low <= point[1] <= high
+                if visible and z_bounds is not None:
+                    low, high = z_bounds
+                    visible = low <= point[2] <= high
+                if visible and zero_missing_eps is not None and all(abs(value) <= zero_missing_eps for value in point):
+                    visible = False
+                if not visible:
+                    point = [0.0, 0.0, 0.0]
+            coords.append(point)
+            mask.append(1.0 if visible else 0.0)
         else:
             coords.append([0.0, 0.0, 0.0])
             mask.append(0.0)
     return np.asarray(coords, dtype=np.float32), np.asarray(mask, dtype=np.float32)
 
 
+def _mask_degenerate_hand(hand: np.ndarray, hand_mask: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    if hand.size == 0 or hand_mask.size == 0:
+        return hand, hand_mask
+    visible = hand_mask > 0
+    if int(visible.sum()) < HAND_DEGENERATE_VISIBLE_MIN_POINTS:
+        return hand, hand_mask
+    xy = hand[visible, :2]
+    if not np.isfinite(xy).all():
+        return hand, hand_mask
+    span = np.ptp(xy, axis=0)
+    if float(max(span[0], span[1])) > HAND_DEGENERATE_XY_SPAN_MIN:
+        return hand, hand_mask
+    out = hand.copy()
+    out_mask = hand_mask.copy()
+    out[visible, :] = 0.0
+    out_mask[visible] = 0.0
+    return out, out_mask
+
+
+def _sanitize_frame_weight(value: Any, default: float = 1.0) -> float:
+    try:
+        weight = float(value)
+    except (TypeError, ValueError):
+        return float(default)
+    if not math.isfinite(weight):
+        return float(default)
+    return max(FRAME_WEIGHT_MIN, min(FRAME_WEIGHT_RAW_MAX, weight))
+
+
+def _parse_temporal_int(value: Any, minimum: int = 0, maximum: Optional[int] = None) -> Optional[int]:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(number):
+        return None
+    parsed = int(number)
+    if abs(number - parsed) > 1e-6 or parsed < minimum:
+        return None
+    if maximum is not None and parsed > maximum:
+        return None
+    return parsed
+
+
+def _sanitize_fps(value: Any, default: float = DEFAULT_FPS) -> float:
+    try:
+        fps = float(value)
+    except (TypeError, ValueError):
+        return float(default)
+    if not math.isfinite(fps) or fps < FPS_MIN or fps > FPS_MAX:
+        return float(default)
+    return fps
+
+
+def _record_dict(record: Dict[str, Any], key: str) -> Dict[str, Any]:
+    value = record.get(key)
+    return value if isinstance(value, dict) else {}
+
+
+def _frame_index_limit(record_count: int) -> int:
+    return min(TOTAL_FRAMES_MAX - 1, max(FRAME_INDEX_MIN_LIMIT, int(record_count) * FRAME_INDEX_RECORD_MULTIPLIER))
+
+
+def _first_valid_frame_idx(record: Dict[str, Any], maximum: int, *, prefer_row: bool = False) -> Optional[int]:
+    row = _record_dict(record, "row")
+    sources = (row, record) if prefer_row else (record, row)
+    for source in sources:
+        parsed = _parse_temporal_int(source.get("frame_idx"), minimum=0, maximum=maximum)
+        if parsed is not None:
+            return parsed
+    return None
+
+
+def _observed_frame_count(records: Sequence[Dict[str, Any]], maximum: int) -> int:
+    observed = [
+        frame_idx
+        for record in records
+        if isinstance(record, dict)
+        for frame_idx in [_first_valid_frame_idx(record, maximum)]
+        if frame_idx is not None
+    ]
+    return max(observed, default=-1) + 1
+
+
+def _sanitize_total_frames(value: Any, record_count: int, observed_frame_count: int, maximum: int) -> int:
+    parsed = _parse_temporal_int(value, minimum=1, maximum=min(TOTAL_FRAMES_MAX, maximum + 1))
+    return max(int(record_count), int(observed_frame_count), parsed if parsed is not None else 0)
+
+
+def _fallback_frame_idx(record_index: int, record_count: int, total_frames: int) -> int:
+    if record_count <= 1 or total_frames <= 1:
+        return 0
+    return int(round(float(record_index) * float(total_frames - 1) / float(record_count - 1)))
+
+
+def _parse_timestamp(value: Any, frame_idx: int, fps: float, total_frames: int) -> Optional[float]:
+    safe_fps = _sanitize_fps(fps)
+    duration_hint = max(float(total_frames), float(frame_idx + 1)) / safe_fps
+    maximum = max(TIMESTAMP_MIN_LIMIT_SEC, duration_hint * TIMESTAMP_DURATION_MULTIPLIER)
+    try:
+        timestamp = float(value)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(timestamp) or timestamp < 0.0 or timestamp > maximum:
+        return None
+    return timestamp
+
+
+def _frame_temporal_metadata(
+    record: Dict[str, Any],
+    fps: float,
+    fallback_frame_idx: int,
+    max_frame_idx: Optional[int],
+    total_frames: int,
+    *,
+    prefer_row: bool = False,
+) -> Tuple[int, float]:
+    row = _record_dict(record, "row")
+    sources = (row, record) if prefer_row else (record, row)
+    frame_idx = _first_valid_frame_idx(record, max_frame_idx, prefer_row=prefer_row)
+    if frame_idx is None:
+        frame_idx = int(fallback_frame_idx)
+    timestamp = None
+    for source in sources:
+        timestamp = _parse_timestamp(source.get("timestamp_sec"), frame_idx, fps, total_frames)
+        if timestamp is not None:
+            break
+    if timestamp is None:
+        timestamp = float(frame_idx) / _sanitize_fps(fps)
+    return frame_idx, timestamp
+
+
 def _normalization_from_pose(pose: np.ndarray, pose_mask: np.ndarray) -> Tuple[np.ndarray, float]:
-    if pose.shape[0] >= 3 and pose_mask[1] > 0 and pose_mask[2] > 0:
+    finite_points = np.isfinite(pose[:, :3]).all(axis=1) if pose.size else np.zeros(0, dtype=bool)
+    if pose.shape[0] >= 3 and pose_mask[1] > 0 and pose_mask[2] > 0 and finite_points[1] and finite_points[2]:
         center = (pose[1] + pose[2]) / 2.0
         scale = float(np.linalg.norm(pose[1, :2] - pose[2, :2]))
         return center, max(scale, 1e-3)
-    valid = pose[pose_mask > 0]
+    valid = pose[(pose_mask > 0) & finite_points]
     if len(valid) > 0:
         xy = valid[:, :2]
         center = np.asarray([float(xy[:, 0].mean()), float(xy[:, 1].mean()), 0.0], dtype=np.float32)
@@ -292,7 +463,13 @@ def _hand_shape_feature(hand: np.ndarray, hand_mask: np.ndarray) -> Tuple[np.nda
             palm_refs.append(_dist(hand[idx], hand[0]))
     if hand_mask[5] > 0 and hand_mask[17] > 0:
         palm_refs.append(_dist(hand[5], hand[17]))
-    palm_scale = max(float(np.mean(palm_refs)) if palm_refs else 0.0, 1e-3)
+    if not palm_refs:
+        # Hand-shape ratios need a trustworthy palm scale. If wrist/MCP anchors
+        # are absent, visible fingertips should still contribute through the raw
+        # hand landmark group, but derived shape ratios would be numerically
+        # unstable and should be treated as missing for this frame.
+        return np.zeros(20, dtype=np.float32), np.zeros(20, dtype=np.float32)
+    palm_scale = max(float(np.mean(palm_refs)), 1e-3)
 
     def append_distance(a_idx: int, b_idx: int) -> None:
         ok = a_idx < len(hand_mask) and b_idx < len(hand_mask) and hand_mask[a_idx] > 0 and hand_mask[b_idx] > 0
@@ -322,13 +499,41 @@ def _append_group(parts: List[np.ndarray], masks: List[np.ndarray], groups: Dict
     groups[name] = slice(start, start + flat.size)
 
 
-def _landmark_feature(record: Dict[str, Any], fps: float) -> FrameFeature:
+def _landmark_feature(
+    record: Dict[str, Any],
+    fps: float,
+    fallback_frame_idx: int = 0,
+    max_frame_idx: Optional[int] = None,
+    total_frames: int = 0,
+) -> FrameFeature:
     result_data = record.get("result_data") or {}
-    row = record.get("row") or {}
+    row = _record_dict(record, "row")
     pose, pose_mask = _landmark_array(result_data.get("pose_landmarks") or [], POSE_CORE_INDICES)
-    left, left_mask = _landmark_array(result_data.get("left_hand_landmarks") or [], expected_count=21)
-    right, right_mask = _landmark_array(result_data.get("right_hand_landmarks") or [], expected_count=21)
-    face, face_mask = _landmark_array(result_data.get("face_landmarks") or [], FACE_CORE_INDICES)
+    xy_bounds = (LANDMARK_XY_VISIBLE_MIN, LANDMARK_XY_VISIBLE_MAX)
+    z_bounds = (LANDMARK_Z_VISIBLE_MIN, LANDMARK_Z_VISIBLE_MAX)
+    left, left_mask = _landmark_array(
+        result_data.get("left_hand_landmarks") or [],
+        expected_count=21,
+        xy_bounds=xy_bounds,
+        z_bounds=z_bounds,
+        zero_missing_eps=LANDMARK_ZERO_MISSING_EPS,
+    )
+    right, right_mask = _landmark_array(
+        result_data.get("right_hand_landmarks") or [],
+        expected_count=21,
+        xy_bounds=xy_bounds,
+        z_bounds=z_bounds,
+        zero_missing_eps=LANDMARK_ZERO_MISSING_EPS,
+    )
+    left, left_mask = _mask_degenerate_hand(left, left_mask)
+    right, right_mask = _mask_degenerate_hand(right, right_mask)
+    face, face_mask = _landmark_array(
+        result_data.get("face_landmarks") or [],
+        FACE_CORE_INDICES,
+        xy_bounds=xy_bounds,
+        z_bounds=z_bounds,
+        zero_missing_eps=LANDMARK_ZERO_MISSING_EPS,
+    )
 
     center, scale = _normalization_from_pose(pose, pose_mask)
 
@@ -351,13 +556,15 @@ def _landmark_feature(record: Dict[str, Any], fps: float) -> FrameFeature:
     _append_group(parts, masks, groups, "right_hand_shape", right_shape.reshape(-1, 1), right_shape_mask)
     _append_group(parts, masks, groups, "face", norm(face), face_mask)
 
-    frame_idx = int(record.get("frame_idx") if record.get("frame_idx") is not None else row.get("frame_idx", 0))
-    timestamp = float(record.get("timestamp_sec") if record.get("timestamp_sec") is not None else frame_idx / max(fps, 1e-6))
+    frame_idx, timestamp = _frame_temporal_metadata(
+        record,
+        fps,
+        fallback_frame_idx,
+        max_frame_idx,
+        total_frames,
+    )
     raw_weight = record.get("frame_weight", row.get("frame_weight", 1.0))
-    try:
-        frame_weight = max(0.05, float(raw_weight))
-    except (TypeError, ValueError):
-        frame_weight = 1.0
+    frame_weight = _sanitize_frame_weight(raw_weight)
     return FrameFeature(
         frame_idx=frame_idx,
         timestamp_sec=timestamp,
@@ -409,16 +616,25 @@ def _bbox_to_features(row: Dict[str, Any]) -> Tuple[np.ndarray, np.ndarray, Dict
     return np.concatenate(parts), np.concatenate(masks), groups, presence
 
 
-def _bbox_feature(record: Dict[str, Any], fps: float) -> FrameFeature:
-    row = record.get("row") or record
+def _bbox_feature(
+    record: Dict[str, Any],
+    fps: float,
+    fallback_frame_idx: int = 0,
+    max_frame_idx: Optional[int] = None,
+    total_frames: int = 0,
+) -> FrameFeature:
+    row = _record_dict(record, "row") or record
     vector, mask, groups, presence = _bbox_to_features(row)
-    frame_idx = int(row.get("frame_idx", record.get("frame_idx", 0)))
-    timestamp = float(row.get("timestamp_sec", record.get("timestamp_sec", frame_idx / max(fps, 1e-6))))
+    frame_idx, timestamp = _frame_temporal_metadata(
+        record,
+        fps,
+        fallback_frame_idx,
+        max_frame_idx,
+        total_frames,
+        prefer_row=True,
+    )
     raw_weight = record.get("frame_weight", row.get("frame_weight", 1.0))
-    try:
-        frame_weight = max(0.05, float(raw_weight))
-    except (TypeError, ValueError):
-        frame_weight = 1.0
+    frame_weight = _sanitize_frame_weight(raw_weight)
     return FrameFeature(frame_idx, timestamp, vector.astype(np.float32), mask.astype(np.float32), groups, presence, frame_weight)
 
 
@@ -432,15 +648,15 @@ def _apply_sidecar_frame_weights(path: Path, features: List[FrameFeature]) -> No
         return
     rows = payload.get("frame_weights") or []
     weight_by_idx: Dict[int, float] = {}
+    max_frame_idx = max((feature.frame_idx for feature in features), default=None)
     for row in rows:
         if not isinstance(row, dict):
             continue
-        try:
-            frame_idx = int(row.get("frame_idx"))
-            weight = float(row.get("semantic_frame_weight", row.get("frame_weight", row.get("weight", 1.0))))
-        except (TypeError, ValueError):
+        frame_idx = _parse_temporal_int(row.get("frame_idx"), minimum=0, maximum=max_frame_idx)
+        if frame_idx is None:
             continue
-        weight_by_idx[frame_idx] = max(0.05, weight)
+        weight = _sanitize_frame_weight(row.get("semantic_frame_weight", row.get("frame_weight", row.get("weight", 1.0))))
+        weight_by_idx[frame_idx] = weight
     if not weight_by_idx:
         return
     for feature in features:
@@ -456,8 +672,14 @@ def load_sequence(
 ) -> SequenceData:
     payload = _load_json(path)
     records = _records_from_payload(payload)
-    fps = float(payload.get("fps") or payload.get("meta", {}).get("fps") or 25.0)
-    total_frames = int(payload.get("total_frames") or payload.get("meta", {}).get("frame_count") or len(records))
+    meta = payload.get("meta") if isinstance(payload.get("meta"), dict) else {}
+    raw_fps = payload.get("fps") if payload.get("fps") is not None else meta.get("fps")
+    raw_total_frames = payload.get("total_frames") if payload.get("total_frames") is not None else meta.get("frame_count")
+    fps = _sanitize_fps(raw_fps)
+    frame_idx_limit = _frame_index_limit(len(records))
+    observed_frame_count = _observed_frame_count(records, frame_idx_limit)
+    total_frames = _sanitize_total_frames(raw_total_frames, len(records), observed_frame_count, frame_idx_limit)
+    max_frame_idx = min(frame_idx_limit, max(total_frames - 1, len(records) - 1))
 
     mode = requested_mode
     if requested_mode == "auto":
@@ -466,9 +688,27 @@ def load_sequence(
         mode = "bbox"
 
     if mode == "landmark":
-        features = [_landmark_feature(record, fps) for record in records]
+        features = [
+            _landmark_feature(
+                record,
+                fps,
+                _fallback_frame_idx(idx, len(records), total_frames),
+                max_frame_idx,
+                total_frames,
+            )
+            for idx, record in enumerate(records)
+        ]
     elif mode == "bbox":
-        features = [_bbox_feature(record, fps) for record in records]
+        features = [
+            _bbox_feature(
+                record,
+                fps,
+                _fallback_frame_idx(idx, len(records), total_frames),
+                max_frame_idx,
+                total_frames,
+            )
+            for idx, record in enumerate(records)
+        ]
     else:
         raise RuntimeError(f"未知特征模式：{mode}")
 
@@ -550,10 +790,25 @@ def _two_hand_relation_feature(feature: FrameFeature) -> Tuple[np.ndarray, np.nd
 
     left_sl = feature.groups["left_hand"]
     right_sl = feature.groups["right_hand"]
-    left = feature.vector[left_sl].reshape(-1, 3)
-    right = feature.vector[right_sl].reshape(-1, 3)
-    left_mask = feature.mask[left_sl].reshape(-1, 3).mean(axis=1) > 0.5
-    right_mask = feature.mask[right_sl].reshape(-1, 3).mean(axis=1) > 0.5
+    left_values = feature.vector[left_sl]
+    right_values = feature.vector[right_sl]
+    left_mask_values = feature.mask[left_sl]
+    right_mask_values = feature.mask[right_sl]
+    if (
+        left_values.size < 21 * 3
+        or right_values.size < 21 * 3
+        or left_values.size % 3
+        or right_values.size % 3
+        or left_mask_values.size != left_values.size
+        or right_mask_values.size != right_values.size
+    ):
+        return relation, relation_mask
+    left = left_values.reshape(-1, 3)
+    right = right_values.reshape(-1, 3)
+    left_mask = left_mask_values.reshape(-1, 3).mean(axis=1) > 0.5
+    right_mask = right_mask_values.reshape(-1, 3).mean(axis=1) > 0.5
+    left_mask &= np.isfinite(left[:, :3]).all(axis=1)
+    right_mask &= np.isfinite(right[:, :3]).all(axis=1)
 
     left_ground_indices = [0, 5, 9, 13, 17]
     right_tip_indices = [8, 12]
@@ -743,8 +998,82 @@ def _required_presence_groups(profile: Optional[SemanticProfile]) -> set[str]:
     return {str(item) for item in raw}
 
 
-def _semantic_core_hand_presence(seq: SequenceData, profile: Optional[SemanticProfile]) -> float:
-    presence = _presence_ratio(seq)
+def _sequence_hand_swap_allowed(profile: Optional[SemanticProfile]) -> bool:
+    if profile is None or not profile.allow_hand_swap:
+        return False
+    # Role-specific two-hand signs need stable left/right semantics. Keep
+    # sequence-level swap tolerance for non-role single-hand or symmetric signs.
+    if "two_hand_relation" in set(profile.focus_groups or []):
+        return False
+    if "two_hand_relation" in _required_presence_groups(profile):
+        return False
+    return True
+
+
+def _swapped_hand_group(group: str) -> str:
+    swaps = {
+        "left_hand": "right_hand",
+        "right_hand": "left_hand",
+        "left_hand_shape": "right_hand_shape",
+        "right_hand_shape": "left_hand_shape",
+        "left_hand_motion": "right_hand_motion",
+        "right_hand_motion": "left_hand_motion",
+        "left_hand_shape_motion": "right_hand_shape_motion",
+        "right_hand_shape_motion": "left_hand_shape_motion",
+    }
+    return swaps.get(group, group)
+
+
+def _maybe_swap_hand_delta(
+    standard_values: Dict[str, float],
+    query_values: Dict[str, float],
+    groups: Sequence[str],
+    weights: Dict[str, float],
+    profile: Optional[SemanticProfile],
+    *,
+    log_ratio: bool,
+) -> Tuple[Dict[str, float], bool]:
+    direct: Dict[str, float] = {}
+    swapped: Dict[str, float] = {}
+    direct_weighted = 0.0
+    swapped_weighted = 0.0
+    hand_groups = {
+        "left_hand",
+        "right_hand",
+        "left_hand_shape",
+        "right_hand_shape",
+        "left_hand_motion",
+        "right_hand_motion",
+        "left_hand_shape_motion",
+        "right_hand_shape_motion",
+    }
+    for group in groups:
+        std_value = float(standard_values.get(group, 0.0))
+        qry_value = float(query_values.get(group, 0.0))
+        if log_ratio:
+            direct_value = min(_safe_log_ratio(std_value, qry_value), 3.0)
+        else:
+            direct_value = abs(std_value - qry_value)
+        direct[group] = direct_value
+        direct_weighted += weights.get(group, 0.0) * direct_value
+
+        swapped_group = _swapped_hand_group(group)
+        if group in hand_groups and swapped_group in query_values:
+            swapped_qry_value = float(query_values.get(swapped_group, 0.0))
+            if log_ratio:
+                swapped_value = min(_safe_log_ratio(std_value, swapped_qry_value), 3.0)
+            else:
+                swapped_value = abs(std_value - swapped_qry_value)
+        else:
+            swapped_value = direct_value
+        swapped[group] = swapped_value
+        swapped_weighted += weights.get(group, 0.0) * swapped_value
+
+    use_swapped = _sequence_hand_swap_allowed(profile) and swapped_weighted < direct_weighted
+    return (swapped if use_swapped else direct), use_swapped
+
+
+def _hand_presence_value(presence: Dict[str, float], profile: Optional[SemanticProfile]) -> float:
     left = float(presence.get("left_hand", 0.0))
     right = float(presence.get("right_hand", 0.0))
     required = _required_presence_groups(profile)
@@ -752,6 +1081,46 @@ def _semantic_core_hand_presence(seq: SequenceData, profile: Optional[SemanticPr
     if "two_hand_relation" in required or "two_hand_relation" in focus or {"left_hand", "right_hand"}.issubset(required):
         return min(left, right)
     return max(left, right)
+
+
+def _presence_ratio_for_features(features: Sequence[FrameFeature]) -> Dict[str, float]:
+    if not features:
+        return {"pose": 0.0, "left_hand": 0.0, "right_hand": 0.0, "face": 0.0}
+    result: Dict[str, float] = {}
+    for group in ["pose", "left_hand", "right_hand", "face"]:
+        result[group] = sum(1 for f in features if f.presence.get(group)) / len(features)
+    return result
+
+
+def _window_features(seq: SequenceData, window: Optional[Dict[str, Any]]) -> List[FrameFeature]:
+    if not window or not bool(window.get("used", False)):
+        return []
+    try:
+        start = int(window.get("start_index", 0))
+        end = int(window.get("end_index", -1))
+    except (TypeError, ValueError):
+        return []
+    if end < start:
+        return []
+    start = max(0, min(start, len(seq.features) - 1))
+    end = max(start, min(end, len(seq.features) - 1))
+    selected = seq.features[start : end + 1]
+    if len(selected) < 3:
+        return []
+    return list(selected)
+
+
+def _semantic_core_hand_presence(
+    seq: SequenceData,
+    profile: Optional[SemanticProfile],
+    action_window: Optional[Dict[str, Any]] = None,
+) -> float:
+    full_presence = _hand_presence_value(_presence_ratio(seq), profile)
+    window_items = _window_features(seq, action_window)
+    if not window_items:
+        return full_presence
+    window_presence = _hand_presence_value(_presence_ratio_for_features(window_items), profile)
+    return max(full_presence, window_presence)
 
 
 def _group_missing_distance_weight(profile: Optional[SemanticProfile], group: str) -> float:
@@ -878,10 +1247,42 @@ def _semantic_dtw_config(profile: Optional[SemanticProfile]) -> Dict[str, Any]:
     core_visible_dtw_threshold = float(raw.get("core_visible_dtw_threshold", 0.045))
     core_visible_presence_threshold = float(raw.get("core_visible_presence_threshold", 0.65))
     core_visible_max_normalized_distance = float(raw.get("core_visible_max_normalized_distance", 0.080))
+    short_core_capture_tolerance_cap = float(raw.get("short_core_capture_tolerance_cap", 0.0))
+    short_core_capture_max_length_ratio = float(raw.get("short_core_capture_max_length_ratio", 0.70))
+    flower_opening_guard_enabled = bool(raw.get("flower_opening_guard_enabled", False))
+    flower_opening_min_score = float(raw.get("flower_opening_min_score", 0.30))
+    flower_visible_core_floor_enabled = bool(raw.get("flower_visible_core_floor_enabled", False))
+    flower_visible_core_floor_min_score = float(raw.get("flower_visible_core_floor_min_score", 72.0))
+    flower_visible_core_floor_max_score = float(raw.get("flower_visible_core_floor_max_score", 80.0))
+    flower_visible_core_floor_max_length_ratio = float(raw.get("flower_visible_core_floor_max_length_ratio", 0.32))
+    flower_visible_core_floor_min_presence = float(raw.get("flower_visible_core_floor_min_presence", 0.62))
+    flower_visible_core_floor_min_opening_score = float(raw.get("flower_visible_core_floor_min_opening_score", 0.60))
+    flower_visible_core_floor_max_dtw = float(raw.get("flower_visible_core_floor_max_dtw", 0.042))
+    flower_visible_core_floor_min_action_coverage = float(raw.get("flower_visible_core_floor_min_action_coverage", 0.62))
+    flower_jump_confusion_guard_enabled = bool(
+        raw.get("flower_jump_confusion_guard_enabled", profile is not None and profile.word == "花")
+    )
+    flower_jump_confusion_min_two_hand_presence = float(raw.get("flower_jump_confusion_min_two_hand_presence", 0.58))
+    flower_jump_confusion_min_relation_valid_count = int(raw.get("flower_jump_confusion_min_relation_valid_count", 3))
+    flower_jump_confusion_max_opening_score = float(raw.get("flower_jump_confusion_max_opening_score", 0.45))
+    flower_jump_confusion_min_two_finger_shape_mean = float(raw.get("flower_jump_confusion_min_two_finger_shape_mean", 1.05))
     jump_relation_semantic_floor_enabled = bool(raw.get("jump_relation_semantic_floor_enabled", False))
     jump_relation_semantic_max_score = float(raw.get("jump_relation_semantic_max_score", 0.0))
     jump_relation_semantic_min_presence = float(raw.get("jump_relation_semantic_min_presence", 0.65))
     jump_relation_semantic_min_direction = float(raw.get("jump_relation_semantic_min_direction", 0.55))
+    jump_relation_local_fallback_enabled = bool(raw.get("jump_relation_local_fallback_enabled", False))
+    jump_relation_local_min_direction = float(raw.get("jump_relation_local_min_direction", 0.92))
+    jump_relation_local_min_amplitude_ratio = float(raw.get("jump_relation_local_min_amplitude_ratio", 0.80))
+    jump_relation_local_max_horizontal_to_vertical = float(raw.get("jump_relation_local_max_horizontal_to_vertical", 0.60))
+    jump_relation_local_min_coverage = float(raw.get("jump_relation_local_min_coverage", 0.48))
+    jump_relation_local_max_coverage = float(raw.get("jump_relation_local_max_coverage", 0.78))
+    jump_relation_local_min_two_finger_shape_mean = float(raw.get("jump_relation_local_min_two_finger_shape_mean", 0.95))
+    phase_order_guard_enabled = bool(raw.get("phase_order_guard_enabled", False))
+    phase_order_guard_min_disorder_span_score = float(raw.get("phase_order_guard_min_disorder_span_score", 0.0))
+    phase_order_guard_min_adjacent_disorder_span_score = float(
+        raw.get("phase_order_guard_min_adjacent_disorder_span_score", 0.0)
+    )
+    phase_order_guard_max_score = float(raw.get("phase_order_guard_max_score", 45.0))
     required_presence_groups = raw.get("required_presence_groups") or []
     if not isinstance(required_presence_groups, list):
         required_presence_groups = []
@@ -894,6 +1295,15 @@ def _semantic_dtw_config(profile: Optional[SemanticProfile]) -> Dict[str, Any]:
             continue
     if not clean_anchors:
         clean_anchors = [0.10, 0.50, 0.90]
+    phase_order_anchors = raw.get("phase_order_guard_anchor_phases") or [0.10, 0.25, 0.50, 0.75, 0.90]
+    clean_phase_order_anchors: List[float] = []
+    for value in phase_order_anchors:
+        try:
+            clean_phase_order_anchors.append(max(0.0, min(1.0, float(value))))
+        except (TypeError, ValueError):
+            continue
+    if len(clean_phase_order_anchors) < 3:
+        clean_phase_order_anchors = [0.10, 0.25, 0.50, 0.75, 0.90]
     return {
         "enabled": enabled,
         "local_phase_weight": max(0.0, min(local_phase_weight, 0.08)),
@@ -914,10 +1324,43 @@ def _semantic_dtw_config(profile: Optional[SemanticProfile]) -> Dict[str, Any]:
         "core_visible_dtw_threshold": max(0.0, min(core_visible_dtw_threshold, 0.120)),
         "core_visible_presence_threshold": max(0.0, min(core_visible_presence_threshold, 1.0)),
         "core_visible_max_normalized_distance": max(0.0, min(core_visible_max_normalized_distance, 0.180)),
+        "short_core_capture_tolerance_cap": max(0.0, min(short_core_capture_tolerance_cap, 0.180)),
+        "short_core_capture_max_length_ratio": max(0.20, min(short_core_capture_max_length_ratio, 1.0)),
+        "flower_opening_guard_enabled": flower_opening_guard_enabled,
+        "flower_opening_min_score": max(0.0, min(flower_opening_min_score, 1.0)),
+        "flower_visible_core_floor_enabled": flower_visible_core_floor_enabled,
+        "flower_visible_core_floor_min_score": max(0.0, min(flower_visible_core_floor_min_score, 95.0)),
+        "flower_visible_core_floor_max_score": max(0.0, min(flower_visible_core_floor_max_score, 95.0)),
+        "flower_visible_core_floor_max_length_ratio": max(0.05, min(flower_visible_core_floor_max_length_ratio, 1.0)),
+        "flower_visible_core_floor_min_presence": max(0.0, min(flower_visible_core_floor_min_presence, 1.0)),
+        "flower_visible_core_floor_min_opening_score": max(0.0, min(flower_visible_core_floor_min_opening_score, 1.0)),
+        "flower_visible_core_floor_max_dtw": max(0.0, min(flower_visible_core_floor_max_dtw, 0.120)),
+        "flower_visible_core_floor_min_action_coverage": max(0.0, min(flower_visible_core_floor_min_action_coverage, 1.0)),
+        "flower_jump_confusion_guard_enabled": flower_jump_confusion_guard_enabled,
+        "flower_jump_confusion_min_two_hand_presence": max(0.0, min(flower_jump_confusion_min_two_hand_presence, 1.0)),
+        "flower_jump_confusion_min_relation_valid_count": max(3, min(flower_jump_confusion_min_relation_valid_count, 80)),
+        "flower_jump_confusion_max_opening_score": max(0.0, min(flower_jump_confusion_max_opening_score, 1.0)),
+        "flower_jump_confusion_min_two_finger_shape_mean": max(0.0, min(flower_jump_confusion_min_two_finger_shape_mean, 3.0)),
         "jump_relation_semantic_floor_enabled": jump_relation_semantic_floor_enabled,
         "jump_relation_semantic_max_score": max(0.0, min(jump_relation_semantic_max_score, 90.0)),
         "jump_relation_semantic_min_presence": max(0.0, min(jump_relation_semantic_min_presence, 1.0)),
         "jump_relation_semantic_min_direction": max(-1.0, min(jump_relation_semantic_min_direction, 1.0)),
+        "jump_relation_local_fallback_enabled": jump_relation_local_fallback_enabled,
+        "jump_relation_local_min_direction": max(-1.0, min(jump_relation_local_min_direction, 1.0)),
+        "jump_relation_local_min_amplitude_ratio": max(0.0, min(jump_relation_local_min_amplitude_ratio, 3.0)),
+        "jump_relation_local_max_horizontal_to_vertical": max(0.0, min(jump_relation_local_max_horizontal_to_vertical, 3.0)),
+        "jump_relation_local_min_coverage": max(0.10, min(jump_relation_local_min_coverage, 1.0)),
+        "jump_relation_local_max_coverage": max(0.10, min(jump_relation_local_max_coverage, 1.0)),
+        "jump_relation_local_min_two_finger_shape_mean": max(0.0, min(jump_relation_local_min_two_finger_shape_mean, 3.0)),
+        "phase_order_guard_enabled": phase_order_guard_enabled,
+        "phase_order_guard_anchor_phases": clean_phase_order_anchors,
+        "phase_order_guard_min_disorder_span_score": max(
+            0.0, min(phase_order_guard_min_disorder_span_score, 1.0)
+        ),
+        "phase_order_guard_min_adjacent_disorder_span_score": max(
+            0.0, min(phase_order_guard_min_adjacent_disorder_span_score, 1.0)
+        ),
+        "phase_order_guard_max_score": max(0.0, min(phase_order_guard_max_score, 60.0)),
     }
 
 
@@ -978,25 +1421,645 @@ def _semantic_phase_anchor_penalty(
     }
 
 
-def _relation_delta_summary(seq: SequenceData, group: str = "two_hand_relation") -> Optional[Dict[str, Any]]:
+def _semantic_phase_order_nearest_query_frame(
+    anchor: FrameFeature,
+    query: SequenceData,
+    profile: Optional[SemanticProfile],
+) -> Tuple[int, FrameFeature, float]:
+    best_idx = 0
+    best_frame = query.features[0]
+    best_distance = float("inf")
+    for idx, candidate in enumerate(query.features):
+        dist, metrics = frame_distance(anchor, candidate, profile)
+        weighted = float(metrics.get("weighted", dist))
+        if weighted < best_distance:
+            best_idx = idx
+            best_frame = candidate
+            best_distance = weighted
+    return best_idx, best_frame, best_distance
+
+
+def _semantic_phase_order_metrics(indices: Sequence[int], max_index: int) -> Dict[str, float]:
+    pair_count = 0
+    concordant = 0
+    discordant = 0
+    inversions = 0
+    ties = 0
+    for a in range(len(indices)):
+        for b in range(a + 1, len(indices)):
+            pair_count += 1
+            delta = int(indices[b]) - int(indices[a])
+            if delta > 0:
+                concordant += 1
+            elif delta < 0:
+                discordant += 1
+                inversions += 1
+            else:
+                ties += 1
+
+    adjacent_count = max(0, len(indices) - 1)
+    adjacent_backtracks = 0
+    max_backtrack = 0.0
+    for a, b in zip(indices[:-1], indices[1:]):
+        delta = int(b) - int(a)
+        if delta < 0:
+            adjacent_backtracks += 1
+            max_backtrack = max(max_backtrack, abs(delta) / max(float(max_index), 1.0))
+
+    inversion_rate = inversions / pair_count if pair_count else 0.0
+    adjacent_backtrack_rate = adjacent_backtracks / adjacent_count if adjacent_count else 0.0
+    tau = (concordant - discordant) / pair_count if pair_count else 0.0
+    span = (max(indices) - min(indices)) / max(float(max_index), 1.0) if indices else 0.0
+    unique_ratio = len(set(indices)) / max(float(len(indices)), 1.0)
+    large_span = min(span / 0.45, 1.0)
+    return {
+        "pair_count": float(pair_count),
+        "concordant": float(concordant),
+        "discordant": float(discordant),
+        "ties": float(ties),
+        "inversions": float(inversions),
+        "inversion_rate": float(inversion_rate),
+        "kendall_tau": float(tau),
+        "adjacent_backtracks": float(adjacent_backtracks),
+        "adjacent_backtrack_rate": float(adjacent_backtrack_rate),
+        "max_backtrack_norm": float(max_backtrack),
+        "span_norm": float(span),
+        "large_span_norm": float(large_span),
+        "unique_index_ratio": float(unique_ratio),
+        "disorder_span_score": float(inversion_rate * large_span * unique_ratio),
+        "adjacent_disorder_span_score": float(adjacent_backtrack_rate * large_span * unique_ratio),
+        "backtrack_span_score": float(max_backtrack * large_span * unique_ratio),
+    }
+
+
+def _semantic_phase_order_guard(
+    standard: SequenceData,
+    query: SequenceData,
+    profile: Optional[SemanticProfile],
+    config: Dict[str, Any],
+) -> Dict[str, Any]:
+    if profile is None or not bool(config.get("phase_order_guard_enabled", False)):
+        return {"enabled": False}
+    if not standard.features or not query.features:
+        return {"enabled": True, "blocked": False, "reason": "empty_sequence"}
+
+    rows: List[Dict[str, Any]] = []
+    best_indices: List[int] = []
+    distances: List[float] = []
+    for phase in config.get("phase_order_guard_anchor_phases") or [0.10, 0.25, 0.50, 0.75, 0.90]:
+        std_frame = _phase_anchor_frame(standard, float(phase))
+        if std_frame is None:
+            continue
+        best_idx, best_frame, best_dist = _semantic_phase_order_nearest_query_frame(std_frame, query, profile)
+        best_indices.append(best_idx)
+        distances.append(best_dist)
+        rows.append(
+            {
+                "target_phase": float(phase),
+                "standard_frame_idx": int(std_frame.frame_idx),
+                "standard_semantic_phase": float(std_frame.semantic_phase),
+                "query_local_index": int(best_idx),
+                "query_frame_idx": int(best_frame.frame_idx),
+                "query_semantic_phase": float(best_frame.semantic_phase),
+                "nearest_distance": float(best_dist),
+            }
+        )
+
+    if len(best_indices) < 3:
+        return {
+            "enabled": True,
+            "blocked": False,
+            "reason": "too_few_anchor_matches",
+            "anchor_count": int(len(best_indices)),
+            "anchors": rows,
+        }
+
+    metrics = _semantic_phase_order_metrics(best_indices, len(query.features) - 1)
+    min_disorder_span = float(config.get("phase_order_guard_min_disorder_span_score", 0.0))
+    min_adjacent_disorder_span = float(config.get("phase_order_guard_min_adjacent_disorder_span_score", 0.0))
+    triggered_by: List[str] = []
+    if min_disorder_span > 0.0 and float(metrics["disorder_span_score"]) >= min_disorder_span:
+        triggered_by.append("disorder_span_score")
+    if (
+        min_adjacent_disorder_span > 0.0
+        and float(metrics["adjacent_disorder_span_score"]) >= min_adjacent_disorder_span
+    ):
+        triggered_by.append("adjacent_disorder_span_score")
+    blocked = bool(triggered_by)
+    return {
+        "enabled": True,
+        "blocked": blocked,
+        "reason": "phase_order_disorder" if blocked else "passed",
+        "triggered_by": triggered_by,
+        "anchor_count": int(len(best_indices)),
+        "query_length": int(len(query.features)),
+        "best_query_indices": [int(idx) for idx in best_indices],
+        "mean_nearest_distance": float(np.mean(distances)) if distances else 0.0,
+        "max_nearest_distance": float(np.max(distances)) if distances else 0.0,
+        "min_disorder_span_score": min_disorder_span,
+        "min_adjacent_disorder_span_score": min_adjacent_disorder_span,
+        "max_score": float(config.get("phase_order_guard_max_score", 45.0)),
+        "anchors": rows,
+        **metrics,
+    }
+
+
+def _relation_value_series(seq: SequenceData, group: str = "two_hand_relation") -> List[Tuple[int, np.ndarray]]:
     if not seq.features or group not in seq.features[0].groups:
-        return None
+        return []
     valid: List[np.ndarray] = []
     for item in seq.features:
         sl = item.groups[group]
         if float(item.mask[sl].mean()) >= 0.50:
-            valid.append(np.asarray(item.vector[sl], dtype=np.float32))
-    if len(valid) < 3:
+            valid.append((int(item.frame_idx), np.asarray(item.vector[sl], dtype=np.float32)))
+    return valid
+
+
+def _relation_delta_from_values(values: Sequence[Tuple[int, np.ndarray]], source: str) -> Optional[Dict[str, Any]]:
+    if len(values) < 3:
         return None
-    window = max(1, min(3, int(round(len(valid) * 0.25))))
-    start = np.stack(valid[:window], axis=0).mean(axis=0)
-    end = np.stack(valid[-window:], axis=0).mean(axis=0)
+    arr = np.stack([value for _, value in values], axis=0)
+    window = max(1, min(3, int(round(len(arr) * 0.25))))
+    start = arr[:window].mean(axis=0)
+    end = arr[-window:].mean(axis=0)
     delta = (end - start).astype(np.float32)
     return {
-        "valid_count": len(valid),
+        "valid_count": len(values),
         "start": start,
         "end": end,
         "delta": delta,
+        "source": source,
+        "start_frame_idx": int(values[0][0]),
+        "end_frame_idx": int(values[-1][0]),
+    }
+
+
+def _relation_delta_summary(seq: SequenceData, group: str = "two_hand_relation") -> Optional[Dict[str, Any]]:
+    valid = _relation_value_series(seq, group)
+    if len(valid) < 3:
+        return None
+    return _relation_delta_from_values(valid, "net")
+
+
+def _jump_relation_delta_metrics(
+    std_delta: np.ndarray,
+    qry_delta: np.ndarray,
+    *,
+    min_direction: float,
+    min_amplitude_ratio: float,
+    max_horizontal_to_vertical: float,
+) -> Dict[str, Any]:
+    semantic_dims = np.asarray([0, 1, 2, 3], dtype=np.int64)
+    vertical_dims = np.asarray([1, 3], dtype=np.int64)
+    horizontal_dims = np.asarray([0, 2], dtype=np.int64)
+    std_vec = std_delta[semantic_dims]
+    qry_vec = qry_delta[semantic_dims]
+    std_norm = float(np.linalg.norm(std_vec))
+    qry_norm = float(np.linalg.norm(qry_vec))
+    if std_norm <= 1e-6 or qry_norm <= 1e-6:
+        return {"passed": False, "reason": "weak_relation_delta"}
+    cosine = max(-1.0, min(1.0, float(np.dot(std_vec, qry_vec) / (std_norm * qry_norm))))
+    if cosine < min_direction:
+        return {
+            "passed": False,
+            "reason": "relation_direction_mismatch",
+            "direction_cosine": cosine,
+            "min_direction": min_direction,
+        }
+
+    vertical_scores: List[float] = []
+    for dim in vertical_dims:
+        std_value = float(std_delta[int(dim)])
+        qry_value = float(qry_delta[int(dim)])
+        if abs(std_value) <= 1e-6:
+            continue
+        signed_ratio = (qry_value * (1.0 if std_value >= 0 else -1.0)) / max(abs(std_value), 1e-6)
+        vertical_scores.append(max(0.0, min(1.0, signed_ratio / 0.45)))
+    vertical_score = float(np.mean(vertical_scores)) if vertical_scores else 0.0
+    if vertical_score < 0.70:
+        return {
+            "passed": False,
+            "reason": "weak_same_direction_vertical_jump",
+            "direction_cosine": cosine,
+            "vertical_score": vertical_score,
+        }
+
+    std_vertical_mag = float(np.linalg.norm(std_delta[vertical_dims]))
+    qry_vertical_mag = float(np.linalg.norm(qry_delta[vertical_dims]))
+    amplitude_ratio = qry_vertical_mag / max(std_vertical_mag, 1e-6)
+    if amplitude_ratio < min_amplitude_ratio:
+        return {
+            "passed": False,
+            "reason": "relation_jump_amplitude_too_small",
+            "direction_cosine": cosine,
+            "vertical_score": vertical_score,
+            "amplitude_ratio": amplitude_ratio,
+            "min_amplitude_ratio": min_amplitude_ratio,
+        }
+    qry_horizontal_mag = float(np.linalg.norm(qry_delta[horizontal_dims]))
+    query_horizontal_to_vertical = qry_horizontal_mag / max(qry_vertical_mag, 1e-6)
+    if query_horizontal_to_vertical > max_horizontal_to_vertical:
+        return {
+            "passed": False,
+            "reason": "relation_motion_too_horizontal",
+            "direction_cosine": cosine,
+            "vertical_score": vertical_score,
+            "amplitude_ratio": amplitude_ratio,
+            "query_horizontal_to_vertical": query_horizontal_to_vertical,
+            "max_horizontal_to_vertical": max_horizontal_to_vertical,
+        }
+    amplitude_score = float(math.exp(-0.32 * min(abs(math.log(max(amplitude_ratio, 1e-6))), 3.0)))
+    direction_score = (cosine - min_direction) / max(1.0 - min_direction, 1e-6)
+    direction_score = max(0.0, min(1.0, direction_score))
+    return {
+        "passed": True,
+        "reason": "used",
+        "direction_cosine": cosine,
+        "direction_score": direction_score,
+        "vertical_score": vertical_score,
+        "amplitude_ratio": amplitude_ratio,
+        "amplitude_score": amplitude_score,
+        "query_horizontal_to_vertical": query_horizontal_to_vertical,
+    }
+
+
+def _right_two_finger_shape_summary(seq: SequenceData, start_frame_idx: int, end_frame_idx: int) -> Optional[Dict[str, Any]]:
+    # right_hand_shape layout: wrist-tip distances, spreads, mcp-tip distances,
+    # then straightness. Index/middle dimensions encode the "two legs" handshape.
+    two_finger_indices = np.asarray([1, 2, 6, 7, 11, 12, 16, 17], dtype=np.int64)
+    values: List[float] = []
+    for item in seq.features:
+        if item.frame_idx < start_frame_idx or item.frame_idx > end_frame_idx:
+            continue
+        if "right_hand_shape" not in item.groups:
+            continue
+        sl = item.groups["right_hand_shape"]
+        vector = item.vector[sl]
+        mask = item.mask[sl]
+        valid = two_finger_indices[two_finger_indices < len(vector)]
+        valid = valid[mask[valid] > 0.5] if len(valid) else valid
+        if len(valid) < 4:
+            continue
+        values.append(float(np.mean(vector[valid])))
+    if len(values) < 3:
+        return None
+    arr = np.asarray(values, dtype=np.float32)
+    window = max(1, min(3, int(round(len(arr) * 0.25))))
+    return {
+        "valid_count": int(len(values)),
+        "mean": float(arr.mean()),
+        "start": float(arr[:window].mean()),
+        "end": float(arr[-window:].mean()),
+        "range": float(arr.max() - arr.min()),
+        "min": float(arr.min()),
+        "max": float(arr.max()),
+    }
+
+
+def _best_local_relation_delta_summary(
+    seq: SequenceData,
+    std_delta: np.ndarray,
+    config: Dict[str, Any],
+    group: str = "two_hand_relation",
+) -> Optional[Dict[str, Any]]:
+    values = _relation_value_series(seq, group)
+    if len(values) < 4:
+        return None
+    min_coverage = float(config.get("jump_relation_local_min_coverage", 0.48))
+    max_coverage = max(min_coverage, float(config.get("jump_relation_local_max_coverage", 0.78)))
+    min_len = max(3, int(math.ceil(len(values) * min_coverage)))
+    max_len = max(min_len, int(math.ceil(len(values) * max_coverage)))
+    max_len = min(max_len, len(values))
+    min_direction = float(config.get("jump_relation_local_min_direction", 0.92))
+    min_amplitude_ratio = float(config.get("jump_relation_local_min_amplitude_ratio", 0.80))
+    max_horizontal = float(config.get("jump_relation_local_max_horizontal_to_vertical", 0.60))
+    min_two_finger_shape_mean = float(config.get("jump_relation_local_min_two_finger_shape_mean", 0.95))
+    best: Optional[Dict[str, Any]] = None
+    best_rank = -1.0
+    for length in range(min_len, max_len + 1):
+        for start_idx in range(0, len(values) - length + 1):
+            segment = values[start_idx:start_idx + length]
+            summary = _relation_delta_from_values(segment, "full_sequence_local_relation_segment")
+            if summary is None:
+                continue
+            qry_delta = np.asarray(summary["delta"], dtype=np.float32)
+            metrics = _jump_relation_delta_metrics(
+                std_delta,
+                qry_delta,
+                min_direction=min_direction,
+                min_amplitude_ratio=min_amplitude_ratio,
+                max_horizontal_to_vertical=max_horizontal,
+            )
+            if not bool(metrics.get("passed")):
+                continue
+            shape_summary = _right_two_finger_shape_summary(
+                seq,
+                int(summary["start_frame_idx"]),
+                int(summary["end_frame_idx"]),
+            )
+            if shape_summary is None or float(shape_summary.get("mean", 0.0)) < min_two_finger_shape_mean:
+                continue
+            coverage = length / max(len(values), 1)
+            rank = (
+                0.55 * float(metrics["direction_cosine"])
+                + 0.20 * min(float(metrics["amplitude_ratio"]), 2.0) / 2.0
+                + 0.15 * max(0.0, 1.0 - float(metrics["query_horizontal_to_vertical"]) / max(max_horizontal, 1e-6))
+                + 0.10 * coverage
+            )
+            if rank > best_rank:
+                best_rank = rank
+                best = {
+                    **summary,
+                    "coverage": coverage,
+                    "candidate_rank": rank,
+                    "candidate_metrics": metrics,
+                    "total_relation_valid_count": len(values),
+                    "right_two_finger_shape": shape_summary,
+                    "min_two_finger_shape_mean": min_two_finger_shape_mean,
+                }
+    return best
+
+
+def _flower_opening_guard(seq: SequenceData, profile: Optional[SemanticProfile], config: Dict[str, Any]) -> Dict[str, Any]:
+    if profile is None or profile.word != "花" or not bool(config.get("flower_opening_guard_enabled", False)):
+        return {"enabled": False, "passed": True}
+
+    opening_indices = np.asarray([5, 6, 7, 8, 9, 15, 16, 17, 18, 19], dtype=np.int64)
+    candidates: List[Dict[str, Any]] = []
+    for group in ["right_hand_shape", "left_hand_shape"]:
+        if not seq.features or group not in seq.features[0].groups:
+            continue
+        values: List[float] = []
+        for item in seq.features:
+            sl = item.groups[group]
+            vector = item.vector[sl]
+            mask = item.mask[sl]
+            valid = opening_indices[opening_indices < len(vector)]
+            valid = valid[mask[valid] > 0.5] if len(valid) else valid
+            if len(valid) < 4:
+                continue
+            values.append(float(np.mean(vector[valid])))
+        if len(values) < 3:
+            continue
+        arr = np.asarray(values, dtype=np.float32)
+        window = max(1, min(3, int(round(len(arr) * 0.25))))
+        start = float(arr[:window].mean())
+        end = float(arr[-window:].mean())
+        delta = end - start
+        value_range = float(arr.max() - arr.min())
+        delta_score = max(0.0, min(1.0, (delta - 0.035) / 0.120))
+        range_score = max(0.0, min(1.0, (value_range - 0.420) / 0.200))
+        opening_score = 0.45 * delta_score + 0.55 * range_score
+        candidates.append(
+            {
+                "group": group,
+                "valid_count": len(values),
+                "start": start,
+                "end": end,
+                "delta": float(delta),
+                "range": value_range,
+                "delta_score": float(delta_score),
+                "range_score": float(range_score),
+                "opening_score": float(opening_score),
+            }
+        )
+
+    min_score = float(config.get("flower_opening_min_score", 0.30))
+    best = max(candidates, key=lambda item: float(item["opening_score"]), default=None)
+    best_score = float(best["opening_score"]) if best else 0.0
+    return {
+        "enabled": True,
+        "passed": best_score >= min_score,
+        "best_score": best_score,
+        "min_score": min_score,
+        "best": best,
+        "candidates": candidates,
+    }
+
+
+def _flower_jump_confusion_guard(
+    seq: SequenceData,
+    profile: Optional[SemanticProfile],
+    config: Dict[str, Any],
+    flower_opening_guard: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    if profile is None or profile.word != "花" or not bool(config.get("flower_jump_confusion_guard_enabled", False)):
+        return {"enabled": False, "blocked": False}
+
+    presence = _presence_ratio(seq)
+    left_presence = float(presence.get("left_hand", 0.0))
+    right_presence = float(presence.get("right_hand", 0.0))
+    two_hand_presence = min(left_presence, right_presence)
+    min_two_hand_presence = float(config.get("flower_jump_confusion_min_two_hand_presence", 0.58))
+    base: Dict[str, Any] = {
+        "enabled": True,
+        "blocked": False,
+        "left_hand_presence": left_presence,
+        "right_hand_presence": right_presence,
+        "two_hand_presence": two_hand_presence,
+        "min_two_hand_presence": min_two_hand_presence,
+    }
+    if two_hand_presence < min_two_hand_presence:
+        return {**base, "reason": "two_hand_presence_low"}
+
+    opening_score = float((flower_opening_guard or {}).get("best_score") or 0.0)
+    max_opening_score = float(config.get("flower_jump_confusion_max_opening_score", 0.45))
+    base.update(
+        {
+            "flower_opening_score": opening_score,
+            "max_opening_score": max_opening_score,
+        }
+    )
+    if opening_score > max_opening_score:
+        return {**base, "reason": "flower_opening_strong"}
+
+    relation_summary = _relation_delta_summary(seq)
+    min_relation_valid_count = int(config.get("flower_jump_confusion_min_relation_valid_count", 3))
+    if relation_summary is None or int(relation_summary.get("valid_count") or 0) < min_relation_valid_count:
+        return {
+            **base,
+            "reason": "relation_not_stable",
+            "relation_valid_count": int((relation_summary or {}).get("valid_count") or 0),
+            "min_relation_valid_count": min_relation_valid_count,
+        }
+
+    shape_summary = _right_two_finger_shape_summary(
+        seq,
+        int(relation_summary["start_frame_idx"]),
+        int(relation_summary["end_frame_idx"]),
+    )
+    shape_mean = float((shape_summary or {}).get("mean") or 0.0)
+    min_shape_mean = float(config.get("flower_jump_confusion_min_two_finger_shape_mean", 1.05))
+    delta = np.asarray(relation_summary["delta"], dtype=np.float32)
+    vertical_mag = float(np.linalg.norm(delta[[1, 3]]))
+    horizontal_mag = float(np.linalg.norm(delta[[0, 2]]))
+    horizontal_to_vertical = horizontal_mag / max(vertical_mag, 1e-6)
+    detail = {
+        **base,
+        "relation_valid_count": int(relation_summary.get("valid_count") or 0),
+        "min_relation_valid_count": min_relation_valid_count,
+        "relation_delta": [float(value) for value in delta.tolist()],
+        "relation_vertical_magnitude": vertical_mag,
+        "relation_horizontal_to_vertical": horizontal_to_vertical,
+        "right_two_finger_shape": shape_summary,
+        "right_two_finger_shape_mean": shape_mean,
+        "min_two_finger_shape_mean": min_shape_mean,
+    }
+    if shape_summary is None or shape_mean < min_shape_mean:
+        return {**detail, "reason": "two_finger_shape_not_clear"}
+
+    return {
+        **detail,
+        "blocked": True,
+        "reason": "jump_like_two_hand_relation_with_weak_flower_opening",
+    }
+
+
+def _flower_visible_core_semantic_floor(
+    *,
+    dtw_distance: float,
+    scoring_length_ratio: float,
+    action_window: Dict[str, Any],
+    score_scale: Dict[str, Any],
+    sequence_penalty: Dict[str, Any],
+    group_mean: Dict[str, float],
+    profile: Optional[SemanticProfile],
+    config: Dict[str, Any],
+) -> Tuple[float, Dict[str, Any]]:
+    if profile is None or profile.word != "花" or not bool(config.get("flower_visible_core_floor_enabled", False)):
+        return 0.0, {"enabled": False}
+
+    confusion_guard = score_scale.get("flower_jump_confusion_guard") or {}
+    if bool(confusion_guard.get("blocked")):
+        return 0.0, {
+            "enabled": True,
+            "used": False,
+            "source": "short_visible_core",
+            "reason": "jump_like_two_hand_confusion",
+            "flower_jump_confusion_guard": confusion_guard,
+        }
+
+    phase_order_guard = score_scale.get("semantic_phase_order_guard") or {}
+    if bool(phase_order_guard.get("blocked")):
+        return 0.0, {
+            "enabled": True,
+            "used": False,
+            "source": "short_visible_core",
+            "reason": "phase_order_disorder",
+            "semantic_phase_order_guard": phase_order_guard,
+        }
+
+    min_score = float(config.get("flower_visible_core_floor_min_score", 72.0))
+    max_score = float(config.get("flower_visible_core_floor_max_score", 80.0))
+    if max_score <= 0.0 or max_score < min_score:
+        return 0.0, {"enabled": False, "reason": "max_score_disabled"}
+
+    max_length_ratio = float(config.get("flower_visible_core_floor_max_length_ratio", 0.32))
+    if scoring_length_ratio > max_length_ratio:
+        return 0.0, {
+            "enabled": True,
+            "used": False,
+            "source": "short_visible_core",
+            "reason": "query_not_short_core_capture",
+            "scoring_length_ratio": scoring_length_ratio,
+            "max_length_ratio": max_length_ratio,
+        }
+
+    min_presence = float(config.get("flower_visible_core_floor_min_presence", 0.62))
+    core_presence = float(score_scale.get("semantic_core_query_hand_presence", 0.0))
+    if core_presence < min_presence:
+        return 0.0, {
+            "enabled": True,
+            "used": False,
+            "source": "short_visible_core",
+            "reason": "insufficient_core_hand_presence",
+            "core_presence": core_presence,
+            "min_presence": min_presence,
+        }
+
+    guard = score_scale.get("flower_opening_guard") or {}
+    opening_score = float(guard.get("best_score") or 0.0)
+    min_opening = float(config.get("flower_visible_core_floor_min_opening_score", 0.60))
+    if not bool(guard.get("passed", True)) or opening_score < min_opening:
+        return 0.0, {
+            "enabled": True,
+            "used": False,
+            "source": "short_visible_core",
+            "reason": "opening_guard_too_weak",
+            "opening_score": opening_score,
+            "min_opening_score": min_opening,
+        }
+
+    max_dtw = float(config.get("flower_visible_core_floor_max_dtw", 0.042))
+    if dtw_distance > max_dtw:
+        return 0.0, {
+            "enabled": True,
+            "used": False,
+            "source": "short_visible_core",
+            "reason": "core_dtw_too_far",
+            "dtw_distance": dtw_distance,
+            "max_dtw": max_dtw,
+        }
+
+    query_window = (action_window.get("query") or {}) if isinstance(action_window, dict) else {}
+    action_coverage = float(query_window.get("energy_coverage") or 0.0)
+    min_action_coverage = float(config.get("flower_visible_core_floor_min_action_coverage", 0.62))
+    if action_coverage < min_action_coverage:
+        return 0.0, {
+            "enabled": True,
+            "used": False,
+            "source": "short_visible_core",
+            "reason": "action_window_coverage_low",
+            "action_coverage": action_coverage,
+            "min_action_coverage": min_action_coverage,
+        }
+
+    if float(sequence_penalty.get("required_presence_penalty", 0.0)) > 0.04:
+        return 0.0, {
+            "enabled": True,
+            "used": False,
+            "source": "short_visible_core",
+            "reason": "required_presence_penalty_too_high",
+            "required_presence_penalty": float(sequence_penalty.get("required_presence_penalty", 0.0)),
+        }
+    if float(group_mean.get("right_hand_shape", 0.0)) > 0.10 or float(group_mean.get("right_hand", 0.0)) > 0.10:
+        return 0.0, {
+            "enabled": True,
+            "used": False,
+            "source": "short_visible_core",
+            "reason": "main_hand_geometry_too_far",
+            "right_hand": float(group_mean.get("right_hand", 0.0)),
+            "right_hand_shape": float(group_mean.get("right_hand_shape", 0.0)),
+        }
+
+    opening_quality = max(0.0, min(1.0, (opening_score - min_opening) / max(1.0 - min_opening, 1e-6)))
+    presence_quality = max(0.0, min(1.0, (core_presence - min_presence) / max(1.0 - min_presence, 1e-6)))
+    dtw_quality = max(0.0, min(1.0, (max_dtw - dtw_distance) / max(max_dtw, 1e-6)))
+    coverage_quality = max(0.0, min(1.0, (action_coverage - min_action_coverage) / max(1.0 - min_action_coverage, 1e-6)))
+    quality = 0.50 * opening_quality + 0.22 * presence_quality + 0.18 * dtw_quality + 0.10 * coverage_quality
+    semantic_score = min_score + (max_score - min_score) * quality
+    semantic_score = max(0.0, min(max_score, semantic_score))
+    return semantic_score, {
+        "enabled": True,
+        "used": semantic_score > 0.0,
+        "reason": "used",
+        "source": "short_visible_core",
+        "score": semantic_score,
+        "min_score": min_score,
+        "max_score": max_score,
+        "quality": quality,
+        "opening_score": opening_score,
+        "opening_quality": opening_quality,
+        "core_presence": core_presence,
+        "presence_quality": presence_quality,
+        "dtw_distance": dtw_distance,
+        "dtw_quality": dtw_quality,
+        "scoring_length_ratio": scoring_length_ratio,
+        "action_coverage": action_coverage,
+        "coverage_quality": coverage_quality,
+        "query_segment_start_frame_idx": query_window.get("start_frame_idx"),
+        "query_segment_end_frame_idx": query_window.get("end_frame_idx"),
+        "query_segment_coverage": action_coverage,
     }
 
 
@@ -1007,6 +2070,8 @@ def _jump_relation_semantic_floor(
     sequence_penalty: Dict[str, Any],
     profile: Optional[SemanticProfile],
     config: Dict[str, Any],
+    full_standard: Optional[SequenceData] = None,
+    full_query: Optional[SequenceData] = None,
 ) -> Tuple[float, Dict[str, Any]]:
     if profile is None or profile.word != "跳" or not bool(config.get("jump_relation_semantic_floor_enabled", False)):
         return 0.0, {"enabled": False}
@@ -1042,98 +2107,236 @@ def _jump_relation_semantic_floor(
             "right_hand_shape": float(group_mean.get("right_hand_shape", 0.0)),
         }
 
-    std_summary = _relation_delta_summary(standard)
-    qry_summary = _relation_delta_summary(query)
-    if std_summary is None or qry_summary is None:
+    primary_std_summary = _relation_delta_summary(standard)
+    primary_qry_summary = _relation_delta_summary(query)
+    if primary_std_summary is None:
         return 0.0, {"enabled": True, "used": False, "reason": "missing_relation_delta"}
-    std_delta = np.asarray(std_summary["delta"], dtype=np.float32)
-    qry_delta = np.asarray(qry_summary["delta"], dtype=np.float32)
-    semantic_dims = np.asarray([0, 1, 2, 3], dtype=np.int64)
-    std_vec = std_delta[semantic_dims]
-    qry_vec = qry_delta[semantic_dims]
-    std_norm = float(np.linalg.norm(std_vec))
-    qry_norm = float(np.linalg.norm(qry_vec))
-    if std_norm <= 1e-6 or qry_norm <= 1e-6:
-        return 0.0, {"enabled": True, "used": False, "reason": "weak_relation_delta"}
-    cosine = max(-1.0, min(1.0, float(np.dot(std_vec, qry_vec) / (std_norm * qry_norm))))
+    fallback_std_summary = _relation_delta_summary(full_standard) if full_standard is not None else primary_std_summary
+    if fallback_std_summary is None:
+        fallback_std_summary = primary_std_summary
+
+    def evaluate_summary(
+        std_summary: Dict[str, Any],
+        qry_summary: Optional[Dict[str, Any]],
+        *,
+        source: str,
+        min_direction_value: float,
+        min_amplitude_ratio: float,
+        max_horizontal_to_vertical: float,
+    ) -> Tuple[float, Dict[str, Any]]:
+        if qry_summary is None:
+            return 0.0, {"enabled": True, "used": False, "reason": "missing_relation_delta", "source": source}
+        std_delta = np.asarray(std_summary["delta"], dtype=np.float32)
+        qry_delta = np.asarray(qry_summary["delta"], dtype=np.float32)
+        metrics = _jump_relation_delta_metrics(
+            std_delta,
+            qry_delta,
+            min_direction=min_direction_value,
+            min_amplitude_ratio=min_amplitude_ratio,
+            max_horizontal_to_vertical=max_horizontal_to_vertical,
+        )
+        if not bool(metrics.get("passed")):
+            return 0.0, {
+                "enabled": True,
+                "used": False,
+                "source": source,
+                "standard_valid_count": int(std_summary.get("valid_count") or 0),
+                "query_valid_count": int(qry_summary.get("valid_count") or 0),
+                "standard_delta": [float(x) for x in std_delta.tolist()],
+                "query_delta": [float(x) for x in qry_delta.tolist()],
+                **{key: value for key, value in metrics.items() if key != "passed"},
+            }
+        presence_factor = 0.88 + 0.12 * max(0.0, min(1.0, (relation_presence - min_presence) / max(1.0 - min_presence, 1e-6)))
+        relation_quality = 0.45 * float(metrics["direction_score"]) + 0.35 * float(metrics["vertical_score"]) + 0.20 * float(metrics["amplitude_score"])
+        semantic_score = max_score * (0.62 + 0.38 * relation_quality) * presence_factor
+        semantic_score = max(0.0, min(max_score, semantic_score))
+        return semantic_score, {
+            "enabled": True,
+            "used": semantic_score > 0.0,
+            "reason": "used",
+            "source": source,
+            "score": semantic_score,
+            "max_score": max_score,
+            "relation_presence": relation_presence,
+            "relation_quality": relation_quality,
+            "standard_valid_count": int(std_summary.get("valid_count") or 0),
+            "query_valid_count": int(qry_summary.get("valid_count") or 0),
+            "standard_delta": [float(x) for x in std_delta.tolist()],
+            "query_delta": [float(x) for x in qry_delta.tolist()],
+            "query_segment_start_frame_idx": qry_summary.get("start_frame_idx"),
+            "query_segment_end_frame_idx": qry_summary.get("end_frame_idx"),
+            "query_segment_coverage": qry_summary.get("coverage"),
+            **{key: value for key, value in metrics.items() if key not in {"passed", "reason"}},
+        }
+
     min_direction = float(config.get("jump_relation_semantic_min_direction", 0.55))
-    if cosine < min_direction:
-        return 0.0, {
-            "enabled": True,
-            "used": False,
-            "reason": "relation_direction_mismatch",
-            "direction_cosine": cosine,
-            "min_direction": min_direction,
-        }
+    primary_score, primary_detail = evaluate_summary(
+        primary_std_summary,
+        primary_qry_summary,
+        source="action_window_net",
+        min_direction_value=min_direction,
+        min_amplitude_ratio=0.42,
+        max_horizontal_to_vertical=1.25,
+    )
+    if primary_score > 0.0:
+        return primary_score, primary_detail
 
-    vertical_dims = [1, 3]
-    vertical_scores: List[float] = []
-    for dim in vertical_dims:
-        std_value = float(std_delta[dim])
-        qry_value = float(qry_delta[dim])
-        if abs(std_value) <= 1e-6:
-            continue
-        signed_ratio = (qry_value * (1.0 if std_value >= 0 else -1.0)) / max(abs(std_value), 1e-6)
-        vertical_scores.append(max(0.0, min(1.0, signed_ratio / 0.45)))
-    vertical_score = float(np.mean(vertical_scores)) if vertical_scores else 0.0
-    if vertical_score < 0.70:
-        return 0.0, {
-            "enabled": True,
+    local_candidate: Optional[Dict[str, Any]] = None
+    if bool(config.get("jump_relation_local_fallback_enabled", True)):
+        local_seq = full_query if full_query is not None else query
+        local_candidate = _best_local_relation_delta_summary(
+            local_seq,
+            np.asarray(fallback_std_summary["delta"], dtype=np.float32),
+            config,
+        )
+    if local_candidate is not None:
+        local_score, local_detail = evaluate_summary(
+            fallback_std_summary,
+            local_candidate,
+            source="full_sequence_local_relation_segment",
+            min_direction_value=float(config.get("jump_relation_local_min_direction", 0.92)),
+            min_amplitude_ratio=float(config.get("jump_relation_local_min_amplitude_ratio", 0.80)),
+            max_horizontal_to_vertical=float(config.get("jump_relation_local_max_horizontal_to_vertical", 0.60)),
+        )
+        if local_score > 0.0:
+            local_detail["fallback_from"] = primary_detail
+            local_detail["local_candidate_rank"] = local_candidate.get("candidate_rank")
+            local_detail["right_two_finger_shape"] = local_candidate.get("right_two_finger_shape")
+            local_detail["min_two_finger_shape_mean"] = local_candidate.get("min_two_finger_shape_mean")
+            return local_score, local_detail
+        primary_detail["local_candidate"] = local_detail
+    else:
+        primary_detail["local_candidate"] = {
             "used": False,
-            "reason": "weak_same_direction_vertical_jump",
-            "direction_cosine": cosine,
-            "vertical_score": vertical_score,
+            "reason": "no_matching_local_relation_segment",
         }
+    return 0.0, primary_detail
 
-    std_vertical_mag = float(np.linalg.norm(std_delta[vertical_dims]))
-    qry_vertical_mag = float(np.linalg.norm(qry_delta[vertical_dims]))
-    amplitude_ratio = qry_vertical_mag / max(std_vertical_mag, 1e-6)
-    if amplitude_ratio < 0.42:
-        return 0.0, {
-            "enabled": True,
-            "used": False,
-            "reason": "relation_jump_amplitude_too_small",
-            "direction_cosine": cosine,
-            "vertical_score": vertical_score,
-            "amplitude_ratio": amplitude_ratio,
-        }
-    qry_horizontal_mag = float(np.linalg.norm(qry_delta[[0, 2]]))
-    query_horizontal_to_vertical = qry_horizontal_mag / max(qry_vertical_mag, 1e-6)
-    if query_horizontal_to_vertical > 1.25:
-        return 0.0, {
-            "enabled": True,
-            "used": False,
-            "reason": "relation_motion_too_horizontal",
-            "direction_cosine": cosine,
-            "vertical_score": vertical_score,
-            "amplitude_ratio": amplitude_ratio,
-            "query_horizontal_to_vertical": query_horizontal_to_vertical,
-        }
-    amplitude_score = float(math.exp(-0.32 * min(abs(math.log(max(amplitude_ratio, 1e-6))), 3.0)))
-    direction_score = (cosine - min_direction) / max(1.0 - min_direction, 1e-6)
-    direction_score = max(0.0, min(1.0, direction_score))
-    presence_factor = 0.75 + 0.25 * max(0.0, min(1.0, (relation_presence - min_presence) / max(1.0 - min_presence, 1e-6)))
-    relation_quality = 0.45 * direction_score + 0.35 * vertical_score + 0.20 * amplitude_score
-    semantic_score = max_score * (0.62 + 0.38 * relation_quality) * presence_factor
-    semantic_score = max(0.0, min(max_score, semantic_score))
-    return semantic_score, {
-        "enabled": True,
-        "used": semantic_score > 0.0,
-        "score": semantic_score,
-        "max_score": max_score,
-        "relation_presence": relation_presence,
-        "direction_cosine": cosine,
-        "direction_score": direction_score,
-        "vertical_score": vertical_score,
-        "amplitude_ratio": amplitude_ratio,
-        "amplitude_score": amplitude_score,
-        "query_horizontal_to_vertical": query_horizontal_to_vertical,
-        "relation_quality": relation_quality,
-        "standard_valid_count": int(std_summary["valid_count"]),
-        "query_valid_count": int(qry_summary["valid_count"]),
-        "standard_delta": [float(x) for x in std_delta.tolist()],
-        "query_delta": [float(x) for x in qry_delta.tolist()],
+
+def _capture_quality_assessment(
+    profile: Optional[SemanticProfile],
+    prototype_score: float,
+    score_scale: Dict[str, Any],
+    sequence_penalty: Dict[str, Any],
+) -> Dict[str, Any]:
+    word = profile.word if profile is not None else ""
+    query_presence = sequence_penalty.get("query_presence") or {}
+    left_presence = float(query_presence.get("left_hand", 0.0))
+    right_presence = float(query_presence.get("right_hand", 0.0))
+    two_hand_presence = min(left_presence, right_presence)
+    core_presence = float(score_scale.get("semantic_core_query_hand_presence", max(left_presence, right_presence)))
+    floor = score_scale.get("semantic_floor") or {}
+    floor_reason = str(floor.get("reason") or "")
+    flower_guard = score_scale.get("flower_opening_guard") or {}
+    result: Dict[str, Any] = {
+        "status": "score_valid",
+        "reason": "score_valid",
+        "reliable_for_scoring": True,
+        "message": "核心语义可评分。",
+        "left_hand_presence": left_presence,
+        "right_hand_presence": right_presence,
+        "two_hand_presence": two_hand_presence,
+        "semantic_core_presence": core_presence,
     }
+
+    phase_order_guard = score_scale.get("semantic_phase_order_guard") or {}
+    if bool(phase_order_guard.get("blocked")):
+        result.update(
+            {
+                "status": "semantic_mismatch",
+                "reason": "phase_order_disorder",
+                "reliable_for_scoring": True,
+                "message": "检测到关键语义锚点跨大段时间反序，动作起止顺序不一致。",
+            }
+        )
+        return result
+
+    if word == "跳":
+        if floor_reason in {"insufficient_two_hand_presence", "required_presence_penalty_too_high"} or two_hand_presence < 0.60:
+            result.update(
+                {
+                    "status": "needs_recapture",
+                    "reason": "jump_two_hand_presence_low",
+                    "reliable_for_scoring": False,
+                    "message": "左手地面和右手跳跃没有同时稳定入画，建议重采后再评分。",
+                }
+            )
+        elif floor_reason in {
+            "relation_direction_mismatch",
+            "weak_same_direction_vertical_jump",
+            "relation_jump_amplitude_too_small",
+            "relation_motion_too_horizontal",
+            "missing_relation_delta",
+            "weak_relation_delta",
+            "right_hand_geometry_too_far",
+        }:
+            result.update(
+                {
+                    "status": "semantic_mismatch",
+                    "reason": floor_reason,
+                    "reliable_for_scoring": True,
+                    "message": "双手关系已入画，但未满足右手在左手基础上弹跳的核心语义。",
+                }
+            )
+    elif word == "花":
+        confusion_guard = score_scale.get("flower_jump_confusion_guard") or {}
+        if core_presence < 0.58:
+            result.update(
+                {
+                    "status": "needs_recapture",
+                    "reason": "flower_core_hand_presence_low",
+                    "reliable_for_scoring": False,
+                    "message": "核心手部覆盖不足，建议让开花手势稳定入画后重采。",
+                }
+            )
+        elif bool(confusion_guard.get("blocked")):
+            result.update(
+                {
+                    "status": "semantic_mismatch",
+                    "reason": "flower_jump_like_two_hand_confusion",
+                    "reliable_for_scoring": True,
+                    "message": "检测到稳定的双手关系和弱开花动态，更像双手交互动作，不符合“花”的一手张开语义。",
+                }
+            )
+        elif floor_reason == "opening_guard_too_weak" and prototype_score < 60.0:
+            if max(left_presence, right_presence) < 0.58:
+                result.update(
+                    {
+                        "status": "needs_recapture",
+                        "reason": "flower_core_hand_presence_low",
+                        "reliable_for_scoring": False,
+                        "message": "开花手势的核心手部覆盖和张开动态都不足，建议重采。",
+                    }
+                )
+            else:
+                result.update(
+                    {
+                        "status": "semantic_mismatch",
+                        "reason": "flower_opening_guard_failed",
+                        "reliable_for_scoring": True,
+                        "message": "手部已入画，但手指张开/绽放动态不够清晰。",
+                    }
+                )
+        elif bool(flower_guard.get("enabled")) and not bool(flower_guard.get("passed", True)):
+            result.update(
+                {
+                    "status": "semantic_mismatch",
+                    "reason": "flower_opening_guard_failed",
+                    "reliable_for_scoring": True,
+                    "message": "手部已入画，但未检测到清晰的手指张开/绽放动态。",
+                }
+            )
+    elif prototype_score < 60.0 and max(left_presence, right_presence) < 0.50:
+        result.update(
+            {
+                "status": "needs_recapture",
+                "reason": "hand_presence_low",
+                "reliable_for_scoring": False,
+                "message": "核心手部覆盖不足，建议重采。",
+            }
+        )
+
+    return result
 
 
 def _sequence_penalty(
@@ -1153,11 +2356,15 @@ def _sequence_penalty(
 
     standard_presence = _presence_ratio(standard)
     query_presence = _presence_ratio(query)
-    presence_delta = {
-        group: abs(float(standard_presence.get(group, 0.0)) - float(query_presence.get(group, 0.0)))
-        for group in ["left_hand", "right_hand", "pose", "face"]
-    }
     penalty_weights = _profile_group_weights(profile, _sequence_groups(standard))
+    presence_delta, presence_hand_side_swapped = _maybe_swap_hand_delta(
+        standard_presence,
+        query_presence,
+        ["left_hand", "right_hand", "pose", "face"],
+        penalty_weights,
+        profile,
+        log_ratio=False,
+    )
     hand_dynamic_scale = _hand_dynamic_scale(profile, _sequence_groups(standard))
     presence_penalty = 0.14 * sum(penalty_weights.get(group, 0.0) * presence_delta[group] for group in presence_delta)
 
@@ -1191,10 +2398,14 @@ def _sequence_penalty(
 
     standard_motion = _sequence_motion_by_group(standard)
     query_motion = _sequence_motion_by_group(query)
-    motion_delta = {
-        group: min(_safe_log_ratio(float(standard_motion.get(group, 0.0)), float(query_motion.get(group, 0.0))), 3.0)
-        for group in _sequence_groups(standard)
-    }
+    motion_delta, motion_hand_side_swapped = _maybe_swap_hand_delta(
+        standard_motion,
+        query_motion,
+        _sequence_groups(standard),
+        penalty_weights,
+        profile,
+        log_ratio=True,
+    )
     motion_penalty = temporal_profile_factor * 0.025 * hand_dynamic_scale * sum(
         penalty_weights.get(group, 0.0) * motion_delta[group] for group in motion_delta
     )
@@ -1217,10 +2428,14 @@ def _sequence_penalty(
 
     standard_roughness = _sequence_roughness_by_group(standard)
     query_roughness = _sequence_roughness_by_group(query)
-    roughness_delta = {
-        group: min(_safe_log_ratio(float(standard_roughness.get(group, 0.0)), float(query_roughness.get(group, 0.0))), 3.0)
-        for group in _sequence_groups(standard)
-    }
+    roughness_delta, roughness_hand_side_swapped = _maybe_swap_hand_delta(
+        standard_roughness,
+        query_roughness,
+        _sequence_groups(standard),
+        penalty_weights,
+        profile,
+        log_ratio=True,
+    )
     # Shuffled or jittery sequences can look locally similar under DTW. Keep a
     # separate temporal roughness penalty so the semantic order is not erased.
     roughness_penalty = temporal_profile_factor * 0.095 * hand_dynamic_scale * sum(
@@ -1270,14 +2485,17 @@ def _sequence_penalty(
         "temporal_profile_factor": temporal_profile_factor,
         "hand_dynamic_scale": hand_dynamic_scale,
         "presence_delta": presence_delta,
+        "presence_hand_side_swapped": presence_hand_side_swapped,
         "presence_penalty": presence_penalty,
         "required_presence_penalty": required_presence_penalty,
         "required_presence_detail": required_presence_detail,
         "motion_delta": motion_delta,
+        "motion_hand_side_swapped": motion_hand_side_swapped,
         "motion_penalty": motion_penalty,
         "dynamic_required_penalty": dynamic_required_penalty,
         "dynamic_required_detail": dynamic_required_detail,
         "roughness_delta": roughness_delta,
+        "roughness_hand_side_swapped": roughness_hand_side_swapped,
         "roughness_penalty": roughness_penalty,
         "info_penalty": info_penalty,
         "endpoint_penalty": endpoint_penalty,
@@ -1373,6 +2591,8 @@ def _dimension_weights(group: str, size: int, profile: Optional[SemanticProfile]
 
 def _weighted_rmse(left: np.ndarray, right: np.ndarray, weights: np.ndarray, cap: Optional[float] = None) -> float:
     weights = np.asarray(weights, dtype=np.float32)
+    finite = np.isfinite(left) & np.isfinite(right) & np.isfinite(weights)
+    weights = np.where(finite, weights, 0.0)
     denom = float(weights.sum())
     if denom <= 1e-8:
         return 0.0
@@ -1450,7 +2670,9 @@ def _pose_robust_hand_distance(
     a_mask = am.reshape(-1, 3)
     b_mask = bm.reshape(-1, 3)
     w_pts = dim_weights.reshape(-1, 3)
-    both_points = (a_mask.mean(axis=1) > 0.5) & (b_mask.mean(axis=1) > 0.5)
+    a_valid = (a_mask.mean(axis=1) > 0.5) & np.isfinite(a_pts[:, :3]).all(axis=1)
+    b_valid = (b_mask.mean(axis=1) > 0.5) & np.isfinite(b_pts[:, :3]).all(axis=1)
+    both_points = a_valid & b_valid
     if int(both_points.sum()) < 2:
         return raw_dist, {"hand_pose_robust_used": 0.0}
 
@@ -1498,9 +2720,11 @@ def _group_distance_between(
     bm = b.mask[br]
     if av.shape != bv.shape or am.shape != bm.shape:
         return 0.0, 1.0
-    both = (am > 0) & (bm > 0)
-    either = (am > 0) | (bm > 0)
-    mismatch = (am > 0) != (bm > 0)
+    a_visible = (am > 0) & np.isfinite(av)
+    b_visible = (bm > 0) & np.isfinite(bv)
+    both = a_visible & b_visible
+    either = a_visible | b_visible
+    mismatch = a_visible != b_visible
     if both.any():
         left = av[both]
         right = bv[both]
@@ -1521,7 +2745,9 @@ def _group_distance_between(
                 scale_penalty = 0.004 * abs(math.log(max(alpha, 1e-6)))
                 dist = min(raw_dist, scaled_dist + scale_penalty)
                 if metric_group in {"left_hand", "right_hand"} and extra_metrics:
-                    dist = min(dist, float(extra_metrics["hand_pose_robust_distance"]))
+                    robust_distance = extra_metrics.get("hand_pose_robust_distance")
+                    if robust_distance is not None:
+                        dist = min(dist, float(robust_distance))
     else:
         dist = 0.0
         extra_metrics = {}
@@ -1751,7 +2977,7 @@ def compute_semantic_frame_weight_values(
     if not combine_stored:
         return dynamic
 
-    stored = np.asarray([max(0.05, float(feature.frame_weight)) for feature in seq.features], dtype=np.float32)
+    stored = np.asarray([_sanitize_frame_weight(feature.frame_weight) for feature in seq.features], dtype=np.float32)
     stored = _normalize_frame_weights(stored, low=0.35, high=3.0)
     combined = np.sqrt(np.maximum(dynamic, 0.05) * np.maximum(stored, 0.05))
     return _normalize_frame_weights(combined, low=0.40, high=2.85)
@@ -1771,13 +2997,13 @@ def with_dynamic_frame_weights(seq: SequenceData, profile: Optional[SemanticProf
 
 
 def _pair_temporal_weight(standard_frame: FrameFeature, query_frame: FrameFeature) -> float:
-    standard_weight = max(0.20, min(3.50, float(standard_frame.frame_weight)))
-    query_weight = max(0.20, min(3.50, float(query_frame.frame_weight)))
+    standard_weight = max(0.20, min(3.50, _sanitize_frame_weight(standard_frame.frame_weight)))
+    query_weight = max(0.20, min(3.50, _sanitize_frame_weight(query_frame.frame_weight)))
     return 0.70 * standard_weight + 0.30 * query_weight
 
 
 def _frame_weight_summary(seq: SequenceData) -> Dict[str, Any]:
-    values = np.asarray([float(feature.frame_weight) for feature in seq.features], dtype=np.float32)
+    values = np.asarray([_sanitize_frame_weight(feature.frame_weight) for feature in seq.features], dtype=np.float32)
     if values.size == 0:
         return {"count": 0}
     top_indices = list(np.argsort(values)[-min(8, values.size) :][::-1])
@@ -2303,12 +3529,74 @@ def dtw_align(standard: SequenceData, query: SequenceData, profile: Optional[Sem
         normalized_distance = max(dtw_distance, normalized_distance - semantic_phase_trim_tolerance)
         sequence_penalty["semantic_phase_trim_tolerance"] = -semantic_phase_trim_tolerance
         sequence_penalty["total_sequence_penalty_after_tolerance"] = normalized_distance - dtw_distance
-    semantic_core_query_hand_presence = _semantic_core_hand_presence(query, profile)
+    query_action_window = (action_window.get("query") or {}) if isinstance(action_window, dict) else {}
+    semantic_core_query_hand_presence_full = _hand_presence_value(_presence_ratio(query), profile)
+    semantic_core_query_hand_presence_window = _hand_presence_value(
+        _presence_ratio_for_features(_window_features(query, query_action_window)),
+        profile,
+    )
+    semantic_core_query_hand_presence = _semantic_core_hand_presence(query, profile, query_action_window)
+    core_presence_threshold = float(semantic_dtw_config["core_visible_presence_threshold"])
+    flower_opening_guard = _flower_opening_guard(query, profile, semantic_dtw_config)
+    flower_jump_confusion_guard = _flower_jump_confusion_guard(
+        full_query,
+        profile,
+        semantic_dtw_config,
+        flower_opening_guard,
+    )
+    semantic_phase_order_guard = _semantic_phase_order_guard(
+        full_standard,
+        full_query,
+        profile,
+        semantic_dtw_config,
+    )
+    semantic_core_guard_passed = bool(flower_opening_guard.get("passed", True)) and not bool(
+        flower_jump_confusion_guard.get("blocked")
+    ) and not bool(semantic_phase_order_guard.get("blocked"))
+    score_scale_detail["semantic_core_query_hand_presence"] = semantic_core_query_hand_presence
+    score_scale_detail["semantic_core_query_hand_presence_full"] = semantic_core_query_hand_presence_full
+    score_scale_detail["semantic_core_query_hand_presence_window"] = semantic_core_query_hand_presence_window
+    score_scale_detail["semantic_core_guard_passed"] = semantic_core_guard_passed
+    score_scale_detail["flower_opening_guard"] = flower_opening_guard
+    score_scale_detail["flower_jump_confusion_guard"] = flower_jump_confusion_guard
+    score_scale_detail["semantic_phase_order_guard"] = semantic_phase_order_guard
+    short_core_capture_tolerance = 0.0
+    if (
+        profile is not None
+        and not alignment_policy["used_action_window_for_scoring"]
+        and float(semantic_dtw_config["short_core_capture_tolerance_cap"]) > 0.0
+        and scoring_length_ratio <= float(semantic_dtw_config["short_core_capture_max_length_ratio"])
+        and semantic_core_query_hand_presence >= core_presence_threshold
+        and semantic_core_guard_passed
+        and dtw_distance <= float(semantic_dtw_config["core_visible_dtw_threshold"])
+        and float(sequence_penalty.get("total_sequence_penalty_after_tolerance", sequence_penalty["total_sequence_penalty"])) > 0.0
+    ):
+        # For single-stage hand signs, real browser captures may include only
+        # the semantic action while the template retains long static context.
+        # If the visible core DTW path is already close, discount context
+        # length and phase-summary penalties without changing the local DTW.
+        context_penalty = (
+            float(sequence_penalty.get("length_penalty", 0.0))
+            + 0.75 * float(sequence_penalty.get("semantic_delta_penalty", 0.0))
+            + float(sequence_penalty.get("semantic_anchor_penalty", 0.0))
+        )
+        current_penalty = float(sequence_penalty.get("total_sequence_penalty_after_tolerance", sequence_penalty["total_sequence_penalty"]))
+        short_core_capture_tolerance = min(
+            float(semantic_dtw_config["short_core_capture_tolerance_cap"]),
+            max(0.0, context_penalty),
+            max(0.0, current_penalty),
+        )
+        if short_core_capture_tolerance > 0.0:
+            normalized_distance = max(dtw_distance, normalized_distance - short_core_capture_tolerance)
+            sequence_penalty["short_core_capture_tolerance"] = -short_core_capture_tolerance
+            sequence_penalty["short_core_capture_context_penalty"] = context_penalty
+            sequence_penalty["total_sequence_penalty_after_tolerance"] = normalized_distance - dtw_distance
     visible_semantic_core_tolerance = 0.0
     if (
         profile is not None
         and float(sequence_penalty.get("hand_dynamic_scale", 1.0)) > 1.0
-        and semantic_core_query_hand_presence >= 0.65
+        and semantic_core_query_hand_presence >= core_presence_threshold
+        and semantic_core_guard_passed
         and dtw_distance < 0.045
         and float(sequence_penalty.get("total_sequence_penalty_after_tolerance", sequence_penalty["total_sequence_penalty"])) > 0.0
     ):
@@ -2324,7 +3612,8 @@ def dtw_align(standard: SequenceData, query: SequenceData, profile: Optional[Sem
     core_visible_scale_used = False
     if (
         profile is not None
-        and semantic_core_query_hand_presence >= float(semantic_dtw_config["core_visible_presence_threshold"])
+        and semantic_core_query_hand_presence >= core_presence_threshold
+        and semantic_core_guard_passed
         and dtw_distance <= float(semantic_dtw_config["core_visible_dtw_threshold"])
         and normalized_distance <= float(semantic_dtw_config["core_visible_max_normalized_distance"])
         and float(semantic_dtw_config["core_visible_score_scale"]) > score_scale
@@ -2347,27 +3636,73 @@ def dtw_align(standard: SequenceData, query: SequenceData, profile: Optional[Sem
         noise_floor = min(0.016, 0.65 * dtw_distance)
     score_distance = max(0.0, normalized_distance - noise_floor)
     prototype_score = float(100.0 * math.exp(-score_distance / score_scale))
-    semantic_floor_score, semantic_floor_detail = _jump_relation_semantic_floor(
+    flower_floor_score, flower_floor_detail = _flower_visible_core_semantic_floor(
+        dtw_distance=dtw_distance,
+        scoring_length_ratio=scoring_length_ratio,
+        action_window=action_window,
+        score_scale=score_scale_detail,
+        sequence_penalty=sequence_penalty,
+        group_mean=group_mean,
+        profile=profile,
+        config=semantic_dtw_config,
+    )
+    jump_floor_score, jump_floor_detail = _jump_relation_semantic_floor(
         standard,
         query,
         group_mean,
         sequence_penalty,
         profile,
         semantic_dtw_config,
+        full_standard=full_standard,
+        full_query=full_query,
     )
+    semantic_floor_score = 0.0
+    semantic_floor_detail: Dict[str, Any] = {"enabled": False}
+    for floor_score, floor_detail in [
+        (flower_floor_score, flower_floor_detail),
+        (jump_floor_score, jump_floor_detail),
+    ]:
+        if float(floor_score) > semantic_floor_score:
+            semantic_floor_score = float(floor_score)
+            semantic_floor_detail = floor_detail
+        elif bool(floor_detail.get("enabled")) and not bool(semantic_floor_detail.get("enabled")):
+            semantic_floor_detail = floor_detail
     if semantic_floor_score > prototype_score:
         prototype_score = semantic_floor_score
-        score_scale_detail["reason"] = "jump_relation_semantic_floor"
+        source = str(semantic_floor_detail.get("source") or "semantic")
+        if profile is not None and profile.word == "跳":
+            score_scale_detail["reason"] = "jump_relation_semantic_floor"
+        elif profile is not None and profile.word == "花":
+            score_scale_detail["reason"] = f"flower_{source}_semantic_floor"
+        else:
+            score_scale_detail["reason"] = f"{source}_semantic_floor"
+    if bool(semantic_phase_order_guard.get("blocked")):
+        max_phase_order_score = float(semantic_phase_order_guard.get("max_score") or 45.0)
+        if prototype_score > max_phase_order_score:
+            prototype_score = max_phase_order_score
+            score_scale_detail["reason"] = "semantic_phase_order_guard"
     score_scale_detail["effective_scale"] = score_scale
     score_scale_detail["noise_floor_distance"] = noise_floor
     score_scale_detail["short_action_subsample_tolerance"] = short_action_tolerance
     score_scale_detail["semantic_phase_trim_tolerance"] = semantic_phase_trim_tolerance
+    score_scale_detail["short_core_capture_tolerance"] = short_core_capture_tolerance
     score_scale_detail["visible_semantic_core_tolerance"] = visible_semantic_core_tolerance
     score_scale_detail["semantic_core_query_hand_presence"] = semantic_core_query_hand_presence
+    score_scale_detail["semantic_core_guard_passed"] = semantic_core_guard_passed
+    score_scale_detail["flower_opening_guard"] = flower_opening_guard
+    score_scale_detail["flower_jump_confusion_guard"] = flower_jump_confusion_guard
+    score_scale_detail["semantic_phase_order_guard"] = semantic_phase_order_guard
     score_scale_detail["core_visible_scale_used"] = core_visible_scale_used
     score_scale_detail["semantic_floor_score"] = semantic_floor_score
     score_scale_detail["semantic_floor"] = semantic_floor_detail
     score_scale_detail["score_distance"] = score_distance
+    prototype_score = max(0.0, min(100.0, prototype_score))
+    score_scale_detail["capture_quality"] = _capture_quality_assessment(
+        profile,
+        prototype_score,
+        score_scale_detail,
+        sequence_penalty,
+    )
     worst_sorted = sorted(worst, key=lambda item: item["temporal_weighted_distance"], reverse=True)[:10]
 
     return {
@@ -2385,7 +3720,7 @@ def dtw_align(standard: SequenceData, query: SequenceData, profile: Optional[Sem
         "trim_tolerance": trim_tolerance,
         "dtw_distance": dtw_distance,
         "normalized_distance": normalized_distance,
-        "prototype_score": max(0.0, min(100.0, prototype_score)),
+        "prototype_score": prototype_score,
         "sequence_penalty": sequence_penalty,
         "group_mean_distance": group_mean,
         "frame_weight_summary": {
@@ -2662,6 +3997,98 @@ def _build_markdown(payload: Dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def _is_web_scoring_query(seq: SequenceData) -> bool:
+    source = str(seq.source)
+    return "web_scoring_mvp" in source or "/holistic/user_" in source or "\\holistic\\user_" in source
+
+
+def _compact_cross_score_result(result: Dict[str, Any]) -> Dict[str, Any]:
+    score_scale = result.get("score_scale") or {}
+    capture_quality = score_scale.get("capture_quality") or {}
+    semantic_floor = score_scale.get("semantic_floor") or {}
+    return {
+        "prototype_score": result.get("prototype_score"),
+        "dtw_distance": result.get("dtw_distance"),
+        "normalized_distance": result.get("normalized_distance"),
+        "score_scale_reason": score_scale.get("reason"),
+        "capture_quality_status": capture_quality.get("status"),
+        "capture_quality_reason": capture_quality.get("reason"),
+        "semantic_floor_reason": semantic_floor.get("reason"),
+        "semantic_floor_source": semantic_floor.get("source"),
+    }
+
+
+def _flower_jump_online_cross_check(
+    target_word: str,
+    query: SequenceData,
+    target_score_result: Dict[str, Any],
+    semantic_profile_json: Path,
+    disable_semantic_profile: bool,
+) -> Dict[str, Any]:
+    pair = {"花": "跳", "跳": "花"}
+    other_word = pair.get(target_word)
+    if other_word is None:
+        return {"enabled": False, "reason": "target_not_in_flower_jump_pair"}
+    if not _is_web_scoring_query(query):
+        return {"enabled": False, "reason": "query_not_web_scoring_sample"}
+
+    other_standard_json = DEFAULT_DENSE_TEMPLATE_ROOT / other_word / f"{other_word}_holistic_results.json"
+    if not other_standard_json.exists():
+        return {
+            "enabled": True,
+            "target_word": target_word,
+            "other_word": other_word,
+            "passed": False,
+            "reason": "other_template_missing",
+            "other_standard_json": str(other_standard_json),
+        }
+
+    try:
+        other_standard = load_sequence(other_standard_json, requested_mode="landmark")
+        other_profile = load_semantic_profile(other_word, semantic_profile_json, disabled=disable_semantic_profile)
+        other_score_result = run_pair(
+            other_standard,
+            query,
+            semantic_profile=other_profile,
+            semantic_profile_json=semantic_profile_json,
+            disable_semantic_profile=disable_semantic_profile,
+            target_word=other_word,
+            enable_cross_check=False,
+        )
+        target_score = float(target_score_result.get("prototype_score") or 0.0)
+        other_score = float(other_score_result.get("prototype_score") or 0.0)
+        margin = target_score - other_score
+        max_cross_score = 55.0
+        min_margin = 15.0
+        passed = bool(other_score <= max_cross_score and margin >= min_margin)
+        return {
+            "enabled": True,
+            "target_word": target_word,
+            "other_word": other_word,
+            "target_score": target_score,
+            "other_score": other_score,
+            "margin": margin,
+            "passed": passed,
+            "max_cross_score": max_cross_score,
+            "min_margin": min_margin,
+            "reason": "passed" if passed else "cross_word_confusion_risk",
+            "source": "score_scale_hot_reload",
+            "other_standard_json": str(other_standard_json),
+            "target_score_summary": _compact_cross_score_result(target_score_result),
+            "other_score_summary": _compact_cross_score_result(other_score_result),
+        }
+    except Exception as exc:
+        return {
+            "enabled": True,
+            "target_word": target_word,
+            "other_word": other_word,
+            "passed": False,
+            "reason": "cross_check_error",
+            "source": "score_scale_hot_reload",
+            "error": str(exc),
+        }
+
+
 def run_pair(
     standard: SequenceData,
     query: SequenceData,
@@ -2669,6 +4096,7 @@ def run_pair(
     semantic_profile_json: Path = DEFAULT_SEMANTIC_PROFILE_JSON,
     disable_semantic_profile: bool = False,
     target_word: Optional[str] = None,
+    enable_cross_check: bool = True,
 ) -> Dict[str, Any]:
     if standard.mode != query.mode:
         raise RuntimeError(f"特征模式不一致：standard={standard.mode}, query={query.mode}")
@@ -2676,7 +4104,17 @@ def run_pair(
     if profile is None:
         word = target_word or _infer_word_from_source(standard.source)
         profile = load_semantic_profile(word, semantic_profile_json, disabled=disable_semantic_profile)
-    return dtw_align(standard, query, profile)
+    result = dtw_align(standard, query, profile)
+    if enable_cross_check and profile is not None and profile.word in {"花", "跳"}:
+        score_scale = result.setdefault("score_scale", {})
+        score_scale["cross_word_check"] = _flower_jump_online_cross_check(
+            profile.word,
+            query,
+            result,
+            semantic_profile_json,
+            disable_semantic_profile,
+        )
+    return result
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:

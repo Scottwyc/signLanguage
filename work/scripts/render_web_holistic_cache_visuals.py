@@ -18,6 +18,12 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 from keyframe_sampling_common import _render_visual_cache, import_optional_backends
+from score_holistic_sequence_mvp import (
+    DEFAULT_SEMANTIC_PROFILE_JSON,
+    load_semantic_profile,
+    load_sequence,
+    run_pair,
+)
 from visualize_holistic_features import _load_font
 
 
@@ -335,6 +341,8 @@ def render_request(
     *,
     web_root: Path,
     output_root: Path,
+    semantic_profile_json: Path,
+    rescore_current: bool,
     max_frames: int,
     canvas_width: int,
     canvas_height: int,
@@ -355,6 +363,15 @@ def render_request(
         query_json = candidates[0]
     if not standard_json.exists():
         raise FileNotFoundError(f"missing standard holistic JSON for {request_id}: {standard_json}")
+
+    stored_score = score
+    score_source = "stored_scoring_result"
+    if rescore_current:
+        standard_seq = load_sequence(standard_json, requested_mode="landmark")
+        query_seq = load_sequence(query_json, requested_mode="landmark")
+        profile = load_semantic_profile(target_word, semantic_profile_json)
+        score = run_pair(standard_seq, query_seq, semantic_profile=profile, enable_cross_check=False)
+        score_source = "current_scoring_module"
 
     cv2, _ = import_optional_backends()
     if cv2 is None:
@@ -389,6 +406,8 @@ def render_request(
         "request_id": request_id,
         "target_word": target_word,
         "score": score.get("prototype_score"),
+        "stored_score": stored_score.get("prototype_score"),
+        "score_source": score_source,
         "query_json": str(query_json),
         "standard_json": str(standard_json),
         "query": query_render,
@@ -405,8 +424,12 @@ def build_markdown(results: Sequence[Dict[str, Any]], output_root: Path) -> str:
     lines.append("说明：网页样本当前没有保留原始摄像头 JPEG，因此这里复用旧的 Holistic JSON 渲染逻辑，在空白画布上恢复关键点骨架和识别时间线。当前 contact sheet 只拼接骨架图，不再拼原图/关键点图/骨骼图三联。")
     lines.append("")
     for item in results:
-        lines.append(f"## {item['request_id']} / {item['target_word']} / score={float(item['score'] or 0.0):.3f}")
+        score_text = f"score={float(item['score'] or 0.0):.3f}"
+        if item.get("score_source") == "current_scoring_module":
+            score_text += f" / stored={float(item.get('stored_score') or 0.0):.3f}"
+        lines.append(f"## {item['request_id']} / {item['target_word']} / {score_text}")
         lines.append("")
+        lines.append(f"- 分数来源：`{item.get('score_source') or 'stored_scoring_result'}`")
         lines.append(f"- 查询样本联系表：`{item['query'].get('contact_sheet_path')}`")
         lines.append(f"- 查询样本识别时间线：`{item['query'].get('presence_timeline')}`")
         lines.append(f"- 查询样本选帧：`{item['query'].get('selected_frame_indices')}`")
@@ -423,6 +446,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="恢复网页样本 Holistic 骨架可视化")
     parser.add_argument("--web-root", default=str(DEFAULT_WEB_ROOT))
     parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
+    parser.add_argument("--semantic-profile-json", default=str(DEFAULT_SEMANTIC_PROFILE_JSON))
+    parser.add_argument("--rescore-current", action="store_true", help="使用当前评分模块复算分数和 action window")
     parser.add_argument("--requests", nargs="*", default=DEFAULT_REQUESTS)
     parser.add_argument("--max-frames", type=int, default=12)
     parser.add_argument("--canvas-width", type=int, default=960)
@@ -436,6 +461,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             request_id,
             web_root=Path(args.web_root),
             output_root=output_root,
+            semantic_profile_json=Path(args.semantic_profile_json),
+            rescore_current=bool(args.rescore_current),
             max_frames=max(4, int(args.max_frames)),
             canvas_width=max(320, int(args.canvas_width)),
             canvas_height=max(240, int(args.canvas_height)),
@@ -445,7 +472,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     build_markdown(results, output_root)
     print(f"已生成汇总：{output_root / 'web_holistic_visual_recovery_summary.md'}")
     for item in results:
-        print(f"{item['request_id']} {item['target_word']} score={float(item['score'] or 0.0):.3f}")
+        print(
+            f"{item['request_id']} {item['target_word']} "
+            f"score={float(item['score'] or 0.0):.3f} source={item.get('score_source')}"
+        )
         print(f"  query_contact={item['query'].get('contact_sheet_path')}")
         print(f"  query_timeline={item['query'].get('presence_timeline')}")
     return 0

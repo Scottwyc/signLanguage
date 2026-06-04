@@ -1,0 +1,19 @@
+word,variant,kind,gated,passed,score,min_score,changed_positions,max_source_displacement,inversions,total_frames,alignment_mode,capture_quality_status,capture_quality_reason,semantic_floor_source,semantic_floor_reason,rationale
+花,self_recomputed,positive,True,True,100.0,95.0,0,0,0,53,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,query_not_short_core_capture,标准序列剥离基础组后重建 motion/relation 特征，应保持近满分。
+花,single_center_adjacent_swap,positive,True,True,99.56034929901968,70.0,2,1,1,53,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,query_not_short_core_capture,开花核心序列中间相邻两帧交换，模拟一次上传/时间戳抖动。
+花,adjacent_swap_every_8f,positive,True,True,97.51054787479558,70.0,14,1,7,53,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,query_not_short_core_capture,每约 8 帧出现一次相邻帧交换，整体动作顺序仍基本保留。
+花,adjacent_swap_every_6f,positive,True,True,97.03529031550634,70.0,18,1,9,53,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,query_not_short_core_capture,更密集的轻微相邻帧交换，覆盖短浏览器采集中的局部到达顺序抖动。
+花,core_two_adjacent_swaps,positive,True,True,97.50497660996812,70.0,4,1,2,53,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,query_not_short_core_capture,核心动作附近两处相邻帧交换，仍应保留可评分的语义轨迹。
+花,center_triplet_102,positive,True,True,99.51099544581771,70.0,2,1,1,53,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,query_not_short_core_capture,核心三帧中的前两帧局部错序，相当于单个 ±1 帧 jitter。
+花,center_triplet_120_diagnostic,diagnostic,False,True,99.27536200757386,,3,2,2,53,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,query_not_short_core_capture,核心三帧循环错序，作为比相邻交换更强的诊断边界。
+花,block_reverse_15pct_diagnostic,diagnostic,False,True,98.28410181131865,,8,7,28,53,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,query_not_short_core_capture,中段约 15% 块状倒序，不作为正常网页采集要求，仅记录边界。
+花,block_reverse_25pct_diagnostic,diagnostic,False,True,97.06847839446495,,12,12,78,53,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,query_not_short_core_capture,中段约 25% 块状倒序，phase-order 门负责硬拒绝；这里仅记录分数。
+跳,self_recomputed,positive,True,True,100.0,95.0,0,0,0,19,semantic_action_window,score_valid,score_valid,action_window_net,used,标准序列剥离基础组后重建 motion/relation 特征，应保持近满分。
+跳,single_center_adjacent_swap,positive,True,True,73.03202084653721,70.0,2,1,1,19,semantic_action_window,score_valid,score_valid,action_window_net,used,弹跳核心序列中间相邻两帧交换，模拟一次上传/时间戳抖动。
+跳,adjacent_swap_every_8f,positive,True,True,74.52670009247538,70.0,4,1,2,19,semantic_action_window,score_valid,score_valid,action_window_net,used,每约 8 帧出现一次相邻帧交换，整体动作顺序仍基本保留。
+跳,adjacent_swap_every_6f,positive,True,True,71.37886190621086,70.0,6,1,3,19,semantic_action_window,score_valid,score_valid,action_window_net,used,更密集的轻微相邻帧交换，覆盖短浏览器采集中的局部到达顺序抖动。
+跳,core_two_adjacent_swaps,positive,True,True,82.3015873015873,70.0,4,1,2,19,semantic_action_window,score_valid,score_valid,action_window_net,used,核心动作附近两处相邻帧交换，仍应保留可评分的语义轨迹。
+跳,center_triplet_102,positive,True,True,90.75834622121923,70.0,2,1,1,19,semantic_action_window,score_valid,score_valid,action_window_net,used,核心三帧中的前两帧局部错序，相当于单个 ±1 帧 jitter。
+跳,center_triplet_120_diagnostic,diagnostic,False,True,73.9626106565198,,3,2,2,19,semantic_action_window,score_valid,score_valid,action_window_net,used,核心三帧循环错序，作为比相邻交换更强的诊断边界。
+跳,block_reverse_15pct_diagnostic,diagnostic,False,True,73.561735458083,,2,2,3,19,semantic_action_window,score_valid,score_valid,action_window_net,used,中段约 15% 块状倒序，不作为正常网页采集要求，仅记录边界。
+跳,block_reverse_25pct_diagnostic,diagnostic,False,True,45.0,,4,4,10,19,semantic_action_window,semantic_mismatch,phase_order_disorder,action_window_net,used,中段约 25% 块状倒序，phase-order 门负责硬拒绝；这里仅记录分数。

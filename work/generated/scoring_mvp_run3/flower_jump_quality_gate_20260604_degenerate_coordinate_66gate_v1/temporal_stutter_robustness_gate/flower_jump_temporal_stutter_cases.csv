@@ -1,0 +1,24 @@
+word,variant,kind,passed,score,min_score,max_score,start,length,sparse_every,sparse_paired,capture_quality_status,capture_quality_reason,semantic_floor_source,semantic_floor_reason,rationale
+花,freeze_mid_3f,positive,True,99.1150218072687,70.0,,25,3,,False,score_valid,score_valid,short_visible_core,query_not_short_core_capture,中段短帧冻结 3 帧。
+花,freeze_mid_5f,positive,True,97.31488280286618,70.0,,24,5,,False,score_valid,score_valid,short_visible_core,query_not_short_core_capture,中段短帧冻结 5 帧。
+花,freeze_mid_15pct,positive,True,93.86889626826877,70.0,,22,8,,False,score_valid,score_valid,short_visible_core,query_not_short_core_capture,中段约 15% 短冻结。
+花,freeze_start_5f,positive,True,100.0,70.0,,0,5,,False,score_valid,score_valid,short_visible_core,query_not_short_core_capture,开头短冻结，核心开花动作仍在。
+花,freeze_end_5f,positive,True,99.20985965637462,70.0,,48,5,,False,score_valid,score_valid,short_visible_core,query_not_short_core_capture,结尾短冻结，核心开花动作已完成。
+花,sparse_freeze_every_7th,positive,True,97.35033125253804,70.0,,0,0,7,False,score_valid,score_valid,short_visible_core,query_not_short_core_capture,每 7 帧一次微冻结。
+花,sparse_freeze_every_5th,positive,True,94.1824643945766,70.0,,0,0,5,False,score_valid,score_valid,short_visible_core,query_not_short_core_capture,每 5 帧一次微冻结。
+花,paired_sparse_freeze_every_7th,positive,True,96.88176258858601,70.0,,0,0,7,True,score_valid,score_valid,short_visible_core,query_not_short_core_capture,每 7 帧附近出现连续两帧微冻结。
+花,freeze_mid_25pct_diagnostic,diagnostic,True,87.9150042435598,,,20,13,,False,score_valid,score_valid,short_visible_core,query_not_short_core_capture,中段约 25% 冻结，只记录边界。
+花,freeze_mid_35pct_negative,negative,True,39.621663778624274,,45.0,17,19,,False,score_valid,score_valid,short_visible_core,query_not_short_core_capture,中段约 35% 核心动作冻结，应明显降分。
+花,freeze_mid_50pct_negative,negative,True,41.634675765291185,,45.0,13,26,,False,score_valid,score_valid,short_visible_core,query_not_short_core_capture,中段约 50% 核心动作冻结，应拒绝。
+花,freeze_full_negative,negative,True,1.1559095878719308,,45.0,0,53,,False,needs_recapture,flower_core_hand_presence_low,short_visible_core,query_not_short_core_capture,全段静态冻结，缺少动态语义。
+跳,freeze_mid_2f,positive,True,94.95925294909863,70.0,,8,2,,False,score_valid,score_valid,action_window_net,used,弹跳中段短冻结 2 帧。
+跳,freeze_mid_3f,positive,True,87.81259427476337,70.0,,8,3,,False,score_valid,score_valid,action_window_net,used,弹跳中段短冻结 3 帧。
+跳,freeze_mid_4f,positive,True,72.0105222363504,70.0,,7,4,,False,score_valid,score_valid,action_window_net,used,短动作中段约 4 帧冻结，仍保留足够弹跳证据。
+跳,freeze_start_2f,positive,True,100.0,70.0,,0,2,,False,score_valid,score_valid,action_window_net,used,开头短冻结，弹跳主段仍在。
+跳,freeze_end_2f,positive,True,99.99301016153399,70.0,,17,2,,False,score_valid,score_valid,action_window_net,used,结尾短冻结，弹跳主段已完成。
+跳,sparse_freeze_every_7th,positive,True,73.88383496149797,70.0,,0,0,7,False,score_valid,score_valid,full_sequence_local_relation_segment,used,每 7 帧一次微冻结。
+跳,sparse_freeze_every_5th,positive,True,73.55889356523335,70.0,,0,0,5,False,score_valid,score_valid,action_window_net,used,每 5 帧一次微冻结。
+跳,paired_sparse_freeze_every_7th,positive,True,77.51027096935383,70.0,,0,0,7,True,score_valid,score_valid,action_window_net,used,每 7 帧附近出现连续两帧微冻结。
+跳,freeze_mid_5f_diagnostic,diagnostic,True,73.22400794256924,,,7,5,,False,score_valid,score_valid,action_window_net,used,短动作中段约 5 帧冻结，记录边界。
+跳,freeze_mid_35pct_negative,negative,True,12.747172419498598,,45.0,6,7,,False,needs_recapture,jump_two_hand_presence_low,,insufficient_two_hand_presence,中段约 35% 弹跳核心冻结，应重采或明显降分。
+跳,freeze_full_negative,negative,True,0.21147760383410816,,45.0,0,19,,False,needs_recapture,jump_two_hand_presence_low,,insufficient_two_hand_presence,全段静态冻结，缺少弹跳动态。

@@ -1,0 +1,19 @@
+word,variant,kind,passed,score,min_score,dtw_distance,normalized_distance,alignment_mode,capture_quality_status,capture_quality_reason,semantic_floor_source,ops,rationale
+花,self_recomputed,positive,True,100.0,95.0,0.0,0.0,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,-,标准序列剥离基础组后重建派生特征，应保持近满分。
+花,pose_shift_right_up,positive,True,100.0,90.0,0.0,0.0,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,pose dx=0.65 dy=-0.45 dz=0.1,躯干/身体关键点整体偏右上，但核心手部语义不变。
+花,face_shift_left_down,positive,True,100.0,90.0,0.0,0.0,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,face dx=-0.55 dy=0.35 dz=-0.08,面部关键点整体偏左下，不应影响手部词评分。
+花,pose_face_opposite_shift,positive,True,100.0,90.0,0.0,0.0,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,pose dx=0.55 dy=-0.45 dz=0.1; face dx=-0.45 dy=0.35 dz=-0.1,pose 与 face 锚点彼此不一致，模拟非核心检测漂移。
+花,pose_face_jitter_0.12,positive,True,100.0,90.0,0.0,0.0,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,"pose,face jitter=0.12",pose/face 存在轻中度逐帧抖动。
+花,pose_face_scale_x0.65_y1.45,positive,True,100.0,90.0,0.0,0.0,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,"pose,face scale_x=0.65 scale_y=1.45",身体/脸部局部比例异常，但手部核心不变。
+花,pose_face_sinusoidal_drift_0.30,positive,True,100.0,90.0,0.0,0.0,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,"pose,face sinusoidal=0.3",非核心身体/脸部锚点随时间漂移。
+花,pose_face_jitter_0.35_diagnostic,diagnostic,True,100.0,,0.0,0.0,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,"pose,face jitter=0.35",严重 pose/face 抖动只记录诊断边界。
+花,pose_face_shift_1.50_diagnostic,diagnostic,True,100.0,,0.0,0.0,full_sequence_with_action_window_diagnostics,score_valid,score_valid,short_visible_core,"pose,face dx=1.5 dy=-1.2 dz=0.3",极端非核心锚点整体偏移只记录诊断边界。
+跳,self_recomputed,positive,True,100.0,95.0,0.0,0.0,semantic_action_window,score_valid,score_valid,action_window_net,-,标准序列剥离基础组后重建派生特征，应保持近满分。
+跳,pose_shift_right_up,positive,True,100.0,90.0,0.0,0.0,semantic_action_window,score_valid,score_valid,action_window_net,pose dx=0.65 dy=-0.45 dz=0.1,躯干/身体关键点整体偏右上，但核心手部语义不变。
+跳,face_shift_left_down,positive,True,100.0,90.0,0.0,0.0,semantic_action_window,score_valid,score_valid,action_window_net,face dx=-0.55 dy=0.35 dz=-0.08,面部关键点整体偏左下，不应影响手部词评分。
+跳,pose_face_opposite_shift,positive,True,100.0,90.0,0.0,0.0,semantic_action_window,score_valid,score_valid,action_window_net,pose dx=0.55 dy=-0.45 dz=0.1; face dx=-0.45 dy=0.35 dz=-0.1,pose 与 face 锚点彼此不一致，模拟非核心检测漂移。
+跳,pose_face_jitter_0.12,positive,True,100.0,90.0,0.0,0.0,semantic_action_window,score_valid,score_valid,action_window_net,"pose,face jitter=0.12",pose/face 存在轻中度逐帧抖动。
+跳,pose_face_scale_x0.65_y1.45,positive,True,100.0,90.0,0.0,0.0,semantic_action_window,score_valid,score_valid,action_window_net,"pose,face scale_x=0.65 scale_y=1.45",身体/脸部局部比例异常，但手部核心不变。
+跳,pose_face_sinusoidal_drift_0.30,positive,True,100.0,90.0,0.0,0.0,semantic_action_window,score_valid,score_valid,action_window_net,"pose,face sinusoidal=0.3",非核心身体/脸部锚点随时间漂移。
+跳,pose_face_jitter_0.35_diagnostic,diagnostic,True,100.0,,0.0,0.0,semantic_action_window,score_valid,score_valid,action_window_net,"pose,face jitter=0.35",严重 pose/face 抖动只记录诊断边界。
+跳,pose_face_shift_1.50_diagnostic,diagnostic,True,100.0,,0.0,0.0,semantic_action_window,score_valid,score_valid,action_window_net,"pose,face dx=1.5 dy=-1.2 dz=0.3",极端非核心锚点整体偏移只记录诊断边界。

@@ -42,6 +42,11 @@
           </div>
           <canvas id="captureCanvas" width="480" height="360" hidden></canvas>
 
+          <div class="target-cue" id="targetCue">
+            <span>动作重点</span>
+            <strong>请选择目标动作</strong>
+          </div>
+
           <div class="controls">
             <label>
               目标动作
@@ -60,6 +65,7 @@
               <input id="frameWidth" type="number" min="240" max="960" step="40" value="960" />
             </label>
           </div>
+          <div class="capture-hint" id="captureHint">采样参数读取中。</div>
 
           <div class="actions">
             <button id="cameraBtn" type="button">开启摄像头</button>
@@ -84,6 +90,11 @@
             <div class="score-copy">
               <h3 id="resultTitle">等待采集</h3>
               <p id="resultNote">当前分数是离线原型相似度，不是正式用户评分或合格线。</p>
+              <div class="request-meta" id="requestMeta" hidden>
+                <span>样本 ID</span>
+                <code id="requestId">--</code>
+                <button id="copyRequestBtn" class="copy-button" type="button">复制</button>
+              </div>
             </div>
           </div>
 
@@ -119,6 +130,46 @@
               <tr><td>暂无结果</td><td>--</td></tr>
             </tbody>
           </table>
+
+          <h3 class="subhead">语义诊断</h3>
+          <table>
+            <tbody id="diagnosticMetrics">
+              <tr><td>暂无结果</td><td>--</td></tr>
+            </tbody>
+          </table>
+
+          <h3 class="subhead">自动诊断</h3>
+          <div class="watch-status" id="watchStatusBox">
+            <div>
+              <span>状态</span>
+              <strong id="watchStatusEvent">读取中</strong>
+            </div>
+            <div>
+              <span>新增目标样本</span>
+              <strong id="watchTargetCount">--</strong>
+            </div>
+            <div>
+              <span>最后检查</span>
+              <strong id="watchGeneratedAt">--</strong>
+            </div>
+            <div>
+              <span>目标完成度</span>
+              <strong id="watchGoalStatus">--</strong>
+            </div>
+            <div>
+              <span>缺失证据</span>
+              <strong class="watch-wide-value" id="watchMissingGates">--</strong>
+            </div>
+            <div class="watch-word-coverage" id="watchWordCoverage" hidden></div>
+            <p class="watch-next-step" id="watchNextStep" hidden>下一步复测：--</p>
+            <div class="watch-actions">
+              <button id="prepareRetestBtn" class="ghost-button" type="button">开始复测轮次</button>
+              <button id="refreshWatchBtn" class="ghost-button" type="button">刷新诊断</button>
+              <strong class="watch-wide-value" id="retestRoundStatus">未开始</strong>
+            </div>
+            <p id="watchStatusNote">自动诊断 watcher 状态读取中。</p>
+            <p class="watch-report" id="watchReportMeta" hidden>最近报告：--</p>
+          </div>
         </section>
       </section>
     </main>

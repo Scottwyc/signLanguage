@@ -1,0 +1,413 @@
+{
+  "generated_at": "2026-06-03T05:38:55",
+  "status": "PASS",
+  "base_url": "http://127.0.0.1:5080",
+  "watch_status_json": "work/generated/scoring_mvp_run3/web_sample_watch_single_jump_default_20260603_v1/watch_status.json",
+  "app_js": "/data/WYC/signLanguage/work/web/static/app.js",
+  "failed_count": 0,
+  "warning_count": 0,
+  "checks": [
+    {
+      "name": "watch_status_json_exists",
+      "passed": true,
+      "detail": "work/generated/scoring_mvp_run3/web_sample_watch_single_jump_default_20260603_v1/watch_status.json",
+      "severity": "fail"
+    },
+    {
+      "name": "watch_status_json_loadable",
+      "passed": true,
+      "detail": "work/generated/scoring_mvp_run3/web_sample_watch_single_jump_default_20260603_v1/watch_status.json",
+      "severity": "fail"
+    },
+    {
+      "name": "watch_status_is_object",
+      "passed": true,
+      "detail": "type=dict",
+      "severity": "fail"
+    },
+    {
+      "name": "watch_status_generated_at",
+      "passed": true,
+      "detail": "2026-06-03T05:38:55",
+      "severity": "fail"
+    },
+    {
+      "name": "watch_status_event_known",
+      "passed": true,
+      "detail": "diagnose_done",
+      "severity": "fail"
+    },
+    {
+      "name": "watcher_pid_present",
+      "passed": true,
+      "detail": "watcher_pid=4000100",
+      "severity": "fail"
+    },
+    {
+      "name": "watch_status_has_status_block",
+      "passed": true,
+      "detail": "keys=['checked_at', 'marker_last_request_id', 'new_summary', 'target_request_ids', 'target_summary']",
+      "severity": "fail"
+    },
+    {
+      "name": "watch_status_fresh",
+      "passed": true,
+      "detail": "age_sec=0.2, max_age_sec=180.0",
+      "severity": "fail"
+    },
+    {
+      "name": "target_summary_present",
+      "passed": true,
+      "detail": "target_summary={'count': 1, 'first_request_id': 'web_20260602_233348_53e3df5d', 'last_request_id': 'web_20260602_233348_53e3df5d', 'by_word': {'跳': 1}}",
+      "severity": "fail"
+    },
+    {
+      "name": "target_summary_count_numeric",
+      "passed": true,
+      "detail": "count=1",
+      "severity": "fail"
+    },
+    {
+      "name": "goal_readiness_present",
+      "passed": true,
+      "detail": "keys=['browser_capture_evidence', 'gates', 'generated_at', 'json_path', 'md_path', 'missing_gates', 'quality_gate_json', 'quality_gate_md', 'readiness_summary', 'ready_to_complete', 'returncode', 'status_label', 'stderr', 'stdout', 'web_root']",
+      "severity": "fail"
+    },
+    {
+      "name": "goal_readiness_status_label_present",
+      "passed": true,
+      "detail": "status_label=READY_TO_COMPLETE",
+      "severity": "fail"
+    },
+    {
+      "name": "goal_readiness_missing_gates_list",
+      "passed": true,
+      "detail": "missing_gates=[]",
+      "severity": "fail"
+    },
+    {
+      "name": "browser_capture_evidence_present",
+      "passed": true,
+      "detail": "type=dict",
+      "severity": "fail"
+    },
+    {
+      "name": "browser_capture_evidence_rows_list",
+      "passed": true,
+      "detail": "rows_type=list",
+      "severity": "fail"
+    },
+    {
+      "name": "latest_diagnosis_object",
+      "passed": true,
+      "detail": "keys=['confusion_csv', 'confusion_json', 'confusion_reason_counts', 'confusion_report', 'confusion_returncode', 'confusion_sample_summaries', 'confusion_stderr', 'confusion_stdout', 'diagnosed_request_ids', 'diagnosed_words', 'generated_at', 'json_path', 'marker_last_request_id', 'marker_path', 'md_path', 'new_summary', 'regression_report', 'regression_returncode', 'regression_stderr', 'regression_stdout', 'semantic_diagnostics_csv', 'semantic_diagnostics_json', 'semantic_diagnostics_report', 'semantic_sample_summaries', 'semantic_triage_counts', 'static_artifacts', 'target_summary', 'visual_report', 'visual_returncode', 'visual_stderr', 'visual_stdout', 'web_root', 'words']",
+      "severity": "fail"
+    },
+    {
+      "name": "latest_diagnosis_regression_returncode_zero",
+      "passed": true,
+      "detail": "regression_returncode=0",
+      "severity": "fail"
+    },
+    {
+      "name": "latest_diagnosis_confusion_returncode_zero",
+      "passed": true,
+      "detail": "confusion_returncode=0",
+      "severity": "fail"
+    },
+    {
+      "name": "latest_diagnosis_visual_returncode_zero",
+      "passed": true,
+      "detail": "visual_returncode=0",
+      "severity": "fail"
+    },
+    {
+      "name": "static_artifacts_index_url_present",
+      "passed": true,
+      "detail": "index_url=/static/latest_watch_single_jump_default_test/index.html",
+      "severity": "fail"
+    },
+    {
+      "name": "static_artifacts_manifest_url_present",
+      "passed": true,
+      "detail": "manifest_url=/static/latest_watch_single_jump_default_test/artifacts.json",
+      "severity": "fail"
+    },
+    {
+      "name": "static_artifact_urls_present",
+      "passed": true,
+      "detail": "checked_count=14",
+      "severity": "fail"
+    },
+    {
+      "name": "artifact_url_200:diagnosis_index",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/index.html status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "artifact_url_200:artifact_manifest",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/artifacts.json status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "artifact_url_200:report:状态报告",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/reports/status.md status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "artifact_url_200:report:网页回归",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/reports/regression.md status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "artifact_url_200:report:语义诊断",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/reports/semantic.md status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "artifact_url_200:report:交叉混淆",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/reports/confusion.md status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "artifact_url_200:report:骨架可视化",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/reports/visual.md status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "artifact_url_200:visual:跳 视觉摘要",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/visuals/web_20260602_233348_53e3df5d/visual_summary.json status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "artifact_url_200:visual:跳 测试骨架联系表",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/visuals/web_20260602_233348_53e3df5d/query_skeleton_contact_sheet.png status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "artifact_url_200:visual:跳 测试识别时间线",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/visuals/web_20260602_233348_53e3df5d/query_presence_timeline.png status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "artifact_url_200:visual:跳 测试完整时间线",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/visuals/web_20260602_233348_53e3df5d/query_timeline.png status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "artifact_url_200:visual:跳 标准骨架联系表",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/visuals/web_20260602_233348_53e3df5d/standard_skeleton_contact_sheet.png status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "artifact_url_200:visual:跳 标准识别时间线",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/visuals/web_20260602_233348_53e3df5d/standard_presence_timeline.png status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "artifact_url_200:visual:跳 标准完整时间线",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/visuals/web_20260602_233348_53e3df5d/standard_timeline.png status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_app_js_file_exists",
+      "passed": true,
+      "detail": "/data/WYC/signLanguage/work/web/static/app.js",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:WATCH_REFRESH_AFTER_SCORE_DELAYS_MS",
+      "passed": true,
+      "detail": "token=WATCH_REFRESH_AFTER_SCORE_DELAYS_MS",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:refreshWatchStatus",
+      "passed": true,
+      "detail": "token=refreshWatchStatus",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:formatBrowserCaptureEvidence",
+      "passed": true,
+      "detail": "token=formatBrowserCaptureEvidence",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:formatReadinessSummary",
+      "passed": true,
+      "detail": "token=formatReadinessSummary",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:formatFrontendContractCheck",
+      "passed": true,
+      "detail": "token=formatFrontendContractCheck",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:renderWatchArtifactLinks",
+      "passed": true,
+      "detail": "token=renderWatchArtifactLinks",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:readiness_summary",
+      "passed": true,
+      "detail": "token=readiness_summary",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:frontend_contract_check",
+      "passed": true,
+      "detail": "token=frontend_contract_check",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:static_artifacts",
+      "passed": true,
+      "detail": "token=static_artifacts",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:/static/watch_status.json",
+      "passed": true,
+      "detail": "token=/static/watch_status.json",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:scheduleWatchRefreshAfterScore",
+      "passed": true,
+      "detail": "token=scheduleWatchRefreshAfterScore",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_app_js_http_200",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/app.js status=200 detail=ok",
+      "severity": "fail"
+    }
+  ],
+  "artifact_url_results": [
+    {
+      "label": "diagnosis_index",
+      "url": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/index.html",
+      "ok": true,
+      "status": 200,
+      "detail": "ok"
+    },
+    {
+      "label": "artifact_manifest",
+      "url": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/artifacts.json",
+      "ok": true,
+      "status": 200,
+      "detail": "ok"
+    },
+    {
+      "label": "report:状态报告",
+      "url": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/reports/status.md",
+      "ok": true,
+      "status": 200,
+      "detail": "ok"
+    },
+    {
+      "label": "report:网页回归",
+      "url": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/reports/regression.md",
+      "ok": true,
+      "status": 200,
+      "detail": "ok"
+    },
+    {
+      "label": "report:语义诊断",
+      "url": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/reports/semantic.md",
+      "ok": true,
+      "status": 200,
+      "detail": "ok"
+    },
+    {
+      "label": "report:交叉混淆",
+      "url": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/reports/confusion.md",
+      "ok": true,
+      "status": 200,
+      "detail": "ok"
+    },
+    {
+      "label": "report:骨架可视化",
+      "url": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/reports/visual.md",
+      "ok": true,
+      "status": 200,
+      "detail": "ok"
+    },
+    {
+      "label": "visual:跳 视觉摘要",
+      "url": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/visuals/web_20260602_233348_53e3df5d/visual_summary.json",
+      "ok": true,
+      "status": 200,
+      "detail": "ok"
+    },
+    {
+      "label": "visual:跳 测试骨架联系表",
+      "url": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/visuals/web_20260602_233348_53e3df5d/query_skeleton_contact_sheet.png",
+      "ok": true,
+      "status": 200,
+      "detail": "ok"
+    },
+    {
+      "label": "visual:跳 测试识别时间线",
+      "url": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/visuals/web_20260602_233348_53e3df5d/query_presence_timeline.png",
+      "ok": true,
+      "status": 200,
+      "detail": "ok"
+    },
+    {
+      "label": "visual:跳 测试完整时间线",
+      "url": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/visuals/web_20260602_233348_53e3df5d/query_timeline.png",
+      "ok": true,
+      "status": 200,
+      "detail": "ok"
+    },
+    {
+      "label": "visual:跳 标准骨架联系表",
+      "url": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/visuals/web_20260602_233348_53e3df5d/standard_skeleton_contact_sheet.png",
+      "ok": true,
+      "status": 200,
+      "detail": "ok"
+    },
+    {
+      "label": "visual:跳 标准识别时间线",
+      "url": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/visuals/web_20260602_233348_53e3df5d/standard_presence_timeline.png",
+      "ok": true,
+      "status": 200,
+      "detail": "ok"
+    },
+    {
+      "label": "visual:跳 标准完整时间线",
+      "url": "http://127.0.0.1:5080/static/latest_watch_single_jump_default_test/visuals/web_20260602_233348_53e3df5d/standard_timeline.png",
+      "ok": true,
+      "status": 200,
+      "detail": "ok"
+    }
+  ],
+  "payload_summary": {
+    "event": "diagnose_done",
+    "generated_at": "2026-06-03T05:38:55",
+    "watcher_pid": 4000100,
+    "target_count": 1,
+    "goal_status": "READY_TO_COMPLETE",
+    "missing_gates": []
+  }
+}

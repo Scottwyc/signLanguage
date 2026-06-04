@@ -38,6 +38,8 @@ OUTPUT_ROOT = WORK_DIR / "generated/web_scoring_mvp"
 LOG_DIR = WORK_DIR / "logs"
 DEMO_VIDEO_ROOT = REPO_ROOT / "data/Demo词汇视频/Demo词汇视频"
 SEMANTIC_PROFILE_JSON = WORK_DIR / "generated/scoring_semantic_profiles/sign_semantic_weights.json"
+WATCH_STATUS_JSON = WORK_DIR / "generated/scoring_mvp_run3/web_sample_marker_watch_status.json"
+WATCH_STATUS_MD = WORK_DIR / "generated/scoring_mvp_run3/web_sample_marker_watch_status.md"
 DEFAULT_MODEL_COMPLEXITY = 1
 
 if str(SCRIPT_DIR) not in sys.path:
@@ -52,6 +54,9 @@ class ScoreRequest(BaseModel):
     duration_sec: Optional[float] = Field(default=None, ge=0.0, le=30.0)
     frame_indices: Optional[List[int]] = None
     frame_weights: Optional[List[float]] = None
+    client_source: Optional[str] = None
+    client_session_id: Optional[str] = None
+    client_capture_id: Optional[str] = None
     frames: List[Dict[str, Any]] = Field(default_factory=list)
     wait_for_ready_sec: float = Field(default=600.0, ge=0.0, le=900.0)
 
@@ -394,6 +399,92 @@ def _list_templates() -> List[Dict[str, Any]]:
     return templates
 
 
+def _watch_status_snapshot() -> Dict[str, Any]:
+    payload: Dict[str, Any] = {
+        "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "status_json": str(WATCH_STATUS_JSON),
+        "status_md": str(WATCH_STATUS_MD),
+        "exists": WATCH_STATUS_JSON.exists(),
+        "markdown_exists": WATCH_STATUS_MD.exists(),
+        "payload": None,
+        "markdown": "",
+        "error": None,
+    }
+    if WATCH_STATUS_JSON.exists():
+        try:
+            payload["payload"] = json.loads(WATCH_STATUS_JSON.read_text(encoding="utf-8"))
+        except Exception as exc:
+            payload["error"] = f"cannot read watch status json: {exc}"
+    if WATCH_STATUS_MD.exists():
+        try:
+            payload["markdown"] = WATCH_STATUS_MD.read_text(encoding="utf-8")
+        except Exception as exc:
+            payload["error"] = f"cannot read watch status markdown: {exc}"
+    return payload
+
+
+def _compact_score_result(result: Dict[str, Any]) -> Dict[str, Any]:
+    score_scale = result.get("score_scale") or {}
+    capture_quality = score_scale.get("capture_quality") or {}
+    semantic_floor = score_scale.get("semantic_floor") or {}
+    return {
+        "prototype_score": result.get("prototype_score"),
+        "dtw_distance": result.get("dtw_distance"),
+        "normalized_distance": result.get("normalized_distance"),
+        "score_scale_reason": score_scale.get("reason"),
+        "capture_quality_status": capture_quality.get("status"),
+        "capture_quality_reason": capture_quality.get("reason"),
+        "semantic_floor_reason": semantic_floor.get("reason"),
+        "semantic_floor_source": semantic_floor.get("source"),
+    }
+
+
+def _flower_jump_cross_check(
+    scoring: Any,
+    target_word: str,
+    target_score_result: Dict[str, Any],
+    query: Any,
+) -> Dict[str, Any]:
+    pair = {"花": "跳", "跳": "花"}
+    other_word = pair.get(target_word)
+    if not other_word:
+        return {"enabled": False, "reason": "target_not_in_flower_jump_pair"}
+    try:
+        other_standard_json = _template_path(other_word)
+        other_standard = scoring.load_sequence(other_standard_json, requested_mode="landmark")
+        other_score_result = scoring.run_pair(other_standard, query, target_word=other_word)
+        target_score = float(target_score_result.get("prototype_score") or 0.0)
+        other_score = float(other_score_result.get("prototype_score") or 0.0)
+        margin = target_score - other_score
+        max_cross_score = 55.0
+        min_margin = 15.0
+        passed = bool(other_score <= max_cross_score and margin >= min_margin)
+        return {
+            "enabled": True,
+            "target_word": target_word,
+            "other_word": other_word,
+            "target_score": target_score,
+            "other_score": other_score,
+            "margin": margin,
+            "passed": passed,
+            "max_cross_score": max_cross_score,
+            "min_margin": min_margin,
+            "reason": "passed" if passed else "cross_word_confusion_risk",
+            "other_standard_json": str(other_standard_json),
+            "target_score_summary": _compact_score_result(target_score_result),
+            "other_score_summary": _compact_score_result(other_score_result),
+        }
+    except Exception as exc:
+        return {
+            "enabled": True,
+            "target_word": target_word,
+            "other_word": other_word,
+            "passed": False,
+            "reason": "cross_check_error",
+            "error": str(exc),
+        }
+
+
 @app.on_event("startup")
 def _startup() -> None:
     OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
@@ -440,6 +531,11 @@ def api_status() -> Dict[str, Any]:
 @app.get("/api/templates")
 def api_templates() -> Dict[str, Any]:
     return {"templates": _list_templates()}
+
+
+@app.get("/api/watch-status")
+def api_watch_status() -> Dict[str, Any]:
+    return _watch_status_snapshot()
 
 
 @app.post("/api/admin/reload-scoring")
@@ -615,6 +711,7 @@ def api_score(request: ScoreRequest) -> Dict[str, Any]:
         standard = scoring.load_sequence(standard_json, requested_mode="landmark")
         query = scoring.load_sequence(Path(result_file), requested_mode="landmark")
         score_result = scoring.run_pair(standard, query)
+        cross_word_check = _flower_jump_cross_check(scoring, request.target_word, score_result, query)
     except TimeoutError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except Exception as exc:
@@ -630,6 +727,12 @@ def api_score(request: ScoreRequest) -> Dict[str, Any]:
         "query_json": str(result_file),
         "duration_sec": request.duration_sec,
         "capture_fps": request.fps,
+        "client_source": request.client_source,
+        "client": {
+            "source": request.client_source,
+            "session_id": request.client_session_id,
+            "capture_id": request.client_capture_id,
+        },
         "frame_count": len(request.frames),
         "timeline_frame_count": total_frames,
         "frame_indices": [int(idx) for idx in frame_indices],
@@ -658,6 +761,7 @@ def api_score(request: ScoreRequest) -> Dict[str, Any]:
             "group_mean_distance": score_result["group_mean_distance"],
             "semantic_dtw": score_result.get("semantic_dtw"),
             "frame_weight_summary": score_result.get("frame_weight_summary"),
+            "cross_word_check": cross_word_check,
             "worst_alignment_points": score_result["worst_alignment_points"][:5],
             "semantic_profile": score_result.get("semantic_profile"),
         },

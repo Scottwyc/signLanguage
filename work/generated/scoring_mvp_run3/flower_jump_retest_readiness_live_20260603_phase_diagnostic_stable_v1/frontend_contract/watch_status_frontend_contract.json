@@ -1,0 +1,307 @@
+{
+  "generated_at": "2026-06-03T07:09:40",
+  "status": "PASS",
+  "base_url": "http://127.0.0.1:5080",
+  "watch_status_json": "/data/WYC/signLanguage/work/web/static/watch_status.json",
+  "index_html": "/data/WYC/signLanguage/work/web/static/index.html",
+  "app_js": "/data/WYC/signLanguage/work/web/static/app.js",
+  "styles_css": "/data/WYC/signLanguage/work/web/static/styles.css",
+  "failed_count": 0,
+  "warning_count": 0,
+  "checks": [
+    {
+      "name": "watch_status_json_exists",
+      "passed": true,
+      "detail": "/data/WYC/signLanguage/work/web/static/watch_status.json",
+      "severity": "fail"
+    },
+    {
+      "name": "watch_status_json_loadable",
+      "passed": true,
+      "detail": "/data/WYC/signLanguage/work/web/static/watch_status.json",
+      "severity": "fail"
+    },
+    {
+      "name": "watch_status_is_object",
+      "passed": true,
+      "detail": "type=dict",
+      "severity": "fail"
+    },
+    {
+      "name": "watch_status_generated_at",
+      "passed": true,
+      "detail": "2026-06-03T07:09:25",
+      "severity": "fail"
+    },
+    {
+      "name": "watch_status_event_known",
+      "passed": true,
+      "detail": "no_target_samples",
+      "severity": "fail"
+    },
+    {
+      "name": "watcher_pid_present",
+      "passed": true,
+      "detail": "watcher_pid=4021854",
+      "severity": "fail"
+    },
+    {
+      "name": "watch_status_has_status_block",
+      "passed": true,
+      "detail": "keys=['checked_at', 'marker_last_request_id', 'new_summary', 'target_request_ids', 'target_summary']",
+      "severity": "fail"
+    },
+    {
+      "name": "target_summary_present",
+      "passed": true,
+      "detail": "target_summary={'count': 0, 'first_request_id': '', 'last_request_id': '', 'by_word': {}}",
+      "severity": "fail"
+    },
+    {
+      "name": "target_summary_count_numeric",
+      "passed": true,
+      "detail": "count=0",
+      "severity": "fail"
+    },
+    {
+      "name": "goal_readiness_present",
+      "passed": true,
+      "detail": "keys=['browser_capture_evidence', 'gates', 'generated_at', 'json_path', 'md_path', 'missing_gates', 'quality_gate_json', 'quality_gate_md', 'readiness_summary', 'ready_to_complete', 'returncode', 'status_label', 'stderr', 'stdout', 'web_root']",
+      "severity": "fail"
+    },
+    {
+      "name": "goal_readiness_status_label_present",
+      "passed": true,
+      "detail": "status_label=NOT_READY",
+      "severity": "fail"
+    },
+    {
+      "name": "goal_readiness_missing_gates_list",
+      "passed": true,
+      "detail": "missing_gates=['combined_quality_gate_passed', 'fresh_real_webcam_target_samples_diagnosed']",
+      "severity": "fail"
+    },
+    {
+      "name": "browser_capture_evidence_present",
+      "passed": true,
+      "detail": "type=dict",
+      "severity": "fail"
+    },
+    {
+      "name": "browser_capture_evidence_rows_list",
+      "passed": true,
+      "detail": "rows_type=list",
+      "severity": "fail"
+    },
+    {
+      "name": "latest_diagnosis_optional_when_no_targets",
+      "passed": true,
+      "detail": "target_count=0, latest_diagnosis=null",
+      "severity": "warn"
+    },
+    {
+      "name": "static_artifacts_optional",
+      "passed": true,
+      "detail": "no static_artifacts in current payload",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_app_js_file_exists",
+      "passed": true,
+      "detail": "/data/WYC/signLanguage/work/web/static/app.js",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:WATCH_REFRESH_AFTER_SCORE_DELAYS_MS",
+      "passed": true,
+      "detail": "token=WATCH_REFRESH_AFTER_SCORE_DELAYS_MS",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:refreshWatchStatus",
+      "passed": true,
+      "detail": "token=refreshWatchStatus",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:formatBrowserCaptureEvidence",
+      "passed": true,
+      "detail": "token=formatBrowserCaptureEvidence",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:formatReadinessSummary",
+      "passed": true,
+      "detail": "token=formatReadinessSummary",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:formatFrontendContractCheck",
+      "passed": true,
+      "detail": "token=formatFrontendContractCheck",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:renderWatchArtifactLinks",
+      "passed": true,
+      "detail": "token=renderWatchArtifactLinks",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:readiness_summary",
+      "passed": true,
+      "detail": "token=readiness_summary",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:frontend_contract_check",
+      "passed": true,
+      "detail": "token=frontend_contract_check",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:static_artifacts",
+      "passed": true,
+      "detail": "token=static_artifacts",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:/static/watch_status.json",
+      "passed": true,
+      "detail": "token=/static/watch_status.json",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:scheduleWatchRefreshAfterScore",
+      "passed": true,
+      "detail": "token=scheduleWatchRefreshAfterScore",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:renderWatchWordCoverage",
+      "passed": true,
+      "detail": "token=renderWatchWordCoverage",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:renderWatchNextRetestStep",
+      "passed": true,
+      "detail": "token=renderWatchNextRetestStep",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:watchWordCoverage",
+      "passed": true,
+      "detail": "token=watchWordCoverage",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_js_token:watchNextStep",
+      "passed": true,
+      "detail": "token=watchNextStep",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_app_js_http_200",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/app.js status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_index_html_file_exists",
+      "passed": true,
+      "detail": "/data/WYC/signLanguage/work/web/static/index.html",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_html_token:watchWordCoverage",
+      "passed": true,
+      "detail": "token=watchWordCoverage",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_html_token:watch-word-coverage",
+      "passed": true,
+      "detail": "token=watch-word-coverage",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_html_token:watchNextStep",
+      "passed": true,
+      "detail": "token=watchNextStep",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_html_token:watch-next-step",
+      "passed": true,
+      "detail": "token=watch-next-step",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_index_http_200",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/ status=200 detail=ok",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_styles_css_file_exists",
+      "passed": true,
+      "detail": "/data/WYC/signLanguage/work/web/static/styles.css",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_css_token:watch-word-coverage",
+      "passed": true,
+      "detail": "token=watch-word-coverage",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_css_token:watch-word-chip",
+      "passed": true,
+      "detail": "token=watch-word-chip",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_css_token:watch-word-chip-covered",
+      "passed": true,
+      "detail": "token=watch-word-chip-covered",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_css_token:watch-word-chip-missing",
+      "passed": true,
+      "detail": "token=watch-word-chip-missing",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_css_token:watch-word-chip-failed",
+      "passed": true,
+      "detail": "token=watch-word-chip-failed",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_css_token:watch-next-step",
+      "passed": true,
+      "detail": "token=watch-next-step",
+      "severity": "fail"
+    },
+    {
+      "name": "frontend_styles_css_http_200",
+      "passed": true,
+      "detail": "http://127.0.0.1:5080/static/styles.css status=200 detail=ok",
+      "severity": "fail"
+    }
+  ],
+  "artifact_url_results": [],
+  "payload_summary": {
+    "event": "no_target_samples",
+    "generated_at": "2026-06-03T07:09:25",
+    "watcher_pid": 4021854,
+    "target_count": 0,
+    "goal_status": "NOT_READY",
+    "missing_gates": [
+      "combined_quality_gate_passed",
+      "fresh_real_webcam_target_samples_diagnosed"
+    ]
+  }
+}

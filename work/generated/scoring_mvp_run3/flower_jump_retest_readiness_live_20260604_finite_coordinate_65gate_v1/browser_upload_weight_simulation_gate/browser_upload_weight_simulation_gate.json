@@ -1,0 +1,311 @@
+{
+  "generated_at": "2026-06-04T03:43:46",
+  "passed": true,
+  "app_js": "/data/WYC/signLanguage/work/web/static/app.js",
+  "node_returncode": 0,
+  "node_stdout": "",
+  "node_stderr": "",
+  "cases": [
+    {
+      "name": "flower_opening_motion",
+      "word": "花",
+      "plan": {
+        "word": "花",
+        "durationSec": 2.5,
+        "uploadFps": 5,
+        "targetFrames": 13,
+        "candidateFps": 10,
+        "candidateFrames": 25,
+        "minFrames": 12
+      },
+      "selected_count": 13,
+      "frame_indices": [
+        0,
+        3,
+        6,
+        7,
+        8,
+        9,
+        12,
+        15,
+        17,
+        18,
+        19,
+        21,
+        24
+      ],
+      "frame_weights": [
+        0.4274,
+        0.4274,
+        1.3859,
+        1.5183,
+        1.4951,
+        1.4461,
+        1.1342,
+        1.2089,
+        1.5563,
+        1.6779,
+        1.4639,
+        0.5086,
+        0.4274
+      ],
+      "weights_min": 0.4274,
+      "weights_max": 1.6779,
+      "weights_range": 1.2505,
+      "weights_unique_4dp": 11,
+      "top_energy_indices": [
+        18,
+        17,
+        7,
+        8,
+        19,
+        9
+      ],
+      "selected_top_energy_count": 6,
+      "selected_in_order": true,
+      "includes_first_frame": true,
+      "includes_last_frame": true,
+      "nonuniform_weights": true,
+      "checks": [
+        {
+          "name": "selected_count_matches_target",
+          "passed": true,
+          "detail": "selected=13 target=13"
+        },
+        {
+          "name": "target_frames_meet_recommendation",
+          "passed": true,
+          "detail": "target=13 min=12"
+        },
+        {
+          "name": "candidate_pool_is_denser_than_upload",
+          "passed": true,
+          "detail": "candidate=25 target=13"
+        },
+        {
+          "name": "frame_indices_strictly_in_order",
+          "passed": true,
+          "detail": "indices=[0, 3, 6, 7, 8, 9, 12, 15, 17, 18, 19, 21, 24]"
+        },
+        {
+          "name": "coverage_keeps_start_and_end",
+          "passed": true,
+          "detail": "first=True last=True"
+        },
+        {
+          "name": "motion_weights_are_nonuniform",
+          "passed": true,
+          "detail": "range=1.2505, min=0.4274, max=1.6779"
+        },
+        {
+          "name": "motion_weight_has_multiple_levels",
+          "passed": true,
+          "detail": "unique_4dp=11"
+        },
+        {
+          "name": "motion_peaks_are_selected",
+          "passed": true,
+          "detail": "selected_top_energy_count=6 top_energy_indices=[18, 17, 7, 8, 19, 9]"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "jump_burst_motion",
+      "word": "跳",
+      "plan": {
+        "word": "跳",
+        "durationSec": 2,
+        "uploadFps": 5,
+        "targetFrames": 10,
+        "candidateFps": 10,
+        "candidateFrames": 20,
+        "minFrames": 6
+      },
+      "selected_count": 10,
+      "frame_indices": [
+        0,
+        4,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        15,
+        19
+      ],
+      "frame_weights": [
+        0.4114,
+        0.4114,
+        1.6608,
+        1.5993,
+        1.7996,
+        2.3909,
+        2.1297,
+        1.455,
+        1.1784,
+        0.4114
+      ],
+      "weights_min": 0.4114,
+      "weights_max": 2.3909,
+      "weights_range": 1.9794999999999998,
+      "weights_unique_4dp": 8,
+      "top_energy_indices": [
+        11,
+        12,
+        10,
+        8,
+        9,
+        13
+      ],
+      "selected_top_energy_count": 6,
+      "selected_in_order": true,
+      "includes_first_frame": true,
+      "includes_last_frame": true,
+      "nonuniform_weights": true,
+      "checks": [
+        {
+          "name": "selected_count_matches_target",
+          "passed": true,
+          "detail": "selected=10 target=10"
+        },
+        {
+          "name": "target_frames_meet_recommendation",
+          "passed": true,
+          "detail": "target=10 min=6"
+        },
+        {
+          "name": "candidate_pool_is_denser_than_upload",
+          "passed": true,
+          "detail": "candidate=20 target=10"
+        },
+        {
+          "name": "frame_indices_strictly_in_order",
+          "passed": true,
+          "detail": "indices=[0, 4, 8, 9, 10, 11, 12, 13, 15, 19]"
+        },
+        {
+          "name": "coverage_keeps_start_and_end",
+          "passed": true,
+          "detail": "first=True last=True"
+        },
+        {
+          "name": "motion_weights_are_nonuniform",
+          "passed": true,
+          "detail": "range=1.9794999999999998, min=0.4114, max=2.3909"
+        },
+        {
+          "name": "motion_weight_has_multiple_levels",
+          "passed": true,
+          "detail": "unique_4dp=8"
+        },
+        {
+          "name": "motion_peaks_are_selected",
+          "passed": true,
+          "detail": "selected_top_energy_count=6 top_energy_indices=[11, 12, 10, 8, 9, 13]"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "static_hold",
+      "word": "花",
+      "plan": {
+        "word": "花",
+        "durationSec": 2.5,
+        "uploadFps": 5,
+        "targetFrames": 13,
+        "candidateFps": 10,
+        "candidateFrames": 25,
+        "minFrames": 12
+      },
+      "selected_count": 13,
+      "frame_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        9,
+        12,
+        15,
+        18,
+        21,
+        24
+      ],
+      "frame_weights": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "weights_min": 1,
+      "weights_max": 1,
+      "weights_range": 0,
+      "weights_unique_4dp": 1,
+      "top_energy_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "selected_top_energy_count": 6,
+      "selected_in_order": true,
+      "includes_first_frame": true,
+      "includes_last_frame": true,
+      "nonuniform_weights": false,
+      "checks": [
+        {
+          "name": "selected_count_matches_target",
+          "passed": true,
+          "detail": "selected=13 target=13"
+        },
+        {
+          "name": "target_frames_meet_recommendation",
+          "passed": true,
+          "detail": "target=13 min=12"
+        },
+        {
+          "name": "candidate_pool_is_denser_than_upload",
+          "passed": true,
+          "detail": "candidate=25 target=13"
+        },
+        {
+          "name": "frame_indices_strictly_in_order",
+          "passed": true,
+          "detail": "indices=[0, 1, 2, 3, 4, 5, 6, 9, 12, 15, 18, 21, 24]"
+        },
+        {
+          "name": "coverage_keeps_start_and_end",
+          "passed": true,
+          "detail": "first=True last=True"
+        },
+        {
+          "name": "static_weights_remain_uniform",
+          "passed": true,
+          "detail": "range=0"
+        },
+        {
+          "name": "static_not_completion_strong_frame_weight_evidence",
+          "passed": true,
+          "detail": "nonuniform=False"
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

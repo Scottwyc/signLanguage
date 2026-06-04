@@ -1,0 +1,687 @@
+{
+  "generated_at": "2026-06-03T05:18:26",
+  "web_root": "/data/WYC/signLanguage/work/generated/web_scoring_mvp",
+  "semantic_profile_json": "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+  "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+  "filters": {
+    "latest": 0,
+    "latest_per_word": 1,
+    "since_request_id": "",
+    "request_ids": [
+      "web_20260602_233343_899e6970",
+      "web_20260602_233348_53e3df5d"
+    ]
+  },
+  "backend_status": {
+    "ok": true,
+    "url": "http://127.0.0.1:5080/api/status",
+    "payload": {
+      "service": "signLanguage scoring MVP",
+      "generated_at": "2026-06-03T05:18:20",
+      "claim_policy": "prototype similarity only; not a calibrated real-user score",
+      "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+      "legacy_template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run2/all_demo_step4_worker_cache_v2/results",
+      "dense_template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+      "output_root": "/data/WYC/signLanguage/work/generated/web_scoring_mvp",
+      "semantic_profile_json": "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+      "scoring_module": {
+        "module": "score_holistic_sequence_mvp",
+        "module_file": "/data/WYC/signLanguage/work/scripts/score_holistic_sequence_mvp.py",
+        "mtime_ns": 1780428448406274113,
+        "loaded_at": "2026-06-03T03:28:20",
+        "reload_count": 11,
+        "last_reload_error": null
+      },
+      "templates": [
+        {
+          "word": "唱歌",
+          "label": "唱歌",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/唱歌/唱歌_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 27,
+          "fps": 25.0,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/唱歌/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/唱歌.mp4",
+          "reference_video_url": "/api/reference-video/唱歌",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "头部左右晃动，模仿真实唱歌时的样子；双手拇指和食指同时从喉部两边向外移出，表示；从喉部发出声音；嘴巴张开，模仿唱歌时的样子；画面可以顺着双手拇指和食指的移动，叠加流动的音符",
+            "group_weights": {
+              "left_hand": 0.2,
+              "right_hand": 0.2,
+              "left_hand_shape": 0.1,
+              "right_hand_shape": 0.1,
+              "pose": 0.14,
+              "face": 0.21,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "left_hand",
+              "right_hand",
+              "face",
+              "pose"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "指示",
+          "label": "指示",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/指示/指示_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 30,
+          "fps": 22.3062381852552,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/指示/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/指示.mp4",
+          "reference_video_url": "/api/reference-video/指示",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "左手拇指模拟人头，右手食指表示另一个人的食指，正在左右指挥前面这个人；画面可以在左手拇指上叠加表情和头发，模拟真的的头",
+            "group_weights": {
+              "left_hand": 0.24,
+              "right_hand": 0.36,
+              "left_hand_shape": 0.14,
+              "right_hand_shape": 0.21,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "right_hand",
+              "right_hand_shape",
+              "left_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "月亮",
+          "label": "月亮",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/月亮/月亮_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 47,
+          "fps": 25.0,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/月亮/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/月亮.mp4",
+          "reference_video_url": "/api/reference-video/月亮",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "双手向两边移动的过程中，两根手指的距离需要逐渐变窄，模拟弯月两边窄、中间宽的形状；画面可以在双手运动的过程中，出现于两手间出现一轮弯月",
+            "group_weights": {
+              "left_hand": 0.24,
+              "right_hand": 0.24,
+              "left_hand_shape": 0.24,
+              "right_hand_shape": 0.24,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.04
+            },
+            "focus_groups": [
+              "left_hand_shape",
+              "right_hand_shape",
+              "left_hand",
+              "right_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "朋友",
+          "label": "朋友",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/朋友/朋友_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 28,
+          "fps": 25.0,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/朋友/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/朋友.mp4",
+          "reference_video_url": "/api/reference-video/朋友",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "两根大拇指模拟两个人的头；两个人的头互相碰两下，象征亲密，表示朋友；画面可以在两根拇指上叠加笑脸和头发，模拟人头",
+            "group_weights": {
+              "left_hand": 0.29999999999999993,
+              "right_hand": 0.29999999999999993,
+              "left_hand_shape": 0.16999999999999998,
+              "right_hand_shape": 0.16999999999999998,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.06
+            },
+            "focus_groups": [
+              "left_hand",
+              "right_hand",
+              "left_hand_shape",
+              "right_hand_shape"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "汽车",
+          "label": "汽车",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/汽车/汽车_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 44,
+          "fps": 26.363636363636363,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/汽车/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/汽车.mp4",
+          "reference_video_url": "/api/reference-video/汽车",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "双手模拟开车的动作，两手虚握，想象手心内是方向盘；双手左右转动，模拟转动方向盘的动作；画面可以叠加一个方向盘，随着双手的转动进行旋转",
+            "group_weights": {
+              "left_hand": 0.29999999999999993,
+              "right_hand": 0.29999999999999993,
+              "left_hand_shape": 0.16999999999999998,
+              "right_hand_shape": 0.16999999999999998,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.06
+            },
+            "focus_groups": [
+              "left_hand",
+              "right_hand",
+              "left_hand_shape",
+              "right_hand_shape"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "花",
+          "label": "花",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/花/花_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 53,
+          "fps": 29.44954128440367,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/花/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/花.mp4",
+          "reference_video_url": "/api/reference-video/花",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "一手撮合、指尖朝上模仿花朵含苞的样子；手缓缓向上的同时，慢慢张开，模仿开花的样子；画面可以叠加一朵含苞的花朵，随着手张开的动作同时逐渐绽放",
+            "group_weights": {
+              "left_hand": 0.08,
+              "right_hand": 0.34,
+              "left_hand_shape": 0.1,
+              "right_hand_shape": 0.44,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.04
+            },
+            "focus_groups": [
+              "right_hand_shape",
+              "right_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "虎",
+          "label": "虎",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/虎/虎_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 54,
+          "fps": 28.205128205128204,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/虎/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/虎.mp4",
+          "reference_video_url": "/api/reference-video/虎",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "左手中、无名、小指和右手食指在前额比出一个“王”字，模仿老虎额头上的“王”字花纹；随后双手五指弯曲、指尖朝下，向前下方按动一下，模仿老虎的兽爪，需要坚定有力。；画面上可以在完成第一个动作后，于人物前额生成一个“王”字花纹，并在第二个动作完成的过程中，随着双手动作出现兽爪留痕",
+            "group_weights": {
+              "left_hand": 0.24,
+              "right_hand": 0.24,
+              "left_hand_shape": 0.2,
+              "right_hand_shape": 0.2,
+              "pose": 0.03,
+              "face": 0.04,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "left_hand_shape",
+              "right_hand_shape",
+              "left_hand",
+              "right_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "谗（羡慕）",
+          "label": "谗（羡慕）",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/谗（羡慕）/谗（羡慕）_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 32,
+          "fps": 26.571428571428573,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/谗（羡慕）/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/谗（羡慕）.mp4",
+          "reference_video_url": "/api/reference-video/谗（羡慕）",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "一手伸食指，熊嘴角处向下滑动，模仿口水从嘴角流出的样子；舌头从嘴巴里微伸出来，模仿馋嘴时舔嘴唇的样子；画面可以顺着向下的食指，叠加从嘴角流出的口水",
+            "group_weights": {
+              "left_hand": 0.1,
+              "right_hand": 0.24,
+              "left_hand_shape": 0.05,
+              "right_hand_shape": 0.12,
+              "pose": 0.0,
+              "face": 0.44,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "face",
+              "right_hand",
+              "right_hand_shape"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "跳",
+          "label": "跳",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 19,
+          "fps": 14.682539682539682,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/跳.mp4",
+          "reference_video_url": "/api/reference-video/跳",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "右手两根手指模拟人的两条腿，左手模拟地面；右手食、中指向上弹跳时，要先弯曲后伸直，并且动作较为迅速；画面可以在右手两根手指上叠加一个小人，双腿正好与右手的食指、中指重合，左手位置叠加一块平地，小人双腿随着右手食、中指的状态运动",
+            "group_weights": {
+              "left_hand": 0.2136363636363636,
+              "right_hand": 0.299090909090909,
+              "left_hand_shape": 0.1068181818181818,
+              "right_hand_shape": 0.3204545454545454,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.06
+            },
+            "focus_groups": [
+              "two_hand_relation",
+              "right_hand_shape",
+              "right_hand",
+              "left_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "香蕉",
+          "label": "香蕉",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/香蕉/香蕉_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 42,
+          "fps": 25.625,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/香蕉/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/香蕉.mp4",
+          "reference_video_url": "/api/reference-video/香蕉",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "左手竖着的食指表示香蕉；右手从左手食指上往下做剥皮动作；画面可以叠加一根真实未剥皮的香蕉，并随着右手的动作，香蕉皮慢慢被剥开",
+            "group_weights": {
+              "left_hand": 0.25999999999999995,
+              "right_hand": 0.33999999999999997,
+              "left_hand_shape": 0.14999999999999997,
+              "right_hand_shape": 0.19999999999999996,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "right_hand",
+              "left_hand",
+              "right_hand_shape",
+              "left_hand_shape"
+            ],
+            "allow_hand_swap": true
+          }
+        }
+      ],
+      "worker": {
+        "status": "ready",
+        "started_at": "2026-05-23T06:56:27",
+        "ready_at": "2026-05-23T07:00:48",
+        "ready_payload": {
+          "type": "ready",
+          "pid": 811485,
+          "started_at": "2026-05-23T07:00:48",
+          "holistic_init_sec": 260.122,
+          "model_complexity": 1,
+          "static_image_mode": true
+        },
+        "error": null,
+        "stderr_log": "/data/WYC/signLanguage/work/logs/web_holistic_worker_20260523_065627.stderr.log",
+        "process": {
+          "pid": 811485,
+          "returncode": null
+        }
+      }
+    },
+    "error": ""
+  },
+  "replay": {
+    "summary": {
+      "samples": 2,
+      "errors": 0,
+      "normal_like": 2,
+      "borderline": 0,
+      "low": 0,
+      "old_score_mean": 82.73806161215484,
+      "new_score_mean": 82.73806161215484,
+      "by_word": {
+        "花": {
+          "samples": 1,
+          "normal_like": 1,
+          "borderline": 0,
+          "low": 0,
+          "old_score_mean": 76.89925771288746,
+          "new_score_mean": 76.89925771288746,
+          "hand_presence_mean": 0.7924528301886793
+        },
+        "跳": {
+          "samples": 1,
+          "normal_like": 1,
+          "borderline": 0,
+          "low": 0,
+          "old_score_mean": 88.57686551142223,
+          "new_score_mean": 88.57686551142223,
+          "hand_presence_mean": 0.8947368421052632
+        }
+      }
+    },
+    "json_path": "work/generated/scoring_mvp_run3/web_regression_flower_jump_latest_per_word_20260603_v1/active_template_replay/web_replay_current.json",
+    "md_path": "work/generated/scoring_mvp_run3/web_regression_flower_jump_latest_per_word_20260603_v1/active_template_replay/web_replay_current.md",
+    "csv_path": "work/generated/scoring_mvp_run3/web_regression_flower_jump_latest_per_word_20260603_v1/active_template_replay/web_replay_current.csv"
+  },
+  "diagnostics": {
+    "summary": {
+      "samples": 2,
+      "errors": 0,
+      "bands": {
+        "normal_like": 2
+      },
+      "diagnoses": {
+        "flower_core_accepted": 1,
+        "jump_core_accepted": 1
+      },
+      "triage_priority": {
+        "normal": 2
+      },
+      "capture_quality": {
+        "score_valid": 2
+      },
+      "effective": {
+        "reliable_samples": 2,
+        "normal_or_borderline": 2,
+        "low": 0,
+        "needs_recapture": 0,
+        "semantic_mismatch": 0,
+        "normal_or_borderline_rate": 1.0,
+        "score_mean": 82.73806161215484,
+        "score_median": 82.73806161215484
+      },
+      "score_mean": 82.73806161215484,
+      "score_median": 82.73806161215484,
+      "by_word": {
+        "花": {
+          "samples": 1,
+          "bands": {
+            "normal_like": 1
+          },
+          "diagnoses": {
+            "flower_core_accepted": 1
+          },
+          "triage_priority": {
+            "normal": 1
+          },
+          "capture_quality": {
+            "score_valid": 1
+          },
+          "effective": {
+            "reliable_samples": 1,
+            "normal_or_borderline": 1,
+            "low": 0,
+            "needs_recapture": 0,
+            "semantic_mismatch": 0,
+            "normal_or_borderline_rate": 1.0,
+            "score_mean": 76.89925771288746,
+            "score_median": 76.89925771288746
+          },
+          "score_mean": 76.89925771288746,
+          "score_median": 76.89925771288746,
+          "score_min": 76.89925771288746,
+          "score_max": 76.89925771288746,
+          "semantic_core_presence_mean": 1.0,
+          "semantic_core_presence_full_mean": 0.7924528301886793,
+          "semantic_core_presence_window_mean": 1.0,
+          "two_hand_presence_mean": 0.0,
+          "left_hand_presence_mean": 0.0,
+          "right_hand_presence_mean": 0.7924528301886793
+        },
+        "跳": {
+          "samples": 1,
+          "bands": {
+            "normal_like": 1
+          },
+          "diagnoses": {
+            "jump_core_accepted": 1
+          },
+          "triage_priority": {
+            "normal": 1
+          },
+          "capture_quality": {
+            "score_valid": 1
+          },
+          "effective": {
+            "reliable_samples": 1,
+            "normal_or_borderline": 1,
+            "low": 0,
+            "needs_recapture": 0,
+            "semantic_mismatch": 0,
+            "normal_or_borderline_rate": 1.0,
+            "score_mean": 88.57686551142223,
+            "score_median": 88.57686551142223
+          },
+          "score_mean": 88.57686551142223,
+          "score_median": 88.57686551142223,
+          "score_min": 88.57686551142223,
+          "score_max": 88.57686551142223,
+          "semantic_core_presence_mean": 0.8888888888888888,
+          "semantic_core_presence_full_mean": 0.8888888888888888,
+          "semantic_core_presence_window_mean": 0.8333333333333334,
+          "two_hand_presence_mean": 0.8421052631578947,
+          "left_hand_presence_mean": 0.8421052631578947,
+          "right_hand_presence_mean": 0.8947368421052632
+        }
+      }
+    },
+    "rows": [
+      {
+        "request_id": "web_20260602_233343_899e6970",
+        "generated_at": "2026-06-02T23:33:47",
+        "target_word": "花",
+        "frame_count": 53,
+        "timeline_frame_count": 105,
+        "capture_fps": 10.0,
+        "standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/花/花_holistic_results.json",
+        "saved_standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/花/花_holistic_results.json",
+        "standard_source": "template_root",
+        "query_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260602_233343_899e6970/holistic/user_花_web_20260602_233343_899e6970_holistic_results.json",
+        "error": "",
+        "score": 76.89925771288746,
+        "band": "normal_like",
+        "diagnosis": "flower_core_accepted",
+        "triage_priority": "normal",
+        "sample_advice": "开花核心段可评分；继续保持手部完整入画和清晰张开动态。",
+        "dtw_distance": 0.029509025311807786,
+        "normalized_distance": 0.038087724511943075,
+        "score_distance": 0.038087724511943075,
+        "alignment_mode": "full_sequence_with_action_window_diagnostics",
+        "used_action_window": false,
+        "score_scale_reason": "visible_semantic_core_scale",
+        "capture_quality_status": "score_valid",
+        "capture_quality_reason": "score_valid",
+        "capture_quality_message": "核心语义可评分。",
+        "capture_quality_reliable": true,
+        "semantic_core_presence": 1.0,
+        "semantic_core_presence_full": 0.7924528301886793,
+        "semantic_core_presence_window": 1.0,
+        "semantic_core_guard_passed": true,
+        "semantic_floor_reason": "query_not_short_core_capture",
+        "semantic_floor_source": "short_visible_core",
+        "semantic_floor_score": 0.0,
+        "semantic_floor_used": false,
+        "semantic_floor_direction_cosine": null,
+        "semantic_floor_vertical_score": null,
+        "semantic_floor_amplitude_ratio": null,
+        "semantic_floor_horizontal_to_vertical": null,
+        "semantic_floor_relation_presence": null,
+        "semantic_floor_query_segment_start": null,
+        "semantic_floor_query_segment_end": null,
+        "semantic_floor_query_segment_coverage": null,
+        "semantic_floor_fallback_from_reason": null,
+        "semantic_floor_fallback_from_direction_cosine": null,
+        "jump_two_finger_shape_mean": null,
+        "jump_two_finger_shape_range": null,
+        "jump_two_finger_shape_valid_count": null,
+        "flower_opening_passed": true,
+        "flower_opening_score": 0.8732175809144974,
+        "flower_opening_hand": "right_hand_shape",
+        "left_hand_presence": 0.0,
+        "right_hand_presence": 0.7924528301886793,
+        "two_hand_presence": 0.0,
+        "pose_presence": 1.0,
+        "face_presence": 1.0,
+        "presence_penalty": 0.0017795431976166832,
+        "required_presence_penalty": 0.0,
+        "semantic_delta_penalty": 0.014475519286287137,
+        "semantic_anchor_penalty": 0.005884829721362231,
+        "group_left_hand": 0.0,
+        "group_right_hand": 0.0,
+        "group_left_hand_shape": 0.0,
+        "group_right_hand_shape": 0.0,
+        "group_two_hand_relation": 0.0
+      },
+      {
+        "request_id": "web_20260602_233348_53e3df5d",
+        "generated_at": "2026-06-02T23:33:49",
+        "target_word": "跳",
+        "frame_count": 19,
+        "timeline_frame_count": 37,
+        "capture_fps": 10.0,
+        "standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json",
+        "saved_standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json",
+        "standard_source": "template_root",
+        "query_json": "/data/WYC/signLanguage/work/generated/web_scoring_mvp/web_20260602_233348_53e3df5d/holistic/user_跳_web_20260602_233348_53e3df5d_holistic_results.json",
+        "error": "",
+        "score": 88.57686551142223,
+        "band": "normal_like",
+        "diagnosis": "jump_core_accepted",
+        "triage_priority": "normal",
+        "sample_advice": "双手弹跳核心语义可评分；继续保持两只手同时稳定入画。",
+        "dtw_distance": 0.02307627007605986,
+        "normalized_distance": 0.02866189788925535,
+        "score_distance": 0.020585203362634398,
+        "alignment_mode": "semantic_action_window",
+        "used_action_window": true,
+        "score_scale_reason": "short_action_window_with_query_energy_peak",
+        "capture_quality_status": "score_valid",
+        "capture_quality_reason": "score_valid",
+        "capture_quality_message": "核心语义可评分。",
+        "capture_quality_reliable": true,
+        "semantic_core_presence": 0.8888888888888888,
+        "semantic_core_presence_full": 0.8888888888888888,
+        "semantic_core_presence_window": 0.8333333333333334,
+        "semantic_core_guard_passed": true,
+        "semantic_floor_reason": "used",
+        "semantic_floor_source": "action_window_net",
+        "semantic_floor_score": 82.085705029437,
+        "semantic_floor_used": true,
+        "semantic_floor_direction_cosine": 0.993497902706036,
+        "semantic_floor_vertical_score": 1.0,
+        "semantic_floor_amplitude_ratio": 1.0062869109760284,
+        "semantic_floor_horizontal_to_vertical": 0.5344131464964378,
+        "semantic_floor_relation_presence": 0.8888888888888888,
+        "semantic_floor_query_segment_start": 6,
+        "semantic_floor_query_segment_end": 22,
+        "semantic_floor_query_segment_coverage": null,
+        "semantic_floor_fallback_from_reason": null,
+        "semantic_floor_fallback_from_direction_cosine": null,
+        "jump_two_finger_shape_mean": null,
+        "jump_two_finger_shape_range": null,
+        "jump_two_finger_shape_valid_count": null,
+        "flower_opening_passed": true,
+        "flower_opening_score": null,
+        "flower_opening_hand": null,
+        "left_hand_presence": 0.8421052631578947,
+        "right_hand_presence": 0.8947368421052632,
+        "two_hand_presence": 0.8421052631578947,
+        "pose_presence": 1.0,
+        "face_presence": 1.0,
+        "presence_penalty": 0.0,
+        "required_presence_penalty": 0.0,
+        "semantic_delta_penalty": 0.0014881856355816129,
+        "semantic_anchor_penalty": 0.0029866471103990955,
+        "group_left_hand": 0.012219724457055731,
+        "group_right_hand": 0.00992315849042866,
+        "group_left_hand_shape": 0.07456611149392556,
+        "group_right_hand_shape": 0.04299140827008548,
+        "group_two_hand_relation": 0.009045765887818788
+      }
+    ],
+    "json_path": "work/generated/scoring_mvp_run3/web_regression_flower_jump_latest_per_word_20260603_v1/flower_jump_diagnostics/web_semantic_diagnostics.json",
+    "md_path": "work/generated/scoring_mvp_run3/web_regression_flower_jump_latest_per_word_20260603_v1/flower_jump_diagnostics/web_semantic_diagnostics.md",
+    "csv_path": "work/generated/scoring_mvp_run3/web_regression_flower_jump_latest_per_word_20260603_v1/flower_jump_diagnostics/web_semantic_diagnostics.csv"
+  },
+  "gates": [
+    {
+      "name": "backend_ready",
+      "passed": true,
+      "detail": "url=http://127.0.0.1:5080/api/status, worker=ready, reload_error=-, error=-"
+    },
+    {
+      "name": "replay_no_errors",
+      "passed": true,
+      "detail": "samples=2, errors=0"
+    },
+    {
+      "name": "diagnostics_no_errors",
+      "passed": true,
+      "detail": "samples=2, errors=0"
+    },
+    {
+      "name": "effective_rate_total",
+      "passed": true,
+      "detail": "rate=100.0%, threshold=95.0%"
+    },
+    {
+      "name": "effective_rate_花",
+      "passed": true,
+      "detail": "rate=100.0%, reliable=1, normal_or_borderline=1, low=0"
+    },
+    {
+      "name": "effective_rate_跳",
+      "passed": true,
+      "detail": "rate=100.0%, reliable=1, normal_or_borderline=1, low=0"
+    },
+    {
+      "name": "jump_effective_low_zero",
+      "passed": true,
+      "detail": "effective_low=0"
+    },
+    {
+      "name": "flower_effective_low_bounded",
+      "passed": true,
+      "detail": "effective_low=0, max=5, diagnoses={}"
+    },
+    {
+      "name": "flower_effective_low_explained",
+      "passed": true,
+      "detail": "allowed=['flower_opening_guard_failed'], observed={}"
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,2825 @@
+{
+  "generated_at": "2026-06-04T06:17:03",
+  "claim_policy": "synthetic hand-trajectory-interpolation robustness sanity gate; not calibrated real-user scoring",
+  "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+  "semantic_profile_json": "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+  "backend_status": {
+    "ok": true,
+    "url": "http://127.0.0.1:5080/api/status",
+    "payload": {
+      "service": "signLanguage scoring MVP",
+      "generated_at": "2026-06-04T06:17:02",
+      "claim_policy": "prototype similarity only; not a calibrated real-user score",
+      "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+      "legacy_template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run2/all_demo_step4_worker_cache_v2/results",
+      "dense_template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+      "output_root": "/data/WYC/signLanguage/work/generated/web_scoring_mvp",
+      "semantic_profile_json": "/data/WYC/signLanguage/work/generated/scoring_semantic_profiles/sign_semantic_weights.json",
+      "scoring_module": {
+        "module": "score_holistic_sequence_mvp",
+        "module_file": "/data/WYC/signLanguage/work/scripts/score_holistic_sequence_mvp.py",
+        "mtime_ns": 1780519720218430025,
+        "loaded_at": "2026-06-04T05:21:37",
+        "reload_count": 18,
+        "last_reload_error": null
+      },
+      "templates": [
+        {
+          "word": "唱歌",
+          "label": "唱歌",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/唱歌/唱歌_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 27,
+          "fps": 25.0,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/唱歌/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/唱歌.mp4",
+          "reference_video_url": "/api/reference-video/唱歌",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "头部左右晃动，模仿真实唱歌时的样子；双手拇指和食指同时从喉部两边向外移出，表示；从喉部发出声音；嘴巴张开，模仿唱歌时的样子；画面可以顺着双手拇指和食指的移动，叠加流动的音符",
+            "group_weights": {
+              "left_hand": 0.2,
+              "right_hand": 0.2,
+              "left_hand_shape": 0.1,
+              "right_hand_shape": 0.1,
+              "pose": 0.14,
+              "face": 0.21,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "left_hand",
+              "right_hand",
+              "face",
+              "pose"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "指示",
+          "label": "指示",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/指示/指示_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 30,
+          "fps": 22.3062381852552,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/指示/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/指示.mp4",
+          "reference_video_url": "/api/reference-video/指示",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "左手拇指模拟人头，右手食指表示另一个人的食指，正在左右指挥前面这个人；画面可以在左手拇指上叠加表情和头发，模拟真的的头",
+            "group_weights": {
+              "left_hand": 0.24,
+              "right_hand": 0.36,
+              "left_hand_shape": 0.14,
+              "right_hand_shape": 0.21,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "right_hand",
+              "right_hand_shape",
+              "left_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "月亮",
+          "label": "月亮",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/月亮/月亮_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 47,
+          "fps": 25.0,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/月亮/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/月亮.mp4",
+          "reference_video_url": "/api/reference-video/月亮",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "双手向两边移动的过程中，两根手指的距离需要逐渐变窄，模拟弯月两边窄、中间宽的形状；画面可以在双手运动的过程中，出现于两手间出现一轮弯月",
+            "group_weights": {
+              "left_hand": 0.24,
+              "right_hand": 0.24,
+              "left_hand_shape": 0.24,
+              "right_hand_shape": 0.24,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.04
+            },
+            "focus_groups": [
+              "left_hand_shape",
+              "right_hand_shape",
+              "left_hand",
+              "right_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "朋友",
+          "label": "朋友",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/朋友/朋友_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 28,
+          "fps": 25.0,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/朋友/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/朋友.mp4",
+          "reference_video_url": "/api/reference-video/朋友",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "两根大拇指模拟两个人的头；两个人的头互相碰两下，象征亲密，表示朋友；画面可以在两根拇指上叠加笑脸和头发，模拟人头",
+            "group_weights": {
+              "left_hand": 0.29999999999999993,
+              "right_hand": 0.29999999999999993,
+              "left_hand_shape": 0.16999999999999998,
+              "right_hand_shape": 0.16999999999999998,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.06
+            },
+            "focus_groups": [
+              "left_hand",
+              "right_hand",
+              "left_hand_shape",
+              "right_hand_shape"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "汽车",
+          "label": "汽车",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/汽车/汽车_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 44,
+          "fps": 26.363636363636363,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/汽车/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/汽车.mp4",
+          "reference_video_url": "/api/reference-video/汽车",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "双手模拟开车的动作，两手虚握，想象手心内是方向盘；双手左右转动，模拟转动方向盘的动作；画面可以叠加一个方向盘，随着双手的转动进行旋转",
+            "group_weights": {
+              "left_hand": 0.29999999999999993,
+              "right_hand": 0.29999999999999993,
+              "left_hand_shape": 0.16999999999999998,
+              "right_hand_shape": 0.16999999999999998,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.06
+            },
+            "focus_groups": [
+              "left_hand",
+              "right_hand",
+              "left_hand_shape",
+              "right_hand_shape"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "花",
+          "label": "花",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/花/花_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 53,
+          "fps": 29.44954128440367,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/花/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/花.mp4",
+          "reference_video_url": "/api/reference-video/花",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "一手撮合、指尖朝上模仿花朵含苞的样子；手缓缓向上的同时，慢慢张开，模仿开花的样子；画面可以叠加一朵含苞的花朵，随着手张开的动作同时逐渐绽放",
+            "group_weights": {
+              "left_hand": 0.08,
+              "right_hand": 0.34,
+              "left_hand_shape": 0.1,
+              "right_hand_shape": 0.44,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.04
+            },
+            "focus_groups": [
+              "right_hand_shape",
+              "right_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "虎",
+          "label": "虎",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/虎/虎_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 54,
+          "fps": 28.205128205128204,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/虎/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/虎.mp4",
+          "reference_video_url": "/api/reference-video/虎",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "左手中、无名、小指和右手食指在前额比出一个“王”字，模仿老虎额头上的“王”字花纹；随后双手五指弯曲、指尖朝下，向前下方按动一下，模仿老虎的兽爪，需要坚定有力。；画面上可以在完成第一个动作后，于人物前额生成一个“王”字花纹，并在第二个动作完成的过程中，随着双手动作出现兽爪留痕",
+            "group_weights": {
+              "left_hand": 0.24,
+              "right_hand": 0.24,
+              "left_hand_shape": 0.2,
+              "right_hand_shape": 0.2,
+              "pose": 0.03,
+              "face": 0.04,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "left_hand_shape",
+              "right_hand_shape",
+              "left_hand",
+              "right_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "谗（羡慕）",
+          "label": "谗（羡慕）",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/谗（羡慕）/谗（羡慕）_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 32,
+          "fps": 26.571428571428573,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/谗（羡慕）/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/谗（羡慕）.mp4",
+          "reference_video_url": "/api/reference-video/谗（羡慕）",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "一手伸食指，熊嘴角处向下滑动，模仿口水从嘴角流出的样子；舌头从嘴巴里微伸出来，模仿馋嘴时舔嘴唇的样子；画面可以顺着向下的食指，叠加从嘴角流出的口水",
+            "group_weights": {
+              "left_hand": 0.1,
+              "right_hand": 0.24,
+              "left_hand_shape": 0.05,
+              "right_hand_shape": 0.12,
+              "pose": 0.0,
+              "face": 0.44,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "face",
+              "right_hand",
+              "right_hand_shape"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "跳",
+          "label": "跳",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 19,
+          "fps": 14.682539682539682,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/跳.mp4",
+          "reference_video_url": "/api/reference-video/跳",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "右手两根手指模拟人的两条腿，左手模拟地面；右手食、中指向上弹跳时，要先弯曲后伸直，并且动作较为迅速；画面可以在右手两根手指上叠加一个小人，双腿正好与右手的食指、中指重合，左手位置叠加一块平地，小人双腿随着右手食、中指的状态运动",
+            "group_weights": {
+              "left_hand": 0.2136363636363636,
+              "right_hand": 0.299090909090909,
+              "left_hand_shape": 0.1068181818181818,
+              "right_hand_shape": 0.3204545454545454,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.06
+            },
+            "focus_groups": [
+              "two_hand_relation",
+              "right_hand_shape",
+              "right_hand",
+              "left_hand"
+            ],
+            "allow_hand_swap": true
+          }
+        },
+        {
+          "word": "香蕉",
+          "label": "香蕉",
+          "template_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/香蕉/香蕉_holistic_results.json",
+          "template_root": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results",
+          "records": 42,
+          "fps": 25.625,
+          "template_weight_manifest": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/香蕉/semantic_frame_weights.json",
+          "reference_video": "/data/WYC/signLanguage/data/Demo词汇视频/Demo词汇视频/香蕉.mp4",
+          "reference_video_url": "/api/reference-video/香蕉",
+          "semantic_profile": {
+            "profile_version": "semantic_weights_v1_20260523",
+            "description": "左手竖着的食指表示香蕉；右手从左手食指上往下做剥皮动作；画面可以叠加一根真实未剥皮的香蕉，并随着右手的动作，香蕉皮慢慢被剥开",
+            "group_weights": {
+              "left_hand": 0.25999999999999995,
+              "right_hand": 0.33999999999999997,
+              "left_hand_shape": 0.14999999999999997,
+              "right_hand_shape": 0.19999999999999996,
+              "pose": 0.0,
+              "face": 0.0,
+              "missing": 0.05
+            },
+            "focus_groups": [
+              "right_hand",
+              "left_hand",
+              "right_hand_shape",
+              "left_hand_shape"
+            ],
+            "allow_hand_swap": true
+          }
+        }
+      ],
+      "worker": {
+        "status": "ready",
+        "started_at": "2026-05-23T06:56:27",
+        "ready_at": "2026-05-23T07:00:48",
+        "ready_payload": {
+          "type": "ready",
+          "pid": 811485,
+          "started_at": "2026-05-23T07:00:48",
+          "holistic_init_sec": 260.122,
+          "model_complexity": 1,
+          "static_image_mode": true
+        },
+        "error": null,
+        "stderr_log": "/data/WYC/signLanguage/work/logs/web_holistic_worker_20260523_065627.stderr.log",
+        "process": {
+          "pid": 811485,
+          "returncode": null
+        }
+      }
+    },
+    "error": ""
+  },
+  "passed": true,
+  "min_score": 70.0,
+  "results": [
+    {
+      "word": "花",
+      "standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/花/花_holistic_results.json",
+      "standard_length": 53,
+      "standard_interpolation_detail": {
+        "operation": "hand_trajectory_interpolation",
+        "groups": [
+          "left_hand",
+          "right_hand"
+        ],
+        "pattern": "none",
+        "interpolated_frame_count": 0,
+        "changed_frame_count": 0,
+        "changed_visible_points": 0,
+        "total_frames": 53,
+        "interpolated_indices": [],
+        "interpolated_ranges": []
+      },
+      "semantic_profile": {
+        "word": "花",
+        "version": "semantic_weights_v1_20260523",
+        "description": "一手撮合、指尖朝上模仿花朵含苞的样子；手缓缓向上的同时，慢慢张开，模仿开花的样子；画面可以叠加一朵含苞的花朵，随着手张开的动作同时逐渐绽放",
+        "group_weights": {
+          "left_hand": 0.08,
+          "right_hand": 0.34,
+          "left_hand_shape": 0.1,
+          "right_hand_shape": 0.44,
+          "pose": 0.0,
+          "face": 0.0,
+          "missing": 0.04
+        },
+        "keypoint_weights": {
+          "hand": {
+            "4": 1.2,
+            "8": 2.2,
+            "12": 2.2,
+            "16": 1.9,
+            "20": 1.9,
+            "opening": 2.9,
+            "spread": 2.7
+          },
+          "pose": {},
+          "face": {}
+        },
+        "focus_groups": [
+          "right_hand_shape",
+          "right_hand"
+        ],
+        "allow_hand_swap": true,
+        "semantic_notes": [
+          "DOCX 语义是一手撮合/含苞并缓慢张开；评分只看主手手形和主手运动。",
+          "脸、身体、主手相对躯干位置不参与主距离；另一只手只作为手势完整性约束，用于惩罚额外双手动作。",
+          "允许左右手互换：用户用左手或右手完成时，都映射到模板主手。",
+          "动态重要帧由主手 opening/spread、指尖相对腕部距离和手指伸直度驱动。"
+        ],
+        "semantic_dtw": {
+          "enabled": true,
+          "local_phase_weight": 0.02,
+          "anchor_penalty_weight": 0.11,
+          "anchor_phases": [
+            0.1,
+            0.5,
+            0.9
+          ],
+          "pose_robust_hand_position": true,
+          "hand_global_position_weight": 0.06,
+          "relative_motion_enabled": false,
+          "relative_motion_weight": 0.12,
+          "two_hand_relation_weight": 0.05,
+          "group_missing_distance_weight": 0.0,
+          "focus_missing_distance_weight": 0.0,
+          "relation_missing_distance_weight": 0.0,
+          "required_presence_groups": [],
+          "required_presence_weight": 0.08,
+          "visible_core_tolerance_cap": 0.045,
+          "core_visible_score_scale": 0.145,
+          "core_visible_dtw_threshold": 0.06,
+          "core_visible_presence_threshold": 0.58,
+          "core_visible_max_normalized_distance": 0.105,
+          "short_core_capture_tolerance_cap": 0.145,
+          "short_core_capture_max_length_ratio": 0.7,
+          "flower_opening_guard_enabled": true,
+          "flower_opening_min_score": 0.3,
+          "flower_visible_core_floor_enabled": true,
+          "flower_visible_core_floor_min_score": 72.0,
+          "flower_visible_core_floor_max_score": 80.0,
+          "flower_visible_core_floor_max_length_ratio": 0.32,
+          "flower_visible_core_floor_min_presence": 0.62,
+          "flower_visible_core_floor_min_opening_score": 0.6,
+          "flower_visible_core_floor_max_dtw": 0.042,
+          "flower_visible_core_floor_min_action_coverage": 0.62,
+          "flower_jump_confusion_guard_enabled": true,
+          "flower_jump_confusion_min_two_hand_presence": 0.58,
+          "flower_jump_confusion_min_relation_valid_count": 3,
+          "flower_jump_confusion_max_opening_score": 0.45,
+          "flower_jump_confusion_min_two_finger_shape_mean": 1.05,
+          "jump_relation_semantic_floor_enabled": false,
+          "jump_relation_semantic_max_score": 0.0,
+          "jump_relation_semantic_min_presence": 0.65,
+          "jump_relation_semantic_min_direction": 0.55,
+          "jump_relation_local_fallback_enabled": false,
+          "jump_relation_local_min_direction": 0.92,
+          "jump_relation_local_min_amplitude_ratio": 0.8,
+          "jump_relation_local_max_horizontal_to_vertical": 0.6,
+          "jump_relation_local_min_coverage": 0.48,
+          "jump_relation_local_max_coverage": 0.78,
+          "jump_relation_local_min_two_finger_shape_mean": 0.95,
+          "phase_order_guard_enabled": true,
+          "phase_order_guard_anchor_phases": [
+            0.1,
+            0.25,
+            0.5,
+            0.75,
+            0.9
+          ],
+          "phase_order_guard_min_disorder_span_score": 0.4,
+          "phase_order_guard_min_adjacent_disorder_span_score": 0.0,
+          "phase_order_guard_max_score": 45.0,
+          "description": "Main-hand opening/spread semantic phases should align even when frame count differs."
+        }
+      },
+      "gate_pass": true,
+      "weakest_positive_score": 93.73057009611107,
+      "weakest_positive_variant": "right_hand_middle12_interp",
+      "weakest_diagnostic_score": 74.44508851452686,
+      "weakest_diagnostic_variant": "right_hand_middle25_interp_diagnostic",
+      "min_required_score": 70.0,
+      "variants": [
+        {
+          "variant": "self_recomputed",
+          "kind": "positive",
+          "gated": true,
+          "min_score": 95.0,
+          "rationale": "标准序列剥离基础组后重建 hand-shape/motion/relation，应保持近满分。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "left_hand",
+            "right_hand"
+          ],
+          "pattern": "none",
+          "interpolated_frame_count": 0,
+          "changed_frame_count": 0,
+          "changed_visible_points": 0,
+          "total_frames": 53,
+          "interpolated_indices": [],
+          "interpolated_ranges": [],
+          "score": 100.0,
+          "dtw_distance": 0.0,
+          "normalized_distance": 0.0,
+          "alignment_policy": {
+            "mode": "full_sequence_with_action_window_diagnostics",
+            "used_action_window_for_scoring": false,
+            "reason": "long_or_context_sensitive_action_keep_full_sequence",
+            "word": "花",
+            "standard_full_length": 53,
+            "standard_action_length": 15,
+            "standard_action_ratio": 0.2830188679245283
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.0,
+            "right_hand_presence": 0.7547169811320755,
+            "two_hand_presence": 0.0,
+            "semantic_core_presence": 1.0
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": false,
+            "source": "short_visible_core",
+            "reason": "query_not_short_core_capture",
+            "scoring_length_ratio": 1.0,
+            "max_length_ratio": 0.32
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 15,
+              "end_index": 29,
+              "length": 15,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.839322084128381,
+              "baseline_weight": 0.6986023187637329,
+              "active_threshold": 1.2816782307624817,
+              "peak_index": 19,
+              "peak_frame_idx": 38,
+              "peak_timestamp_sec": 1.290342679127726,
+              "peak_weight": 2.0868782997131348,
+              "contrast": 2.9872192571678484,
+              "discarded_prefix_frames": 15,
+              "discarded_suffix_frames": 23,
+              "start_frame_idx": 30,
+              "end_frame_idx": 58,
+              "start_timestamp_sec": 1.0186915887850467,
+              "end_timestamp_sec": 1.9694704049844238
+            },
+            "query": {
+              "start_index": 15,
+              "end_index": 29,
+              "length": 15,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.839322084128381,
+              "baseline_weight": 0.6986023187637329,
+              "active_threshold": 1.2816782307624817,
+              "peak_index": 19,
+              "peak_frame_idx": 38,
+              "peak_timestamp_sec": 1.290342679127726,
+              "peak_weight": 2.0868782997131348,
+              "contrast": 2.9872192571678484,
+              "discarded_prefix_frames": 15,
+              "discarded_suffix_frames": 23,
+              "start_frame_idx": 30,
+              "end_frame_idx": 58,
+              "start_timestamp_sec": 1.0186915887850467,
+              "end_timestamp_sec": 1.9694704049844238
+            },
+            "used_for_scoring": false
+          },
+          "passed": true
+        },
+        {
+          "variant": "right_hand_single_mid_interp",
+          "kind": "positive",
+          "gated": true,
+          "min_score": 70.0,
+          "rationale": "开花核心手单帧轨迹被前后帧线性插值，模拟 tracker 短补洞。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "right_hand"
+          ],
+          "pattern": "single_mid",
+          "interpolated_frame_count": 1,
+          "changed_frame_count": 1,
+          "changed_visible_points": 21,
+          "total_frames": 53,
+          "interpolated_indices": [
+            26
+          ],
+          "interpolated_ranges": [
+            [
+              26,
+              27
+            ]
+          ],
+          "score": 99.61392443276547,
+          "dtw_distance": 0.0008579235862938827,
+          "normalized_distance": 0.0011185433370525942,
+          "alignment_policy": {
+            "mode": "full_sequence_with_action_window_diagnostics",
+            "used_action_window_for_scoring": false,
+            "reason": "long_or_context_sensitive_action_keep_full_sequence",
+            "word": "花",
+            "standard_full_length": 53,
+            "standard_action_length": 15,
+            "standard_action_ratio": 0.2830188679245283
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.0,
+            "right_hand_presence": 0.7547169811320755,
+            "two_hand_presence": 0.0,
+            "semantic_core_presence": 1.0
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": false,
+            "source": "short_visible_core",
+            "reason": "query_not_short_core_capture",
+            "scoring_length_ratio": 1.0,
+            "max_length_ratio": 0.32
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 15,
+              "end_index": 29,
+              "length": 15,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.839322084128381,
+              "baseline_weight": 0.6986023187637329,
+              "active_threshold": 1.2816782307624817,
+              "peak_index": 19,
+              "peak_frame_idx": 38,
+              "peak_timestamp_sec": 1.290342679127726,
+              "peak_weight": 2.0868782997131348,
+              "contrast": 2.9872192571678484,
+              "discarded_prefix_frames": 15,
+              "discarded_suffix_frames": 23,
+              "start_frame_idx": 30,
+              "end_frame_idx": 58,
+              "start_timestamp_sec": 1.0186915887850467,
+              "end_timestamp_sec": 1.9694704049844238
+            },
+            "query": {
+              "start_index": 15,
+              "end_index": 29,
+              "length": 15,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8387407763291423,
+              "baseline_weight": 0.7000420689582825,
+              "active_threshold": 1.2841177618503572,
+              "peak_index": 19,
+              "peak_frame_idx": 38,
+              "peak_timestamp_sec": 1.290342679127726,
+              "peak_weight": 2.090698480606079,
+              "contrast": 2.9865326289850014,
+              "discarded_prefix_frames": 15,
+              "discarded_suffix_frames": 23,
+              "start_frame_idx": 30,
+              "end_frame_idx": 58,
+              "start_timestamp_sec": 1.0186915887850467,
+              "end_timestamp_sec": 1.9694704049844238
+            },
+            "used_for_scoring": false
+          },
+          "passed": true
+        },
+        {
+          "variant": "right_hand_sparse_interp_every_6th",
+          "kind": "positive",
+          "gated": true,
+          "min_score": 70.0,
+          "rationale": "开花核心手稀疏帧被线性插值，短时开合证据仍应保留。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "right_hand"
+          ],
+          "pattern": "sparse_every_6th",
+          "interpolated_frame_count": 9,
+          "changed_frame_count": 7,
+          "changed_visible_points": 147,
+          "total_frames": 53,
+          "interpolated_indices": [
+            3,
+            9,
+            15,
+            21,
+            27,
+            33,
+            39,
+            45,
+            51
+          ],
+          "interpolated_ranges": [
+            [
+              3,
+              4
+            ],
+            [
+              9,
+              10
+            ],
+            [
+              15,
+              16
+            ],
+            [
+              21,
+              22
+            ],
+            [
+              27,
+              28
+            ],
+            [
+              33,
+              34
+            ],
+            [
+              39,
+              40
+            ],
+            [
+              45,
+              46
+            ],
+            [
+              51,
+              52
+            ]
+          ],
+          "score": 96.27112307550398,
+          "dtw_distance": 0.0046922572553978695,
+          "normalized_distance": 0.008560224790154437,
+          "alignment_policy": {
+            "mode": "full_sequence_with_action_window_diagnostics",
+            "used_action_window_for_scoring": false,
+            "reason": "long_or_context_sensitive_action_keep_full_sequence",
+            "word": "花",
+            "standard_full_length": 53,
+            "standard_action_length": 15,
+            "standard_action_ratio": 0.2830188679245283
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.0,
+            "right_hand_presence": 0.7547169811320755,
+            "two_hand_presence": 0.0,
+            "semantic_core_presence": 1.0
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": false,
+            "source": "short_visible_core",
+            "reason": "query_not_short_core_capture",
+            "scoring_length_ratio": 1.0,
+            "max_length_ratio": 0.32
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 15,
+              "end_index": 29,
+              "length": 15,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.839322084128381,
+              "baseline_weight": 0.6986023187637329,
+              "active_threshold": 1.2816782307624817,
+              "peak_index": 19,
+              "peak_frame_idx": 38,
+              "peak_timestamp_sec": 1.290342679127726,
+              "peak_weight": 2.0868782997131348,
+              "contrast": 2.9872192571678484,
+              "discarded_prefix_frames": 15,
+              "discarded_suffix_frames": 23,
+              "start_frame_idx": 30,
+              "end_frame_idx": 58,
+              "start_timestamp_sec": 1.0186915887850467,
+              "end_timestamp_sec": 1.9694704049844238
+            },
+            "query": {
+              "start_index": 16,
+              "end_index": 30,
+              "length": 15,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8221408833891993,
+              "baseline_weight": 0.7390968799591064,
+              "active_threshold": 1.3233423280715941,
+              "peak_index": 19,
+              "peak_frame_idx": 38,
+              "peak_timestamp_sec": 1.290342679127726,
+              "peak_weight": 2.130157470703125,
+              "contrast": 2.8821085955889636,
+              "discarded_prefix_frames": 16,
+              "discarded_suffix_frames": 22,
+              "start_frame_idx": 32,
+              "end_frame_idx": 60,
+              "start_timestamp_sec": 1.0866043613707166,
+              "end_timestamp_sec": 2.0373831775700935
+            },
+            "used_for_scoring": false
+          },
+          "passed": true
+        },
+        {
+          "variant": "right_hand_middle12_interp",
+          "kind": "positive",
+          "gated": true,
+          "min_score": 70.0,
+          "rationale": "开花核心段约 12% 手部轨迹线性化，作为正常短补洞正向门。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "right_hand"
+          ],
+          "pattern": "middle_12pct",
+          "interpolated_frame_count": 7,
+          "changed_frame_count": 7,
+          "changed_visible_points": 147,
+          "total_frames": 53,
+          "interpolated_indices": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29
+          ],
+          "interpolated_ranges": [
+            [
+              23,
+              30
+            ]
+          ],
+          "score": 93.73057009611107,
+          "dtw_distance": 0.006029189057744895,
+          "normalized_distance": 0.013307113151724032,
+          "alignment_policy": {
+            "mode": "full_sequence_with_action_window_diagnostics",
+            "used_action_window_for_scoring": false,
+            "reason": "long_or_context_sensitive_action_keep_full_sequence",
+            "word": "花",
+            "standard_full_length": 53,
+            "standard_action_length": 15,
+            "standard_action_ratio": 0.2830188679245283
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.0,
+            "right_hand_presence": 0.7547169811320755,
+            "two_hand_presence": 0.0,
+            "semantic_core_presence": 0.9333333333333333
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": false,
+            "source": "short_visible_core",
+            "reason": "query_not_short_core_capture",
+            "scoring_length_ratio": 1.0,
+            "max_length_ratio": 0.32
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 15,
+              "end_index": 29,
+              "length": 15,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.839322084128381,
+              "baseline_weight": 0.6986023187637329,
+              "active_threshold": 1.2816782307624817,
+              "peak_index": 19,
+              "peak_frame_idx": 38,
+              "peak_timestamp_sec": 1.290342679127726,
+              "peak_weight": 2.0868782997131348,
+              "contrast": 2.9872192571678484,
+              "discarded_prefix_frames": 15,
+              "discarded_suffix_frames": 23,
+              "start_frame_idx": 30,
+              "end_frame_idx": 58,
+              "start_timestamp_sec": 1.0186915887850467,
+              "end_timestamp_sec": 1.9694704049844238
+            },
+            "query": {
+              "start_index": 13,
+              "end_index": 27,
+              "length": 15,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.839261287084216,
+              "baseline_weight": 0.7694606781005859,
+              "active_threshold": 1.3594300889968873,
+              "peak_index": 19,
+              "peak_frame_idx": 38,
+              "peak_timestamp_sec": 1.290342679127726,
+              "peak_weight": 2.174149751663208,
+              "contrast": 2.825550172401399,
+              "discarded_prefix_frames": 13,
+              "discarded_suffix_frames": 25,
+              "start_frame_idx": 26,
+              "end_frame_idx": 54,
+              "start_timestamp_sec": 0.8828660436137072,
+              "end_timestamp_sec": 1.8336448598130841
+            },
+            "used_for_scoring": false
+          },
+          "passed": true
+        },
+        {
+          "variant": "both_hands_middle12_interp",
+          "kind": "positive",
+          "gated": true,
+          "min_score": 70.0,
+          "rationale": "双手约 12% 轨迹线性化，验证非核心手同时受平滑影响仍可评分。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "left_hand",
+            "right_hand"
+          ],
+          "pattern": "middle_12pct",
+          "interpolated_frame_count": 7,
+          "changed_frame_count": 7,
+          "changed_visible_points": 147,
+          "total_frames": 53,
+          "interpolated_indices": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29
+          ],
+          "interpolated_ranges": [
+            [
+              23,
+              30
+            ]
+          ],
+          "score": 93.73057009611107,
+          "dtw_distance": 0.006029189057744895,
+          "normalized_distance": 0.013307113151724032,
+          "alignment_policy": {
+            "mode": "full_sequence_with_action_window_diagnostics",
+            "used_action_window_for_scoring": false,
+            "reason": "long_or_context_sensitive_action_keep_full_sequence",
+            "word": "花",
+            "standard_full_length": 53,
+            "standard_action_length": 15,
+            "standard_action_ratio": 0.2830188679245283
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.0,
+            "right_hand_presence": 0.7547169811320755,
+            "two_hand_presence": 0.0,
+            "semantic_core_presence": 0.9333333333333333
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": false,
+            "source": "short_visible_core",
+            "reason": "query_not_short_core_capture",
+            "scoring_length_ratio": 1.0,
+            "max_length_ratio": 0.32
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 15,
+              "end_index": 29,
+              "length": 15,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.839322084128381,
+              "baseline_weight": 0.6986023187637329,
+              "active_threshold": 1.2816782307624817,
+              "peak_index": 19,
+              "peak_frame_idx": 38,
+              "peak_timestamp_sec": 1.290342679127726,
+              "peak_weight": 2.0868782997131348,
+              "contrast": 2.9872192571678484,
+              "discarded_prefix_frames": 15,
+              "discarded_suffix_frames": 23,
+              "start_frame_idx": 30,
+              "end_frame_idx": 58,
+              "start_timestamp_sec": 1.0186915887850467,
+              "end_timestamp_sec": 1.9694704049844238
+            },
+            "query": {
+              "start_index": 13,
+              "end_index": 27,
+              "length": 15,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.839261287084216,
+              "baseline_weight": 0.7694606781005859,
+              "active_threshold": 1.3594300889968873,
+              "peak_index": 19,
+              "peak_frame_idx": 38,
+              "peak_timestamp_sec": 1.290342679127726,
+              "peak_weight": 2.174149751663208,
+              "contrast": 2.825550172401399,
+              "discarded_prefix_frames": 13,
+              "discarded_suffix_frames": 25,
+              "start_frame_idx": 26,
+              "end_frame_idx": 54,
+              "start_timestamp_sec": 0.8828660436137072,
+              "end_timestamp_sec": 1.8336448598130841
+            },
+            "used_for_scoring": false
+          },
+          "passed": true
+        },
+        {
+          "variant": "right_hand_middle18_interp_diagnostic",
+          "kind": "diagnostic",
+          "gated": false,
+          "min_score": null,
+          "rationale": "开花核心段约 18% 轨迹线性化偏强，只记录诊断边界。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "right_hand"
+          ],
+          "pattern": "middle_18pct",
+          "interpolated_frame_count": 9,
+          "changed_frame_count": 9,
+          "changed_visible_points": 189,
+          "total_frames": 53,
+          "interpolated_indices": [
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30
+          ],
+          "interpolated_ranges": [
+            [
+              22,
+              31
+            ]
+          ],
+          "score": 92.21508368510756,
+          "dtw_distance": 0.007543218910512344,
+          "normalized_distance": 0.01665483063813221,
+          "alignment_policy": {
+            "mode": "full_sequence_with_action_window_diagnostics",
+            "used_action_window_for_scoring": false,
+            "reason": "long_or_context_sensitive_action_keep_full_sequence",
+            "word": "花",
+            "standard_full_length": 53,
+            "standard_action_length": 15,
+            "standard_action_ratio": 0.2830188679245283
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.0,
+            "right_hand_presence": 0.7547169811320755,
+            "two_hand_presence": 0.0,
+            "semantic_core_presence": 0.9333333333333333
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": false,
+            "source": "short_visible_core",
+            "reason": "query_not_short_core_capture",
+            "scoring_length_ratio": 1.0,
+            "max_length_ratio": 0.32
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 15,
+              "end_index": 29,
+              "length": 15,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.839322084128381,
+              "baseline_weight": 0.6986023187637329,
+              "active_threshold": 1.2816782307624817,
+              "peak_index": 19,
+              "peak_frame_idx": 38,
+              "peak_timestamp_sec": 1.290342679127726,
+              "peak_weight": 2.0868782997131348,
+              "contrast": 2.9872192571678484,
+              "discarded_prefix_frames": 15,
+              "discarded_suffix_frames": 23,
+              "start_frame_idx": 30,
+              "end_frame_idx": 58,
+              "start_timestamp_sec": 1.0186915887850467,
+              "end_timestamp_sec": 1.9694704049844238
+            },
+            "query": {
+              "start_index": 13,
+              "end_index": 27,
+              "length": 15,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8347880628804161,
+              "baseline_weight": 0.7766945362091064,
+              "active_threshold": 1.3640986680984497,
+              "peak_index": 19,
+              "peak_frame_idx": 38,
+              "peak_timestamp_sec": 1.290342679127726,
+              "peak_weight": 2.1752758026123047,
+              "contrast": 2.8006837967850253,
+              "discarded_prefix_frames": 13,
+              "discarded_suffix_frames": 25,
+              "start_frame_idx": 26,
+              "end_frame_idx": 54,
+              "start_timestamp_sec": 0.8828660436137072,
+              "end_timestamp_sec": 1.8336448598130841
+            },
+            "used_for_scoring": false
+          },
+          "passed": true
+        },
+        {
+          "variant": "right_hand_middle25_interp_diagnostic",
+          "kind": "diagnostic",
+          "gated": false,
+          "min_score": null,
+          "rationale": "开花核心段约 25% 轨迹线性化属于强边界，只作诊断。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "right_hand"
+          ],
+          "pattern": "middle_25pct",
+          "interpolated_frame_count": 13,
+          "changed_frame_count": 13,
+          "changed_visible_points": 273,
+          "total_frames": 53,
+          "interpolated_indices": [
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32
+          ],
+          "interpolated_ranges": [
+            [
+              20,
+              33
+            ]
+          ],
+          "score": 74.44508851452686,
+          "dtw_distance": 0.010649004539507371,
+          "normalized_distance": 0.04971257084759209,
+          "alignment_policy": {
+            "mode": "full_sequence_with_action_window_diagnostics",
+            "used_action_window_for_scoring": false,
+            "reason": "long_or_context_sensitive_action_keep_full_sequence",
+            "word": "花",
+            "standard_full_length": 53,
+            "standard_action_length": 15,
+            "standard_action_ratio": 0.2830188679245283
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.0,
+            "right_hand_presence": 0.7547169811320755,
+            "two_hand_presence": 0.0,
+            "semantic_core_presence": 0.8666666666666667
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": false,
+            "source": "short_visible_core",
+            "reason": "query_not_short_core_capture",
+            "scoring_length_ratio": 1.0,
+            "max_length_ratio": 0.32
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 15,
+              "end_index": 29,
+              "length": 15,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.839322084128381,
+              "baseline_weight": 0.6986023187637329,
+              "active_threshold": 1.2816782307624817,
+              "peak_index": 19,
+              "peak_frame_idx": 38,
+              "peak_timestamp_sec": 1.290342679127726,
+              "peak_weight": 2.0868782997131348,
+              "contrast": 2.9872192571678484,
+              "discarded_prefix_frames": 15,
+              "discarded_suffix_frames": 23,
+              "start_frame_idx": 30,
+              "end_frame_idx": 58,
+              "start_timestamp_sec": 1.0186915887850467,
+              "end_timestamp_sec": 1.9694704049844238
+            },
+            "query": {
+              "start_index": 12,
+              "end_index": 26,
+              "length": 15,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8014186427032046,
+              "baseline_weight": 0.8063633441925049,
+              "active_threshold": 1.3282734537124634,
+              "peak_index": 16,
+              "peak_frame_idx": 32,
+              "peak_timestamp_sec": 1.0866043613707166,
+              "peak_weight": 2.049006462097168,
+              "contrast": 2.5410461386349974,
+              "discarded_prefix_frames": 12,
+              "discarded_suffix_frames": 26,
+              "start_frame_idx": 24,
+              "end_frame_idx": 52,
+              "start_timestamp_sec": 0.8149532710280374,
+              "end_timestamp_sec": 1.7657320872274145
+            },
+            "used_for_scoring": false
+          },
+          "passed": true
+        }
+      ]
+    },
+    {
+      "word": "跳",
+      "standard_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/all_demo_step2_worker_cache_semantic_v1/results/跳/跳_holistic_results.json",
+      "standard_length": 19,
+      "standard_interpolation_detail": {
+        "operation": "hand_trajectory_interpolation",
+        "groups": [
+          "left_hand",
+          "right_hand"
+        ],
+        "pattern": "none",
+        "interpolated_frame_count": 0,
+        "changed_frame_count": 0,
+        "changed_visible_points": 0,
+        "total_frames": 19,
+        "interpolated_indices": [],
+        "interpolated_ranges": []
+      },
+      "semantic_profile": {
+        "word": "跳",
+        "version": "semantic_weights_v1_20260523",
+        "description": "右手两根手指模拟人的两条腿，左手模拟地面；右手食、中指向上弹跳时，要先弯曲后伸直，并且动作较为迅速；画面可以在右手两根手指上叠加一个小人，双腿正好与右手的食指、中指重合，左手位置叠加一块平地，小人双腿随着右手食、中指的状态运动",
+        "group_weights": {
+          "left_hand": 0.21363636363636365,
+          "right_hand": 0.2990909090909091,
+          "left_hand_shape": 0.10681818181818183,
+          "right_hand_shape": 0.32045454545454544,
+          "pose": 0.0,
+          "face": 0.0,
+          "missing": 0.06
+        },
+        "keypoint_weights": {
+          "hand": {
+            "8": 2.25,
+            "12": 2.25,
+            "5": 1.45,
+            "9": 1.45,
+            "index": 2.05,
+            "middle": 2.05
+          },
+          "left_hand": {
+            "0": 1.2,
+            "5": 1.25,
+            "9": 1.25,
+            "13": 1.15,
+            "17": 1.15
+          },
+          "right_hand": {
+            "8": 2.45,
+            "12": 2.45,
+            "5": 1.55,
+            "9": 1.55,
+            "index": 2.25,
+            "middle": 2.25
+          },
+          "pose": {},
+          "face": {}
+        },
+        "focus_groups": [
+          "two_hand_relation",
+          "right_hand_shape",
+          "right_hand",
+          "left_hand"
+        ],
+        "allow_hand_swap": true,
+        "semantic_notes": [
+          "DOCX 语义是右手食指/中指模拟两条腿，先弯曲后伸直并向上弹跳；评分主导项是右手两指手形动态。",
+          "左手模拟地面，必须进入评分；单手动作缺少左手地面或双手相对关系时应明显扣分。",
+          "脸、躯干和手-躯干相对位置不参与主距离，核心是右手在左手基础上的相对跳跃。",
+          "动态重要帧主要由 two_hand_relation、跳跃手食指/中指相对运动和弯曲-伸直变化驱动。"
+        ],
+        "semantic_dtw": {
+          "enabled": true,
+          "local_phase_weight": 0.016,
+          "anchor_penalty_weight": 0.09,
+          "anchor_phases": [
+            0.1,
+            0.5,
+            0.9
+          ],
+          "pose_robust_hand_position": true,
+          "hand_global_position_weight": 0.08,
+          "relative_motion_enabled": false,
+          "relative_motion_weight": 0.14,
+          "two_hand_relation_weight": 0.9,
+          "group_missing_distance_weight": 0.2,
+          "focus_missing_distance_weight": 0.34,
+          "relation_missing_distance_weight": 0.78,
+          "required_presence_groups": [
+            "left_hand",
+            "right_hand",
+            "two_hand_relation"
+          ],
+          "required_presence_weight": 0.24,
+          "visible_core_tolerance_cap": 0.034,
+          "core_visible_score_scale": 0.12,
+          "core_visible_dtw_threshold": 0.045,
+          "core_visible_presence_threshold": 0.65,
+          "core_visible_max_normalized_distance": 0.08,
+          "short_core_capture_tolerance_cap": 0.0,
+          "short_core_capture_max_length_ratio": 0.7,
+          "flower_opening_guard_enabled": false,
+          "flower_opening_min_score": 0.3,
+          "flower_visible_core_floor_enabled": false,
+          "flower_visible_core_floor_min_score": 72.0,
+          "flower_visible_core_floor_max_score": 80.0,
+          "flower_visible_core_floor_max_length_ratio": 0.32,
+          "flower_visible_core_floor_min_presence": 0.62,
+          "flower_visible_core_floor_min_opening_score": 0.6,
+          "flower_visible_core_floor_max_dtw": 0.042,
+          "flower_visible_core_floor_min_action_coverage": 0.62,
+          "flower_jump_confusion_guard_enabled": false,
+          "flower_jump_confusion_min_two_hand_presence": 0.58,
+          "flower_jump_confusion_min_relation_valid_count": 3,
+          "flower_jump_confusion_max_opening_score": 0.45,
+          "flower_jump_confusion_min_two_finger_shape_mean": 1.05,
+          "jump_relation_semantic_floor_enabled": true,
+          "jump_relation_semantic_max_score": 85.0,
+          "jump_relation_semantic_min_presence": 0.58,
+          "jump_relation_semantic_min_direction": 0.55,
+          "jump_relation_local_fallback_enabled": true,
+          "jump_relation_local_min_direction": 0.92,
+          "jump_relation_local_min_amplitude_ratio": 0.8,
+          "jump_relation_local_max_horizontal_to_vertical": 0.6,
+          "jump_relation_local_min_coverage": 0.48,
+          "jump_relation_local_max_coverage": 0.78,
+          "jump_relation_local_min_two_finger_shape_mean": 0.95,
+          "phase_order_guard_enabled": true,
+          "phase_order_guard_anchor_phases": [
+            0.1,
+            0.25,
+            0.5,
+            0.75,
+            0.9
+          ],
+          "phase_order_guard_min_disorder_span_score": 0.6,
+          "phase_order_guard_min_adjacent_disorder_span_score": 0.25,
+          "phase_order_guard_max_score": 45.0,
+          "description": "Short two-hand jump requires the right jumping hand relative to the left ground hand; relation missing is a hard semantic error."
+        }
+      },
+      "gate_pass": true,
+      "weakest_positive_score": 82.67194005108975,
+      "weakest_positive_variant": "right_hand_middle12_interp",
+      "weakest_diagnostic_score": 77.3164615242177,
+      "weakest_diagnostic_variant": "both_hands_middle25_interp_diagnostic",
+      "min_required_score": 70.0,
+      "variants": [
+        {
+          "variant": "self_recomputed",
+          "kind": "positive",
+          "gated": true,
+          "min_score": 95.0,
+          "rationale": "标准序列剥离基础组后重建 hand-shape/motion/relation，应保持近满分。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "left_hand",
+            "right_hand"
+          ],
+          "pattern": "none",
+          "interpolated_frame_count": 0,
+          "changed_frame_count": 0,
+          "changed_visible_points": 0,
+          "total_frames": 19,
+          "interpolated_indices": [],
+          "interpolated_ranges": [],
+          "score": 100.0,
+          "dtw_distance": 0.0,
+          "normalized_distance": 0.0,
+          "alignment_policy": {
+            "mode": "semantic_action_window",
+            "used_action_window_for_scoring": true,
+            "reason": "short_standard_action_window",
+            "word": "跳",
+            "standard_full_length": 19,
+            "standard_action_length": 9,
+            "standard_action_ratio": 0.47368421052631576
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.8888888888888888,
+            "right_hand_presence": 1.0,
+            "two_hand_presence": 0.8888888888888888,
+            "semantic_core_presence": 0.8888888888888888
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": true,
+            "reason": "used",
+            "source": "action_window_net",
+            "score": 82.3015873015873,
+            "max_score": 85.0,
+            "relation_presence": 0.8888888888888888,
+            "relation_quality": 1.0,
+            "standard_valid_count": 8,
+            "query_valid_count": 8,
+            "standard_delta": [
+              0.15788370370864868,
+              -0.19874300062656403,
+              0.1542455404996872,
+              -0.2505398392677307,
+              0.003638148307800293,
+              0.05179682374000549,
+              0.022433429956436157,
+              0.08759468793869019
+            ],
+            "query_delta": [
+              0.15788370370864868,
+              -0.19874300062656403,
+              0.1542455404996872,
+              -0.2505398392677307,
+              0.003638148307800293,
+              0.05179682374000549,
+              0.022433429956436157,
+              0.08759468793869019
+            ],
+            "query_segment_start_frame_idx": 6,
+            "query_segment_end_frame_idx": 22,
+            "query_segment_coverage": null,
+            "direction_cosine": 1.0,
+            "direction_score": 1.0,
+            "vertical_score": 1.0,
+            "amplitude_ratio": 1.0,
+            "amplitude_score": 1.0,
+            "query_horizontal_to_vertical": 0.690203193723191
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8904492089667322,
+              "baseline_weight": 0.7502872943878174,
+              "active_threshold": 1.0411624193191529,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.437417984008789,
+              "contrast": 1.9158234382492414,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "query": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8904492089667322,
+              "baseline_weight": 0.7502872943878174,
+              "active_threshold": 1.0411624193191529,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.437417984008789,
+              "contrast": 1.9158234382492414,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "used_for_scoring": true
+          },
+          "passed": true
+        },
+        {
+          "variant": "right_hand_single_mid_interp",
+          "kind": "positive",
+          "gated": true,
+          "min_score": 70.0,
+          "rationale": "右手两指小人单帧轨迹补洞，双手关系仍应可评分。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "right_hand"
+          ],
+          "pattern": "single_mid",
+          "interpolated_frame_count": 1,
+          "changed_frame_count": 1,
+          "changed_visible_points": 21,
+          "total_frames": 19,
+          "interpolated_indices": [
+            9
+          ],
+          "interpolated_ranges": [
+            [
+              9,
+              10
+            ]
+          ],
+          "score": 96.49408903705907,
+          "dtw_distance": 0.004378077302139659,
+          "normalized_distance": 0.007588854975560199,
+          "alignment_policy": {
+            "mode": "semantic_action_window",
+            "used_action_window_for_scoring": true,
+            "reason": "short_standard_action_window",
+            "word": "跳",
+            "standard_full_length": 19,
+            "standard_action_length": 9,
+            "standard_action_ratio": 0.47368421052631576
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.8888888888888888,
+            "right_hand_presence": 1.0,
+            "two_hand_presence": 0.8888888888888888,
+            "semantic_core_presence": 0.8888888888888888
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": true,
+            "reason": "used",
+            "source": "action_window_net",
+            "score": 82.3015873015873,
+            "max_score": 85.0,
+            "relation_presence": 0.8888888888888888,
+            "relation_quality": 1.0,
+            "standard_valid_count": 8,
+            "query_valid_count": 8,
+            "standard_delta": [
+              0.15788370370864868,
+              -0.19874300062656403,
+              0.1542455404996872,
+              -0.2505398392677307,
+              0.003638148307800293,
+              0.05179682374000549,
+              0.022433429956436157,
+              0.08759468793869019
+            ],
+            "query_delta": [
+              0.15788370370864868,
+              -0.19874300062656403,
+              0.1542455404996872,
+              -0.2505398392677307,
+              0.003638148307800293,
+              0.05179682374000549,
+              0.022433429956436157,
+              0.08759468793869019
+            ],
+            "query_segment_start_frame_idx": 6,
+            "query_segment_end_frame_idx": 22,
+            "query_segment_coverage": null,
+            "direction_cosine": 1.0,
+            "direction_score": 1.0,
+            "vertical_score": 1.0,
+            "amplitude_ratio": 1.0,
+            "amplitude_score": 1.0,
+            "query_horizontal_to_vertical": 0.690203193723191
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8904492089667322,
+              "baseline_weight": 0.7502872943878174,
+              "active_threshold": 1.0411624193191529,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.437417984008789,
+              "contrast": 1.9158234382492414,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "query": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8843473429423366,
+              "baseline_weight": 0.7661595940589905,
+              "active_threshold": 1.0553803086280824,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.4140294790267944,
+              "contrast": 1.8456069596877243,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "used_for_scoring": true
+          },
+          "passed": true
+        },
+        {
+          "variant": "left_hand_single_mid_interp",
+          "kind": "positive",
+          "gated": true,
+          "min_score": 70.0,
+          "rationale": "左手地面单帧轨迹补洞，不应导致跳跃关系失败。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "left_hand"
+          ],
+          "pattern": "single_mid",
+          "interpolated_frame_count": 1,
+          "changed_frame_count": 1,
+          "changed_visible_points": 21,
+          "total_frames": 19,
+          "interpolated_indices": [
+            9
+          ],
+          "interpolated_ranges": [
+            [
+              9,
+              10
+            ]
+          ],
+          "score": 97.61123758883318,
+          "dtw_distance": 0.0009080045799084698,
+          "normalized_distance": 0.0044208695882538155,
+          "alignment_policy": {
+            "mode": "semantic_action_window",
+            "used_action_window_for_scoring": true,
+            "reason": "short_standard_action_window",
+            "word": "跳",
+            "standard_full_length": 19,
+            "standard_action_length": 9,
+            "standard_action_ratio": 0.47368421052631576
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.8888888888888888,
+            "right_hand_presence": 1.0,
+            "two_hand_presence": 0.8888888888888888,
+            "semantic_core_presence": 0.8888888888888888
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": true,
+            "reason": "used",
+            "source": "action_window_net",
+            "score": 82.3015873015873,
+            "max_score": 85.0,
+            "relation_presence": 0.8888888888888888,
+            "relation_quality": 1.0,
+            "standard_valid_count": 8,
+            "query_valid_count": 8,
+            "standard_delta": [
+              0.15788370370864868,
+              -0.19874300062656403,
+              0.1542455404996872,
+              -0.2505398392677307,
+              0.003638148307800293,
+              0.05179682374000549,
+              0.022433429956436157,
+              0.08759468793869019
+            ],
+            "query_delta": [
+              0.15788370370864868,
+              -0.19874300062656403,
+              0.1542455404996872,
+              -0.2505398392677307,
+              0.003638148307800293,
+              0.05179682374000549,
+              0.022433429956436157,
+              0.08759468793869019
+            ],
+            "query_segment_start_frame_idx": 6,
+            "query_segment_end_frame_idx": 22,
+            "query_segment_coverage": null,
+            "direction_cosine": 1.0,
+            "direction_score": 1.0,
+            "vertical_score": 1.0,
+            "amplitude_ratio": 1.0,
+            "amplitude_score": 1.0,
+            "query_horizontal_to_vertical": 0.690203193723191
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8904492089667322,
+              "baseline_weight": 0.7502872943878174,
+              "active_threshold": 1.0411624193191529,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.437417984008789,
+              "contrast": 1.9158234382492414,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "query": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8896887603868268,
+              "baseline_weight": 0.7524266839027405,
+              "active_threshold": 1.0412369906902312,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.4400702714920044,
+              "contrast": 1.9139011179435383,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "used_for_scoring": true
+          },
+          "passed": true
+        },
+        {
+          "variant": "right_hand_sparse_interp_every_6th",
+          "kind": "positive",
+          "gated": true,
+          "min_score": 70.0,
+          "rationale": "右手稀疏帧线性补洞，弹跳主方向仍应保留。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "right_hand"
+          ],
+          "pattern": "sparse_every_6th",
+          "interpolated_frame_count": 3,
+          "changed_frame_count": 3,
+          "changed_visible_points": 63,
+          "total_frames": 19,
+          "interpolated_indices": [
+            3,
+            9,
+            15
+          ],
+          "interpolated_ranges": [
+            [
+              3,
+              4
+            ],
+            [
+              9,
+              10
+            ],
+            [
+              15,
+              16
+            ]
+          ],
+          "score": 94.30490048805738,
+          "dtw_distance": 0.009287872988322952,
+          "normalized_distance": 0.01320178963459329,
+          "alignment_policy": {
+            "mode": "semantic_action_window",
+            "used_action_window_for_scoring": true,
+            "reason": "short_standard_action_window",
+            "word": "跳",
+            "standard_full_length": 19,
+            "standard_action_length": 9,
+            "standard_action_ratio": 0.47368421052631576
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.8888888888888888,
+            "right_hand_presence": 1.0,
+            "two_hand_presence": 0.8888888888888888,
+            "semantic_core_presence": 0.8888888888888888
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": true,
+            "reason": "used",
+            "source": "action_window_net",
+            "score": 82.09705293197158,
+            "max_score": 85.0,
+            "relation_presence": 0.8888888888888888,
+            "relation_quality": 0.9934600490860324,
+            "standard_valid_count": 8,
+            "query_valid_count": 8,
+            "standard_delta": [
+              0.15788370370864868,
+              -0.19874300062656403,
+              0.1542455404996872,
+              -0.2505398392677307,
+              0.003638148307800293,
+              0.05179682374000549,
+              0.022433429956436157,
+              0.08759468793869019
+            ],
+            "query_delta": [
+              0.15397444367408752,
+              -0.18307159841060638,
+              0.1481974571943283,
+              -0.2256467193365097,
+              0.00577700138092041,
+              0.04257512092590332,
+              0.023622184991836548,
+              0.08465644717216492
+            ],
+            "query_segment_start_frame_idx": 6,
+            "query_segment_end_frame_idx": 22,
+            "query_segment_coverage": null,
+            "direction_cosine": 0.9995002193296506,
+            "direction_score": 0.9988893762881125,
+            "vertical_score": 1.0,
+            "amplitude_ratio": 0.9086165030900566,
+            "amplitude_score": 0.9697991487819089,
+            "query_horizontal_to_vertical": 0.735471391503118
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8904492089667322,
+              "baseline_weight": 0.7502872943878174,
+              "active_threshold": 1.0411624193191529,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.437417984008789,
+              "contrast": 1.9158234382492414,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "query": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.9189920478709791,
+              "baseline_weight": 0.7788642048835754,
+              "active_threshold": 1.0675822257995606,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.4335030317306519,
+              "contrast": 1.8405044457588493,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "used_for_scoring": true
+          },
+          "passed": true
+        },
+        {
+          "variant": "left_hand_sparse_interp_every_6th",
+          "kind": "positive",
+          "gated": true,
+          "min_score": 70.0,
+          "rationale": "左手地面稀疏帧线性补洞，右手弹跳关系仍应稳定。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "left_hand"
+          ],
+          "pattern": "sparse_every_6th",
+          "interpolated_frame_count": 3,
+          "changed_frame_count": 2,
+          "changed_visible_points": 42,
+          "total_frames": 19,
+          "interpolated_indices": [
+            3,
+            9,
+            15
+          ],
+          "interpolated_ranges": [
+            [
+              3,
+              4
+            ],
+            [
+              9,
+              10
+            ],
+            [
+              15,
+              16
+            ]
+          ],
+          "score": 97.60725487598395,
+          "dtw_distance": 0.0009186575552921272,
+          "normalized_distance": 0.004431522563637471,
+          "alignment_policy": {
+            "mode": "semantic_action_window",
+            "used_action_window_for_scoring": true,
+            "reason": "short_standard_action_window",
+            "word": "跳",
+            "standard_full_length": 19,
+            "standard_action_length": 9,
+            "standard_action_ratio": 0.47368421052631576
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.8888888888888888,
+            "right_hand_presence": 1.0,
+            "two_hand_presence": 0.8888888888888888,
+            "semantic_core_presence": 0.8888888888888888
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": true,
+            "reason": "used",
+            "source": "action_window_net",
+            "score": 82.3015873015873,
+            "max_score": 85.0,
+            "relation_presence": 0.8888888888888888,
+            "relation_quality": 1.0,
+            "standard_valid_count": 8,
+            "query_valid_count": 8,
+            "standard_delta": [
+              0.15788370370864868,
+              -0.19874300062656403,
+              0.1542455404996872,
+              -0.2505398392677307,
+              0.003638148307800293,
+              0.05179682374000549,
+              0.022433429956436157,
+              0.08759468793869019
+            ],
+            "query_delta": [
+              0.15788370370864868,
+              -0.19874300062656403,
+              0.1542455404996872,
+              -0.2505398392677307,
+              0.003638148307800293,
+              0.05179682374000549,
+              0.022433429956436157,
+              0.08759468793869019
+            ],
+            "query_segment_start_frame_idx": 6,
+            "query_segment_end_frame_idx": 22,
+            "query_segment_coverage": null,
+            "direction_cosine": 1.0,
+            "direction_score": 1.0,
+            "vertical_score": 1.0,
+            "amplitude_ratio": 1.0,
+            "amplitude_score": 1.0,
+            "query_horizontal_to_vertical": 0.690203193723191
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8904492089667322,
+              "baseline_weight": 0.7502872943878174,
+              "active_threshold": 1.0411624193191529,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.437417984008789,
+              "contrast": 1.9158234382492414,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "query": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8950256542203364,
+              "baseline_weight": 0.7538092136383057,
+              "active_threshold": 1.042875943183899,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.442063331604004,
+              "contrast": 1.9130348973101539,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "used_for_scoring": true
+          },
+          "passed": true
+        },
+        {
+          "variant": "right_hand_middle12_interp",
+          "kind": "positive",
+          "gated": true,
+          "min_score": 70.0,
+          "rationale": "右手约 12% 弹跳轨迹线性化，作为短补洞正向门。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "right_hand"
+          ],
+          "pattern": "middle_12pct",
+          "interpolated_frame_count": 3,
+          "changed_frame_count": 3,
+          "changed_visible_points": 63,
+          "total_frames": 19,
+          "interpolated_indices": [
+            8,
+            9,
+            10
+          ],
+          "interpolated_ranges": [
+            [
+              8,
+              11
+            ]
+          ],
+          "score": 82.67194005108975,
+          "dtw_distance": 0.021131002239748804,
+          "normalized_distance": 0.03968912438525305,
+          "alignment_policy": {
+            "mode": "semantic_action_window",
+            "used_action_window_for_scoring": true,
+            "reason": "short_standard_action_window",
+            "word": "跳",
+            "standard_full_length": 19,
+            "standard_action_length": 9,
+            "standard_action_ratio": 0.47368421052631576
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.8888888888888888,
+            "right_hand_presence": 1.0,
+            "two_hand_presence": 0.8888888888888888,
+            "semantic_core_presence": 0.8888888888888888
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": true,
+            "reason": "used",
+            "source": "action_window_net",
+            "score": 82.12758906825712,
+            "max_score": 85.0,
+            "relation_presence": 0.8888888888888888,
+            "relation_quality": 0.994436436735623,
+            "standard_valid_count": 8,
+            "query_valid_count": 8,
+            "standard_delta": [
+              0.15788370370864868,
+              -0.19874300062656403,
+              0.1542455404996872,
+              -0.2505398392677307,
+              0.003638148307800293,
+              0.05179682374000549,
+              0.022433429956436157,
+              0.08759468793869019
+            ],
+            "query_delta": [
+              0.13739071786403656,
+              -0.21199838817119598,
+              0.15478770434856415,
+              -0.26212263107299805,
+              -0.017396993935108185,
+              0.05012425780296326,
+              0.04290798306465149,
+              0.09798893332481384
+            ],
+            "query_segment_start_frame_idx": 6,
+            "query_segment_end_frame_idx": 22,
+            "query_segment_coverage": null,
+            "direction_cosine": 0.9977850730244072,
+            "direction_score": 0.9950779400542382,
+            "vertical_score": 1.0,
+            "amplitude_ratio": 1.0541823213502237,
+            "amplitude_score": 0.9832568185560792,
+            "query_horizontal_to_vertical": 0.6139229791776027
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8904492089667322,
+              "baseline_weight": 0.7502872943878174,
+              "active_threshold": 1.0411624193191529,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.437417984008789,
+              "contrast": 1.9158234382492414,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "query": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.876177271624083,
+              "baseline_weight": 0.7872949838638306,
+              "active_threshold": 1.0795601606369019,
+              "peak_index": 3,
+              "peak_frame_idx": 6,
+              "peak_timestamp_sec": 0.4086486486486487,
+              "peak_weight": 1.4463858604431152,
+              "contrast": 1.8371587398469695,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "used_for_scoring": true
+          },
+          "passed": true
+        },
+        {
+          "variant": "left_hand_middle12_interp",
+          "kind": "positive",
+          "gated": true,
+          "min_score": 70.0,
+          "rationale": "左手地面约 12% 轨迹线性化，双手关系仍应可恢复。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "left_hand"
+          ],
+          "pattern": "middle_12pct",
+          "interpolated_frame_count": 3,
+          "changed_frame_count": 3,
+          "changed_visible_points": 63,
+          "total_frames": 19,
+          "interpolated_indices": [
+            8,
+            9,
+            10
+          ],
+          "interpolated_ranges": [
+            [
+              8,
+              11
+            ]
+          ],
+          "score": 93.00348649972656,
+          "dtw_distance": 0.004419505929219585,
+          "normalized_distance": 0.01385612002328003,
+          "alignment_policy": {
+            "mode": "semantic_action_window",
+            "used_action_window_for_scoring": true,
+            "reason": "short_standard_action_window",
+            "word": "跳",
+            "standard_full_length": 19,
+            "standard_action_length": 9,
+            "standard_action_ratio": 0.47368421052631576
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.8888888888888888,
+            "right_hand_presence": 1.0,
+            "two_hand_presence": 0.8888888888888888,
+            "semantic_core_presence": 0.8888888888888888
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": true,
+            "reason": "used",
+            "source": "action_window_net",
+            "score": 82.17502674732708,
+            "max_score": 85.0,
+            "relation_presence": 0.8888888888888888,
+            "relation_quality": 0.9959532482777271,
+            "standard_valid_count": 8,
+            "query_valid_count": 8,
+            "standard_delta": [
+              0.15788370370864868,
+              -0.19874300062656403,
+              0.1542455404996872,
+              -0.2505398392677307,
+              0.003638148307800293,
+              0.05179682374000549,
+              0.022433429956436157,
+              0.08759468793869019
+            ],
+            "query_delta": [
+              0.1826028823852539,
+              -0.19519008696079254,
+              0.17896471917629242,
+              -0.24698691070079803,
+              0.003638148307800293,
+              0.05179682374000549,
+              0.012576282024383545,
+              0.07539066672325134
+            ],
+            "query_segment_start_frame_idx": 6,
+            "query_segment_end_frame_idx": 22,
+            "query_segment_coverage": null,
+            "direction_cosine": 0.9969574393640671,
+            "direction_score": 0.9932387541423714,
+            "vertical_score": 1.0,
+            "amplitude_ratio": 0.9843930617522982,
+            "amplitude_score": 0.9949790445683006,
+            "query_horizontal_to_vertical": 0.8121868277586162
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8904492089667322,
+              "baseline_weight": 0.7502872943878174,
+              "active_threshold": 1.0411624193191529,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.437417984008789,
+              "contrast": 1.9158234382492414,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "query": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8877618955797313,
+              "baseline_weight": 0.7579167485237122,
+              "active_threshold": 1.0467122077941895,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.407416820526123,
+              "contrast": 1.856954372980307,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "used_for_scoring": true
+          },
+          "passed": true
+        },
+        {
+          "variant": "both_hands_middle12_interp_diagnostic",
+          "kind": "diagnostic",
+          "gated": false,
+          "min_score": null,
+          "rationale": "短动作双手同时线性化约 12% 偏强，只记录诊断边界。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "left_hand",
+            "right_hand"
+          ],
+          "pattern": "middle_12pct",
+          "interpolated_frame_count": 3,
+          "changed_frame_count": 3,
+          "changed_visible_points": 126,
+          "total_frames": 19,
+          "interpolated_indices": [
+            8,
+            9,
+            10
+          ],
+          "interpolated_ranges": [
+            [
+              8,
+              11
+            ]
+          ],
+          "score": 78.5453980517561,
+          "dtw_distance": 0.0312199551976477,
+          "normalized_distance": 0.055084355432857536,
+          "alignment_policy": {
+            "mode": "semantic_action_window",
+            "used_action_window_for_scoring": true,
+            "reason": "short_standard_action_window",
+            "word": "跳",
+            "standard_full_length": 19,
+            "standard_action_length": 9,
+            "standard_action_ratio": 0.47368421052631576
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.75,
+            "right_hand_presence": 1.0,
+            "two_hand_presence": 0.75,
+            "semantic_core_presence": 0.8333333333333334
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": true,
+            "reason": "used",
+            "source": "full_sequence_local_relation_segment",
+            "score": 78.5453980517561,
+            "max_score": 85.0,
+            "relation_presence": 0.75,
+            "relation_quality": 0.9872245123233754,
+            "standard_valid_count": 15,
+            "query_valid_count": 12,
+            "standard_delta": [
+              0.02289007604122162,
+              -0.21324841678142548,
+              0.05041748285293579,
+              -0.26832932233810425,
+              -0.02752743475139141,
+              0.055080875754356384,
+              0.11937923729419708,
+              0.17029798030853271
+            ],
+            "query_delta": [
+              0.03327392041683197,
+              -0.2609465420246124,
+              0.05745041370391846,
+              -0.3160881996154785,
+              -0.02417650632560253,
+              0.0551416277885437,
+              0.15588532388210297,
+              0.21115800738334656
+            ],
+            "query_segment_start_frame_idx": 6,
+            "query_segment_end_frame_idx": 30,
+            "query_segment_coverage": 0.8,
+            "direction_cosine": 0.999706920112112,
+            "direction_score": 0.9963365014014005,
+            "vertical_score": 1.0,
+            "amplitude_ratio": 1.195879009251713,
+            "amplitude_score": 0.9443654334637259,
+            "query_horizontal_to_vertical": 0.16197400458053243,
+            "fallback_from": {
+              "enabled": true,
+              "used": false,
+              "source": "action_window_net",
+              "standard_valid_count": 8,
+              "query_valid_count": 6,
+              "standard_delta": [
+                0.15788370370864868,
+                -0.19874300062656403,
+                0.1542455404996872,
+                -0.2505398392677307,
+                0.003638148307800293,
+                0.05179682374000549,
+                0.022433429956436157,
+                0.08759468793869019
+              ],
+              "query_delta": [
+                0.16565176844596863,
+                -0.07377943396568298,
+                0.19392284750938416,
+                -0.10341653227806091,
+                -0.02827109396457672,
+                0.02963709831237793,
+                -0.0962064266204834,
+                -0.06553396582603455
+              ],
+              "reason": "relation_jump_amplitude_too_small",
+              "direction_cosine": 0.8728538651717298,
+              "vertical_score": 0.871116835945867,
+              "amplitude_ratio": 0.3972446234805529,
+              "min_amplitude_ratio": 0.42
+            },
+            "local_candidate_rank": 0.8589332058416999,
+            "right_two_finger_shape": {
+              "valid_count": 13,
+              "mean": 1.0493524074554443,
+              "start": 0.9482738375663757,
+              "end": 1.128077745437622,
+              "range": 0.24612998962402344,
+              "min": 0.9233999252319336,
+              "max": 1.169529914855957
+            },
+            "min_two_finger_shape_mean": 0.95
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8904492089667322,
+              "baseline_weight": 0.7502872943878174,
+              "active_threshold": 1.0411624193191529,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.437417984008789,
+              "contrast": 1.9158234382492414,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "query": {
+              "start_index": 2,
+              "end_index": 9,
+              "length": 8,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.806111517868771,
+              "baseline_weight": 0.7992028594017029,
+              "active_threshold": 1.0791498458385467,
+              "peak_index": 3,
+              "peak_frame_idx": 6,
+              "peak_timestamp_sec": 0.4086486486486487,
+              "peak_weight": 1.4657433032989502,
+              "contrast": 1.8340065805022658,
+              "discarded_prefix_frames": 2,
+              "discarded_suffix_frames": 9,
+              "start_frame_idx": 4,
+              "end_frame_idx": 18,
+              "start_timestamp_sec": 0.2724324324324324,
+              "end_timestamp_sec": 1.225945945945946
+            },
+            "used_for_scoring": true
+          },
+          "passed": true
+        },
+        {
+          "variant": "right_hand_middle18_interp_diagnostic",
+          "kind": "diagnostic",
+          "gated": false,
+          "min_score": null,
+          "rationale": "右手弹跳核心约 18% 线性化偏强，只记录诊断边界。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "right_hand"
+          ],
+          "pattern": "middle_18pct",
+          "interpolated_frame_count": 3,
+          "changed_frame_count": 3,
+          "changed_visible_points": 63,
+          "total_frames": 19,
+          "interpolated_indices": [
+            8,
+            9,
+            10
+          ],
+          "interpolated_ranges": [
+            [
+              8,
+              11
+            ]
+          ],
+          "score": 82.67194005108975,
+          "dtw_distance": 0.021131002239748804,
+          "normalized_distance": 0.03968912438525305,
+          "alignment_policy": {
+            "mode": "semantic_action_window",
+            "used_action_window_for_scoring": true,
+            "reason": "short_standard_action_window",
+            "word": "跳",
+            "standard_full_length": 19,
+            "standard_action_length": 9,
+            "standard_action_ratio": 0.47368421052631576
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.8888888888888888,
+            "right_hand_presence": 1.0,
+            "two_hand_presence": 0.8888888888888888,
+            "semantic_core_presence": 0.8888888888888888
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": true,
+            "reason": "used",
+            "source": "action_window_net",
+            "score": 82.12758906825712,
+            "max_score": 85.0,
+            "relation_presence": 0.8888888888888888,
+            "relation_quality": 0.994436436735623,
+            "standard_valid_count": 8,
+            "query_valid_count": 8,
+            "standard_delta": [
+              0.15788370370864868,
+              -0.19874300062656403,
+              0.1542455404996872,
+              -0.2505398392677307,
+              0.003638148307800293,
+              0.05179682374000549,
+              0.022433429956436157,
+              0.08759468793869019
+            ],
+            "query_delta": [
+              0.13739071786403656,
+              -0.21199838817119598,
+              0.15478770434856415,
+              -0.26212263107299805,
+              -0.017396993935108185,
+              0.05012425780296326,
+              0.04290798306465149,
+              0.09798893332481384
+            ],
+            "query_segment_start_frame_idx": 6,
+            "query_segment_end_frame_idx": 22,
+            "query_segment_coverage": null,
+            "direction_cosine": 0.9977850730244072,
+            "direction_score": 0.9950779400542382,
+            "vertical_score": 1.0,
+            "amplitude_ratio": 1.0541823213502237,
+            "amplitude_score": 0.9832568185560792,
+            "query_horizontal_to_vertical": 0.6139229791776027
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8904492089667322,
+              "baseline_weight": 0.7502872943878174,
+              "active_threshold": 1.0411624193191529,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.437417984008789,
+              "contrast": 1.9158234382492414,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "query": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.876177271624083,
+              "baseline_weight": 0.7872949838638306,
+              "active_threshold": 1.0795601606369019,
+              "peak_index": 3,
+              "peak_frame_idx": 6,
+              "peak_timestamp_sec": 0.4086486486486487,
+              "peak_weight": 1.4463858604431152,
+              "contrast": 1.8371587398469695,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "used_for_scoring": true
+          },
+          "passed": true
+        },
+        {
+          "variant": "both_hands_middle25_interp_diagnostic",
+          "kind": "diagnostic",
+          "gated": false,
+          "min_score": null,
+          "rationale": "双手核心约 25% 轨迹线性化属于强边界，只作诊断。",
+          "operation": "hand_trajectory_interpolation",
+          "groups": [
+            "left_hand",
+            "right_hand"
+          ],
+          "pattern": "middle_25pct",
+          "interpolated_frame_count": 5,
+          "changed_frame_count": 5,
+          "changed_visible_points": 105,
+          "total_frames": 19,
+          "interpolated_indices": [
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "interpolated_ranges": [
+            [
+              7,
+              12
+            ]
+          ],
+          "score": 77.3164615242177,
+          "dtw_distance": 0.03701316196211447,
+          "normalized_distance": 0.06086590171276534,
+          "alignment_policy": {
+            "mode": "semantic_action_window",
+            "used_action_window_for_scoring": true,
+            "reason": "short_standard_action_window",
+            "word": "跳",
+            "standard_full_length": 19,
+            "standard_action_length": 9,
+            "standard_action_ratio": 0.47368421052631576
+          },
+          "capture_quality": {
+            "status": "score_valid",
+            "reason": "score_valid",
+            "reliable_for_scoring": true,
+            "message": "核心语义可评分。",
+            "left_hand_presence": 0.75,
+            "right_hand_presence": 1.0,
+            "two_hand_presence": 0.75,
+            "semantic_core_presence": 0.8333333333333334
+          },
+          "semantic_floor": {
+            "enabled": true,
+            "used": true,
+            "reason": "used",
+            "source": "action_window_net",
+            "score": 77.3164615242177,
+            "max_score": 85.0,
+            "relation_presence": 0.75,
+            "relation_quality": 0.9462502056181179,
+            "standard_valid_count": 8,
+            "query_valid_count": 6,
+            "standard_delta": [
+              0.15788370370864868,
+              -0.19874300062656403,
+              0.1542455404996872,
+              -0.2505398392677307,
+              0.003638148307800293,
+              0.05179682374000549,
+              0.022433429956436157,
+              0.08759468793869019
+            ],
+            "query_delta": [
+              0.1311279982328415,
+              -0.12321631610393524,
+              0.15889960527420044,
+              -0.15061508119106293,
+              -0.02777162194252014,
+              0.027398765087127686,
+              -0.03678753972053528,
+              -0.008485287427902222
+            ],
+            "query_segment_start_frame_idx": 6,
+            "query_segment_end_frame_idx": 18,
+            "query_segment_coverage": null,
+            "direction_cosine": 0.975644720808023,
+            "direction_score": 0.9458771573511622,
+            "vertical_score": 1.0,
+            "amplitude_ratio": 0.6084982798641784,
+            "amplitude_score": 0.8530274240504745,
+            "query_horizontal_to_vertical": 1.0587049277741702
+          },
+          "action_window": {
+            "standard": {
+              "start_index": 3,
+              "end_index": 11,
+              "length": 9,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8904492089667322,
+              "baseline_weight": 0.7502872943878174,
+              "active_threshold": 1.0411624193191529,
+              "peak_index": 8,
+              "peak_frame_idx": 16,
+              "peak_timestamp_sec": 1.0897297297297297,
+              "peak_weight": 1.437417984008789,
+              "contrast": 1.9158234382492414,
+              "discarded_prefix_frames": 3,
+              "discarded_suffix_frames": 7,
+              "start_frame_idx": 6,
+              "end_frame_idx": 22,
+              "start_timestamp_sec": 0.4086486486486487,
+              "end_timestamp_sec": 1.4983783783783784
+            },
+            "query": {
+              "start_index": 2,
+              "end_index": 9,
+              "length": 8,
+              "used": true,
+              "reason": "semantic_energy_window",
+              "energy_coverage": 0.8347351295794897,
+              "baseline_weight": 0.8153265714645386,
+              "active_threshold": 1.0995959448814392,
+              "peak_index": 3,
+              "peak_frame_idx": 6,
+              "peak_timestamp_sec": 0.4086486486486487,
+              "peak_weight": 1.4921584129333496,
+              "contrast": 1.8301358807097934,
+              "discarded_prefix_frames": 2,
+              "discarded_suffix_frames": 9,
+              "start_frame_idx": 4,
+              "end_frame_idx": 18,
+              "start_timestamp_sec": 0.2724324324324324,
+              "end_timestamp_sec": 1.225945945945946
+            },
+            "used_for_scoring": true
+          },
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

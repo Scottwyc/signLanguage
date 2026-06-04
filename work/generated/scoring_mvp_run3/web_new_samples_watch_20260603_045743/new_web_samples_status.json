@@ -1,0 +1,137 @@
+{
+  "generated_at": "2026-06-03T04:57:43",
+  "web_root": "/data/WYC/signLanguage/work/generated/web_scoring_mvp",
+  "marker_path": "work/generated/scoring_mvp_run3/web_sample_marker_legacy_evidence_test_20260603.json",
+  "marker_last_request_id": "web_20260602_233302_d92c0ce2",
+  "new_summary": {
+    "count": 2,
+    "first_request_id": "web_20260602_233343_899e6970",
+    "last_request_id": "web_20260602_233348_53e3df5d",
+    "by_word": {
+      "花": 1,
+      "跳": 1
+    }
+  },
+  "target_summary": {
+    "count": 2,
+    "first_request_id": "web_20260602_233343_899e6970",
+    "last_request_id": "web_20260602_233348_53e3df5d",
+    "by_word": {
+      "花": 1,
+      "跳": 1
+    }
+  },
+  "words": [
+    "花",
+    "跳"
+  ],
+  "diagnosed_request_ids": [
+    "web_20260602_233343_899e6970",
+    "web_20260602_233348_53e3df5d"
+  ],
+  "regression_report": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/flower_jump_regression/flower_jump_web_regression.md",
+  "semantic_diagnostics_report": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/flower_jump_regression/flower_jump_diagnostics/web_semantic_diagnostics.md",
+  "semantic_diagnostics_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/flower_jump_regression/flower_jump_diagnostics/web_semantic_diagnostics.json",
+  "semantic_diagnostics_csv": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/flower_jump_regression/flower_jump_diagnostics/web_semantic_diagnostics.csv",
+  "semantic_sample_summaries": [
+    {
+      "request_id": "web_20260602_233343_899e6970",
+      "target_word": "花",
+      "score": 76.89925771288746,
+      "band": "normal_like",
+      "triage_priority": "normal",
+      "capture_quality_status": "score_valid",
+      "diagnosis": "flower_core_accepted",
+      "sample_advice": "开花核心段可评分；继续保持手部完整入画和清晰张开动态。",
+      "left_hand_presence": 0.0,
+      "right_hand_presence": 0.7924528301886793,
+      "semantic_core_presence_full": 0.7924528301886793,
+      "semantic_core_presence_window": 1.0
+    },
+    {
+      "request_id": "web_20260602_233348_53e3df5d",
+      "target_word": "跳",
+      "score": 88.57686551142223,
+      "band": "normal_like",
+      "triage_priority": "normal",
+      "capture_quality_status": "score_valid",
+      "diagnosis": "jump_core_accepted",
+      "sample_advice": "双手弹跳核心语义可评分；继续保持两只手同时稳定入画。",
+      "left_hand_presence": 0.8421052631578947,
+      "right_hand_presence": 0.8947368421052632,
+      "semantic_core_presence_full": 0.8888888888888888,
+      "semantic_core_presence_window": 0.8333333333333334
+    }
+  ],
+  "semantic_triage_counts": {
+    "normal": 2
+  },
+  "regression_returncode": 0,
+  "confusion_report": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/flower_jump_confusion/flower_jump_web_confusion_gate.md",
+  "confusion_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/flower_jump_confusion/flower_jump_web_confusion_gate.json",
+  "confusion_csv": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/flower_jump_confusion/flower_jump_web_confusion_cases.csv",
+  "confusion_sample_summaries": [
+    {
+      "request_id": "web_20260602_233343_899e6970",
+      "target_word": "花",
+      "other_word": "跳",
+      "target_score": 76.89925771288746,
+      "other_score": 7.473900153605198,
+      "margin": 69.42535755928226,
+      "eligible_for_gate": true,
+      "confusion_pass": true,
+      "confusion_reason": "passed",
+      "target_capture_quality_status": "score_valid",
+      "target_capture_quality_reason": "score_valid",
+      "other_capture_quality_status": "needs_recapture",
+      "other_capture_quality_reason": "jump_two_hand_presence_low"
+    },
+    {
+      "request_id": "web_20260602_233348_53e3df5d",
+      "target_word": "跳",
+      "other_word": "花",
+      "target_score": 88.57686551142223,
+      "other_score": 14.588278097991585,
+      "margin": 73.98858741343064,
+      "eligible_for_gate": true,
+      "confusion_pass": true,
+      "confusion_reason": "passed",
+      "target_capture_quality_status": "score_valid",
+      "target_capture_quality_reason": "score_valid",
+      "other_capture_quality_status": "semantic_mismatch",
+      "other_capture_quality_reason": "flower_jump_like_two_hand_confusion"
+    }
+  ],
+  "confusion_reason_counts": {
+    "passed": 2
+  },
+  "confusion_returncode": 0,
+  "visual_report": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/holistic_visuals/web_holistic_visual_recovery_summary.md",
+  "visual_returncode": 0,
+  "regression_stdout": "已生成花/跳网页回归 JSON：/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/flower_jump_regression/flower_jump_web_regression.json\n已生成花/跳网页回归报告：/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/flower_jump_regression/flower_jump_web_regression.md\n回归状态：PASS\n- backend_ready: PASS (url=http://127.0.0.1:5080/api/status, worker=ready, reload_error=-, error=-)\n- replay_no_errors: PASS (samples=2, errors=0)\n- diagnostics_no_errors: PASS (samples=2, errors=0)\n- effective_rate_total: PASS (rate=100.0%, threshold=95.0%)\n- effective_rate_花: PASS (rate=100.0%, reliable=1, normal_or_borderline=1, low=0)\n- effective_rate_跳: PASS (rate=100.0%, reliable=1, normal_or_borderline=1, low=0)\n- jump_effective_low_zero: PASS (effective_low=0)\n- flower_effective_low_bounded: PASS (effective_low=0, max=5, diagnoses={})\n- flower_effective_low_explained: PASS (allowed=['flower_opening_guard_failed'], observed={})\n",
+  "regression_stderr": "",
+  "confusion_stdout": "已生成花/跳网页交叉混淆 JSON：/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/flower_jump_confusion/flower_jump_web_confusion_gate.json\n已生成花/跳网页交叉混淆报告：/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/flower_jump_confusion/flower_jump_web_confusion_gate.md\n已生成花/跳网页交叉混淆 CSV：/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/flower_jump_confusion/flower_jump_web_confusion_cases.csv\n综合状态：PASS\n- backend_ready: PASS (worker=ready, reload_error=-, error=-)\n- no_errors: PASS (errors=0, samples=2)\n- all_eligible_pass: PASS (eligible=2, pass=2, fail=0)\n- eligible_花: PASS (eligible=1, min=0, samples=1)\n- confusion_pass_花: PASS (pass=1, fail=0, other_score_max=7.474, margin_min=69.425)\n- eligible_跳: PASS (eligible=1, min=0, samples=1)\n- confusion_pass_跳: PASS (pass=1, fail=0, other_score_max=14.588, margin_min=73.989)\n",
+  "confusion_stderr": "",
+  "visual_stdout": "已生成汇总：/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/holistic_visuals/web_holistic_visual_recovery_summary.md\nweb_20260602_233343_899e6970 花 score=76.899 source=current_scoring_module\n  query_contact=/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/holistic_visuals/web_20260602_233343_899e6970/query/web_20260602_233343_899e6970_花_query_skeleton_contact_sheet.png\n  query_timeline=/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/holistic_visuals/web_20260602_233343_899e6970/query/web_20260602_233343_899e6970_花_query_presence_timeline.png\nweb_20260602_233348_53e3df5d 跳 score=88.577 source=current_scoring_module\n  query_contact=/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/holistic_visuals/web_20260602_233348_53e3df5d/query/web_20260602_233348_53e3df5d_跳_query_skeleton_contact_sheet.png\n  query_timeline=/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/holistic_visuals/web_20260602_233348_53e3df5d/query/web_20260602_233348_53e3df5d_跳_query_presence_timeline.png\n",
+  "visual_stderr": "",
+  "json_path": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/new_web_samples_status.json",
+  "md_path": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_new_samples_watch_20260603_045743/new_web_samples_status.md",
+  "updated_marker": {
+    "generated_at": "2026-06-03T04:58:01",
+    "web_root": "/data/WYC/signLanguage/work/generated/web_scoring_mvp",
+    "summary": {
+      "count": 168,
+      "first_request_id": "web_20260522_222243_a23d679c",
+      "last_request_id": "web_20260602_233348_53e3df5d",
+      "by_word": {
+        "月亮": 1,
+        "汽车": 3,
+        "花": 93,
+        "虎": 2,
+        "跳": 56,
+        "香蕉": 13
+      }
+    },
+    "last_request_id": "web_20260602_233348_53e3df5d"
+  }
+}
