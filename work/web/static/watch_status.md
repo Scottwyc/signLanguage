@@ -1,8 +1,8 @@
 # 网页样本自动诊断 Watcher 状态
 
-- 生成时间：`2026-06-04T09:48:42`
+- 生成时间：`2026-06-04T20:42:34`
 - 当前事件：`no_target_samples`
-- watcher PID：`3588275`
+- watcher PID：`2311546`
 - Web 样本根目录：`/data/WYC/signLanguage/work/generated/web_scoring_mvp`
 - marker：`/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_sample_marker_current.json`
 - marker last_request_id：`web_20260602_233348_53e3df5d`

@@ -1,0 +1,25 @@
+word,variant,kind,passed,score,min_score,feature_mode,result_finite,sequence_finite,feature_count_preserved,changed_structure_values,total_records,exception,rationale
+花,self_reloaded,positive,True,100.0,95.0,landmark,True,True,True,0,53,,原始标准 JSON 经正常加载后应保持近满分。
+花,first_result_data_string,positive,True,100.0,70.0,landmark,True,True,True,1,53,,首帧 result_data 错类型不应让整段自动误切到 bbox。
+花,mid_record_null,positive,True,99.01601643848744,70.0,landmark,True,True,True,1,53,,单个 null record 应按缺失帧保留时序，不应崩溃。
+花,mid_record_string,positive,True,99.01601643848744,70.0,landmark,True,True,True,1,53,,单个字符串 record 应按缺失帧保留时序，不应崩溃。
+花,mid_result_data_string,positive,True,99.01601643848744,70.0,landmark,True,True,True,1,53,,单帧 result_data 错类型应按该帧 landmarks 缺失处理。
+花,mid_right_hand_group_string,positive,True,99.01601643848744,70.0,landmark,True,True,True,1,53,,单帧核心手 landmark 组错类型应按该组缺失处理。
+花,mid_right_hand_group_dict,positive,True,99.01601643848744,70.0,landmark,True,True,True,1,53,,landmark 组误写成字典时应按该组缺失处理。
+花,mid_right_hand_point_null,positive,True,99.94694281766942,70.0,landmark,True,True,True,1,53,,单个 landmark point=null 应按该点缺失处理。
+花,mid_right_hand_point_list,positive,True,99.94694281766942,70.0,landmark,True,True,True,1,53,,单个 landmark point 为数组而非对象时应按该点缺失处理。
+花,mid_pose_group_number,positive,True,97.28300025628376,70.0,landmark,True,True,True,1,53,,单帧 pose landmark 组为数字时应回退到手部语义评分。
+花,malformed_sidecar_ignored,positive,True,100.0,95.0,landmark,True,True,True,0,53,,semantic_frame_weights.json 顶层错类型时应忽略 sidecar 并保持正常评分。
+花,bbox_combined_structure_finite,compatibility,True,3.0573506938352044,,bbox,True,True,True,3,53,,旧 bbox 模式遇到错类型 group/bbox 和非有限 bbox 数值时应保持有限，不强求 bbox 语义高分。
+跳,self_reloaded,positive,True,100.0,95.0,landmark,True,True,True,0,19,,原始标准 JSON 经正常加载后应保持近满分。
+跳,first_result_data_string,positive,True,100.0,70.0,landmark,True,True,True,1,19,,首帧 result_data 错类型不应让整段自动误切到 bbox。
+跳,mid_record_null,positive,True,78.5453980517561,70.0,landmark,True,True,True,1,19,,单个 null record 应按缺失帧保留时序，不应崩溃。
+跳,mid_record_string,positive,True,78.5453980517561,70.0,landmark,True,True,True,1,19,,单个字符串 record 应按缺失帧保留时序，不应崩溃。
+跳,mid_result_data_string,positive,True,78.5453980517561,70.0,landmark,True,True,True,1,19,,单帧 result_data 错类型应按该帧 landmarks 缺失处理。
+跳,mid_right_hand_group_string,positive,True,81.56637489990057,70.0,landmark,True,True,True,1,19,,单帧核心手 landmark 组错类型应按该组缺失处理。
+跳,mid_right_hand_group_dict,positive,True,81.56637489990057,70.0,landmark,True,True,True,1,19,,landmark 组误写成字典时应按该组缺失处理。
+跳,mid_right_hand_point_null,positive,True,70.71354399426619,70.0,landmark,True,True,True,1,19,,单个 landmark point=null 应按该点缺失处理。
+跳,mid_right_hand_point_list,positive,True,70.71354399426619,70.0,landmark,True,True,True,1,19,,单个 landmark point 为数组而非对象时应按该点缺失处理。
+跳,mid_pose_group_number,positive,True,81.95782774824136,70.0,landmark,True,True,True,1,19,,单帧 pose landmark 组为数字时应回退到手部语义评分。
+跳,malformed_sidecar_ignored,positive,True,100.0,95.0,landmark,True,True,True,0,19,,semantic_frame_weights.json 顶层错类型时应忽略 sidecar 并保持正常评分。
+跳,bbox_combined_structure_finite,compatibility,True,2.6109646399873094e-18,,bbox,True,True,True,3,19,,旧 bbox 模式遇到错类型 group/bbox 和非有限 bbox 数值时应保持有限，不强求 bbox 语义高分。

@@ -89,9 +89,14 @@ def _variant_specs(min_score: float) -> List[Dict[str, Any]]:
         _spec("mid_frame_idx_nan_both_fallback", "单帧 record/row frame_idx 均为 NaN 时应保持原有动作顺序。", min_score),
         _spec("mid_frame_idx_negative_both_fallback", "单帧负 frame_idx 不应被排序到动作开头。", min_score),
         _spec("mid_frame_idx_extreme_both_fallback", "单帧极大 frame_idx 不应被排序到动作末尾。", min_score),
+        _spec("adjacent_frame_idx_swap_order_fallback", "相邻合法 frame_idx 对调时应保留 record 动作顺序。", min_score),
+        _spec("reverse_frame_idx_order_fallback", "整段合法 frame_idx 倒序时不应把正确动作倒放。", min_score),
+        _spec("duplicate_frame_idx_order_fallback", "重复合法 frame_idx 应恢复为严格递增帧序。", min_score),
         _spec("all_frame_idx_invalid_order_fallback", "整段 frame_idx 不可用时应按总帧数做顺序保持回退。", min_score),
         _spec("all_timestamp_nonfinite_fallback", "整段 timestamp_sec 非有限时应生成有限非负时间戳。", min_score),
         _spec("mixed_timestamp_invalid_fallback", "稀疏负数/字符串/极大/非有限时间戳应逐帧回退。", min_score),
+        _spec("adjacent_timestamp_swap_fallback", "相邻合法 timestamp_sec 对调时应恢复严格递增时间轴。", min_score),
+        _spec("reverse_timestamp_fallback", "整段合法 timestamp_sec 倒序时应恢复严格递增时间轴。", min_score),
         _spec("combined_temporal_metadata_corruption", "fps、总帧数、帧索引和时间戳同时损坏时仍应正常评分。", min_score),
         _spec(
             "bbox_combined_temporal_metadata_finite",
@@ -136,6 +141,22 @@ def _apply_variant(payload: Dict[str, Any], variant: str) -> Dict[str, Any]:
         set_frame(len(records) // 2, "frame_idx", -7)
     elif variant == "mid_frame_idx_extreme_both_fallback":
         set_frame(len(records) // 2, "frame_idx", 1.0e12)
+    elif variant == "adjacent_frame_idx_swap_order_fallback":
+        mid = min(max(0, len(records) // 2), max(0, len(records) - 2))
+        left = records[mid].get("frame_idx")
+        right = records[mid + 1].get("frame_idx")
+        set_frame(mid, "frame_idx", right)
+        set_frame(mid + 1, "frame_idx", left)
+    elif variant == "reverse_frame_idx_order_fallback":
+        values = [record.get("frame_idx") for record in records]
+        for record, value in zip(records, reversed(values)):
+            _set_record_metadata(record, "frame_idx", value)
+            changed += 1
+    elif variant == "duplicate_frame_idx_order_fallback":
+        value = records[len(records) // 2].get("frame_idx") if records else 0
+        for record in records:
+            _set_record_metadata(record, "frame_idx", value)
+            changed += 1
     elif variant == "all_frame_idx_invalid_order_fallback":
         for record in records:
             _set_record_metadata(record, "frame_idx", float("nan"))
@@ -148,6 +169,17 @@ def _apply_variant(payload: Dict[str, Any], variant: str) -> Dict[str, Any]:
         values = [float("nan"), float("inf"), -5.0, 1.0e12, "not-a-time"]
         for offset, value in enumerate(values):
             set_frame((offset + 1) * len(records) // (len(values) + 1), "timestamp_sec", value)
+    elif variant == "adjacent_timestamp_swap_fallback":
+        mid = min(max(0, len(records) // 2), max(0, len(records) - 2))
+        left = records[mid].get("timestamp_sec")
+        right = records[mid + 1].get("timestamp_sec")
+        set_frame(mid, "timestamp_sec", right)
+        set_frame(mid + 1, "timestamp_sec", left)
+    elif variant == "reverse_timestamp_fallback":
+        values = [record.get("timestamp_sec") for record in records]
+        for record, value in zip(records, reversed(values)):
+            _set_record_metadata(record, "timestamp_sec", value)
+            changed += 1
     elif variant in {"combined_temporal_metadata_corruption", "bbox_combined_temporal_metadata_finite"}:
         set_top("fps", -5.0)
         set_top("total_frames", float("inf"))
@@ -181,8 +213,9 @@ def _sequence_temporal_summary(seq: Any) -> Dict[str, Any]:
         and 0 < int(seq.total_frames) <= TOTAL_FRAMES_MAX
         and int(seq.total_frames) >= len(seq.features)
         and all(0 <= value < int(seq.total_frames) for value in frame_indices)
-        and all(left <= right for left, right in zip(frame_indices, frame_indices[1:]))
+        and all(left < right for left, right in zip(frame_indices, frame_indices[1:]))
         and all(math.isfinite(value) and value >= 0.0 for value in timestamps)
+        and all(left < right for left, right in zip(timestamps, timestamps[1:]))
     )
     return {
         "metadata_valid": metadata_valid,
@@ -192,10 +225,12 @@ def _sequence_temporal_summary(seq: Any) -> Dict[str, Any]:
         "frame_idx_min": min(frame_indices) if frame_indices else None,
         "frame_idx_max": max(frame_indices) if frame_indices else None,
         "frame_idx_nonmonotonic": sum(left > right for left, right in zip(frame_indices, frame_indices[1:])),
+        "frame_idx_duplicate": sum(left == right for left, right in zip(frame_indices, frame_indices[1:])),
         "timestamp_min": min(timestamps) if timestamps else None,
         "timestamp_max": max(timestamps) if timestamps else None,
         "timestamp_nonfinite": sum(not math.isfinite(value) for value in timestamps),
         "timestamp_negative": sum(value < 0.0 for value in timestamps if math.isfinite(value)),
+        "timestamp_nonmonotonic": sum(left >= right for left, right in zip(timestamps, timestamps[1:])),
     }
 
 

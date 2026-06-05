@@ -124,6 +124,37 @@ def _quality_metrics(quality: Dict[str, Any]) -> Dict[str, Any]:
     temporal_stutter = quality.get("temporal_stutter_summary") or summaries.get("temporal_stutter_robustness_gate") or {}
     temporal_rate = quality.get("temporal_rate_summary") or summaries.get("temporal_rate_robustness_gate") or {}
     temporal_metadata = quality.get("temporal_metadata_summary") or summaries.get("temporal_metadata_robustness_gate") or {}
+    structural_json = quality.get("structural_json_summary") or summaries.get("structural_json_robustness_gate") or {}
+    pose_normalization_anchor = (
+        quality.get("pose_normalization_anchor_summary")
+        or summaries.get("pose_normalization_anchor_robustness_gate")
+        or {}
+    )
+    landmark_cardinality = (
+        quality.get("landmark_cardinality_summary")
+        or summaries.get("landmark_cardinality_robustness_gate")
+        or {}
+    )
+    hand_wrist_identity = (
+        quality.get("hand_wrist_identity_summary")
+        or summaries.get("hand_wrist_identity_robustness_gate")
+        or {}
+    )
+    hand_internal_topology = (
+        quality.get("hand_internal_topology_summary")
+        or summaries.get("hand_internal_topology_robustness_gate")
+        or {}
+    )
+    hand_landmark_collision = (
+        quality.get("hand_landmark_collision_summary")
+        or summaries.get("hand_landmark_collision_robustness_gate")
+        or {}
+    )
+    hand_bone_length_integrity = (
+        quality.get("hand_bone_length_integrity_summary")
+        or summaries.get("hand_bone_length_integrity_robustness_gate")
+        or {}
+    )
     composite_browser = quality.get("composite_browser_summary") or summaries.get("composite_browser_robustness_gate") or {}
     frame_weight = quality.get("frame_weight_summary") or summaries.get("frame_weight_robustness_gate") or {}
     coordinate_precision = quality.get("coordinate_precision_summary") or summaries.get("coordinate_precision_robustness_gate") or {}
@@ -196,6 +227,13 @@ def _quality_metrics(quality: Dict[str, Any]) -> Dict[str, Any]:
         "temporal_stutter": temporal_stutter,
         "temporal_rate": temporal_rate,
         "temporal_metadata": temporal_metadata,
+        "structural_json": structural_json,
+        "pose_normalization_anchor": pose_normalization_anchor,
+        "landmark_cardinality": landmark_cardinality,
+        "hand_wrist_identity": hand_wrist_identity,
+        "hand_internal_topology": hand_internal_topology,
+        "hand_landmark_collision": hand_landmark_collision,
+        "hand_bone_length_integrity": hand_bone_length_integrity,
         "composite_browser": composite_browser,
         "frame_weight": frame_weight,
         "coordinate_precision": coordinate_precision,
@@ -507,6 +545,153 @@ def _build_markdown(payload: Dict[str, Any]) -> str:
             lines.append(
                 f"| {row.get('word')} | {_fmt(row.get('weakest_positive_score'))} | "
                 f"{row.get('weakest_positive_variant') or '-'} |"
+            )
+
+    structural_json = metrics.get("structural_json") or {}
+    structural_json_rows = structural_json.get("rows") or []
+    if structural_json_rows:
+        lines.extend(
+            [
+                "",
+                "| 词条 | 缓存 JSON 结构正向最低分 | 最弱结构损坏变体 |",
+                "|---|---:|---|",
+            ]
+        )
+        for row in structural_json_rows:
+            lines.append(
+                f"| {row.get('word')} | {_fmt(row.get('weakest_positive_score'))} | "
+                f"{row.get('weakest_positive_variant') or '-'} |"
+            )
+
+    pose_normalization_anchor = metrics.get("pose_normalization_anchor") or {}
+    pose_normalization_anchor_rows = pose_normalization_anchor.get("rows") or []
+    if pose_normalization_anchor_rows:
+        lines.extend(
+            [
+                "",
+                "| 词条 | Pose 归一化锚点正向最低分 | 最弱归一化锚点变体 |",
+                "|---|---:|---|",
+            ]
+        )
+        for row in pose_normalization_anchor_rows:
+            lines.append(
+                f"| {row.get('word')} | {_fmt(row.get('weakest_positive_score'))} | "
+                f"{row.get('weakest_positive_variant') or '-'} |"
+            )
+
+    landmark_cardinality = metrics.get("landmark_cardinality") or {}
+    landmark_cardinality_rows = landmark_cardinality.get("rows") or []
+    if landmark_cardinality_rows:
+        lines.extend(
+            [
+                "",
+                "| 词条 | Landmark 长度正向最低分 | 最弱长度损坏 | 核心手诊断最高分 | 最强核心手长度损坏 |",
+                "|---|---:|---|---:|---|",
+            ]
+        )
+        for row in landmark_cardinality_rows:
+            lines.append(
+                f"| {row.get('word')} | {_fmt(row.get('weakest_positive_score'))} | "
+                f"{row.get('weakest_positive_variant') or '-'} | "
+                f"{_fmt(row.get('strongest_diagnostic_score'))} | "
+                f"{row.get('strongest_diagnostic_variant') or '-'} |"
+            )
+
+    hand_wrist_identity = metrics.get("hand_wrist_identity") or {}
+    hand_wrist_identity_rows = hand_wrist_identity.get("rows") or []
+    if hand_wrist_identity_rows:
+        audit = hand_wrist_identity.get("normal_wrist_origin_audit") or {}
+        lines.extend(
+            [
+                "",
+                f"- Hand Wrist 正常证据审计：files=`{audit.get('file_count')}`，hand_frames=`{audit.get('hand_frame_count')}`，"
+                f"violations=`{audit.get('violation_count')}`，max_abs_z0=`{audit.get('max_wrist_z_abs')}`。",
+                "",
+                "| 词条 | Wrist 身份正向最低分 | 最弱身份变体 | 整段身份损坏诊断最高分 | 最强身份损坏 |",
+                "|---|---:|---|---:|---|",
+            ]
+        )
+        for row in hand_wrist_identity_rows:
+            lines.append(
+                f"| {row.get('word')} | {_fmt(row.get('weakest_positive_score'))} | "
+                f"{row.get('weakest_positive_variant') or '-'} | "
+                f"{_fmt(row.get('strongest_diagnostic_score'))} | "
+                f"{row.get('strongest_diagnostic_variant') or '-'} |"
+            )
+
+    hand_internal_topology = metrics.get("hand_internal_topology") or {}
+    hand_internal_topology_rows = hand_internal_topology.get("rows") or []
+    if hand_internal_topology_rows:
+        audit = hand_internal_topology.get("normal_topology_audit") or {}
+        lines.extend(
+            [
+                "",
+                f"- Hand 内部拓扑正常证据审计：files=`{audit.get('file_count')}`，hand_frames=`{audit.get('hand_frame_count')}`，"
+                f"violations=`{audit.get('violation_count')}`，max_backtrack=`{audit.get('max_backtrack_turn_count')}`，"
+                f"max_reversed_chains=`{audit.get('max_reversed_chain_count')}`，"
+                f"min_proximal_distal_ratio=`{audit.get('min_median_proximal_distal_ratio')}`。",
+                "",
+                "| 词条 | 内部拓扑正向最低分 | 最弱拓扑变体 | 整段拓扑损坏诊断最高分 | 最强拓扑损坏 |",
+                "|---|---:|---|---:|---|",
+            ]
+        )
+        for row in hand_internal_topology_rows:
+            lines.append(
+                f"| {row.get('word')} | {_fmt(row.get('weakest_positive_score'))} | "
+                f"{row.get('weakest_positive_variant') or '-'} | "
+                f"{_fmt(row.get('strongest_diagnostic_score'))} | "
+                f"{row.get('strongest_diagnostic_variant') or '-'} |"
+            )
+
+    hand_landmark_collision = metrics.get("hand_landmark_collision") or {}
+    hand_landmark_collision_rows = hand_landmark_collision.get("rows") or []
+    if hand_landmark_collision_rows:
+        audit = hand_landmark_collision.get("normal_collision_audit") or {}
+        lines.extend(
+            [
+                "",
+                f"- Hand Landmark 碰撞正常证据审计：files=`{audit.get('file_count')}`，"
+                f"hand_frames=`{audit.get('hand_frame_count')}`，"
+                f"raw_collisions=`{audit.get('raw_collision_frame_count')}`，"
+                f"raw_quantization_signatures=`{audit.get('raw_global_quantization_signature_frame_count')}`，"
+                f"min_pair_distance=`{audit.get('minimum_normal_pair_distance')}`。",
+                "",
+                "| 词条 | 碰撞正向最低分 | 最弱碰撞变体 | 严重碰撞诊断最高分 | 最强碰撞损坏 |",
+                "|---|---:|---|---:|---|",
+            ]
+        )
+        for row in hand_landmark_collision_rows:
+            lines.append(
+                f"| {row.get('word')} | {_fmt(row.get('weakest_positive_score'))} | "
+                f"{row.get('weakest_positive_variant') or '-'} | "
+                f"{_fmt(row.get('strongest_diagnostic_score'))} | "
+                f"{row.get('strongest_diagnostic_variant') or '-'} |"
+            )
+
+    hand_bone_length_integrity = metrics.get("hand_bone_length_integrity") or {}
+    hand_bone_length_integrity_rows = hand_bone_length_integrity.get("rows") or []
+    if hand_bone_length_integrity_rows:
+        audit = hand_bone_length_integrity.get("normal_bone_length_audit") or {}
+        lines.extend(
+            [
+                "",
+                f"- Hand 骨段长度正常证据审计：files=`{audit.get('file_count')}`，"
+                f"hand_frames=`{audit.get('hand_frame_count')}`，segments=`{audit.get('segment_count')}`，"
+                f"violations=`{audit.get('violation_frame_count')}`，"
+                f"normal_ratio_range=`{audit.get('minimum_normal_bone_length_ratio')}`–"
+                f"`{audit.get('maximum_normal_bone_length_ratio')}`，"
+                f"partial_visibility=`{audit.get('partial_visibility_audit')}`。",
+                "",
+                "| 词条 | 骨段正向最低分 | 最弱骨段变体 | 整段骨段损坏诊断最高分 | 最强骨段损坏 |",
+                "|---|---:|---|---:|---|",
+            ]
+        )
+        for row in hand_bone_length_integrity_rows:
+            lines.append(
+                f"| {row.get('word')} | {_fmt(row.get('weakest_positive_score'))} | "
+                f"{row.get('weakest_positive_variant') or '-'} | "
+                f"{_fmt(row.get('strongest_diagnostic_score'))} | "
+                f"{row.get('strongest_diagnostic_variant') or '-'} |"
             )
 
     composite_browser = metrics.get("composite_browser") or {}

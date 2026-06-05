@@ -628,6 +628,185 @@ def _temporal_metadata_summary(payload: Dict[str, Any]) -> Dict[str, Any]:
     return {"passed": bool(payload.get("passed")), "rows": rows}
 
 
+def _structural_json_summary(payload: Dict[str, Any]) -> Dict[str, Any]:
+    rows: List[Dict[str, Any]] = []
+    for item in payload.get("results") or []:
+        rows.append(
+            {
+                "word": item.get("word"),
+                "passed": bool(item.get("gate_pass")),
+                "weakest_positive_score": item.get("weakest_positive_score"),
+                "weakest_positive_variant": item.get("weakest_positive_variant"),
+                "min_required_score": item.get("min_required_score", payload.get("min_score")),
+            }
+        )
+    return {"passed": bool(payload.get("passed")), "rows": rows}
+
+
+def _pose_normalization_anchor_summary(payload: Dict[str, Any]) -> Dict[str, Any]:
+    rows: List[Dict[str, Any]] = []
+    for item in payload.get("results") or []:
+        rows.append(
+            {
+                "word": item.get("word"),
+                "passed": bool(item.get("gate_pass")),
+                "weakest_positive_score": item.get("weakest_positive_score"),
+                "weakest_positive_variant": item.get("weakest_positive_variant"),
+                "min_required_score": item.get("min_required_score", payload.get("min_score")),
+                "sparse_min_required_score": item.get(
+                    "sparse_min_required_score",
+                    payload.get("sparse_min_score"),
+                ),
+            }
+        )
+    return {"passed": bool(payload.get("passed")), "rows": rows}
+
+
+def _landmark_cardinality_summary(payload: Dict[str, Any]) -> Dict[str, Any]:
+    rows: List[Dict[str, Any]] = []
+    for item in payload.get("results") or []:
+        rows.append(
+            {
+                "word": item.get("word"),
+                "passed": bool(item.get("gate_pass")),
+                "weakest_positive_score": item.get("weakest_positive_score"),
+                "weakest_positive_variant": item.get("weakest_positive_variant"),
+                "strongest_diagnostic_score": item.get("strongest_diagnostic_score"),
+                "strongest_diagnostic_variant": item.get("strongest_diagnostic_variant"),
+                "min_required_score": item.get("min_required_score", payload.get("min_score")),
+                "sparse_min_required_score": item.get(
+                    "sparse_min_required_score",
+                    payload.get("sparse_min_score"),
+                ),
+                "diagnostic_max_score": item.get(
+                    "diagnostic_max_score",
+                    payload.get("diagnostic_max_score"),
+                ),
+            }
+        )
+    return {"passed": bool(payload.get("passed")), "rows": rows}
+
+
+def _hand_wrist_identity_summary(payload: Dict[str, Any]) -> Dict[str, Any]:
+    rows: List[Dict[str, Any]] = []
+    for item in payload.get("results") or []:
+        rows.append(
+            {
+                "word": item.get("word"),
+                "passed": bool(item.get("gate_pass")),
+                "weakest_positive_score": item.get("weakest_positive_score"),
+                "weakest_positive_variant": item.get("weakest_positive_variant"),
+                "strongest_diagnostic_score": item.get("strongest_diagnostic_score"),
+                "strongest_diagnostic_variant": item.get("strongest_diagnostic_variant"),
+                "sparse_min_required_score": item.get(
+                    "sparse_min_required_score",
+                    payload.get("sparse_min_score"),
+                ),
+                "diagnostic_max_score": item.get(
+                    "diagnostic_max_score",
+                    payload.get("diagnostic_max_score"),
+                ),
+            }
+        )
+    return {
+        "passed": bool(payload.get("passed")),
+        "normal_wrist_origin_audit": payload.get("normal_wrist_origin_audit") or {},
+        "rows": rows,
+    }
+
+
+def _hand_internal_topology_summary(payload: Dict[str, Any]) -> Dict[str, Any]:
+    rows: List[Dict[str, Any]] = []
+    for item in payload.get("results") or []:
+        rows.append(
+            {
+                "word": item.get("word"),
+                "passed": bool(item.get("gate_pass")),
+                "weakest_positive_score": item.get("weakest_positive_score"),
+                "weakest_positive_variant": item.get("weakest_positive_variant"),
+                "strongest_diagnostic_score": item.get("strongest_diagnostic_score"),
+                "strongest_diagnostic_variant": item.get("strongest_diagnostic_variant"),
+                "sparse_min_required_score": item.get(
+                    "sparse_min_required_score",
+                    payload.get("sparse_min_score"),
+                ),
+                "diagnostic_max_score": item.get(
+                    "diagnostic_max_score",
+                    payload.get("diagnostic_max_score"),
+                ),
+            }
+        )
+    return {
+        "passed": bool(payload.get("passed")),
+        "normal_topology_audit": payload.get("normal_topology_audit") or {},
+        "topology_thresholds": payload.get("topology_thresholds") or {},
+        "rows": rows,
+    }
+
+
+def _hand_landmark_collision_summary(payload: Dict[str, Any]) -> Dict[str, Any]:
+    rows: List[Dict[str, Any]] = []
+    for item in payload.get("results") or []:
+        rows.append(
+            {
+                "word": item.get("word"),
+                "passed": bool(item.get("gate_pass")),
+                "weakest_positive_score": item.get("weakest_positive_score"),
+                "weakest_positive_variant": item.get("weakest_positive_variant"),
+                "strongest_diagnostic_score": item.get("strongest_diagnostic_score"),
+                "strongest_diagnostic_variant": item.get("strongest_diagnostic_variant"),
+                "sparse_min_required_score": item.get(
+                    "sparse_min_required_score",
+                    payload.get("sparse_min_score"),
+                ),
+                "diagnostic_max_score": item.get(
+                    "diagnostic_max_score",
+                    payload.get("diagnostic_max_score"),
+                ),
+            }
+        )
+    return {
+        "passed": bool(payload.get("passed")),
+        "normal_collision_audit": payload.get("normal_collision_audit") or {},
+        "collision_distance_max": payload.get("collision_distance_max"),
+        "global_quantization_steps": payload.get("global_quantization_steps") or [],
+        "global_quantization_residual_max": payload.get("global_quantization_residual_max"),
+        "rows": rows,
+    }
+
+
+def _hand_bone_length_integrity_summary(payload: Dict[str, Any]) -> Dict[str, Any]:
+    rows: List[Dict[str, Any]] = []
+    for item in payload.get("results") or []:
+        rows.append(
+            {
+                "word": item.get("word"),
+                "passed": bool(item.get("gate_pass")),
+                "weakest_positive_score": item.get("weakest_positive_score"),
+                "weakest_positive_variant": item.get("weakest_positive_variant"),
+                "strongest_diagnostic_score": item.get("strongest_diagnostic_score"),
+                "strongest_diagnostic_variant": item.get("strongest_diagnostic_variant"),
+                "sparse_min_required_score": item.get(
+                    "sparse_min_required_score",
+                    payload.get("sparse_min_score"),
+                ),
+                "diagnostic_max_score": item.get(
+                    "diagnostic_max_score",
+                    payload.get("diagnostic_max_score"),
+                ),
+            }
+        )
+    return {
+        "passed": bool(payload.get("passed")),
+        "normal_bone_length_audit": payload.get("normal_bone_length_audit") or {},
+        "bone_length_ratio_min": payload.get("bone_length_ratio_min"),
+        "bone_length_ratio_max": payload.get("bone_length_ratio_max"),
+        "bone_length_visible_min_points": payload.get("bone_length_visible_min_points"),
+        "bone_length_palm_ref_min": payload.get("bone_length_palm_ref_min"),
+        "rows": rows,
+    }
+
+
 def _composite_browser_summary(payload: Dict[str, Any]) -> Dict[str, Any]:
     rows: List[Dict[str, Any]] = []
     for item in payload.get("results") or []:
@@ -1825,6 +2004,162 @@ def _build_markdown(payload: Dict[str, Any]) -> str:
         )
     lines.append("")
 
+    structural_json = payload.get("structural_json_summary") or {}
+    lines.append("## 缓存 JSON 结构鲁棒性门")
+    lines.append("")
+    lines.append("- 错类型 record/result_data/landmark group/point/bbox/sidecar 必须按局部缺失安全退化，保留帧序和 landmark 模式，评分与 bbox 兼容诊断保持有限。")
+    lines.append("")
+    lines.append("| 目标词 | 状态 | 正向最低分 | 最弱结构损坏变体 | 门槛 |")
+    lines.append("|---|---|---:|---|---:|")
+    for row in structural_json.get("rows") or []:
+        lines.append(
+            f"| {row.get('word')} | {'PASS' if row.get('passed') else 'FAIL'} | "
+            f"{_fmt(row.get('weakest_positive_score'))} | {row.get('weakest_positive_variant') or '-'} | "
+            f"{_fmt(row.get('min_required_score'))} |"
+        )
+    lines.append("")
+
+    pose_normalization_anchor = payload.get("pose_normalization_anchor_summary") or {}
+    lines.append("## Pose 归一化锚点鲁棒性门")
+    lines.append("")
+    lines.append("- 稀疏坏肩点需由相邻可信锚点插值；整段肩部/pose 不可信但手部完整时，需使用手部中心与掌尺度 fallback，不能制造误低分。")
+    lines.append("")
+    lines.append("| 目标词 | 状态 | 正向最低分 | 最弱归一化锚点变体 | 基础门槛 | 稀疏门槛 |")
+    lines.append("|---|---|---:|---|---:|---:|")
+    for row in pose_normalization_anchor.get("rows") or []:
+        lines.append(
+            f"| {row.get('word')} | {'PASS' if row.get('passed') else 'FAIL'} | "
+            f"{_fmt(row.get('weakest_positive_score'))} | {row.get('weakest_positive_variant') or '-'} | "
+            f"{_fmt(row.get('min_required_score'))} | {_fmt(row.get('sparse_min_required_score'))} |"
+        )
+    lines.append("")
+
+    landmark_cardinality = payload.get("landmark_cardinality_summary") or {}
+    lines.append("## Landmark 数组长度与索引完整性门")
+    lines.append("")
+    lines.append("- 非空 pose/hand/face 数组长度不符合固定 MediaPipe 契约时，必须整组按缺失处理；稀疏损坏应保持可评分，整段核心手损坏必须要求重采。")
+    lines.append("")
+    lines.append("| 目标词 | 状态 | 正向最低分 | 最弱正向长度损坏 | 核心手诊断最高分 | 最强诊断长度损坏 | 稀疏门槛 | 诊断上限 |")
+    lines.append("|---|---|---:|---|---:|---|---:|---:|")
+    for row in landmark_cardinality.get("rows") or []:
+        lines.append(
+            f"| {row.get('word')} | {'PASS' if row.get('passed') else 'FAIL'} | "
+            f"{_fmt(row.get('weakest_positive_score'))} | {row.get('weakest_positive_variant') or '-'} | "
+            f"{_fmt(row.get('strongest_diagnostic_score'))} | {row.get('strongest_diagnostic_variant') or '-'} | "
+            f"{_fmt(row.get('sparse_min_required_score'))} | {_fmt(row.get('diagnostic_max_score'))} |"
+        )
+    lines.append("")
+
+    hand_wrist_identity = payload.get("hand_wrist_identity_summary") or {}
+    wrist_audit = hand_wrist_identity.get("normal_wrist_origin_audit") or {}
+    lines.append("## Hand Wrist 身份完整性门")
+    lines.append("")
+    lines.append(
+        "- MediaPipe hand landmark z 以 wrist 为原点；等长数组若把 wrist 移出 index 0，必须整组按缺失处理。"
+        "相邻整指链交换保留 wrist index 0，继续由 finger-identity 容错评分。"
+    )
+    lines.append(
+        f"- 正常证据审计：files=`{wrist_audit.get('file_count')}`，hand_frames=`{wrist_audit.get('hand_frame_count')}`，"
+        f"violations=`{wrist_audit.get('violation_count')}`，max_abs_z0=`{wrist_audit.get('max_wrist_z_abs')}`。"
+    )
+    lines.append("")
+    lines.append("| 目标词 | 状态 | 正向最低分 | 最弱正向身份变体 | 整段损坏诊断最高分 | 最强诊断身份损坏 | 稀疏门槛 | 诊断上限 |")
+    lines.append("|---|---|---:|---|---:|---|---:|---:|")
+    for row in hand_wrist_identity.get("rows") or []:
+        lines.append(
+            f"| {row.get('word')} | {'PASS' if row.get('passed') else 'FAIL'} | "
+            f"{_fmt(row.get('weakest_positive_score'))} | {row.get('weakest_positive_variant') or '-'} | "
+            f"{_fmt(row.get('strongest_diagnostic_score'))} | {row.get('strongest_diagnostic_variant') or '-'} | "
+            f"{_fmt(row.get('sparse_min_required_score'))} | {_fmt(row.get('diagnostic_max_score'))} |"
+        )
+    lines.append("")
+
+    hand_internal_topology = payload.get("hand_internal_topology_summary") or {}
+    topology_audit = hand_internal_topology.get("normal_topology_audit") or {}
+    topology_thresholds = hand_internal_topology.get("topology_thresholds") or {}
+    lines.append("## Hand 内部拓扑完整性门")
+    lines.append("")
+    lines.append(
+        "- 多指链同时出现不可能的骨段回折、proximal/distal 解剖比例倒置或整链反向证据时，"
+        "必须整组按缺失处理；相邻整指链交换保持内部顺序并继续容错。"
+    )
+    lines.append(
+        f"- 正常证据审计：files=`{topology_audit.get('file_count')}`，hand_frames=`{topology_audit.get('hand_frame_count')}`，"
+        f"violations=`{topology_audit.get('violation_count')}`，max_backtrack=`{topology_audit.get('max_backtrack_turn_count')}`，"
+        f"max_reversed_chains=`{topology_audit.get('max_reversed_chain_count')}`，"
+        f"min_proximal_distal_ratio=`{topology_audit.get('min_median_proximal_distal_ratio')}`，"
+        f"thresholds=`{topology_thresholds}`。"
+    )
+    lines.append("")
+    lines.append("| 目标词 | 状态 | 正向最低分 | 最弱正向拓扑变体 | 整段损坏诊断最高分 | 最强诊断拓扑损坏 | 稀疏门槛 | 诊断上限 |")
+    lines.append("|---|---|---:|---|---:|---|---:|---:|")
+    for row in hand_internal_topology.get("rows") or []:
+        lines.append(
+            f"| {row.get('word')} | {'PASS' if row.get('passed') else 'FAIL'} | "
+            f"{_fmt(row.get('weakest_positive_score'))} | {row.get('weakest_positive_variant') or '-'} | "
+            f"{_fmt(row.get('strongest_diagnostic_score'))} | {row.get('strongest_diagnostic_variant') or '-'} | "
+            f"{_fmt(row.get('sparse_min_required_score'))} | {_fmt(row.get('diagnostic_max_score'))} |"
+        )
+    lines.append("")
+
+    hand_landmark_collision = payload.get("hand_landmark_collision_summary") or {}
+    collision_audit = hand_landmark_collision.get("normal_collision_audit") or {}
+    lines.append("## Hand Landmark 碰撞完整性门")
+    lines.append("")
+    lines.append(
+        "- 非量化手内近重复 landmarks 按歧义点局部屏蔽；符合已知全局坐标网格的完整量化手保留，"
+        "避免把合理摄像头/序列化精度损失误判为身份碰撞。"
+    )
+    lines.append(
+        f"- 正常证据审计：files=`{collision_audit.get('file_count')}`，"
+        f"hand_frames=`{collision_audit.get('hand_frame_count')}`，"
+        f"raw_collisions=`{collision_audit.get('raw_collision_frame_count')}`，"
+        f"raw_quantization_signatures=`{collision_audit.get('raw_global_quantization_signature_frame_count')}`，"
+        f"min_pair_distance=`{collision_audit.get('minimum_normal_pair_distance')}`，"
+        f"collision_distance_max=`{hand_landmark_collision.get('collision_distance_max')}`。"
+    )
+    lines.append("")
+    lines.append("| 目标词 | 状态 | 正向最低分 | 最弱正向碰撞变体 | 严重碰撞诊断最高分 | 最强诊断碰撞 | 稀疏门槛 | 诊断上限 |")
+    lines.append("|---|---|---:|---|---:|---|---:|---:|")
+    for row in hand_landmark_collision.get("rows") or []:
+        lines.append(
+            f"| {row.get('word')} | {'PASS' if row.get('passed') else 'FAIL'} | "
+            f"{_fmt(row.get('weakest_positive_score'))} | {row.get('weakest_positive_variant') or '-'} | "
+            f"{_fmt(row.get('strongest_diagnostic_score'))} | {row.get('strongest_diagnostic_variant') or '-'} | "
+            f"{_fmt(row.get('sparse_min_required_score'))} | {_fmt(row.get('diagnostic_max_score'))} |"
+        )
+    lines.append("")
+
+    hand_bone_length = payload.get("hand_bone_length_integrity_summary") or {}
+    bone_audit = hand_bone_length.get("normal_bone_length_audit") or {}
+    lines.append("## Hand 骨段长度完整性门")
+    lines.append("")
+    lines.append(
+        "- 完整或部分可见非量化手在可见点、wrist 和掌参考足够时，"
+        "远离正常证据范围的极短/极长指骨按参与点局部屏蔽；全局量化手旁路。"
+    )
+    lines.append(
+        f"- 正常证据审计：files=`{bone_audit.get('file_count')}`，hand_frames=`{bone_audit.get('hand_frame_count')}`，"
+        f"segments=`{bone_audit.get('segment_count')}`，violations=`{bone_audit.get('violation_frame_count')}`，"
+        f"normal_ratio_range=`{bone_audit.get('minimum_normal_bone_length_ratio')}`–"
+        f"`{bone_audit.get('maximum_normal_bone_length_ratio')}`，"
+        f"thresholds=`[{hand_bone_length.get('bone_length_ratio_min')}, {hand_bone_length.get('bone_length_ratio_max')}]`，"
+        f"visible_min=`{hand_bone_length.get('bone_length_visible_min_points')}`，"
+        f"palm_ref_min=`{hand_bone_length.get('bone_length_palm_ref_min')}`。"
+    )
+    lines.append(f"- 部分可见零误伤审计：`{bone_audit.get('partial_visibility_audit')}`。")
+    lines.append("")
+    lines.append("| 目标词 | 状态 | 正向最低分 | 最弱正向骨段变体 | 整段损坏诊断最高分 | 最强诊断骨段损坏 | 稀疏门槛 | 诊断上限 |")
+    lines.append("|---|---|---:|---|---:|---|---:|---:|")
+    for row in hand_bone_length.get("rows") or []:
+        lines.append(
+            f"| {row.get('word')} | {'PASS' if row.get('passed') else 'FAIL'} | "
+            f"{_fmt(row.get('weakest_positive_score'))} | {row.get('weakest_positive_variant') or '-'} | "
+            f"{_fmt(row.get('strongest_diagnostic_score'))} | {row.get('strongest_diagnostic_variant') or '-'} | "
+            f"{_fmt(row.get('sparse_min_required_score'))} | {_fmt(row.get('diagnostic_max_score'))} |"
+        )
+    lines.append("")
+
     composite_browser = payload.get("composite_browser_summary") or {}
     lines.append("## 组合网页扰动鲁棒性门")
     lines.append("")
@@ -2557,6 +2892,13 @@ def run_quality_gate(args: argparse.Namespace) -> Dict[str, Any]:
     temporal_stutter_dir = output_dir / "temporal_stutter_robustness_gate"
     temporal_rate_dir = output_dir / "temporal_rate_robustness_gate"
     temporal_metadata_dir = output_dir / "temporal_metadata_robustness_gate"
+    structural_json_dir = output_dir / "structural_json_robustness_gate"
+    pose_normalization_anchor_dir = output_dir / "pose_normalization_anchor_robustness_gate"
+    landmark_cardinality_dir = output_dir / "landmark_cardinality_robustness_gate"
+    hand_wrist_identity_dir = output_dir / "hand_wrist_identity_robustness_gate"
+    hand_internal_topology_dir = output_dir / "hand_internal_topology_robustness_gate"
+    hand_landmark_collision_dir = output_dir / "hand_landmark_collision_robustness_gate"
+    hand_bone_length_integrity_dir = output_dir / "hand_bone_length_integrity_robustness_gate"
     hand_trajectory_interpolation_dir = output_dir / "hand_trajectory_interpolation_robustness_gate"
     composite_browser_dir = output_dir / "composite_browser_robustness_gate"
     frame_weight_dir = output_dir / "frame_weight_robustness_gate"
@@ -2929,6 +3271,126 @@ def run_quality_gate(args: argparse.Namespace) -> Dict[str, Any]:
         args.backend_url,
         "--min-score",
         str(args.temporal_metadata_min_score),
+    ]
+    structural_json_cmd = [
+        sys.executable,
+        str(SCRIPTS_DIR / "run_flower_jump_structural_json_robustness_gate.py"),
+        "--template-root",
+        str(template_root),
+        "--semantic-profile-json",
+        str(semantic_profile_json),
+        "--output-dir",
+        str(structural_json_dir),
+        "--backend-url",
+        args.backend_url,
+        "--min-score",
+        str(args.structural_json_min_score),
+    ]
+    pose_normalization_anchor_cmd = [
+        sys.executable,
+        str(SCRIPTS_DIR / "run_flower_jump_pose_normalization_anchor_robustness_gate.py"),
+        "--template-root",
+        str(template_root),
+        "--semantic-profile-json",
+        str(semantic_profile_json),
+        "--output-dir",
+        str(pose_normalization_anchor_dir),
+        "--backend-url",
+        args.backend_url,
+        "--min-score",
+        str(args.pose_normalization_anchor_min_score),
+        "--sparse-min-score",
+        str(args.pose_normalization_anchor_sparse_min_score),
+    ]
+    landmark_cardinality_cmd = [
+        sys.executable,
+        str(SCRIPTS_DIR / "run_flower_jump_landmark_cardinality_robustness_gate.py"),
+        "--template-root",
+        str(template_root),
+        "--semantic-profile-json",
+        str(semantic_profile_json),
+        "--output-dir",
+        str(landmark_cardinality_dir),
+        "--backend-url",
+        args.backend_url,
+        "--min-score",
+        str(args.landmark_cardinality_min_score),
+        "--sparse-min-score",
+        str(args.landmark_cardinality_sparse_min_score),
+        "--diagnostic-max-score",
+        str(args.landmark_cardinality_diagnostic_max_score),
+    ]
+    hand_wrist_identity_cmd = [
+        sys.executable,
+        str(SCRIPTS_DIR / "run_flower_jump_hand_wrist_identity_robustness_gate.py"),
+        "--template-root",
+        str(template_root),
+        "--web-root",
+        str(web_root),
+        "--semantic-profile-json",
+        str(semantic_profile_json),
+        "--output-dir",
+        str(hand_wrist_identity_dir),
+        "--backend-url",
+        args.backend_url,
+        "--sparse-min-score",
+        str(args.hand_wrist_identity_sparse_min_score),
+        "--diagnostic-max-score",
+        str(args.hand_wrist_identity_diagnostic_max_score),
+    ]
+    hand_internal_topology_cmd = [
+        sys.executable,
+        str(SCRIPTS_DIR / "run_flower_jump_hand_internal_topology_robustness_gate.py"),
+        "--template-root",
+        str(template_root),
+        "--web-root",
+        str(web_root),
+        "--semantic-profile-json",
+        str(semantic_profile_json),
+        "--output-dir",
+        str(hand_internal_topology_dir),
+        "--backend-url",
+        args.backend_url,
+        "--sparse-min-score",
+        str(args.hand_internal_topology_sparse_min_score),
+        "--diagnostic-max-score",
+        str(args.hand_internal_topology_diagnostic_max_score),
+    ]
+    hand_landmark_collision_cmd = [
+        sys.executable,
+        str(SCRIPTS_DIR / "run_flower_jump_hand_landmark_collision_robustness_gate.py"),
+        "--template-root",
+        str(template_root),
+        "--web-root",
+        str(web_root),
+        "--semantic-profile-json",
+        str(semantic_profile_json),
+        "--output-dir",
+        str(hand_landmark_collision_dir),
+        "--backend-url",
+        args.backend_url,
+        "--sparse-min-score",
+        str(args.hand_landmark_collision_sparse_min_score),
+        "--diagnostic-max-score",
+        str(args.hand_landmark_collision_diagnostic_max_score),
+    ]
+    hand_bone_length_integrity_cmd = [
+        sys.executable,
+        str(SCRIPTS_DIR / "run_flower_jump_hand_bone_length_integrity_robustness_gate.py"),
+        "--template-root",
+        str(template_root),
+        "--web-root",
+        str(web_root),
+        "--semantic-profile-json",
+        str(semantic_profile_json),
+        "--output-dir",
+        str(hand_bone_length_integrity_dir),
+        "--backend-url",
+        args.backend_url,
+        "--sparse-min-score",
+        str(args.hand_bone_length_integrity_sparse_min_score),
+        "--diagnostic-max-score",
+        str(args.hand_bone_length_integrity_diagnostic_max_score),
     ]
     composite_browser_cmd = [
         sys.executable,
@@ -3871,6 +4333,41 @@ def run_quality_gate(args: argparse.Namespace) -> Dict[str, Any]:
             temporal_metadata_cmd,
             temporal_metadata_dir / "flower_jump_temporal_metadata_robustness_gate.json",
         ),
+        (
+            "structural_json_robustness_gate",
+            structural_json_cmd,
+            structural_json_dir / "flower_jump_structural_json_robustness_gate.json",
+        ),
+        (
+            "pose_normalization_anchor_robustness_gate",
+            pose_normalization_anchor_cmd,
+            pose_normalization_anchor_dir / "flower_jump_pose_normalization_anchor_robustness_gate.json",
+        ),
+        (
+            "landmark_cardinality_robustness_gate",
+            landmark_cardinality_cmd,
+            landmark_cardinality_dir / "flower_jump_landmark_cardinality_robustness_gate.json",
+        ),
+        (
+            "hand_wrist_identity_robustness_gate",
+            hand_wrist_identity_cmd,
+            hand_wrist_identity_dir / "flower_jump_hand_wrist_identity_robustness_gate.json",
+        ),
+        (
+            "hand_internal_topology_robustness_gate",
+            hand_internal_topology_cmd,
+            hand_internal_topology_dir / "flower_jump_hand_internal_topology_robustness_gate.json",
+        ),
+        (
+            "hand_landmark_collision_robustness_gate",
+            hand_landmark_collision_cmd,
+            hand_landmark_collision_dir / "flower_jump_hand_landmark_collision_robustness_gate.json",
+        ),
+        (
+            "hand_bone_length_integrity_robustness_gate",
+            hand_bone_length_integrity_cmd,
+            hand_bone_length_integrity_dir / "flower_jump_hand_bone_length_integrity_robustness_gate.json",
+        ),
     ]
     runs: List[Dict[str, Any]] = []
     for name, cmd, json_path in command_specs:
@@ -3912,6 +4409,12 @@ def run_quality_gate(args: argparse.Namespace) -> Dict[str, Any]:
     temporal_stutter_payload: Dict[str, Any] = {}
     temporal_rate_payload: Dict[str, Any] = {}
     temporal_metadata_payload: Dict[str, Any] = {}
+    structural_json_payload: Dict[str, Any] = {}
+    landmark_cardinality_payload: Dict[str, Any] = {}
+    hand_wrist_identity_payload: Dict[str, Any] = {}
+    hand_internal_topology_payload: Dict[str, Any] = {}
+    hand_landmark_collision_payload: Dict[str, Any] = {}
+    hand_bone_length_integrity_payload: Dict[str, Any] = {}
     composite_browser_payload: Dict[str, Any] = {}
     frame_weight_payload: Dict[str, Any] = {}
     coordinate_precision_payload: Dict[str, Any] = {}
@@ -4291,6 +4794,41 @@ def run_quality_gate(args: argparse.Namespace) -> Dict[str, Any]:
         temporal_metadata_dir / "flower_jump_temporal_metadata_robustness_gate.json",
         temporal_metadata_dir / "flower_jump_temporal_metadata_robustness_gate.md",
     )
+    structural_json_payload = add_subgate(
+        runs[67],
+        structural_json_dir / "flower_jump_structural_json_robustness_gate.json",
+        structural_json_dir / "flower_jump_structural_json_robustness_gate.md",
+    )
+    pose_normalization_anchor_payload = add_subgate(
+        runs[68],
+        pose_normalization_anchor_dir / "flower_jump_pose_normalization_anchor_robustness_gate.json",
+        pose_normalization_anchor_dir / "flower_jump_pose_normalization_anchor_robustness_gate.md",
+    )
+    landmark_cardinality_payload = add_subgate(
+        runs[69],
+        landmark_cardinality_dir / "flower_jump_landmark_cardinality_robustness_gate.json",
+        landmark_cardinality_dir / "flower_jump_landmark_cardinality_robustness_gate.md",
+    )
+    hand_wrist_identity_payload = add_subgate(
+        runs[70],
+        hand_wrist_identity_dir / "flower_jump_hand_wrist_identity_robustness_gate.json",
+        hand_wrist_identity_dir / "flower_jump_hand_wrist_identity_robustness_gate.md",
+    )
+    hand_internal_topology_payload = add_subgate(
+        runs[71],
+        hand_internal_topology_dir / "flower_jump_hand_internal_topology_robustness_gate.json",
+        hand_internal_topology_dir / "flower_jump_hand_internal_topology_robustness_gate.md",
+    )
+    hand_landmark_collision_payload = add_subgate(
+        runs[72],
+        hand_landmark_collision_dir / "flower_jump_hand_landmark_collision_robustness_gate.json",
+        hand_landmark_collision_dir / "flower_jump_hand_landmark_collision_robustness_gate.md",
+    )
+    hand_bone_length_integrity_payload = add_subgate(
+        runs[73],
+        hand_bone_length_integrity_dir / "flower_jump_hand_bone_length_integrity_robustness_gate.json",
+        hand_bone_length_integrity_dir / "flower_jump_hand_bone_length_integrity_robustness_gate.md",
+    )
 
     marker_status = _load_marker_status()
     payload = {
@@ -4332,6 +4870,37 @@ def run_quality_gate(args: argparse.Namespace) -> Dict[str, Any]:
         "temporal_stutter_summary": _temporal_stutter_summary(temporal_stutter_payload) if temporal_stutter_payload else {},
         "temporal_rate_summary": _temporal_rate_summary(temporal_rate_payload) if temporal_rate_payload else {},
         "temporal_metadata_summary": _temporal_metadata_summary(temporal_metadata_payload) if temporal_metadata_payload else {},
+        "structural_json_summary": _structural_json_summary(structural_json_payload) if structural_json_payload else {},
+        "pose_normalization_anchor_summary": (
+            _pose_normalization_anchor_summary(pose_normalization_anchor_payload)
+            if pose_normalization_anchor_payload
+            else {}
+        ),
+        "landmark_cardinality_summary": (
+            _landmark_cardinality_summary(landmark_cardinality_payload)
+            if landmark_cardinality_payload
+            else {}
+        ),
+        "hand_wrist_identity_summary": (
+            _hand_wrist_identity_summary(hand_wrist_identity_payload)
+            if hand_wrist_identity_payload
+            else {}
+        ),
+        "hand_internal_topology_summary": (
+            _hand_internal_topology_summary(hand_internal_topology_payload)
+            if hand_internal_topology_payload
+            else {}
+        ),
+        "hand_landmark_collision_summary": (
+            _hand_landmark_collision_summary(hand_landmark_collision_payload)
+            if hand_landmark_collision_payload
+            else {}
+        ),
+        "hand_bone_length_integrity_summary": (
+            _hand_bone_length_integrity_summary(hand_bone_length_integrity_payload)
+            if hand_bone_length_integrity_payload
+            else {}
+        ),
         "composite_browser_summary": _composite_browser_summary(composite_browser_payload) if composite_browser_payload else {},
         "frame_weight_summary": _frame_weight_summary(frame_weight_payload) if frame_weight_payload else {},
         "coordinate_precision_summary": _coordinate_precision_summary(coordinate_precision_payload) if coordinate_precision_payload else {},
@@ -4473,6 +5042,20 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument("--temporal-stutter-min-score", type=float, default=70.0)
     parser.add_argument("--temporal-rate-min-score", type=float, default=70.0)
     parser.add_argument("--temporal-metadata-min-score", type=float, default=70.0)
+    parser.add_argument("--structural-json-min-score", type=float, default=70.0)
+    parser.add_argument("--pose-normalization-anchor-min-score", type=float, default=70.0)
+    parser.add_argument("--pose-normalization-anchor-sparse-min-score", type=float, default=75.0)
+    parser.add_argument("--landmark-cardinality-min-score", type=float, default=70.0)
+    parser.add_argument("--landmark-cardinality-sparse-min-score", type=float, default=75.0)
+    parser.add_argument("--landmark-cardinality-diagnostic-max-score", type=float, default=55.0)
+    parser.add_argument("--hand-wrist-identity-sparse-min-score", type=float, default=75.0)
+    parser.add_argument("--hand-wrist-identity-diagnostic-max-score", type=float, default=55.0)
+    parser.add_argument("--hand-internal-topology-sparse-min-score", type=float, default=75.0)
+    parser.add_argument("--hand-internal-topology-diagnostic-max-score", type=float, default=55.0)
+    parser.add_argument("--hand-landmark-collision-sparse-min-score", type=float, default=75.0)
+    parser.add_argument("--hand-landmark-collision-diagnostic-max-score", type=float, default=55.0)
+    parser.add_argument("--hand-bone-length-integrity-sparse-min-score", type=float, default=75.0)
+    parser.add_argument("--hand-bone-length-integrity-diagnostic-max-score", type=float, default=55.0)
     parser.add_argument("--composite-browser-min-score", type=float, default=70.0)
     parser.add_argument("--frame-weight-min-score", type=float, default=70.0)
     parser.add_argument("--coordinate-precision-min-score", type=float, default=70.0)

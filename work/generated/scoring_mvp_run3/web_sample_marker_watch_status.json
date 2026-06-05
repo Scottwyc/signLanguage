@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-04T09:48:42",
+  "generated_at": "2026-06-04T20:42:34",
   "event": "no_target_samples",
-  "watcher_pid": 3588275,
+  "watcher_pid": 2311546,
   "web_root": "/data/WYC/signLanguage/work/generated/web_scoring_mvp",
   "marker": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/web_sample_marker_current.json",
   "words": [
@@ -11,7 +11,7 @@
   "poll_sec": 20.0,
   "update_marker": true,
   "status": {
-    "checked_at": "2026-06-04T09:48:41",
+    "checked_at": "2026-06-04T20:42:33",
     "marker_last_request_id": "web_20260602_233348_53e3df5d",
     "new_summary": {
       "count": 0,
@@ -29,14 +29,14 @@
   },
   "latest_diagnosis": null,
   "goal_readiness": {
-    "generated_at": "2026-06-04T09:48:42",
+    "generated_at": "2026-06-04T20:42:34",
     "returncode": 0,
     "ready_to_complete": false,
     "status_label": "NOT_READY",
     "json_path": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/flower_jump_goal_readiness_watch_current/flower_jump_goal_readiness_audit.json",
     "md_path": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/flower_jump_goal_readiness_watch_current/flower_jump_goal_readiness_audit.md",
-    "quality_gate_json": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260604_sanitized_temporal_metadata_67gate_v1/flower_jump_quality_gate.json",
-    "quality_gate_md": "work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260604_sanitized_temporal_metadata_67gate_v1/flower_jump_quality_gate.md",
+    "quality_gate_json": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260604_partial_hand_bone_length_74gate_v1/flower_jump_quality_gate.json",
+    "quality_gate_md": "/data/WYC/signLanguage/work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260604_partial_hand_bone_length_74gate_v1/flower_jump_quality_gate.md",
     "web_root": "/data/WYC/signLanguage/work/generated/web_scoring_mvp",
     "readiness_summary": {
       "runtime_ready": true,
@@ -83,12 +83,12 @@
       {
         "name": "backend_ready",
         "passed": true,
-        "detail": "worker=ready, pid=811485, reload_count=22, last_reload_error=None"
+        "detail": "worker=ready, pid=811485, reload_count=32, last_reload_error=None"
       },
       {
         "name": "watcher_online",
         "passed": true,
-        "detail": "event=no_target_samples, watcher_pid=3588275, generated_at=2026-06-04T09:48:41"
+        "detail": "event=no_target_samples, watcher_pid=2311546, generated_at=2026-06-04T20:42:33"
       },
       {
         "name": "marker_available",
@@ -98,7 +98,7 @@
       {
         "name": "combined_quality_gate_passed",
         "passed": true,
-        "detail": "quality_gate=work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260604_sanitized_temporal_metadata_67gate_v1/flower_jump_quality_gate.json, subgates=[('web_regression', True), ('web_confusion_gate', True), ('synthetic_confusion_robustness_gate', True), ('discrimination_gate', True), ('pose_robustness_gate', True), ('framing_robustness_gate', True), ('aspect_ratio_robustness_gate', True), ('camera_roll_robustness_gate', True), ('body_anchor_robustness_gate', True), ('depth_robustness_gate', True), ('edge_clipping_robustness_gate', True), ('mirror_robustness_gate', True), ('hand_role_robustness_gate', True), ('hand_label_flicker_robustness_gate', True), ('hand_dropout_burst_robustness_gate', True), ('frame_count_robustness_gate', True), ('temporal_stutter_robustness_gate', True), ('temporal_rate_robustness_gate', True), ('composite_browser_robustness_gate', True), ('frame_weight_robustness_gate', True), ('coordinate_precision_robustness_gate', True), ('motion_blur_robustness_gate', True), ('landmark_noise_robustness_gate', True), ('landmark_spike_robustness_gate', True), ('fingertip_occlusion_robustness_gate', True), ('palm_anchor_occlusion_robustness_gate', True), ('hand_shape_scale_robustness_gate', True), ('hand_orientation_robustness_gate', True), ('missing_mask_robustness_gate', True), ('temporal_padding_robustness_gate', True), ('action_crop_robustness_gate', True), ('action_repeat_robustness_gate', True), ('phase_order_robustness_gate', True), ('noncore_hand_distractor_robustness_gate', True), ('relation_geometry_robustness_gate', True), ('core_shape_amplitude_robustness_gate', True), ('perspective_shear_robustness_gate', True), ('interhand_temporal_desync_robustness_gate', True), ('temporal_order_jitter_robustness_gate', True), ('finger_identity_jitter_robustness_gate', True), ('hand_scale_flicker_robustness_gate', True), ('hand_center_flicker_robustness_gate', True), ('global_framing_flicker_robustness_gate', True), ('finger_mid_joint_occlusion_robustness_gate', True), ('z_flicker_robustness_gate', True), ('hand_trajectory_interpolation_robustness_gate', True), ('hand_z_tilt_robustness_gate', True), ('finger_curl_style_robustness_gate', True), ('finger_length_style_robustness_gate', True), ('moving_setup_exit_robustness_gate', True), ('core_phase_speed_robustness_gate', True), ('hand_confidence_attenuation_robustness_gate', True), ('energy_sampling_robustness_gate', True), ('rolling_shutter_robustness_gate', True), ('hand_detail_loss_robustness_gate', True), ('hand_stream_latency_robustness_gate', True), ('ghost_hand_duplicate_robustness_gate', True), ('hand_overlap_merge_robustness_gate', True), ('wrist_anchor_drift_robustness_gate', True), ('finger_chain_latency_robustness_gate', True), ('finger_fan_geometry_robustness_gate', True), ('finger_base_geometry_robustness_gate', True), ('finger_chain_confidence_robustness_gate', True), ('finger_chain_smoothing_robustness_gate', True), ('finite_coordinate_robustness_gate', True), ('bounded_coordinate_robustness_gate', True), ('temporal_metadata_robustness_gate', True)]"
+        "detail": "quality_gate=/data/WYC/signLanguage/work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260604_partial_hand_bone_length_74gate_v1/flower_jump_quality_gate.json, subgates=[('web_regression', True), ('web_confusion_gate', True), ('synthetic_confusion_robustness_gate', True), ('discrimination_gate', True), ('pose_robustness_gate', True), ('framing_robustness_gate', True), ('aspect_ratio_robustness_gate', True), ('camera_roll_robustness_gate', True), ('body_anchor_robustness_gate', True), ('depth_robustness_gate', True), ('edge_clipping_robustness_gate', True), ('mirror_robustness_gate', True), ('hand_role_robustness_gate', True), ('hand_label_flicker_robustness_gate', True), ('hand_dropout_burst_robustness_gate', True), ('frame_count_robustness_gate', True), ('temporal_stutter_robustness_gate', True), ('temporal_rate_robustness_gate', True), ('composite_browser_robustness_gate', True), ('frame_weight_robustness_gate', True), ('coordinate_precision_robustness_gate', True), ('motion_blur_robustness_gate', True), ('landmark_noise_robustness_gate', True), ('landmark_spike_robustness_gate', True), ('fingertip_occlusion_robustness_gate', True), ('palm_anchor_occlusion_robustness_gate', True), ('hand_shape_scale_robustness_gate', True), ('hand_orientation_robustness_gate', True), ('missing_mask_robustness_gate', True), ('temporal_padding_robustness_gate', True), ('action_crop_robustness_gate', True), ('action_repeat_robustness_gate', True), ('phase_order_robustness_gate', True), ('noncore_hand_distractor_robustness_gate', True), ('relation_geometry_robustness_gate', True), ('core_shape_amplitude_robustness_gate', True), ('perspective_shear_robustness_gate', True), ('interhand_temporal_desync_robustness_gate', True), ('temporal_order_jitter_robustness_gate', True), ('finger_identity_jitter_robustness_gate', True), ('hand_scale_flicker_robustness_gate', True), ('hand_center_flicker_robustness_gate', True), ('global_framing_flicker_robustness_gate', True), ('finger_mid_joint_occlusion_robustness_gate', True), ('z_flicker_robustness_gate', True), ('hand_trajectory_interpolation_robustness_gate', True), ('hand_z_tilt_robustness_gate', True), ('finger_curl_style_robustness_gate', True), ('finger_length_style_robustness_gate', True), ('moving_setup_exit_robustness_gate', True), ('core_phase_speed_robustness_gate', True), ('hand_confidence_attenuation_robustness_gate', True), ('energy_sampling_robustness_gate', True), ('rolling_shutter_robustness_gate', True), ('hand_detail_loss_robustness_gate', True), ('hand_stream_latency_robustness_gate', True), ('ghost_hand_duplicate_robustness_gate', True), ('hand_overlap_merge_robustness_gate', True), ('wrist_anchor_drift_robustness_gate', True), ('finger_chain_latency_robustness_gate', True), ('finger_fan_geometry_robustness_gate', True), ('finger_base_geometry_robustness_gate', True), ('finger_chain_confidence_robustness_gate', True), ('finger_chain_smoothing_robustness_gate', True), ('finite_coordinate_robustness_gate', True), ('bounded_coordinate_robustness_gate', True), ('temporal_metadata_robustness_gate', True), ('structural_json_robustness_gate', True), ('pose_normalization_anchor_robustness_gate', True), ('landmark_cardinality_robustness_gate', True), ('hand_wrist_identity_robustness_gate', True), ('hand_internal_topology_robustness_gate', True), ('hand_landmark_collision_robustness_gate', True), ('hand_bone_length_integrity_robustness_gate', True)]"
       },
       {
         "name": "fresh_real_webcam_target_samples_diagnosed",
@@ -109,7 +109,7 @@
     "missing_gates": [
       "fresh_real_webcam_target_samples_diagnosed"
     ],
-    "stdout": "e_shear_robustness_gate', True), ('interhand_temporal_desync_robustness_gate', True), ('temporal_order_jitter_robustness_gate', True), ('finger_identity_jitter_robustness_gate', True), ('hand_scale_flicker_robustness_gate', True), ('hand_center_flicker_robustness_gate', True), ('global_framing_flicker_robustness_gate', True), ('finger_mid_joint_occlusion_robustness_gate', True), ('z_flicker_robustness_gate', True), ('hand_trajectory_interpolation_robustness_gate', True), ('hand_z_tilt_robustness_gate', True), ('finger_curl_style_robustness_gate', True), ('finger_length_style_robustness_gate', True), ('moving_setup_exit_robustness_gate', True), ('core_phase_speed_robustness_gate', True), ('hand_confidence_attenuation_robustness_gate', True), ('energy_sampling_robustness_gate', True), ('rolling_shutter_robustness_gate', True), ('hand_detail_loss_robustness_gate', True), ('hand_stream_latency_robustness_gate', True), ('ghost_hand_duplicate_robustness_gate', True), ('hand_overlap_merge_robustness_gate', True), ('wrist_anchor_drift_robustness_gate', True), ('finger_chain_latency_robustness_gate', True), ('finger_fan_geometry_robustness_gate', True), ('finger_base_geometry_robustness_gate', True), ('finger_chain_confidence_robustness_gate', True), ('finger_chain_smoothing_robustness_gate', True), ('finite_coordinate_robustness_gate', True), ('bounded_coordinate_robustness_gate', True), ('temporal_metadata_robustness_gate', True)])\n- fresh_real_webcam_target_samples_diagnosed: MISSING (marker_after_target_count=0, latest_diagnosis=-, diagnosis_scope={'passed': False, 'mode': 'missing_diagnosis_ids', 'diagnosed_request_ids': [], 'target_request_ids': [], 'current_marker_id': 'web_20260602_233348_53e3df5d'}, browser_capture_evidence={'request_ids': [], 'passed': False, 'sample_evidence_passed': False, 'allow_legacy_browser_evidence': False, 'required_words': ['花', '跳'], 'observed_words': [], 'required_words_covered': False, 'missing_required_words': ['花', '跳'], 'rows': []})\n",
+    "stdout": "_occlusion_robustness_gate', True), ('z_flicker_robustness_gate', True), ('hand_trajectory_interpolation_robustness_gate', True), ('hand_z_tilt_robustness_gate', True), ('finger_curl_style_robustness_gate', True), ('finger_length_style_robustness_gate', True), ('moving_setup_exit_robustness_gate', True), ('core_phase_speed_robustness_gate', True), ('hand_confidence_attenuation_robustness_gate', True), ('energy_sampling_robustness_gate', True), ('rolling_shutter_robustness_gate', True), ('hand_detail_loss_robustness_gate', True), ('hand_stream_latency_robustness_gate', True), ('ghost_hand_duplicate_robustness_gate', True), ('hand_overlap_merge_robustness_gate', True), ('wrist_anchor_drift_robustness_gate', True), ('finger_chain_latency_robustness_gate', True), ('finger_fan_geometry_robustness_gate', True), ('finger_base_geometry_robustness_gate', True), ('finger_chain_confidence_robustness_gate', True), ('finger_chain_smoothing_robustness_gate', True), ('finite_coordinate_robustness_gate', True), ('bounded_coordinate_robustness_gate', True), ('temporal_metadata_robustness_gate', True), ('structural_json_robustness_gate', True), ('pose_normalization_anchor_robustness_gate', True), ('landmark_cardinality_robustness_gate', True), ('hand_wrist_identity_robustness_gate', True), ('hand_internal_topology_robustness_gate', True), ('hand_landmark_collision_robustness_gate', True), ('hand_bone_length_integrity_robustness_gate', True)])\n- fresh_real_webcam_target_samples_diagnosed: MISSING (marker_after_target_count=0, latest_diagnosis=-, diagnosis_scope={'passed': False, 'mode': 'missing_diagnosis_ids', 'diagnosed_request_ids': [], 'target_request_ids': [], 'current_marker_id': 'web_20260602_233348_53e3df5d'}, browser_capture_evidence={'request_ids': [], 'passed': False, 'sample_evidence_passed': False, 'allow_legacy_browser_evidence': False, 'required_words': ['花', '跳'], 'observed_words': [], 'required_words_covered': False, 'missing_required_words': ['花', '跳'], 'rows': []})\n",
     "stderr": ""
   }
 }

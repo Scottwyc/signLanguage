@@ -31,6 +31,9 @@ import numpy as np
 
 POSE_CORE_INDICES = [0, 11, 12, 13, 14, 15, 16, 23, 24]
 FACE_CORE_INDICES = [33, 133, 159, 145, 362, 263, 386, 374, 61, 291, 13, 14]
+POSE_LANDMARK_COUNT = 33
+HAND_LANDMARK_COUNT = 21
+FACE_LANDMARK_COUNT = 478
 
 GROUP_WEIGHTS = {
     "left_hand": 0.32,
@@ -61,6 +64,13 @@ FINGER_TIPS = [4, 8, 12, 16, 20]
 FINGER_MCPS = [1, 5, 9, 13, 17]
 FINGER_PIPS = [2, 6, 10, 14, 18]
 FINGER_DIPS = [3, 7, 11, 15, 19]
+HAND_FINGER_CHAINS = (
+    (1, 2, 3, 4),
+    (5, 6, 7, 8),
+    (9, 10, 11, 12),
+    (13, 14, 15, 16),
+    (17, 18, 19, 20),
+)
 SPREAD_PAIRS = [(4, 8), (8, 12), (12, 16), (16, 20), (8, 20)]
 FINGER_NAMES = ["thumb", "index", "middle", "ring", "pinky"]
 POSITIVE_VARIANTS = [
@@ -86,6 +96,57 @@ LANDMARK_Z_VISIBLE_MAX = 1.0
 LANDMARK_ZERO_MISSING_EPS = 1e-7
 HAND_DEGENERATE_VISIBLE_MIN_POINTS = 8
 HAND_DEGENERATE_XY_SPAN_MIN = 0.012
+HAND_WRIST_Z_ORIGIN_MAX = 2e-6
+HAND_LANDMARK_COLLISION_DISTANCE_MAX = 1e-5
+HAND_GLOBAL_QUANTIZATION_VISIBLE_MIN_POINTS = 16
+HAND_GLOBAL_QUANTIZATION_RESIDUAL_MAX = 5e-4
+HAND_GLOBAL_QUANTIZATION_STEPS = (
+    1.0 / 1024.0,
+    1.0 / 640.0,
+    1.0 / 512.0,
+    1.0 / 480.0,
+    1.0 / 320.0,
+    1.0 / 256.0,
+    1.0 / 240.0,
+)
+HAND_BONE_LENGTH_RATIO_MIN = 0.003
+HAND_BONE_LENGTH_RATIO_MAX = 2.0
+HAND_BONE_LENGTH_VISIBLE_MIN_POINTS = 16
+HAND_BONE_LENGTH_PALM_REF_MIN = 3
+HAND_INTERNAL_TOPOLOGY_BACKTRACK_TURN_MIN = 6
+HAND_INTERNAL_TOPOLOGY_PROXIMAL_DISTAL_RATIO_MIN = 0.5
+HAND_INTERNAL_TOPOLOGY_REVERSED_CHAIN_MIN = 5
+HAND_INTERNAL_TOPOLOGY_REVERSED_RATIO_MAX = 0.8
+POSE_SHOULDER_X_MIN = -0.25
+POSE_SHOULDER_X_MAX = 1.25
+POSE_SHOULDER_Y_MIN = -0.25
+POSE_SHOULDER_Y_MAX = 1.40
+POSE_SHOULDER_Z_MIN = -2.0
+POSE_SHOULDER_Z_MAX = 1.0
+POSE_SHOULDER_SCALE_MIN = 0.06
+POSE_SHOULDER_SCALE_MAX = 0.85
+POSE_SHOULDER_NOSE_Y_GAP_MIN = 0.0
+POSE_SHOULDER_NOSE_Y_GAP_MAX = 0.50
+POSE_SHOULDER_NOSE_Z_GAP_MIN = 0.05
+POSE_SHOULDER_NOSE_Z_GAP_MAX = 1.10
+POSE_SHOULDER_HIP_Y_GAP_MIN = 0.02
+POSE_SHOULDER_HIP_Y_GAP_MAX = 1.00
+POSE_SHOULDER_HIP_Z_GAP_MIN = -1.20
+POSE_SHOULDER_HIP_Z_GAP_MAX = 0.50
+POSE_SHOULDER_HIP_X_DELTA_MAX = 0.35
+POSE_SHOULDER_HIP_WIDTH_RATIO_MIN = 0.75
+POSE_SHOULDER_HIP_WIDTH_RATIO_MAX = 2.50
+POSE_HAND_WRIST_XY_DISTANCE_MAX = 0.35
+POSE_SEQUENCE_SHOULDER_HAND_Z_MEDIAN_MIN = -0.80
+POSE_SEQUENCE_SHOULDER_HAND_Z_MEDIAN_MAX = 0.35
+POSE_SEQUENCE_RELATION_MIN_FRAMES = 3
+POSE_FALLBACK_HAND_SCALE_FACTOR = 4.0
+POSE_FALLBACK_SCALE_MIN = 0.06
+POSE_FALLBACK_SCALE_MAX = 0.85
+POSE_FALLBACK_XY_MIN = -1.0
+POSE_FALLBACK_XY_MAX = 2.0
+POSE_FALLBACK_Z_MIN = -4.0
+POSE_FALLBACK_Z_MAX = 2.0
 FRAME_WEIGHT_MIN = 0.05
 FRAME_WEIGHT_RAW_MAX = 10.0
 DEFAULT_FPS = 25.0
@@ -228,32 +289,66 @@ def _profile_summary(profile: SemanticProfile) -> Dict[str, Any]:
 
 def _records_from_payload(payload: Dict[str, Any]) -> List[Dict[str, Any]]:
     if isinstance(payload.get("records"), list):
-        return list(payload["records"])
+        return [item if isinstance(item, dict) else {} for item in payload["records"]]
     if isinstance(payload.get("frames"), list):
-        return [{"frame_idx": row.get("frame_idx"), "timestamp_sec": row.get("timestamp_sec"), "row": row} for row in payload["frames"]]
+        rows = [item if isinstance(item, dict) else {} for item in payload["frames"]]
+        return [
+            {
+                "frame_idx": row.get("frame_idx"),
+                "timestamp_sec": row.get("timestamp_sec"),
+                "frame_weight": row.get("frame_weight", 1.0),
+                "result_data": row.get("result_data") if isinstance(row.get("result_data"), dict) else {},
+                "row": row,
+            }
+            for row in rows
+        ]
     if isinstance(payload.get("rows"), list):
-        return [{"frame_idx": row.get("frame_idx"), "timestamp_sec": row.get("timestamp_sec"), "row": row} for row in payload["rows"]]
+        rows = [item if isinstance(item, dict) else {} for item in payload["rows"]]
+        return [
+            {
+                "frame_idx": row.get("frame_idx"),
+                "timestamp_sec": row.get("timestamp_sec"),
+                "frame_weight": row.get("frame_weight", 1.0),
+                "result_data": row.get("result_data") if isinstance(row.get("result_data"), dict) else {},
+                "row": row,
+            }
+            for row in rows
+        ]
     raise RuntimeError("不支持的 Holistic JSON 格式：缺少 records / frames / rows")
 
 
 def _has_landmark_records(records: Sequence[Dict[str, Any]]) -> bool:
+    expected_counts = {
+        "pose_landmarks": POSE_LANDMARK_COUNT,
+        "left_hand_landmarks": HAND_LANDMARK_COUNT,
+        "right_hand_landmarks": HAND_LANDMARK_COUNT,
+    }
     for item in records:
-        result_data = item.get("result_data")
-        if not isinstance(result_data, dict):
-            return False
-        if result_data.get("pose_landmarks") or result_data.get("left_hand_landmarks") or result_data.get("right_hand_landmarks"):
-            return True
+        result_data = _record_dict(item, "result_data")
+        for group, expected_count in expected_counts.items():
+            landmarks = result_data.get(group)
+            if (
+                isinstance(landmarks, (list, tuple))
+                and len(landmarks) == expected_count
+                and any(isinstance(point, dict) for point in landmarks)
+            ):
+                return True
     return False
 
 
 def _landmark_array(
-    items: Sequence[Dict[str, Any]],
+    items: Any,
     indices: Optional[Sequence[int]] = None,
     expected_count: Optional[int] = None,
+    required_input_count: Optional[int] = None,
     xy_bounds: Optional[Tuple[float, float]] = None,
     z_bounds: Optional[Tuple[float, float]] = None,
     zero_missing_eps: Optional[float] = None,
 ) -> Tuple[np.ndarray, np.ndarray]:
+    if not isinstance(items, (list, tuple)):
+        items = []
+    elif items and required_input_count is not None and len(items) != required_input_count:
+        items = []
     if indices is not None:
         selected = list(indices)
     elif expected_count is not None:
@@ -265,23 +360,27 @@ def _landmark_array(
     for idx in selected:
         if 0 <= idx < len(items):
             lm = items[idx]
-            try:
-                point = [float(lm.get("x", 0.0)), float(lm.get("y", 0.0)), float(lm.get("z", 0.0))]
-            except (TypeError, ValueError):
+            if not isinstance(lm, dict):
                 point = [0.0, 0.0, 0.0]
                 visible = False
             else:
-                visible = bool(np.isfinite(point).all())
-                if visible and xy_bounds is not None:
-                    low, high = xy_bounds
-                    visible = low <= point[0] <= high and low <= point[1] <= high
-                if visible and z_bounds is not None:
-                    low, high = z_bounds
-                    visible = low <= point[2] <= high
-                if visible and zero_missing_eps is not None and all(abs(value) <= zero_missing_eps for value in point):
-                    visible = False
-                if not visible:
+                try:
+                    point = [float(lm.get("x", 0.0)), float(lm.get("y", 0.0)), float(lm.get("z", 0.0))]
+                except (TypeError, ValueError):
                     point = [0.0, 0.0, 0.0]
+                    visible = False
+                else:
+                    visible = bool(np.isfinite(point).all())
+                    if visible and xy_bounds is not None:
+                        low, high = xy_bounds
+                        visible = low <= point[0] <= high and low <= point[1] <= high
+                    if visible and z_bounds is not None:
+                        low, high = z_bounds
+                        visible = low <= point[2] <= high
+                    if visible and zero_missing_eps is not None and all(abs(value) <= zero_missing_eps for value in point):
+                        visible = False
+                    if not visible:
+                        point = [0.0, 0.0, 0.0]
             coords.append(point)
             mask.append(1.0 if visible else 0.0)
         else:
@@ -309,6 +408,296 @@ def _mask_degenerate_hand(hand: np.ndarray, hand_mask: np.ndarray) -> Tuple[np.n
     return out, out_mask
 
 
+def _mask_hand_wrist_identity_corruption(hand: np.ndarray, hand_mask: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    if hand.shape != (HAND_LANDMARK_COUNT, 3) or hand_mask.size != HAND_LANDMARK_COUNT:
+        return hand, hand_mask
+    if hand_mask[0] <= 0 or not np.isfinite(hand[0, 2]):
+        return hand, hand_mask
+    # MediaPipe hand z is wrist-relative, so landmark 0 must stay at the z
+    # origin. A displaced z origin means an exact-length array was reordered.
+    if abs(float(hand[0, 2])) <= HAND_WRIST_Z_ORIGIN_MAX:
+        return hand, hand_mask
+    out = hand.copy()
+    out_mask = hand_mask.copy()
+    visible = out_mask > 0
+    out[visible, :] = 0.0
+    out_mask[visible] = 0.0
+    return out, out_mask
+
+
+def _hand_global_quantization_signature(hand: np.ndarray, hand_mask: np.ndarray) -> Optional[Dict[str, Any]]:
+    if hand.shape != (HAND_LANDMARK_COUNT, 3) or hand_mask.size != HAND_LANDMARK_COUNT:
+        return None
+    visible_indices = np.flatnonzero(hand_mask > 0)
+    if visible_indices.size < HAND_GLOBAL_QUANTIZATION_VISIBLE_MIN_POINTS:
+        return None
+    visible = hand[visible_indices]
+    if not np.isfinite(visible).all():
+        return None
+    matched_steps: List[float] = []
+    for axis in range(3):
+        deltas = visible[:, axis] - visible[0, axis]
+        matched_step = next(
+            (
+                step
+                for step in HAND_GLOBAL_QUANTIZATION_STEPS
+                if float(np.max(np.abs(deltas / step - np.round(deltas / step))))
+                <= HAND_GLOBAL_QUANTIZATION_RESIDUAL_MAX
+            ),
+            None,
+        )
+        if matched_step is None:
+            return None
+        matched_steps.append(float(matched_step))
+    return {
+        "visible_point_count": int(visible_indices.size),
+        "axis_steps": matched_steps,
+    }
+
+
+def _hand_landmark_collision_metrics(hand: np.ndarray, hand_mask: np.ndarray) -> Optional[Dict[str, Any]]:
+    if hand.shape != (HAND_LANDMARK_COUNT, 3) or hand_mask.size != HAND_LANDMARK_COUNT:
+        return None
+    visible_indices = np.flatnonzero(hand_mask > 0)
+    quantization_signature = _hand_global_quantization_signature(hand, hand_mask)
+    if visible_indices.size < 2 or not np.isfinite(hand[visible_indices]).all():
+        return {
+            "collision_pair_count": 0,
+            "collision_participant_count": 0,
+            "max_collision_cluster_size": 0,
+            "collision_indices": [],
+            "global_quantization_signature": quantization_signature,
+            "corrupted": False,
+        }
+
+    adjacency: Dict[int, set[int]] = {}
+    collision_pair_count = 0
+    distance_sq_max = HAND_LANDMARK_COLLISION_DISTANCE_MAX**2
+    for offset, left_index in enumerate(visible_indices[:-1]):
+        for right_index in visible_indices[offset + 1 :]:
+            delta = hand[int(left_index)] - hand[int(right_index)]
+            if float(np.dot(delta, delta)) > distance_sq_max:
+                continue
+            left = int(left_index)
+            right = int(right_index)
+            adjacency.setdefault(left, set()).add(right)
+            adjacency.setdefault(right, set()).add(left)
+            collision_pair_count += 1
+
+    collision_indices = sorted(adjacency)
+    visited: set[int] = set()
+    max_cluster_size = 0
+    for index in collision_indices:
+        if index in visited:
+            continue
+        stack = [index]
+        visited.add(index)
+        cluster_size = 0
+        while stack:
+            current = stack.pop()
+            cluster_size += 1
+            for neighbor in adjacency[current]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    stack.append(neighbor)
+        max_cluster_size = max(max_cluster_size, cluster_size)
+
+    return {
+        "collision_pair_count": collision_pair_count,
+        "collision_participant_count": len(collision_indices),
+        "max_collision_cluster_size": max_cluster_size,
+        "collision_indices": collision_indices,
+        "global_quantization_signature": quantization_signature,
+        "corrupted": bool(collision_indices and quantization_signature is None),
+    }
+
+
+def _mask_hand_landmark_collisions(hand: np.ndarray, hand_mask: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    metrics = _hand_landmark_collision_metrics(hand, hand_mask)
+    if not metrics or not bool(metrics["corrupted"]):
+        return hand, hand_mask
+    out = hand.copy()
+    out_mask = hand_mask.copy()
+    collision_indices = np.asarray(metrics["collision_indices"], dtype=np.int64)
+    out[collision_indices, :] = 0.0
+    out_mask[collision_indices] = 0.0
+    return out, out_mask
+
+
+def _hand_bone_length_integrity_metrics(hand: np.ndarray, hand_mask: np.ndarray) -> Optional[Dict[str, Any]]:
+    if hand.shape != (HAND_LANDMARK_COUNT, 3) or hand_mask.size != HAND_LANDMARK_COUNT:
+        return None
+    quantization_signature = _hand_global_quantization_signature(hand, hand_mask)
+    if quantization_signature is not None:
+        return {
+            "palm_scale": None,
+            "visible_point_count": int(np.sum(hand_mask > 0)),
+            "palm_ref_count": None,
+            "evaluated_edge_count": 0,
+            "minimum_bone_length_ratio": None,
+            "maximum_bone_length_ratio": None,
+            "short_edge_count": 0,
+            "long_edge_count": 0,
+            "corrupted_edges": [],
+            "corrupted_indices": [],
+            "global_quantization_signature": quantization_signature,
+            "quantization_bypassed": True,
+            "corrupted": False,
+        }
+    visible = (hand_mask > 0) & np.isfinite(hand).all(axis=1)
+    visible_point_count = int(visible.sum())
+    if visible_point_count < HAND_BONE_LENGTH_VISIBLE_MIN_POINTS or not bool(visible[0]):
+        return None
+
+    palm_refs = [_dist(hand[idx], hand[0]) for idx in (5, 9, 13, 17) if visible[idx]]
+    if visible[5] and visible[17]:
+        palm_refs.append(_dist(hand[5], hand[17]))
+    palm_refs = [value for value in palm_refs if math.isfinite(value) and value > 1e-8]
+    if len(palm_refs) < HAND_BONE_LENGTH_PALM_REF_MIN:
+        return None
+    palm_scale = float(np.median(np.asarray(palm_refs, dtype=np.float32)))
+    if not math.isfinite(palm_scale) or palm_scale <= 1e-8:
+        return None
+
+    ratios: List[float] = []
+    short_edges: List[Tuple[int, int]] = []
+    long_edges: List[Tuple[int, int]] = []
+    for chain in HAND_FINGER_CHAINS:
+        for start, end in zip(chain[:-1], chain[1:]):
+            if not (visible[start] and visible[end]):
+                continue
+            ratio = _dist(hand[start], hand[end]) / palm_scale
+            ratios.append(ratio)
+            if ratio < HAND_BONE_LENGTH_RATIO_MIN:
+                short_edges.append((start, end))
+            elif ratio > HAND_BONE_LENGTH_RATIO_MAX:
+                long_edges.append((start, end))
+
+    corrupted_edges = short_edges + long_edges
+    corrupted_indices = sorted({index for edge in corrupted_edges for index in edge})
+    if not ratios:
+        return None
+    return {
+        "palm_scale": palm_scale,
+        "visible_point_count": visible_point_count,
+        "palm_ref_count": len(palm_refs),
+        "evaluated_edge_count": len(ratios),
+        "minimum_bone_length_ratio": min(ratios),
+        "maximum_bone_length_ratio": max(ratios),
+        "short_edge_count": len(short_edges),
+        "long_edge_count": len(long_edges),
+        "corrupted_edges": corrupted_edges,
+        "corrupted_indices": corrupted_indices,
+        "global_quantization_signature": None,
+        "quantization_bypassed": False,
+        "corrupted": bool(corrupted_edges),
+    }
+
+
+def _mask_hand_bone_length_corruption(hand: np.ndarray, hand_mask: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    metrics = _hand_bone_length_integrity_metrics(hand, hand_mask)
+    if not metrics or not bool(metrics["corrupted"]):
+        return hand, hand_mask
+    out = hand.copy()
+    out_mask = hand_mask.copy()
+    corrupted_indices = np.asarray(metrics["corrupted_indices"], dtype=np.int64)
+    out[corrupted_indices, :] = 0.0
+    out_mask[corrupted_indices] = 0.0
+    return out, out_mask
+
+
+def _hand_internal_topology_metrics(hand: np.ndarray, hand_mask: np.ndarray) -> Optional[Dict[str, Any]]:
+    if hand.shape != (HAND_LANDMARK_COUNT, 3) or hand_mask.size != HAND_LANDMARK_COUNT:
+        return None
+    if not bool(np.all(hand_mask > 0)) or not np.isfinite(hand).all():
+        return None
+
+    xy = hand[:, :2]
+    wrist = xy[0]
+    backtrack_turn_count = 0
+    reversed_chain_count = 0
+    proximal_distal_ratios: List[float] = []
+    for chain_index, chain in enumerate(HAND_FINGER_CHAINS):
+        points_xy = xy[list(chain)]
+        vectors = np.diff(points_xy, axis=0)
+        for vector_index in range(len(vectors) - 1):
+            if float(np.dot(vectors[vector_index], vectors[vector_index + 1])) < 0.0:
+                backtrack_turn_count += 1
+        if float(np.linalg.norm(points_xy[0] - wrist)) > float(np.linalg.norm(points_xy[-1] - wrist)):
+            reversed_chain_count += 1
+        if chain_index > 0:
+            points_xyz = hand[list(chain)]
+            proximal = float(np.linalg.norm(points_xyz[1] - points_xyz[0]))
+            distal = float(np.linalg.norm(points_xyz[3] - points_xyz[2]))
+            proximal_distal_ratios.append(proximal / max(distal, 1e-12))
+
+    median_proximal_distal_ratio = float(np.median(proximal_distal_ratios))
+    corrupted = bool(
+        backtrack_turn_count >= HAND_INTERNAL_TOPOLOGY_BACKTRACK_TURN_MIN
+        or median_proximal_distal_ratio < HAND_INTERNAL_TOPOLOGY_PROXIMAL_DISTAL_RATIO_MIN
+        or (
+            reversed_chain_count >= HAND_INTERNAL_TOPOLOGY_REVERSED_CHAIN_MIN
+            and median_proximal_distal_ratio < HAND_INTERNAL_TOPOLOGY_REVERSED_RATIO_MAX
+        )
+    )
+    return {
+        "backtrack_turn_count": backtrack_turn_count,
+        "reversed_chain_count": reversed_chain_count,
+        "median_proximal_distal_ratio": median_proximal_distal_ratio,
+        "corrupted": corrupted,
+    }
+
+
+def _mask_hand_internal_topology_corruption(
+    hand: np.ndarray,
+    hand_mask: np.ndarray,
+) -> Tuple[np.ndarray, np.ndarray]:
+    metrics = _hand_internal_topology_metrics(hand, hand_mask)
+    if not metrics or not bool(metrics["corrupted"]):
+        return hand, hand_mask
+    out = hand.copy()
+    out_mask = hand_mask.copy()
+    visible = out_mask > 0
+    out[visible, :] = 0.0
+    out_mask[visible] = 0.0
+    return out, out_mask
+
+
+def _hand_landmark_arrays(result_data: Dict[str, Any]) -> Tuple[Tuple[np.ndarray, np.ndarray], Tuple[np.ndarray, np.ndarray]]:
+    xy_bounds = (LANDMARK_XY_VISIBLE_MIN, LANDMARK_XY_VISIBLE_MAX)
+    z_bounds = (LANDMARK_Z_VISIBLE_MIN, LANDMARK_Z_VISIBLE_MAX)
+    left, left_mask = _landmark_array(
+        result_data.get("left_hand_landmarks") or [],
+        expected_count=21,
+        required_input_count=HAND_LANDMARK_COUNT,
+        xy_bounds=xy_bounds,
+        z_bounds=z_bounds,
+        zero_missing_eps=LANDMARK_ZERO_MISSING_EPS,
+    )
+    right, right_mask = _landmark_array(
+        result_data.get("right_hand_landmarks") or [],
+        expected_count=21,
+        required_input_count=HAND_LANDMARK_COUNT,
+        xy_bounds=xy_bounds,
+        z_bounds=z_bounds,
+        zero_missing_eps=LANDMARK_ZERO_MISSING_EPS,
+    )
+    left, left_mask = _mask_degenerate_hand(left, left_mask)
+    right, right_mask = _mask_degenerate_hand(right, right_mask)
+    left, left_mask = _mask_hand_wrist_identity_corruption(left, left_mask)
+    right, right_mask = _mask_hand_wrist_identity_corruption(right, right_mask)
+    left, left_mask = _mask_hand_landmark_collisions(left, left_mask)
+    right, right_mask = _mask_hand_landmark_collisions(right, right_mask)
+    left, left_mask = _mask_hand_bone_length_corruption(left, left_mask)
+    right, right_mask = _mask_hand_bone_length_corruption(right, right_mask)
+    left, left_mask = _mask_degenerate_hand(left, left_mask)
+    right, right_mask = _mask_degenerate_hand(right, right_mask)
+    return _mask_hand_internal_topology_corruption(left, left_mask), _mask_hand_internal_topology_corruption(
+        right,
+        right_mask,
+    )
+
+
 def _sanitize_frame_weight(value: Any, default: float = 1.0) -> float:
     try:
         weight = float(value)
@@ -317,6 +706,14 @@ def _sanitize_frame_weight(value: Any, default: float = 1.0) -> float:
     if not math.isfinite(weight):
         return float(default)
     return max(FRAME_WEIGHT_MIN, min(FRAME_WEIGHT_RAW_MAX, weight))
+
+
+def _finite_float(value: Any, default: float = 0.0) -> float:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return float(default)
+    return number if math.isfinite(number) else float(default)
 
 
 def _parse_temporal_int(value: Any, minimum: int = 0, maximum: Optional[int] = None) -> Optional[int]:
@@ -344,7 +741,9 @@ def _sanitize_fps(value: Any, default: float = DEFAULT_FPS) -> float:
     return fps
 
 
-def _record_dict(record: Dict[str, Any], key: str) -> Dict[str, Any]:
+def _record_dict(record: Any, key: str) -> Dict[str, Any]:
+    if not isinstance(record, dict):
+        return {}
     value = record.get(key)
     return value if isinstance(value, dict) else {}
 
@@ -422,18 +821,160 @@ def _frame_temporal_metadata(
     return frame_idx, timestamp
 
 
-def _normalization_from_pose(pose: np.ndarray, pose_mask: np.ndarray) -> Tuple[np.ndarray, float]:
+def _stabilize_feature_temporal_metadata(features: List[FrameFeature], total_frames: int, fps: float) -> None:
+    if not features:
+        return
+    frame_indices = [int(feature.frame_idx) for feature in features]
+    frame_indices_strict = all(
+        0 <= value < total_frames for value in frame_indices
+    ) and all(left < right for left, right in zip(frame_indices, frame_indices[1:]))
+    if not frame_indices_strict:
+        for index, feature in enumerate(features):
+            feature.frame_idx = _fallback_frame_idx(index, len(features), total_frames)
+
+    timestamps = [float(feature.timestamp_sec) for feature in features]
+    timestamps_strict = all(math.isfinite(value) and value >= 0.0 for value in timestamps) and all(
+        left < right for left, right in zip(timestamps, timestamps[1:])
+    )
+    if not timestamps_strict or not frame_indices_strict:
+        safe_fps = _sanitize_fps(fps)
+        for feature in features:
+            feature.timestamp_sec = float(feature.frame_idx) / safe_fps
+
+
+def _hand_fallback_normalization(
+    hands: Sequence[Tuple[np.ndarray, np.ndarray]],
+) -> Optional[Tuple[np.ndarray, float]]:
+    centers: List[np.ndarray] = []
+    palm_scales: List[float] = []
+    for hand, hand_mask in hands:
+        if hand.size == 0 or hand_mask.size == 0:
+            continue
+        visible = (hand_mask > 0) & np.isfinite(hand[:, :3]).all(axis=1)
+        if not visible.any():
+            continue
+        if visible[0]:
+            centers.append(np.asarray(hand[0, :3], dtype=np.float32))
+        else:
+            centers.append(np.asarray(np.median(hand[visible, :3], axis=0), dtype=np.float32))
+
+        if not visible[0]:
+            continue
+        distances: List[float] = []
+        for idx in [5, 9, 13, 17]:
+            if idx < len(visible) and visible[idx]:
+                distances.append(_dist(hand[idx], hand[0]))
+        if len(visible) > 17 and visible[5] and visible[17]:
+            distances.append(_dist(hand[5], hand[17]))
+        finite_distances = [value for value in distances if math.isfinite(value) and value > 1e-6]
+        if len(finite_distances) >= 2:
+            palm_scales.append(float(np.mean(finite_distances)))
+
+    if not centers or not palm_scales:
+        return None
+    center = np.asarray(np.mean(np.stack(centers, axis=0), axis=0), dtype=np.float32)
+    scale = float(np.median(np.asarray(palm_scales, dtype=np.float32))) * POSE_FALLBACK_HAND_SCALE_FACTOR
+    scale = max(POSE_FALLBACK_SCALE_MIN, min(POSE_FALLBACK_SCALE_MAX, scale))
+    return center, scale
+
+
+def _shoulder_normalization(
+    pose: np.ndarray,
+    pose_mask: np.ndarray,
+    hands: Sequence[Tuple[np.ndarray, np.ndarray]] = (),
+) -> Optional[Tuple[np.ndarray, float]]:
     finite_points = np.isfinite(pose[:, :3]).all(axis=1) if pose.size else np.zeros(0, dtype=bool)
-    if pose.shape[0] >= 3 and pose_mask[1] > 0 and pose_mask[2] > 0 and finite_points[1] and finite_points[2]:
-        center = (pose[1] + pose[2]) / 2.0
-        scale = float(np.linalg.norm(pose[1, :2] - pose[2, :2]))
-        return center, max(scale, 1e-3)
-    valid = pose[(pose_mask > 0) & finite_points]
+    if not (pose.shape[0] >= 3 and pose_mask[1] > 0 and pose_mask[2] > 0 and finite_points[1] and finite_points[2]):
+        return None
+    scale = float(np.linalg.norm(pose[1, :2] - pose[2, :2]))
+    shoulders = pose[[1, 2], :3]
+    center = np.asarray((pose[1] + pose[2]) / 2.0, dtype=np.float32)
+    shoulders_valid = (
+        np.all((shoulders[:, 0] >= POSE_SHOULDER_X_MIN) & (shoulders[:, 0] <= POSE_SHOULDER_X_MAX))
+        and np.all((shoulders[:, 1] >= POSE_SHOULDER_Y_MIN) & (shoulders[:, 1] <= POSE_SHOULDER_Y_MAX))
+        and np.all((shoulders[:, 2] >= POSE_SHOULDER_Z_MIN) & (shoulders[:, 2] <= POSE_SHOULDER_Z_MAX))
+        and POSE_SHOULDER_SCALE_MIN <= scale <= POSE_SHOULDER_SCALE_MAX
+    )
+    if not shoulders_valid:
+        return None
+
+    def pose_point_valid(idx: int) -> bool:
+        return idx < len(pose_mask) and pose_mask[idx] > 0 and idx < len(finite_points) and finite_points[idx]
+
+    if pose_point_valid(0):
+        shoulder_nose_y_gap = float(center[1] - pose[0, 1])
+        shoulder_nose_z_gap = float(center[2] - pose[0, 2])
+        if not (
+            POSE_SHOULDER_NOSE_Y_GAP_MIN <= shoulder_nose_y_gap <= POSE_SHOULDER_NOSE_Y_GAP_MAX
+            and POSE_SHOULDER_NOSE_Z_GAP_MIN <= shoulder_nose_z_gap <= POSE_SHOULDER_NOSE_Z_GAP_MAX
+        ):
+            return None
+
+    if pose_point_valid(7) and pose_point_valid(8):
+        hip_center = (pose[7] + pose[8]) / 2.0
+        hip_width = float(np.linalg.norm(pose[7, :2] - pose[8, :2]))
+        shoulder_hip_y_gap = float(hip_center[1] - center[1])
+        shoulder_hip_z_gap = float(center[2] - hip_center[2])
+        shoulder_hip_x_delta = abs(float(center[0] - hip_center[0]))
+        if not (
+            POSE_SHOULDER_HIP_Y_GAP_MIN <= shoulder_hip_y_gap <= POSE_SHOULDER_HIP_Y_GAP_MAX
+            and POSE_SHOULDER_HIP_Z_GAP_MIN <= shoulder_hip_z_gap <= POSE_SHOULDER_HIP_Z_GAP_MAX
+            and shoulder_hip_x_delta <= POSE_SHOULDER_HIP_X_DELTA_MAX
+        ):
+            return None
+        if hip_width > 1e-6:
+            shoulder_hip_width_ratio = scale / hip_width
+            if not POSE_SHOULDER_HIP_WIDTH_RATIO_MIN <= shoulder_hip_width_ratio <= POSE_SHOULDER_HIP_WIDTH_RATIO_MAX:
+                return None
+
+    pose_wrists = [pose[idx] for idx in (5, 6) if pose_point_valid(idx)]
+    if pose_wrists:
+        for hand, hand_mask in hands:
+            if hand.size == 0 or hand_mask.size == 0 or hand_mask[0] <= 0 or not np.isfinite(hand[0, :3]).all():
+                continue
+            wrist_distance = min(float(np.linalg.norm(hand[0, :2] - pose_wrist[:2])) for pose_wrist in pose_wrists)
+            if wrist_distance > POSE_HAND_WRIST_XY_DISTANCE_MAX:
+                return None
+    return center, scale
+
+
+def _normalization_from_pose(
+    pose: np.ndarray,
+    pose_mask: np.ndarray,
+    hands: Sequence[Tuple[np.ndarray, np.ndarray]] = (),
+    allow_shoulders: bool = True,
+) -> Tuple[np.ndarray, float]:
+    finite_points = np.isfinite(pose[:, :3]).all(axis=1) if pose.size else np.zeros(0, dtype=bool)
+    if allow_shoulders:
+        shoulder_normalization = _shoulder_normalization(pose, pose_mask, hands)
+        if shoulder_normalization is not None:
+            return shoulder_normalization
+
+    hand_fallback = _hand_fallback_normalization(hands)
+    if hand_fallback is not None:
+        return hand_fallback
+
+    valid_mask = (pose_mask > 0) & finite_points
+    if pose.size:
+        valid_mask &= (
+            (pose[:, 0] >= POSE_FALLBACK_XY_MIN)
+            & (pose[:, 0] <= POSE_FALLBACK_XY_MAX)
+            & (pose[:, 1] >= POSE_FALLBACK_XY_MIN)
+            & (pose[:, 1] <= POSE_FALLBACK_XY_MAX)
+            & (pose[:, 2] >= POSE_FALLBACK_Z_MIN)
+            & (pose[:, 2] <= POSE_FALLBACK_Z_MAX)
+        )
+    valid = pose[valid_mask]
     if len(valid) > 0:
-        xy = valid[:, :2]
-        center = np.asarray([float(xy[:, 0].mean()), float(xy[:, 1].mean()), 0.0], dtype=np.float32)
-        span = np.ptp(xy, axis=0)
-        return center, max(float(np.linalg.norm(span)), 1e-3)
+        center = np.asarray(np.median(valid[:, :3], axis=0), dtype=np.float32)
+        if len(valid) >= 3:
+            low = np.quantile(valid[:, :2], 0.10, axis=0)
+            high = np.quantile(valid[:, :2], 0.90, axis=0)
+            scale = float(np.linalg.norm(high - low))
+        else:
+            scale = float(np.linalg.norm(np.ptp(valid[:, :2], axis=0)))
+        scale = max(POSE_FALLBACK_SCALE_MIN, min(POSE_FALLBACK_SCALE_MAX, scale))
+        return center, scale
     return np.zeros(3, dtype=np.float32), 1.0
 
 
@@ -505,37 +1046,32 @@ def _landmark_feature(
     fallback_frame_idx: int = 0,
     max_frame_idx: Optional[int] = None,
     total_frames: int = 0,
+    normalization_override: Optional[Tuple[np.ndarray, float]] = None,
 ) -> FrameFeature:
-    result_data = record.get("result_data") or {}
+    result_data = _record_dict(record, "result_data")
     row = _record_dict(record, "row")
-    pose, pose_mask = _landmark_array(result_data.get("pose_landmarks") or [], POSE_CORE_INDICES)
+    pose, pose_mask = _landmark_array(
+        result_data.get("pose_landmarks") or [],
+        POSE_CORE_INDICES,
+        required_input_count=POSE_LANDMARK_COUNT,
+    )
     xy_bounds = (LANDMARK_XY_VISIBLE_MIN, LANDMARK_XY_VISIBLE_MAX)
     z_bounds = (LANDMARK_Z_VISIBLE_MIN, LANDMARK_Z_VISIBLE_MAX)
-    left, left_mask = _landmark_array(
-        result_data.get("left_hand_landmarks") or [],
-        expected_count=21,
-        xy_bounds=xy_bounds,
-        z_bounds=z_bounds,
-        zero_missing_eps=LANDMARK_ZERO_MISSING_EPS,
-    )
-    right, right_mask = _landmark_array(
-        result_data.get("right_hand_landmarks") or [],
-        expected_count=21,
-        xy_bounds=xy_bounds,
-        z_bounds=z_bounds,
-        zero_missing_eps=LANDMARK_ZERO_MISSING_EPS,
-    )
-    left, left_mask = _mask_degenerate_hand(left, left_mask)
-    right, right_mask = _mask_degenerate_hand(right, right_mask)
+    (left, left_mask), (right, right_mask) = _hand_landmark_arrays(result_data)
     face, face_mask = _landmark_array(
         result_data.get("face_landmarks") or [],
         FACE_CORE_INDICES,
+        required_input_count=FACE_LANDMARK_COUNT,
         xy_bounds=xy_bounds,
         z_bounds=z_bounds,
         zero_missing_eps=LANDMARK_ZERO_MISSING_EPS,
     )
 
-    center, scale = _normalization_from_pose(pose, pose_mask)
+    center, scale = normalization_override or _normalization_from_pose(
+        pose,
+        pose_mask,
+        ((left, left_mask), (right, right_mask)),
+    )
 
     def norm(arr: np.ndarray) -> np.ndarray:
         if arr.size == 0:
@@ -582,11 +1118,15 @@ def _landmark_feature(
 
 
 def _bbox_to_features(row: Dict[str, Any]) -> Tuple[np.ndarray, np.ndarray, Dict[str, slice], Dict[str, bool]]:
-    pose_box = (row.get("pose") or {}).get("bbox") or {}
-    center_x = (float(pose_box.get("x_min", 0.0)) + float(pose_box.get("x_max", 1.0))) / 2.0
-    center_y = (float(pose_box.get("y_min", 0.0)) + float(pose_box.get("y_max", 1.0))) / 2.0
-    span_x = max(float(pose_box.get("x_max", 1.0)) - float(pose_box.get("x_min", 0.0)), 1.0)
-    span_y = max(float(pose_box.get("y_max", 1.0)) - float(pose_box.get("y_min", 0.0)), 1.0)
+    pose_box = _record_dict(_record_dict(row, "pose"), "bbox")
+    pose_x_min = _finite_float(pose_box.get("x_min"), 0.0)
+    pose_x_max = _finite_float(pose_box.get("x_max"), 1.0)
+    pose_y_min = _finite_float(pose_box.get("y_min"), 0.0)
+    pose_y_max = _finite_float(pose_box.get("y_max"), 1.0)
+    center_x = (pose_x_min + pose_x_max) / 2.0
+    center_y = (pose_y_min + pose_y_max) / 2.0
+    span_x = max(pose_x_max - pose_x_min, 1.0)
+    span_y = max(pose_y_max - pose_y_min, 1.0)
     scale = max(math.hypot(span_x, span_y), 1.0)
 
     parts: List[np.ndarray] = []
@@ -594,15 +1134,17 @@ def _bbox_to_features(row: Dict[str, Any]) -> Tuple[np.ndarray, np.ndarray, Dict
     groups: Dict[str, slice] = {}
     presence: Dict[str, bool] = {}
     for group in ["pose", "left_hand", "right_hand", "face"]:
-        box = (row.get(group) or {}).get("bbox")
-        present = bool(row.get(f"{group}_present")) and isinstance(box, dict)
+        group_data = _record_dict(row, group)
+        raw_box = group_data.get("bbox")
+        box = raw_box if isinstance(raw_box, dict) else {}
+        present = bool(row.get(f"{group}_present")) and isinstance(raw_box, dict)
         presence[group] = present
         if present:
-            x_min = (float(box.get("x_min", center_x)) - center_x) / scale
-            x_max = (float(box.get("x_max", center_x)) - center_x) / scale
-            y_min = (float(box.get("y_min", center_y)) - center_y) / scale
-            y_max = (float(box.get("y_max", center_y)) - center_y) / scale
-            vis = float(box.get("visibility_mean", row.get(group, {}).get("visibility_mean", 0.0)) or 0.0)
+            x_min = (_finite_float(box.get("x_min"), center_x) - center_x) / scale
+            x_max = (_finite_float(box.get("x_max"), center_x) - center_x) / scale
+            y_min = (_finite_float(box.get("y_min"), center_y) - center_y) / scale
+            y_max = (_finite_float(box.get("y_max"), center_y) - center_y) / scale
+            vis = _finite_float(box.get("visibility_mean", group_data.get("visibility_mean", 0.0)), 0.0)
             arr = np.asarray([x_min, x_max, y_min, y_max, vis], dtype=np.float32)
             mask = np.ones(5, dtype=np.float32)
         else:
@@ -646,6 +1188,8 @@ def _apply_sidecar_frame_weights(path: Path, features: List[FrameFeature]) -> No
         payload = _load_json(manifest_path)
     except Exception:
         return
+    if not isinstance(payload, dict):
+        return
     rows = payload.get("frame_weights") or []
     weight_by_idx: Dict[int, float] = {}
     max_frame_idx = max((feature.frame_idx for feature in features), default=None)
@@ -664,6 +1208,83 @@ def _apply_sidecar_frame_weights(path: Path, features: List[FrameFeature]) -> No
             feature.frame_weight = weight_by_idx[feature.frame_idx]
 
 
+def _pose_normalization_overrides(records: Sequence[Dict[str, Any]]) -> List[Optional[Tuple[np.ndarray, float]]]:
+    frame_data: List[Tuple[np.ndarray, np.ndarray, Tuple[Tuple[np.ndarray, np.ndarray], Tuple[np.ndarray, np.ndarray]]]] = []
+    anchors: List[Optional[Tuple[np.ndarray, float]]] = []
+    shoulder_hand_z_offsets: List[float] = []
+    for record in records:
+        result_data = _record_dict(record, "result_data")
+        pose, pose_mask = _landmark_array(
+            result_data.get("pose_landmarks") or [],
+            POSE_CORE_INDICES,
+            required_input_count=POSE_LANDMARK_COUNT,
+        )
+        hands = _hand_landmark_arrays(result_data)
+        frame_data.append((pose, pose_mask, hands))
+        anchors.append(_shoulder_normalization(pose, pose_mask, hands))
+        finite_points = np.isfinite(pose[:, :3]).all(axis=1) if pose.size else np.zeros(0, dtype=bool)
+        if (
+            pose.shape[0] >= 3
+            and pose_mask[1] > 0
+            and pose_mask[2] > 0
+            and finite_points[1]
+            and finite_points[2]
+        ):
+            hand_wrist_z = [
+                float(hand[0, 2])
+                for hand, hand_mask in hands
+                if hand.size > 0 and hand_mask.size > 0 and hand_mask[0] > 0 and np.isfinite(hand[0, :3]).all()
+            ]
+            if hand_wrist_z:
+                shoulder_center_z = float((pose[1, 2] + pose[2, 2]) / 2.0)
+                shoulder_hand_z_offsets.append(shoulder_center_z - float(np.mean(hand_wrist_z)))
+
+    if len(shoulder_hand_z_offsets) >= POSE_SEQUENCE_RELATION_MIN_FRAMES:
+        median_shoulder_hand_z = float(np.median(np.asarray(shoulder_hand_z_offsets, dtype=np.float32)))
+        if not POSE_SEQUENCE_SHOULDER_HAND_Z_MEDIAN_MIN <= median_shoulder_hand_z <= POSE_SEQUENCE_SHOULDER_HAND_Z_MEDIAN_MAX:
+            return [
+                _normalization_from_pose(pose, pose_mask, hands, allow_shoulders=False)
+                for pose, pose_mask, hands in frame_data
+            ]
+
+    valid_indices = [idx for idx, anchor in enumerate(anchors) if anchor is not None]
+    if not valid_indices:
+        return anchors
+
+    previous_valid: List[Optional[int]] = []
+    last_valid: Optional[int] = None
+    for anchor in anchors:
+        previous_valid.append(last_valid)
+        if anchor is not None:
+            last_valid = len(previous_valid) - 1
+    next_valid: List[Optional[int]] = [None] * len(anchors)
+    last_valid = None
+    for idx in range(len(anchors) - 1, -1, -1):
+        next_valid[idx] = last_valid
+        if anchors[idx] is not None:
+            last_valid = idx
+
+    for idx, anchor in enumerate(anchors):
+        if anchor is not None:
+            continue
+        left_idx = previous_valid[idx]
+        right_idx = next_valid[idx]
+        if left_idx is not None and right_idx is not None:
+            left_center, left_scale = anchors[left_idx]  # type: ignore[misc]
+            right_center, right_scale = anchors[right_idx]  # type: ignore[misc]
+            fraction = float(idx - left_idx) / float(right_idx - left_idx)
+            center = (1.0 - fraction) * left_center + fraction * right_center
+            scale = (1.0 - fraction) * float(left_scale) + fraction * float(right_scale)
+            anchors[idx] = np.asarray(center, dtype=np.float32), float(scale)
+        elif left_idx is not None:
+            left_center, left_scale = anchors[left_idx]  # type: ignore[misc]
+            anchors[idx] = np.asarray(left_center, dtype=np.float32).copy(), float(left_scale)
+        elif right_idx is not None:
+            right_center, right_scale = anchors[right_idx]  # type: ignore[misc]
+            anchors[idx] = np.asarray(right_center, dtype=np.float32).copy(), float(right_scale)
+    return anchors
+
+
 def load_sequence(
     path: Path,
     requested_mode: str = "auto",
@@ -671,6 +1292,8 @@ def load_sequence(
     apply_sidecar_weights: bool = True,
 ) -> SequenceData:
     payload = _load_json(path)
+    if not isinstance(payload, dict):
+        raise RuntimeError(f"不支持的 Holistic JSON 顶层结构：{path}")
     records = _records_from_payload(payload)
     meta = payload.get("meta") if isinstance(payload.get("meta"), dict) else {}
     raw_fps = payload.get("fps") if payload.get("fps") is not None else meta.get("fps")
@@ -688,6 +1311,7 @@ def load_sequence(
         mode = "bbox"
 
     if mode == "landmark":
+        normalization_overrides = _pose_normalization_overrides(records)
         features = [
             _landmark_feature(
                 record,
@@ -695,6 +1319,7 @@ def load_sequence(
                 _fallback_frame_idx(idx, len(records), total_frames),
                 max_frame_idx,
                 total_frames,
+                normalization_overrides[idx],
             )
             for idx, record in enumerate(records)
         ]
@@ -712,6 +1337,7 @@ def load_sequence(
     else:
         raise RuntimeError(f"未知特征模式：{mode}")
 
+    _stabilize_feature_temporal_metadata(features, total_frames, fps)
     features = sorted(features, key=lambda item: item.frame_idx)
     if apply_sidecar_weights:
         _apply_sidecar_frame_weights(path, features)
