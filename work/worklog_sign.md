@@ -2982,3 +2982,574 @@ A:
 - 已整理当前打分算法优化详细报告，Markdown 路径为 `/data/WYC/signLanguage/work/reports/scoring_algorithm_optimization_summary_20260605.md`，Word 路径为 `/data/WYC/signLanguage/work/reports/scoring_algorithm_optimization_summary_20260605.docx`。报告共 `779` 行，覆盖基础 raw landmark DTW、判别性门控、文本语义 profile、动态帧权重、semantic phase、语义相位加权 DTW、混合对齐策略、`花` opening/short-core/confusion guard、`跳` two-hand relation/local fallback、capture_quality、cross-word check、保存网页回放闭环、74 子门质量门、代表性鲁棒性结果和仍未完成的真实用户校准限制。
 - 报告引用当前质量门 `/data/WYC/signLanguage/work/generated/scoring_mvp_run3/flower_jump_quality_gate_20260604_partial_hand_bone_length_74gate_v1/flower_jump_quality_gate.md`：综合 `PASS`，`74/74` 子门 returncode `0`；保存网页/API replay `168` 样本错误 `0`，花/跳 diagnostics `149` 样本错误 `0`，有效正常+边界 `124/128=96.9%`，其中 `花=87/91`、`跳=37/37`。
 - 当前 5080 状态在报告前确认：worker `ready`，PID `3896404`，Holistic 初始化 `260.114s`，模板数 `10`，scorer 文件 `/data/WYC/signLanguage/work/scripts/score_holistic_sequence_mvp.py` 已于 `2026-06-05T14:08:09` 随新后端加载，`last_reload_error=None`。
+
+
+# workEpoch3 26/6/10~
+
+
+## teamwork 
+
+P: 现在，我想请你调查一下合适的团队代码写作工作流程方案，比如GitHub协作，比如基于codex的项目团队协作，等；我希望有统一的代码仓库，工作环境，能够方便地和团队进行代码上的协调和沟通，最好和团队成员能共享上下文，甚至是ai上下文。请你调研出多种合适的团队工作方案，整理出详细的中文报告。
+
+P: 现在，我希望基于 /data/WYC/skill_research/team_code_ai_workflow_20260610/team_code_ai_workflow_report_20260610.md 里面的方案A，先实现基础的团队协作项目管理。目前我已经有服务器本地的 signLanguage项目仓库，它实现了手语打分核心算法和前后端搭建等，现在我希望和团队其他成员一起协作推进整个手语学习宇宙项目开发，其他成员目前完成了其他网页内容的前端开发，我的手语打分模块要和它们整合在一起。目前大家还没有建立github仓库。接下来，我希望主导构建一个手语学习宇宙github团队仓库，先加入我的本地仓库部分，之后会合并其他人的模块，我希望建立规范化的团队代码协作和管理，请你给出详细的操作方案。
+
+
+P: 命名调整了：
+GitHub Org:  sign-language-universe
+Main Repo:   sign-language-universe
+
+请据此调整你刚刚的plan文档
+
+DONE
+
+
+P: 现在，已经有了 /data/WYC/signLanguage/work/other/sign-language-universe/sign-language-universe 别人的前端代码和资料等；我要开始建立团队github仓库了。你补充一下操作手册；或者可以的话，你来自动化操作，根据我前面的具体需求
+
+
+我还没有创建 团队 github 仓库，可以给我整理一下操作手册
+
+创建：• monorepo 是 monolithic repository 的缩写，意思是：把一个项目里的多个模块
+  放在同一个 Git 仓库里管理
+
+P: 现在，团队org和main repo都已经创建，你可以帮我提交了
+
+Q: 也就是说 org里面的team，每个负责相应的只能，每个team内部再有相应成员；所以org的组织层级就是：
+org -> team -> member  理解的对吗 
+
+A: • 对，核心理解是：
+
+  GitHub Organization
+    -> Team
+      -> Member
+
+  也就是：
+
+  sign-language-universe 这个 org
+    -> frontend team
+      -> 前端成员 A / 前端成员 B
+    -> scoring team
+      -> 评分算法成员 A / 后端成员 B
+    -> content team
+      -> 内容成员 A
+    -> qa team
+      -> 测试成员 A
+    -> maintainers team
+      -> 仓库维护负责人
+
+  但还要补一个关键点：仓库权限通常是授权给 team，而不是直接授权给每个
+  member。
+
+  所以完整关系更像：
+
+  Organization
+    -> Team
+      -> Member
+
+  Repository
+    -> 授权给 Team
+
+  例如：
+
+  sign-language-universe/sign-language-universe 仓库
+    -> frontend team: Write 权限
+    -> scoring team: Write 权限
+    -> qa team: Triage 权限
+    -> maintainers team: Maintain 权限
+
+  这样你以后只需要把新人加入对应 team，他就自动获得这个 team 对仓库的权
+  限。比如新前端同学加入 frontend，就自动能对仓库创建分支、提交代码、发
+  PR。
+
+Q: 对于一个团队仓库，Direct access 和 Organization access 区别是？
+
+A: • 是 GitHub 仓库 Settings -> Collaborators & teams 里两类访问来源的区别。
+
+  Direct access
+  表示这个人或 team 是直接被加到这个仓库上的。
+
+  例子：
+
+  sign-language-universe 仓库
+    -> 直接添加 frontend team: Write
+    -> 直接添加 scoring team: Write
+    -> 直接添加某个成员 alice: Admin
+
+  特点：
+
+  - 在当前仓库页面就能直接修改或移除。
+  - 适合给某个 team 配置这个仓库的明确权限。
+  - 不建议长期给个人 direct access，除非是临时协作者或特殊负责人。
+  - 如果一个 team 是直接加到仓库的，它的权限可以在这个仓库里直接改。
+
+  Organization access
+  表示这个人能访问仓库，但权限来源不是这个仓库里直接添加的，而是来自组织层
+  级，例如：
+
+  Organization base permission
+  Organization role
+  Parent team 继承权限
+  某个 team 的间接权限
+
+  例子：
+
+  Organization 默认给所有成员 Read
+    -> 所有 org member 都能读这个仓库
+
+  或者：
+
+  engineering parent team: Write
+    -> frontend child team 继承 Write
+    -> frontend 成员可以访问仓库
+
+  这种访问通常要回到权限来源那里改，比如 org 设置、parent team、
+  organization role，而不是只在当前仓库里改。
+
+  对你们当前项目，推荐理解为：
+
+  Direct access:
+    maintainers / frontend / scoring / content / qa 这些 team 直接授权到主
+    仓库
+
+  Organization access:
+    由 org 默认权限、组织角色、parent team 继承等带来的访问
+
+  我的建议是：
+
+  Organization base permission: No permission 或最小权限
+  主仓库权限: 主要通过 team 的 Direct access 管理
+  个人 Direct access: 尽量少用
+  Admin: 只给极少数负责人
+
+  这样权限来源最清楚：谁能访问仓库，主要看他在哪个 team 里。
+
+Q: Your protected branch rules for your branch won't be enforced on this private repository until you upgrade your organization account to a GitHub Team or Enterprise account.
+
+A: • 这个提示的意思很明确：你现在的 GitHub Organization 账户是 Free，且仓库是
+  private，所以 main 分支保护规则即使配置了，也不会真正生效。
+
+  也就是说，目前这些规则不会硬性拦截：
+
+  禁止直接 push main
+  要求 PR
+  要求 review
+  要求 CI 通过
+  要求 CODEOWNERS review
+  禁止 force push
+
+  原因是 GitHub 对私有仓库的分支保护有计划限制。官方文档里也写了：
+  protected branches 在 GitHub Free 组织下只支持 public repositories；
+  private repositories 需要 GitHub Team 或 Enterprise。GitHub Team 计划包
+  含 private repositories 的 protected branches、required reviewers、Code
+  owners 等能力。
+
+  你现在有几个选择：
+
+  方案 1：升级 Organization 到 GitHub Team
+  推荐。继续保持 private repo，同时 main 分支保护真正生效。
+
+  方案 2：把仓库改成 public
+  技术上可用 Free 的分支保护，但不推荐，除非确认代码、资料、算法、素材都可
+  以公开。
+
+  方案 3：保持 Free + private
+  可以继续用 PR 流程、CODEOWNERS、CI、团队约定，但 GitHub 不会强制阻止直接
+  push main。
+
+  对你们这个项目，我建议是：
+
+  短期：
+    仓库继续 private
+    团队仍按 PR 流程协作
+    明确约定不要直接 push main
+    main 只由 maintainers 合并
+
+  如果正式多人开发：
+    升级 GitHub Team
+    让 main 分支保护真正生效
+
+  在没有升级前，文档里的分支保护设置可以先保留，但要标注为：
+
+  当前 Free organization + private repository 下不会被强制执行；
+  升级 GitHub Team 后才会真正生效。
+
+## github 网页构建
+
+P: 现在我想访问已经在仓库里面的前端，给我操作手册
+
+P: 你参考一下下面的说法，看看能不能直接让网页建立在GitHub仓库上，而不我的服务器上？
+进入仓库的Settings（设置）页面
+在你的代码仓库页面，点击顶部菜单栏的 Settings。
+
+找到Pages（页面）选项
+在左侧菜单栏里，找到并点击 Pages。这通常在 "Code and automation" 分类下。
+
+选择分支并保存
+在 "Branch" (分支) 选项下，选择包含你网页代码的分支，通常是 main 或 master。然后，点击文件夹图标，选择根目录 / (root)，最后点击 Save 按钮。
+
+<div align="center" style="display: flex; justify-content: center; gap: 20px; margin: 20px 0;"> < img src="https://img-blog.csdnimg.cn/6cf6c5a0e6a84be093c24c757cc09b96.png" alt="选择分支界面" style="max-width: 45%; height: auto;"> < img src="https://img-blog.csdnimg.cn/1f3451ced57b492ab68f808da23ef742.png" alt="保存设置界面" style="max-width: 45%; height: auto;"> </div>
+获取你的网站地址
+保存成功后，页面会刷新，并在顶部显示一个绿色的地址栏，那就是你的网站地址了。通常是 https://你的用户名.github.io/你的仓库名/ 的格式。注意，如果是用户主页型的仓库（仓库名是你的用户名.github.io），地址会更短。
+
+配置完成后，可能需要等待1-2分钟才能成功访问，请耐心等待一下。
+
+
+NEW：
+
+  你现在需要在 GitHub 页面手动做这一步：
+
+  Repository -> Settings -> Pages
+  Build and deployment -> Source -> GitHub Actions
+
+  然后去：
+
+  Actions -> Deploy frontend to GitHub Pages
+
+  运行或等待 workflow。
+
+  默认访问地址应是：
+
+  https://sign-language-universe.github.io/sign-language-universe/
+
+
+
+
+P: 我们现在决定把仓库设置成public，请补充相关的 apache 权限等
+
+NOTE: 视频素材，要询问提供方是否愿意被公开使用
+
+NOTE:  视频素材应该分成两类，一类是网页上可以公开展示，用于学习的；另一类是可以只是我们内部训练使用，但不公开
+  要确认知情同意等。。
+
+
+## 测试PR
+
+P: 现在，我要开始测试PR提交了
+
+p: 我提交了 git push -u origin docs/test-pr-flow；现在怎么设置PR，我作为owner，怎么approve？谁有权限approve？
+
+A:  你作为 owner 能不能 approve？
+
+  分情况：
+
+  如果 PR 是你自己提交/创建的：
+    你不能 approve 自己的 PR。
+    即使你是 owner，GitHub 也不允许 PR author approve 自己的 PR。
+
+  如果 PR 是别人提交的：
+    你作为 owner/admin 可以 approve。
+
+  所以这次 docs/test-pr-flow 如果 commit 是你自己推的，就需要另一个有权限
+  的人 approve。
+
+  谁的 approve 算数？
+
+  对你们当前仓库，最稳妥的是：
+
+  maintainers team 成员
+  有 Write / Maintain / Admin 权限的人
+  对应 CODEOWNERS team 里的成员
+
+  当前 .github/CODEOWNERS 里有全局规则：
+
+  * @sign-language-universe/maintainers
+
+  所以普通文档改动默认会要求 maintainers review。如果你开启了 Require
+  review from Code Owners，那就需要 maintainers 里另一个成员 approve。
+
+  推荐流程
+
+  1. 你创建 PR：docs/test-pr-flow -> main
+  2. 右侧 Reviewers 选择 @sign-language-universe/maintainers 或具体成员
+  3. 等 CI 通过
+  4. 另一个 maintainer 打开 PR -> Files changed -> Review changes ->
+  Approve
+  5. 你或 maintainer 点击 Squash and merge
+  6. 删除 docs/test-pr-flow 分支
+
+  如果现在团队里还没有第二个 maintainer，你需要先把一个成员加入：
+
+  Organization -> Teams -> maintainers -> Members -> Add a member
+
+  并确保 maintainers 对仓库至少有 Write，推荐 Maintain。
+
+
+Q: 那怎么办，我就是仓库目前的唯一主管人，我希望我能方便地完成自己提交的approve，这允许吗？
+A: • 不允许。GitHub 明确不允许 PR 作者 approve 自己的 PR，即使你是 owner/
+  admin，这个 approval 也不能算作 required approval。
+
+  你有三个现实选择：
+
+  方案 A：单人维护阶段推荐
+
+  保留 PR 流程，但暂时不要要求 approval：
+
+  Require a pull request before merging: 开
+  Require approvals: 关
+  Require review from Code Owners: 关
+  Require status checks: 开
+
+  这样你仍然必须走：
+
+  branch -> PR -> CI 通过 -> merge
+
+  但不需要别人 approve。适合当前只有你一个主管人的阶段。
+
+  方案 B：允许 owner/admin bypass
+
+  你可以配置允许管理员绕过规则，然后自己 merge。但这不是“自己 approve”，而
+  是“管理员绕过 required review”。
+
+  需要确认没有开启：
+
+  Do not allow bypassing the above settings
+
+  这种方式方便，但审计意义弱一些。适合临时救急，不建议作为长期日常流程。
+
+  方案 C：加一个真实 maintainer
+
+  找一个团队成员加入：
+
+  maintainers team
+
+  并给仓库：
+
+  Maintain 或 Write 权限
+
+  之后你的 PR 由他 approve，他的 PR 由你 approve。这是正式团队协作最推荐的
+  方式。
+
+  我建议你现在用方案 A，把 main 保护规则改成：
+
+  必须 PR
+  必须 CI 通过
+  暂不强制 approval
+  暂不强制 CODEOWNERS review
+  禁止 force push
+  禁止删除 main
+
+  等团队至少有第二个 maintainer 后，再打开：
+
+  Require approvals: 1
+  Require review from Code Owners
+
+  这样既保留规范流程，又不会卡住你这个唯一维护者。
+
+
+NOW：no need for approval..
+
+
+Q: 现在别人提交了PR，我作为主管如何通过它，实现merge？
+
+A: • 可以。别人提交的 PR，你作为主管可以正常 Approve 并 Merge，前提是你有仓库
+  Write / Maintain / Admin / Owner 权限，并且你不是这个 PR 的作者。
+
+  网页操作流程
+
+  1. 进入仓库：
+
+  https://github.com/sign-language-universe/sign-language-universe
+
+  2. 点击顶部 Pull requests。
+  3. 打开别人提交的 PR。
+  4. 先看这几个状态：
+
+  Conversation: 有没有讨论未解决
+  Files changed: 改了哪些文件
+  Checks: CI 是否通过
+  Reviewers / Code owners: 是否要求特定团队 review
+
+  5. 审代码：
+
+  Files changed -> Review changes -> Approve -> Submit review
+
+  如果有问题，选：
+
+  Request changes
+
+  或直接评论，让对方继续改。
+
+  6. CI 通过、approval 满足后，在 PR 页面底部点击：
+
+  Squash and merge
+
+  再点：
+
+  Confirm squash and merge
+
+  7. 合并后点击：
+
+  Delete branch
+
+  如果这个按钮出现的话。
+
+  推荐你们用 Squash and merge
+
+  这样每个 PR 进入 main 只形成一个清晰提交，适合你们现在的团队协作阶段。
+
+  用 gh 命令行也可以
+
+  你先登录：
+
+  gh auth login --hostname github.com --git-protocol ssh --web
+
+  然后：
+
+  cd /data/WYC/sign-language-universe
+
+  gh pr list
+  gh pr view <PR编号> --web
+  gh pr review <PR编号> --approve -b "Reviewed and approved."
+  gh pr checks <PR编号>
+  gh pr merge <PR编号> --squash --delete-branch
+
+  合并后本地同步：
+
+  git switch main
+  git pull --ff-only
+
+  NOTE: 谁的 approve 算数
+
+  一般算数的是：
+
+  有 Write / Maintain / Admin / Owner 权限的人
+  不是 PR 作者本人
+  如果开启 CODEOWNERS，则还要是对应 CODEOWNERS 成员
+
+
+P:  现在网页端操作成功通过了PR，接下来，我想看看试试 本地 gh 管理这个团队
+  仓库，我作为主管者怎么操作；你可以给一下相关的操作手册
+
+
+
+
+
+### gh 安装
+P: 要不要给本地当前环境加入 gh 等，方便仓库管理？
+A: • 建议装。你现在已经开始做 org、public repo、Pages、分支保护、团队权限这些
+  操作，gh 会明显方便很多。
+
+  我刚检查了当前环境：
+
+  gh: 未安装
+  系统: Ubuntu 22.04.5 LTS
+  包管理器: apt
+
+  建议本地工具组合：
+
+  gh        GitHub CLI，管理 repo / PR / issue / Actions / Pages / API
+  jq        处理 gh api 返回的 JSON
+  git-lfs   后续管理 .glb、视频等大文件
+
+  安装建议用 GitHub CLI 官方 apt 源，不建议用 snap。Ubuntu 上可用：
+
+  sudo apt update
+  sudo apt install -y wget gpg jq git-lfs
+
+  sudo mkdir -p -m 755 /etc/apt/keyrings
+  wget -nv -O /tmp/githubcli-archive-keyring.gpg
+  https://cli.github.com/packages/githubcli-archive-keyring.gpg
+  sudo install -m 644 /tmp/githubcli-archive-keyring.gpg /etc/apt/
+  keyrings/githubcli-archive-keyring.gpg
+
+  echo "deb [arch=$(dpkg --print-architecture)
+  signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg]
+  https://cli.github.com/packages stable main" \
+    | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+
+  sudo apt update
+  sudo apt install -y gh
+
+  安装后认证：
+
+  gh auth login
+
+  建议选择：
+
+  GitHub.com
+  SSH
+  Login with a web browser
+
+  后续常用命令会很有用：
+
+  gh repo view sign-language-universe/sign-language-universe
+  gh pr list
+  gh pr create
+  gh pr checkout <PR编号>
+  gh workflow list
+  gh workflow run pages.yml
+  gh run list
+  gh run watch
+  gh api repos/sign-language-universe/sign-language-universe/pages
+
+  对你们当前项目，gh 最有价值的是：
+
+  1. 检查 GitHub Pages 是否启用、部署是否成功
+  2. 看 Actions 日志
+  3. 创建和合并 PR
+  4. 管理 issue / milestone
+  5. 用 gh api 检查分支保护、仓库 public 状态、team 权限
+
+  注意一点：gh auth login 会在当前服务器用户目录下保存 GitHub 凭据，不会进
+  入仓库，但这台服务器如果多人共用，就要确保只在你自己的 Linux 用户下登
+  录，不要把 token 写进项目文件。
+
+NEW: • 已安装好 gh，因为当前用户没有无密码 sudo，我采用了用户目录安装。
+
+  安装结果：
+
+  gh version 2.94.0
+  安装位置: ~/.local/share/gh-2.94.0/bin/gh
+  命令入口: ~/.local/bin/gh
+
+  验证通过：
+
+  gh --version
+
+  当前还没有登录 GitHub，后续你需要执行：
+
+  gh auth login --hostname github.com --git-protocol ssh --web
+
+  我也新增了使用手册：
+
+  sign-language-universe/docs/operations/
+  github_cli_management_manual_20260611.md
+
+  注意：由于 main 分支保护已经生效，直接 push main 被 GitHub 拒绝了：
+
+  Changes must be made through a pull request.
+
+  所以我把手册提交到了新分支：
+
+  docs/github-cli-management-manual
+
+  PR 创建链接：
+
+  https://github.com/sign-language-universe/sign-language-universe/pull/new/docs/github-cli-management-manual
+
+  提交是：
+
+  3d2e203 docs: add GitHub CLI management manual
+
+  手册里包含：登录、仓库 public 状态检查、GitHub Pages、Actions、PR、
+  Issue、分支保护、Team 权限检查、升级/卸载方式。
+
+  参考官方资料：
+
+  - https://cli.github.com/manual/
+  - https://cli.github.com/manual/gh_auth_login
+  - https://github.com/cli/cli/releases
+
+
+
+
+
+## 合并手语打分前端模块
+
+P: 现在，我要合并之前专门的手语打分的前端模块到整体的手语宇宙前端里面
+
+
+
+
+
+
+
