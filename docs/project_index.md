@@ -25,6 +25,14 @@
 - `work/scripts/plot_holistic_probe_summary.py`: Holistic 探针结果可视化和分析脚本。
 - `work/scripts/recommend_keyframes_from_probe.py`: 基于探针结果推荐关键帧和采样策略的脚本。
 - `work/scripts/visualize_holistic_features.py`: Holistic 特征检测结果可视化脚本，输出骨骼图、三联图和联系表。
+- `work/scripts/migrate_clear_view_cutpoints_to_left.py`: 将正/右清晰视角的节点共识迁移到左视角。
+- `work/scripts/optimize_cutpoints_to_rest_pose.py`: 将候选边界微调到手臂贴身静止姿态帧。
+- `work/scripts/holistic_worker_daemon_v2.py`: 支持连续解码和损坏帧容错的常驻 Holistic 后端。
+- `work/scripts/build_raw_holistic_database_worker_pool_v2.py`: 多后端构建中文目录、普通 JSON、旧坐标兼容的原始 Landmark 数据库。
+- `work/scripts/build_demo21_semantic_weight_profiles_v2.py`: 从最新 21 词语义资料生成逐词加权 Profile。
+- `work/scripts/build_weighted_holistic_feature_database.py`: 从原始 Landmark 构建固定维数、带 mask 的语义加权 DTW 特征库。
+- `work/scripts/validate_raw_holistic_database_v2.py`: 原始数据库全量验证。
+- `work/scripts/validate_weighted_holistic_database.py`: 加权数据库全量验证。
 
 ## 主要文档
 
@@ -35,6 +43,7 @@
 - `work/手语动作准确度评测方案_20260402.md`: 评测方案。
 - `work/手语动作准确度评测技术路线_20260423.md`: 技术路线深化版。
 - `work/手语动作准确度评测技术路线_20260423_ppt.md`: 对应演示稿文本版。
+- `work/手语宇宙_原始与语义加权数据库技术报告_20260801.md`: 1,384 样本原始 Holistic 与 21 词加权 DTW 数据库技术报告。
 
 ## 资料目录
 

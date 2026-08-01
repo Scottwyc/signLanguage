@@ -1,0 +1,1947 @@
+{
+  "version": "demo21_semantic_weights_v2_20260801",
+  "generated_at": "2026-08-01 03:30:14 +0800",
+  "docx_path": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx",
+  "claim_policy": "Text-derived engineering weights; legacy-calibrated profiles preserved where available; new profiles require empirical calibration.",
+  "handedness_policy": "原始左右 landmark 保留；评分时按用户惯用手或 best-of hand swap 归一化主辅手。",
+  "face_policy": "仅使用12个核心眼口面部点；只有文档明确包含口型、头部或表情语义时赋非零权重。",
+  "profiles": {
+    "谗（羡慕）": {
+      "word": "谗（羡慕）",
+      "description": "一手伸食指，熊嘴角处向下滑动，模仿口水从嘴角流出的样子；舌头从嘴巴里微伸出来，模仿馋嘴时舔嘴唇的样子；画面可以顺着向下的食指，叠加从嘴角流出的口水",
+      "source_lines": [
+        "一手食指从嘴角向下滑动表示口水",
+        "舌头微伸表示舔嘴唇"
+      ],
+      "group_weights": {
+        "left_hand": 0.1,
+        "right_hand": 0.24,
+        "left_hand_shape": 0.05,
+        "right_hand_shape": 0.12,
+        "pose": 0.0,
+        "face": 0.44,
+        "missing": 0.05
+      },
+      "keypoint_weights": {
+        "hand": {
+          "8": 1.75,
+          "4": 1.3
+        },
+        "pose": {},
+        "face": {
+          "13": 1.75,
+          "14": 1.75,
+          "61": 1.6,
+          "291": 1.6
+        }
+      },
+      "focus_groups": [
+        "face",
+        "right_hand",
+        "right_hand_shape"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.18,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.14,
+        "group_missing_distance_weight": 0.0,
+        "focus_missing_distance_weight": 0.0,
+        "relation_missing_distance_weight": 0.0,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "visible_core_tolerance_cap": 0.034,
+        "core_visible_score_scale": 0.12,
+        "core_visible_dtw_threshold": 0.045,
+        "core_visible_presence_threshold": 0.65,
+        "core_visible_max_normalized_distance": 0.08,
+        "short_core_capture_tolerance_cap": 0.0,
+        "short_core_capture_max_length_ratio": 0.7,
+        "flower_opening_guard_enabled": false,
+        "flower_opening_min_score": 0.3,
+        "flower_visible_core_floor_enabled": false,
+        "flower_visible_core_floor_min_score": 72.0,
+        "flower_visible_core_floor_max_score": 80.0,
+        "flower_visible_core_floor_max_length_ratio": 0.32,
+        "flower_visible_core_floor_min_presence": 0.62,
+        "flower_visible_core_floor_min_opening_score": 0.6,
+        "flower_visible_core_floor_max_dtw": 0.042,
+        "flower_visible_core_floor_min_action_coverage": 0.62,
+        "flower_jump_confusion_guard_enabled": false,
+        "flower_jump_confusion_min_two_hand_presence": 0.58,
+        "flower_jump_confusion_min_relation_valid_count": 3,
+        "flower_jump_confusion_max_opening_score": 0.45,
+        "flower_jump_confusion_min_two_finger_shape_mean": 1.05,
+        "jump_relation_semantic_floor_enabled": false,
+        "jump_relation_semantic_max_score": 0.0,
+        "jump_relation_semantic_min_presence": 0.65,
+        "jump_relation_semantic_min_direction": 0.55,
+        "jump_relation_local_fallback_enabled": false,
+        "jump_relation_local_min_direction": 0.92,
+        "jump_relation_local_min_amplitude_ratio": 0.8,
+        "jump_relation_local_max_horizontal_to_vertical": 0.6,
+        "jump_relation_local_min_coverage": 0.48,
+        "jump_relation_local_max_coverage": 0.78,
+        "jump_relation_local_min_two_finger_shape_mean": 0.95,
+        "phase_order_guard_enabled": false,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_min_disorder_span_score": 0.0,
+        "phase_order_guard_min_adjacent_disorder_span_score": 0.0,
+        "phase_order_guard_max_score": 45.0,
+        "description": "Use semantic energy progress, not frame index, to softly align start/mid/end action phases."
+      },
+      "semantic_notes": [
+        "DOCX 语义是食指从嘴角向下滑动模拟口水，同时舌头/嘴巴表现馋嘴。",
+        "脸部嘴唇/嘴角是主语义之一，手部食指下滑是另一主语义；躯干不参与主距离。",
+        "保留少量非主手约束，用于惩罚额外双手动作；动态帧由嘴部和食指下滑共同驱动。"
+      ],
+      "profile_origin": "legacy_calibrated:谗（羡慕）",
+      "acquisition_word_index": 1,
+      "document_order": 10,
+      "semantic_id": "谗",
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "唱歌": {
+      "word": "唱歌",
+      "description": "头部左右晃动，模仿真实唱歌时的样子；双手拇指和食指同时从喉部两边向外移出，表示；从喉部发出声音；嘴巴张开，模仿唱歌时的样子；画面可以顺着双手拇指和食指的移动，叠加流动的音符",
+      "source_lines": [
+        "头部左右晃动",
+        "双手拇指和食指从喉部两边向外移动",
+        "嘴巴张开"
+      ],
+      "group_weights": {
+        "left_hand": 0.2,
+        "right_hand": 0.2,
+        "left_hand_shape": 0.1,
+        "right_hand_shape": 0.1,
+        "pose": 0.14,
+        "face": 0.21,
+        "missing": 0.05
+      },
+      "keypoint_weights": {
+        "hand": {
+          "4": 1.45,
+          "8": 1.45
+        },
+        "pose": {
+          "0": 1.4,
+          "11": 1.15,
+          "12": 1.15
+        },
+        "face": {
+          "13": 1.8,
+          "14": 1.8,
+          "61": 1.35,
+          "291": 1.35
+        }
+      },
+      "focus_groups": [
+        "left_hand",
+        "right_hand",
+        "face",
+        "pose"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.18,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.14,
+        "group_missing_distance_weight": 0.0,
+        "focus_missing_distance_weight": 0.0,
+        "relation_missing_distance_weight": 0.0,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "visible_core_tolerance_cap": 0.034,
+        "core_visible_score_scale": 0.12,
+        "core_visible_dtw_threshold": 0.045,
+        "core_visible_presence_threshold": 0.65,
+        "core_visible_max_normalized_distance": 0.08,
+        "short_core_capture_tolerance_cap": 0.0,
+        "short_core_capture_max_length_ratio": 0.7,
+        "flower_opening_guard_enabled": false,
+        "flower_opening_min_score": 0.3,
+        "flower_visible_core_floor_enabled": false,
+        "flower_visible_core_floor_min_score": 72.0,
+        "flower_visible_core_floor_max_score": 80.0,
+        "flower_visible_core_floor_max_length_ratio": 0.32,
+        "flower_visible_core_floor_min_presence": 0.62,
+        "flower_visible_core_floor_min_opening_score": 0.6,
+        "flower_visible_core_floor_max_dtw": 0.042,
+        "flower_visible_core_floor_min_action_coverage": 0.62,
+        "flower_jump_confusion_guard_enabled": false,
+        "flower_jump_confusion_min_two_hand_presence": 0.58,
+        "flower_jump_confusion_min_relation_valid_count": 3,
+        "flower_jump_confusion_max_opening_score": 0.45,
+        "flower_jump_confusion_min_two_finger_shape_mean": 1.05,
+        "jump_relation_semantic_floor_enabled": false,
+        "jump_relation_semantic_max_score": 0.0,
+        "jump_relation_semantic_min_presence": 0.65,
+        "jump_relation_semantic_min_direction": 0.55,
+        "jump_relation_local_fallback_enabled": false,
+        "jump_relation_local_min_direction": 0.92,
+        "jump_relation_local_min_amplitude_ratio": 0.8,
+        "jump_relation_local_max_horizontal_to_vertical": 0.6,
+        "jump_relation_local_min_coverage": 0.48,
+        "jump_relation_local_max_coverage": 0.78,
+        "jump_relation_local_min_two_finger_shape_mean": 0.95,
+        "phase_order_guard_enabled": false,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_min_disorder_span_score": 0.0,
+        "phase_order_guard_min_adjacent_disorder_span_score": 0.0,
+        "phase_order_guard_max_score": 45.0,
+        "description": "Use semantic energy progress, not frame index, to softly align start/mid/end action phases."
+      },
+      "semantic_notes": [
+        "DOCX 语义同时包含双手从喉部向外移出、头部左右晃动和嘴巴张开。",
+        "双手拇指/食指、嘴唇张合、头部/肩部运动都参与主评分；这类词不是纯手势动作。",
+        "动态重要帧由双手外移、嘴部开合和头部晃动共同决定。"
+      ],
+      "profile_origin": "legacy_calibrated:唱歌",
+      "acquisition_word_index": 2,
+      "document_order": 9,
+      "semantic_id": "唱歌",
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "超市": {
+      "group_weights": {
+        "left_hand": 0.23,
+        "right_hand": 0.23,
+        "left_hand_shape": 0.2,
+        "right_hand_shape": 0.2,
+        "pose": 0.05,
+        "face": 0.0,
+        "missing": 0.09
+      },
+      "keypoint_weights": {
+        "hand": {
+          "0": 1.3,
+          "4": 1.4,
+          "8": 1.35,
+          "opening": 1.7
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "left_hand",
+        "right_hand",
+        "left_hand_shape",
+        "right_hand_shape",
+        "two_hand_relation"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.12,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.55,
+        "required_presence_groups": [
+          "left_hand",
+          "right_hand",
+          "two_hand_relation"
+        ],
+        "required_presence_weight": 0.2,
+        "phase_order_guard_enabled": true,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_max_score": 45.0,
+        "description": "按语义能量阶段而非绝对帧号进行软 DTW 对齐。"
+      },
+      "semantic_phases": [
+        "双手虚握购物车把手",
+        "双手向前推动",
+        "双手交替向两边抓取",
+        "回到虚握"
+      ],
+      "semantic_notes": [
+        "双手购物车把手关系和前推动作为第一阶段；交替抓取商品并回位作为第二阶段。"
+      ],
+      "profile_status": "text_derived_pending_empirical_calibration",
+      "word": "超市",
+      "acquisition_word_index": 3,
+      "document_order": 17,
+      "semantic_id": "超市",
+      "source_lines": [
+        "第一阶段双手虚握虎口相对手背向上并向前推动购物车",
+        "第二阶段双手交替向两边抓取后回到虚握"
+      ],
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "船（轮船）": {
+      "group_weights": {
+        "left_hand": 0.28,
+        "right_hand": 0.28,
+        "left_hand_shape": 0.17,
+        "right_hand_shape": 0.17,
+        "pose": 0.03,
+        "face": 0.0,
+        "missing": 0.07
+      },
+      "keypoint_weights": {
+        "hand": {
+          "8": 1.65,
+          "12": 1.35,
+          "opening": 1.25
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "left_hand",
+        "right_hand",
+        "two_hand_relation"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.12,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.65,
+        "required_presence_groups": [
+          "left_hand",
+          "right_hand",
+          "two_hand_relation"
+        ],
+        "required_presence_weight": 0.2,
+        "phase_order_guard_enabled": true,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_max_score": 45.0,
+        "description": "按语义能量阶段而非绝对帧号进行软 DTW 对齐。"
+      },
+      "semantic_phases": [
+        "双手斜立指尖相抵形成船头",
+        "双手整体向前航行"
+      ],
+      "semantic_notes": [
+        "船头几何关系和双手同步向前轨迹共同主导。"
+      ],
+      "profile_status": "text_derived_pending_empirical_calibration",
+      "word": "船（轮船）",
+      "acquisition_word_index": 4,
+      "document_order": 12,
+      "semantic_id": "船",
+      "source_lines": [
+        "双手斜立且指尖相抵表示船头",
+        "双手整体向前移动表示航行"
+      ],
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "公交车": {
+      "group_weights": {
+        "left_hand": 0.1,
+        "right_hand": 0.38,
+        "left_hand_shape": 0.08,
+        "right_hand_shape": 0.29,
+        "pose": 0.08,
+        "face": 0.0,
+        "missing": 0.07
+      },
+      "keypoint_weights": {
+        "hand": {
+          "0": 1.2,
+          "4": 1.6,
+          "8": 1.55,
+          "opening": 1.7
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "right_hand",
+        "right_hand_shape"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.12,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.14,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "phase_order_guard_enabled": true,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_max_score": 45.0,
+        "description": "按语义能量阶段而非绝对帧号进行软 DTW 对齐。"
+      },
+      "semantic_phases": [
+        "主手虚握虎口朝内",
+        "虚握手前后晃动两次"
+      ],
+      "semantic_notes": [
+        "主手虚握和前后重复晃动是核心；允许主辅手镜像。"
+      ],
+      "profile_status": "text_derived_pending_empirical_calibration",
+      "word": "公交车",
+      "acquisition_word_index": 5,
+      "document_order": 11,
+      "semantic_id": "公交车",
+      "source_lines": [
+        "一手虚握且虎口朝内表示握把手",
+        "虚握手前后移动两次表示乘车晃动"
+      ],
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "虎": {
+      "word": "虎",
+      "description": "左手中、无名、小指和右手食指在前额比出一个“王”字，模仿老虎额头上的“王”字花纹；随后双手五指弯曲、指尖朝下，向前下方按动一下，模仿老虎的兽爪，需要坚定有力。；画面上可以在完成第一个动作后，于人物前额生成一个“王”字花纹，并在第二个动作完成的过程中，随着双手动作出现兽爪留痕",
+      "source_lines": [
+        "双手手指在前额形成王字",
+        "双手五指弯曲且指尖朝下向前下方有力按动表示兽爪"
+      ],
+      "group_weights": {
+        "left_hand": 0.24,
+        "right_hand": 0.24,
+        "left_hand_shape": 0.2,
+        "right_hand_shape": 0.2,
+        "pose": 0.03,
+        "face": 0.04,
+        "missing": 0.05
+      },
+      "keypoint_weights": {
+        "hand": {
+          "8": 1.6,
+          "12": 1.45,
+          "16": 1.6,
+          "20": 1.6,
+          "opening": 1.75
+        },
+        "pose": {
+          "0": 1.2
+        },
+        "face": {}
+      },
+      "focus_groups": [
+        "left_hand_shape",
+        "right_hand_shape",
+        "left_hand",
+        "right_hand"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.18,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.14,
+        "group_missing_distance_weight": 0.0,
+        "focus_missing_distance_weight": 0.0,
+        "relation_missing_distance_weight": 0.0,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "visible_core_tolerance_cap": 0.034,
+        "core_visible_score_scale": 0.12,
+        "core_visible_dtw_threshold": 0.045,
+        "core_visible_presence_threshold": 0.65,
+        "core_visible_max_normalized_distance": 0.08,
+        "short_core_capture_tolerance_cap": 0.0,
+        "short_core_capture_max_length_ratio": 0.7,
+        "flower_opening_guard_enabled": false,
+        "flower_opening_min_score": 0.3,
+        "flower_visible_core_floor_enabled": false,
+        "flower_visible_core_floor_min_score": 72.0,
+        "flower_visible_core_floor_max_score": 80.0,
+        "flower_visible_core_floor_max_length_ratio": 0.32,
+        "flower_visible_core_floor_min_presence": 0.62,
+        "flower_visible_core_floor_min_opening_score": 0.6,
+        "flower_visible_core_floor_max_dtw": 0.042,
+        "flower_visible_core_floor_min_action_coverage": 0.62,
+        "flower_jump_confusion_guard_enabled": false,
+        "flower_jump_confusion_min_two_hand_presence": 0.58,
+        "flower_jump_confusion_min_relation_valid_count": 3,
+        "flower_jump_confusion_max_opening_score": 0.45,
+        "flower_jump_confusion_min_two_finger_shape_mean": 1.05,
+        "jump_relation_semantic_floor_enabled": false,
+        "jump_relation_semantic_max_score": 0.0,
+        "jump_relation_semantic_min_presence": 0.65,
+        "jump_relation_semantic_min_direction": 0.55,
+        "jump_relation_local_fallback_enabled": false,
+        "jump_relation_local_min_direction": 0.92,
+        "jump_relation_local_min_amplitude_ratio": 0.8,
+        "jump_relation_local_max_horizontal_to_vertical": 0.6,
+        "jump_relation_local_min_coverage": 0.48,
+        "jump_relation_local_max_coverage": 0.78,
+        "jump_relation_local_min_two_finger_shape_mean": 0.95,
+        "phase_order_guard_enabled": false,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_min_disorder_span_score": 0.0,
+        "phase_order_guard_min_adjacent_disorder_span_score": 0.0,
+        "phase_order_guard_max_score": 45.0,
+        "description": "Use semantic energy progress, not frame index, to softly align start/mid/end action phases."
+      },
+      "semantic_notes": [
+        "DOCX 语义包含两段：先在前额比出“王”字，再双手五指弯曲向前下方按动模拟兽爪。",
+        "主语义是双手手形和兽爪按动；额头位置只作小权重定位参照，不让脸/躯干主导评分。",
+        "动态重要帧由双手从王字过渡到兽爪按动、五指弯曲开合变化驱动。"
+      ],
+      "profile_origin": "legacy_calibrated:虎",
+      "acquisition_word_index": 6,
+      "document_order": 4,
+      "semantic_id": "虎",
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "花": {
+      "word": "花",
+      "description": "一手撮合、指尖朝上模仿花朵含苞的样子；手缓缓向上的同时，慢慢张开，模仿开花的样子；画面可以叠加一朵含苞的花朵，随着手张开的动作同时逐渐绽放",
+      "source_lines": [
+        "一手撮合且指尖朝上表示花苞",
+        "手缓慢上移并逐渐张开表示开花"
+      ],
+      "group_weights": {
+        "left_hand": 0.08,
+        "right_hand": 0.34,
+        "left_hand_shape": 0.1,
+        "right_hand_shape": 0.44,
+        "pose": 0.0,
+        "face": 0.0,
+        "missing": 0.04
+      },
+      "keypoint_weights": {
+        "hand": {
+          "4": 1.2,
+          "8": 2.2,
+          "12": 2.2,
+          "16": 1.9,
+          "20": 1.9,
+          "opening": 2.9,
+          "spread": 2.7
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "right_hand_shape",
+        "right_hand"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.02,
+        "anchor_penalty_weight": 0.11,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.06,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.12,
+        "two_hand_relation_weight": 0.05,
+        "group_missing_distance_weight": 0.0,
+        "focus_missing_distance_weight": 0.0,
+        "relation_missing_distance_weight": 0.0,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "visible_core_tolerance_cap": 0.045,
+        "core_visible_score_scale": 0.145,
+        "core_visible_dtw_threshold": 0.06,
+        "core_visible_presence_threshold": 0.58,
+        "core_visible_max_normalized_distance": 0.105,
+        "short_core_capture_tolerance_cap": 0.145,
+        "short_core_capture_max_length_ratio": 0.7,
+        "flower_opening_guard_enabled": true,
+        "flower_opening_min_score": 0.3,
+        "flower_visible_core_floor_enabled": true,
+        "flower_visible_core_floor_min_score": 72.0,
+        "flower_visible_core_floor_max_score": 80.0,
+        "flower_visible_core_floor_max_length_ratio": 0.32,
+        "flower_visible_core_floor_min_presence": 0.62,
+        "flower_visible_core_floor_min_opening_score": 0.6,
+        "flower_visible_core_floor_max_dtw": 0.042,
+        "flower_visible_core_floor_min_action_coverage": 0.62,
+        "flower_jump_confusion_guard_enabled": true,
+        "flower_jump_confusion_min_two_hand_presence": 0.58,
+        "flower_jump_confusion_min_relation_valid_count": 3,
+        "flower_jump_confusion_max_opening_score": 0.45,
+        "flower_jump_confusion_min_two_finger_shape_mean": 1.05,
+        "jump_relation_semantic_floor_enabled": false,
+        "jump_relation_semantic_max_score": 0.0,
+        "jump_relation_semantic_min_presence": 0.65,
+        "jump_relation_semantic_min_direction": 0.55,
+        "jump_relation_local_fallback_enabled": false,
+        "jump_relation_local_min_direction": 0.92,
+        "jump_relation_local_min_amplitude_ratio": 0.8,
+        "jump_relation_local_max_horizontal_to_vertical": 0.6,
+        "jump_relation_local_min_coverage": 0.48,
+        "jump_relation_local_max_coverage": 0.78,
+        "jump_relation_local_min_two_finger_shape_mean": 0.95,
+        "phase_order_guard_enabled": true,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_min_disorder_span_score": 0.4,
+        "phase_order_guard_min_adjacent_disorder_span_score": 0.0,
+        "phase_order_guard_max_score": 45.0,
+        "description": "Main-hand opening/spread semantic phases should align even when frame count differs."
+      },
+      "semantic_notes": [
+        "DOCX 语义是一手撮合/含苞并缓慢张开；评分只看主手手形和主手运动。",
+        "脸、身体、主手相对躯干位置不参与主距离；另一只手只作为手势完整性约束，用于惩罚额外双手动作。",
+        "允许左右手互换：用户用左手或右手完成时，都映射到模板主手。",
+        "动态重要帧由主手 opening/spread、指尖相对腕部距离和手指伸直度驱动。"
+      ],
+      "profile_origin": "legacy_calibrated:花",
+      "acquisition_word_index": 7,
+      "document_order": 2,
+      "semantic_id": "花",
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "鸡蛋": {
+      "group_weights": {
+        "left_hand": 0.2,
+        "right_hand": 0.27,
+        "left_hand_shape": 0.18,
+        "right_hand_shape": 0.25,
+        "pose": 0.03,
+        "face": 0.02,
+        "missing": 0.05
+      },
+      "keypoint_weights": {
+        "hand": {
+          "4": 1.9,
+          "8": 1.9,
+          "opening": 1.7
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "right_hand_shape",
+        "right_hand",
+        "left_hand",
+        "two_hand_relation"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.12,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.45,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "phase_order_guard_enabled": true,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_max_score": 45.0,
+        "description": "按语义能量阶段而非绝对帧号进行软 DTW 对齐。"
+      },
+      "semantic_phases": [
+        "单手拇食指撮合放嘴前表示鸡嘴",
+        "双手拇食指形成椭圆",
+        "双手分开表示打蛋"
+      ],
+      "semantic_notes": [
+        "鸡与蛋为有序两阶段动作，必须保留阶段顺序。"
+      ],
+      "profile_status": "text_derived_pending_empirical_calibration",
+      "word": "鸡蛋",
+      "acquisition_word_index": 8,
+      "document_order": 14,
+      "semantic_id": "鸡蛋",
+      "source_lines": [
+        "第一阶段一手拇食指撮合放嘴前表示鸡嘴",
+        "第二阶段双手拇食指形成椭圆后分开表示打蛋"
+      ],
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "烤串": {
+      "group_weights": {
+        "left_hand": 0.22,
+        "right_hand": 0.22,
+        "left_hand_shape": 0.24,
+        "right_hand_shape": 0.24,
+        "pose": 0.01,
+        "face": 0.0,
+        "missing": 0.07
+      },
+      "keypoint_weights": {
+        "hand": {
+          "4": 1.5,
+          "8": 1.45,
+          "12": 1.45,
+          "16": 1.45,
+          "20": 1.45,
+          "spread": 1.5
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "left_hand_shape",
+        "right_hand_shape",
+        "left_hand",
+        "right_hand"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.12,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.35,
+        "required_presence_groups": [
+          "left_hand",
+          "right_hand"
+        ],
+        "required_presence_weight": 0.2,
+        "phase_order_guard_enabled": true,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_max_score": 45.0,
+        "description": "按语义能量阶段而非绝对帧号进行软 DTW 对齐。"
+      },
+      "semantic_phases": [
+        "双手收拇指平摊四指",
+        "双手左右翻转烤串"
+      ],
+      "semantic_notes": [
+        "八指平摊手形与双手反复翻转是核心。"
+      ],
+      "profile_status": "text_derived_pending_empirical_calibration",
+      "word": "烤串",
+      "acquisition_word_index": 9,
+      "document_order": 15,
+      "semantic_id": "烤串",
+      "source_lines": [
+        "双手收拇指并平摊四指表示签子",
+        "双手左右翻动表示翻烤串"
+      ],
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "科学": {
+      "group_weights": {
+        "left_hand": 0.19,
+        "right_hand": 0.27,
+        "left_hand_shape": 0.2,
+        "right_hand_shape": 0.24,
+        "pose": 0.04,
+        "face": 0.0,
+        "missing": 0.06
+      },
+      "keypoint_weights": {
+        "hand": {
+          "4": 1.5,
+          "8": 1.8,
+          "12": 1.8,
+          "opening": 1.5
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "left_hand_shape",
+        "right_hand_shape",
+        "left_hand",
+        "right_hand"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.12,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.38,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "phase_order_guard_enabled": true,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_max_score": 45.0,
+        "description": "按语义能量阶段而非绝对帧号进行软 DTW 对齐。"
+      },
+      "semantic_phases": [
+        "双手K手形交替向前绕圈",
+        "单手五指撮合从外向前额并按下"
+      ],
+      "semantic_notes": [
+        "科学交流与学习为有序两阶段；K手形和前额方向轨迹分别加权。"
+      ],
+      "profile_status": "text_derived_pending_empirical_calibration",
+      "word": "科学",
+      "acquisition_word_index": 10,
+      "document_order": 19,
+      "semantic_id": "科学",
+      "source_lines": [
+        "第一阶段双手K手形交替向前绕圈",
+        "第二阶段一手五指撮合从外向前额移动并按向前额"
+      ],
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "牛奶": {
+      "group_weights": {
+        "left_hand": 0.08,
+        "right_hand": 0.38,
+        "left_hand_shape": 0.08,
+        "right_hand_shape": 0.27,
+        "pose": 0.13,
+        "face": 0.0,
+        "missing": 0.06
+      },
+      "keypoint_weights": {
+        "hand": {
+          "4": 1.45,
+          "8": 1.5,
+          "opening": 1.8
+        },
+        "pose": {
+          "0": 1.3,
+          "11": 1.25,
+          "12": 1.25
+        },
+        "face": {}
+      },
+      "focus_groups": [
+        "right_hand",
+        "right_hand_shape",
+        "pose"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.12,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.14,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "phase_order_guard_enabled": true,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_max_score": 45.0,
+        "description": "按语义能量阶段而非绝对帧号进行软 DTW 对齐。"
+      },
+      "semantic_phases": [
+        "单手牛角手形抵太阳穴",
+        "单手五指弯曲挤压并下移"
+      ],
+      "semantic_notes": [
+        "牛与奶为有序两阶段，太阳穴定位和挤压下移均保留。"
+      ],
+      "profile_status": "text_derived_pending_empirical_calibration",
+      "word": "牛奶",
+      "acquisition_word_index": 11,
+      "document_order": 13,
+      "semantic_id": "牛奶",
+      "source_lines": [
+        "第一阶段一手模拟牛角抵太阳穴",
+        "第二阶段一手虎口朝上五指弯曲并挤压下移表示挤奶"
+      ],
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "朋友": {
+      "word": "朋友",
+      "description": "两根大拇指模拟两个人的头；两个人的头互相碰两下，象征亲密，表示朋友；画面可以在两根拇指上叠加笑脸和头发，模拟人头",
+      "source_lines": [
+        "双手拇指表示两个人头",
+        "两拇指相碰两次"
+      ],
+      "group_weights": {
+        "left_hand": 0.29999999999999993,
+        "right_hand": 0.29999999999999993,
+        "left_hand_shape": 0.16999999999999998,
+        "right_hand_shape": 0.16999999999999998,
+        "pose": 0.0,
+        "face": 0.0,
+        "missing": 0.06
+      },
+      "keypoint_weights": {
+        "hand": {
+          "4": 2.1,
+          "thumb": 2.1
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "left_hand",
+        "right_hand",
+        "left_hand_shape",
+        "right_hand_shape"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.18,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.14,
+        "group_missing_distance_weight": 0.0,
+        "focus_missing_distance_weight": 0.0,
+        "relation_missing_distance_weight": 0.0,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "visible_core_tolerance_cap": 0.034,
+        "core_visible_score_scale": 0.12,
+        "core_visible_dtw_threshold": 0.045,
+        "core_visible_presence_threshold": 0.65,
+        "core_visible_max_normalized_distance": 0.08,
+        "short_core_capture_tolerance_cap": 0.0,
+        "short_core_capture_max_length_ratio": 0.7,
+        "flower_opening_guard_enabled": false,
+        "flower_opening_min_score": 0.3,
+        "flower_visible_core_floor_enabled": false,
+        "flower_visible_core_floor_min_score": 72.0,
+        "flower_visible_core_floor_max_score": 80.0,
+        "flower_visible_core_floor_max_length_ratio": 0.32,
+        "flower_visible_core_floor_min_presence": 0.62,
+        "flower_visible_core_floor_min_opening_score": 0.6,
+        "flower_visible_core_floor_max_dtw": 0.042,
+        "flower_visible_core_floor_min_action_coverage": 0.62,
+        "flower_jump_confusion_guard_enabled": false,
+        "flower_jump_confusion_min_two_hand_presence": 0.58,
+        "flower_jump_confusion_min_relation_valid_count": 3,
+        "flower_jump_confusion_max_opening_score": 0.45,
+        "flower_jump_confusion_min_two_finger_shape_mean": 1.05,
+        "jump_relation_semantic_floor_enabled": false,
+        "jump_relation_semantic_max_score": 0.0,
+        "jump_relation_semantic_min_presence": 0.65,
+        "jump_relation_semantic_min_direction": 0.55,
+        "jump_relation_local_fallback_enabled": false,
+        "jump_relation_local_min_direction": 0.92,
+        "jump_relation_local_min_amplitude_ratio": 0.8,
+        "jump_relation_local_max_horizontal_to_vertical": 0.6,
+        "jump_relation_local_min_coverage": 0.48,
+        "jump_relation_local_max_coverage": 0.78,
+        "jump_relation_local_min_two_finger_shape_mean": 0.95,
+        "phase_order_guard_enabled": false,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_min_disorder_span_score": 0.0,
+        "phase_order_guard_min_adjacent_disorder_span_score": 0.0,
+        "phase_order_guard_max_score": 45.0,
+        "description": "Use semantic energy progress, not frame index, to softly align start/mid/end action phases."
+      },
+      "semantic_notes": [
+        "DOCX 语义是两根大拇指模拟两个人的头，并互相碰两下表示亲密。",
+        "主语义是左右拇指位置、碰撞节奏和双手相对运动；脸和躯干不参与主距离。",
+        "动态重要帧由两拇指靠近/接触的重复动作驱动。"
+      ],
+      "profile_origin": "legacy_calibrated:朋友",
+      "acquisition_word_index": 12,
+      "document_order": 7,
+      "semantic_id": "朋友",
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "汽车（一）": {
+      "word": "汽车（一）",
+      "description": "双手模拟开车的动作，两手虚握，想象手心内是方向盘；双手左右转动，模拟转动方向盘的动作；画面可以叠加一个方向盘，随着双手的转动进行旋转",
+      "source_lines": [
+        "双手虚握模拟方向盘",
+        "双手左右转动模拟驾驶"
+      ],
+      "group_weights": {
+        "left_hand": 0.29999999999999993,
+        "right_hand": 0.29999999999999993,
+        "left_hand_shape": 0.16999999999999998,
+        "right_hand_shape": 0.16999999999999998,
+        "pose": 0.0,
+        "face": 0.0,
+        "missing": 0.06
+      },
+      "keypoint_weights": {
+        "hand": {
+          "4": 1.35,
+          "8": 1.35,
+          "12": 1.25,
+          "opening": 1.25
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "left_hand",
+        "right_hand",
+        "left_hand_shape",
+        "right_hand_shape"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.18,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.14,
+        "group_missing_distance_weight": 0.0,
+        "focus_missing_distance_weight": 0.0,
+        "relation_missing_distance_weight": 0.0,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "visible_core_tolerance_cap": 0.034,
+        "core_visible_score_scale": 0.12,
+        "core_visible_dtw_threshold": 0.045,
+        "core_visible_presence_threshold": 0.65,
+        "core_visible_max_normalized_distance": 0.08,
+        "short_core_capture_tolerance_cap": 0.0,
+        "short_core_capture_max_length_ratio": 0.7,
+        "flower_opening_guard_enabled": false,
+        "flower_opening_min_score": 0.3,
+        "flower_visible_core_floor_enabled": false,
+        "flower_visible_core_floor_min_score": 72.0,
+        "flower_visible_core_floor_max_score": 80.0,
+        "flower_visible_core_floor_max_length_ratio": 0.32,
+        "flower_visible_core_floor_min_presence": 0.62,
+        "flower_visible_core_floor_min_opening_score": 0.6,
+        "flower_visible_core_floor_max_dtw": 0.042,
+        "flower_visible_core_floor_min_action_coverage": 0.62,
+        "flower_jump_confusion_guard_enabled": false,
+        "flower_jump_confusion_min_two_hand_presence": 0.58,
+        "flower_jump_confusion_min_relation_valid_count": 3,
+        "flower_jump_confusion_max_opening_score": 0.45,
+        "flower_jump_confusion_min_two_finger_shape_mean": 1.05,
+        "jump_relation_semantic_floor_enabled": false,
+        "jump_relation_semantic_max_score": 0.0,
+        "jump_relation_semantic_min_presence": 0.65,
+        "jump_relation_semantic_min_direction": 0.55,
+        "jump_relation_local_fallback_enabled": false,
+        "jump_relation_local_min_direction": 0.92,
+        "jump_relation_local_min_amplitude_ratio": 0.8,
+        "jump_relation_local_max_horizontal_to_vertical": 0.6,
+        "jump_relation_local_min_coverage": 0.48,
+        "jump_relation_local_max_coverage": 0.78,
+        "jump_relation_local_min_two_finger_shape_mean": 0.95,
+        "phase_order_guard_enabled": false,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_min_disorder_span_score": 0.0,
+        "phase_order_guard_min_adjacent_disorder_span_score": 0.0,
+        "phase_order_guard_max_score": 45.0,
+        "description": "Use semantic energy progress, not frame index, to softly align start/mid/end action phases."
+      },
+      "semantic_notes": [
+        "汽车（一）为双手虚握方向盘并左右转动；已由用户确认并通过切片尾部密集帧复核。",
+        "双手相对位置、虚握手形和协同旋转是主语义；脸与躯干不参与主距离。"
+      ],
+      "profile_origin": "legacy_calibrated:汽车",
+      "semantic_id": "汽车_方向盘",
+      "acquisition_word_index": 13,
+      "document_order": 3,
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "汽车二": {
+      "group_weights": {
+        "left_hand": 0.08,
+        "right_hand": 0.42,
+        "left_hand_shape": 0.08,
+        "right_hand_shape": 0.34,
+        "pose": 0.02,
+        "face": 0.0,
+        "missing": 0.06
+      },
+      "keypoint_weights": {
+        "hand": {
+          "0": 1.25,
+          "4": 1.4,
+          "8": 1.45,
+          "12": 1.35,
+          "16": 1.3,
+          "20": 1.3,
+          "opening": 1.6
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "right_hand",
+        "right_hand_shape"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.12,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.14,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "phase_order_guard_enabled": true,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_max_score": 45.0,
+        "description": "按语义能量阶段而非绝对帧号进行软 DTW 对齐。"
+      },
+      "semantic_phases": [
+        "单手五指形成方块车身",
+        "该手整体向前移动"
+      ],
+      "semantic_notes": [
+        "汽车二为单手车身前行；已由用户确认并通过切片密集帧复核。"
+      ],
+      "profile_status": "text_derived_pending_empirical_calibration",
+      "word": "汽车二",
+      "acquisition_word_index": 14,
+      "document_order": 21,
+      "semantic_id": "汽车_车身前行",
+      "source_lines": [
+        "一手五指形成方块模拟汽车侧面",
+        "该手向前移动一次模拟汽车行驶"
+      ],
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "人们（人民）": {
+      "group_weights": {
+        "left_hand": 0.27,
+        "right_hand": 0.27,
+        "left_hand_shape": 0.18,
+        "right_hand_shape": 0.18,
+        "pose": 0.03,
+        "face": 0.0,
+        "missing": 0.07
+      },
+      "keypoint_weights": {
+        "hand": {
+          "8": 1.9,
+          "index": 1.8
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "left_hand",
+        "right_hand",
+        "two_hand_relation"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.12,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.65,
+        "required_presence_groups": [
+          "left_hand",
+          "right_hand",
+          "two_hand_relation"
+        ],
+        "required_presence_weight": 0.2,
+        "phase_order_guard_enabled": true,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_max_score": 45.0,
+        "description": "按语义能量阶段而非绝对帧号进行软 DTW 对齐。"
+      },
+      "semantic_phases": [
+        "双手食指形成人字",
+        "人字从胸前顺时针转动一圈"
+      ],
+      "semantic_notes": [
+        "双食指人字关系和整体顺时针环绕轨迹共同主导。"
+      ],
+      "profile_status": "text_derived_pending_empirical_calibration",
+      "word": "人们（人民）",
+      "acquisition_word_index": 15,
+      "document_order": 20,
+      "semantic_id": "人们",
+      "source_lines": [
+        "双手食指形成一个人字",
+        "人字从胸前顺时针转动一圈表示很多人"
+      ],
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "森林": {
+      "group_weights": {
+        "left_hand": 0.24,
+        "right_hand": 0.24,
+        "left_hand_shape": 0.19,
+        "right_hand_shape": 0.19,
+        "pose": 0.06,
+        "face": 0.0,
+        "missing": 0.08
+      },
+      "keypoint_weights": {
+        "hand": {
+          "4": 1.7,
+          "8": 1.7,
+          "opening": 1.55
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "left_hand",
+        "right_hand",
+        "left_hand_shape",
+        "right_hand_shape",
+        "two_hand_relation"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.12,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.48,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "phase_order_guard_enabled": true,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_max_score": 45.0,
+        "description": "按语义能量阶段而非绝对帧号进行软 DTW 对齐。"
+      },
+      "semantic_phases": [
+        "双手拇食指形成大圆树干",
+        "在三个不同位置自下而上移动"
+      ],
+      "semantic_notes": [
+        "大圆树干手形和三处上移的重复空间轨迹是核心。"
+      ],
+      "profile_status": "text_derived_pending_empirical_calibration",
+      "word": "森林",
+      "acquisition_word_index": 16,
+      "document_order": 16,
+      "semantic_id": "森林",
+      "source_lines": [
+        "双手拇食指形成大圆表示粗树干",
+        "在三个不同位置自下而上移动表示多棵树"
+      ],
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "跳": {
+      "word": "跳",
+      "description": "右手两根手指模拟人的两条腿，左手模拟地面；右手食、中指向上弹跳时，要先弯曲后伸直，并且动作较为迅速；画面可以在右手两根手指上叠加一个小人，双腿正好与右手的食指、中指重合，左手位置叠加一块平地，小人双腿随着右手食、中指的状态运动",
+      "source_lines": [
+        "主手食中指表示双腿，辅助手表示地面",
+        "主手食中指先弯后快速伸直并相对辅助手向上弹跳"
+      ],
+      "group_weights": {
+        "left_hand": 0.2136363636363636,
+        "right_hand": 0.299090909090909,
+        "left_hand_shape": 0.1068181818181818,
+        "right_hand_shape": 0.3204545454545454,
+        "pose": 0.0,
+        "face": 0.0,
+        "missing": 0.06
+      },
+      "keypoint_weights": {
+        "hand": {
+          "8": 2.25,
+          "12": 2.25,
+          "5": 1.45,
+          "9": 1.45,
+          "index": 2.05,
+          "middle": 2.05
+        },
+        "left_hand": {
+          "0": 1.2,
+          "5": 1.25,
+          "9": 1.25,
+          "13": 1.15,
+          "17": 1.15
+        },
+        "right_hand": {
+          "8": 2.45,
+          "12": 2.45,
+          "5": 1.55,
+          "9": 1.55,
+          "index": 2.25,
+          "middle": 2.25
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "two_hand_relation",
+        "right_hand_shape",
+        "right_hand",
+        "left_hand"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.016,
+        "anchor_penalty_weight": 0.09,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.08,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.9,
+        "group_missing_distance_weight": 0.2,
+        "focus_missing_distance_weight": 0.34,
+        "relation_missing_distance_weight": 0.78,
+        "required_presence_groups": [
+          "left_hand",
+          "right_hand",
+          "two_hand_relation"
+        ],
+        "required_presence_weight": 0.24,
+        "visible_core_tolerance_cap": 0.034,
+        "core_visible_score_scale": 0.12,
+        "core_visible_dtw_threshold": 0.045,
+        "core_visible_presence_threshold": 0.65,
+        "core_visible_max_normalized_distance": 0.08,
+        "short_core_capture_tolerance_cap": 0.0,
+        "short_core_capture_max_length_ratio": 0.7,
+        "flower_opening_guard_enabled": false,
+        "flower_opening_min_score": 0.3,
+        "flower_visible_core_floor_enabled": false,
+        "flower_visible_core_floor_min_score": 72.0,
+        "flower_visible_core_floor_max_score": 80.0,
+        "flower_visible_core_floor_max_length_ratio": 0.32,
+        "flower_visible_core_floor_min_presence": 0.62,
+        "flower_visible_core_floor_min_opening_score": 0.6,
+        "flower_visible_core_floor_max_dtw": 0.042,
+        "flower_visible_core_floor_min_action_coverage": 0.62,
+        "flower_jump_confusion_guard_enabled": false,
+        "flower_jump_confusion_min_two_hand_presence": 0.58,
+        "flower_jump_confusion_min_relation_valid_count": 3,
+        "flower_jump_confusion_max_opening_score": 0.45,
+        "flower_jump_confusion_min_two_finger_shape_mean": 1.05,
+        "jump_relation_semantic_floor_enabled": true,
+        "jump_relation_semantic_max_score": 85.0,
+        "jump_relation_semantic_min_presence": 0.58,
+        "jump_relation_semantic_min_direction": 0.55,
+        "jump_relation_local_fallback_enabled": true,
+        "jump_relation_local_min_direction": 0.92,
+        "jump_relation_local_min_amplitude_ratio": 0.8,
+        "jump_relation_local_max_horizontal_to_vertical": 0.6,
+        "jump_relation_local_min_coverage": 0.48,
+        "jump_relation_local_max_coverage": 0.78,
+        "jump_relation_local_min_two_finger_shape_mean": 0.95,
+        "phase_order_guard_enabled": true,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_min_disorder_span_score": 0.6,
+        "phase_order_guard_min_adjacent_disorder_span_score": 0.25,
+        "phase_order_guard_max_score": 45.0,
+        "description": "Short two-hand jump requires the right jumping hand relative to the left ground hand; relation missing is a hard semantic error."
+      },
+      "semantic_notes": [
+        "DOCX 语义是右手食指/中指模拟两条腿，先弯曲后伸直并向上弹跳；评分主导项是右手两指手形动态。",
+        "左手模拟地面，必须进入评分；单手动作缺少左手地面或双手相对关系时应明显扣分。",
+        "脸、躯干和手-躯干相对位置不参与主距离，核心是右手在左手基础上的相对跳跃。",
+        "动态重要帧主要由 two_hand_relation、跳跃手食指/中指相对运动和弯曲-伸直变化驱动。"
+      ],
+      "profile_origin": "legacy_calibrated:跳",
+      "acquisition_word_index": 17,
+      "document_order": 6,
+      "semantic_id": "跳",
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "香蕉": {
+      "word": "香蕉",
+      "description": "左手竖着的食指表示香蕉；右手从左手食指上往下做剥皮动作；画面可以叠加一根真实未剥皮的香蕉，并随着右手的动作，香蕉皮慢慢被剥开",
+      "source_lines": [
+        "辅助手竖食指表示香蕉",
+        "主手从辅助手食指上方向下做剥皮动作"
+      ],
+      "group_weights": {
+        "left_hand": 0.25999999999999995,
+        "right_hand": 0.33999999999999997,
+        "left_hand_shape": 0.14999999999999997,
+        "right_hand_shape": 0.19999999999999996,
+        "pose": 0.0,
+        "face": 0.0,
+        "missing": 0.05
+      },
+      "keypoint_weights": {
+        "hand": {
+          "8": 2.0,
+          "index": 1.9,
+          "4": 1.35
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "right_hand",
+        "left_hand",
+        "right_hand_shape",
+        "left_hand_shape"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.18,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.14,
+        "group_missing_distance_weight": 0.0,
+        "focus_missing_distance_weight": 0.0,
+        "relation_missing_distance_weight": 0.0,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "visible_core_tolerance_cap": 0.034,
+        "core_visible_score_scale": 0.12,
+        "core_visible_dtw_threshold": 0.045,
+        "core_visible_presence_threshold": 0.65,
+        "core_visible_max_normalized_distance": 0.08,
+        "short_core_capture_tolerance_cap": 0.0,
+        "short_core_capture_max_length_ratio": 0.7,
+        "flower_opening_guard_enabled": false,
+        "flower_opening_min_score": 0.3,
+        "flower_visible_core_floor_enabled": false,
+        "flower_visible_core_floor_min_score": 72.0,
+        "flower_visible_core_floor_max_score": 80.0,
+        "flower_visible_core_floor_max_length_ratio": 0.32,
+        "flower_visible_core_floor_min_presence": 0.62,
+        "flower_visible_core_floor_min_opening_score": 0.6,
+        "flower_visible_core_floor_max_dtw": 0.042,
+        "flower_visible_core_floor_min_action_coverage": 0.62,
+        "flower_jump_confusion_guard_enabled": false,
+        "flower_jump_confusion_min_two_hand_presence": 0.58,
+        "flower_jump_confusion_min_relation_valid_count": 3,
+        "flower_jump_confusion_max_opening_score": 0.45,
+        "flower_jump_confusion_min_two_finger_shape_mean": 1.05,
+        "jump_relation_semantic_floor_enabled": false,
+        "jump_relation_semantic_max_score": 0.0,
+        "jump_relation_semantic_min_presence": 0.65,
+        "jump_relation_semantic_min_direction": 0.55,
+        "jump_relation_local_fallback_enabled": false,
+        "jump_relation_local_min_direction": 0.92,
+        "jump_relation_local_min_amplitude_ratio": 0.8,
+        "jump_relation_local_max_horizontal_to_vertical": 0.6,
+        "jump_relation_local_min_coverage": 0.48,
+        "jump_relation_local_max_coverage": 0.78,
+        "jump_relation_local_min_two_finger_shape_mean": 0.95,
+        "phase_order_guard_enabled": false,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_min_disorder_span_score": 0.0,
+        "phase_order_guard_min_adjacent_disorder_span_score": 0.0,
+        "phase_order_guard_max_score": 45.0,
+        "description": "Use semantic energy progress, not frame index, to softly align start/mid/end action phases."
+      },
+      "semantic_notes": [
+        "DOCX 语义是左手竖食指表示香蕉，右手沿左手食指向下做剥皮动作。",
+        "主语义是左手食指稳定参照和右手剥皮轨迹；脸、身体和手-躯干关系不参与主距离。",
+        "动态重要帧主要由右手沿左手食指下滑/剥开的相对运动驱动。"
+      ],
+      "profile_origin": "legacy_calibrated:香蕉",
+      "acquisition_word_index": 18,
+      "document_order": 1,
+      "semantic_id": "香蕉",
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "勇敢": {
+      "group_weights": {
+        "left_hand": 0.22,
+        "right_hand": 0.22,
+        "left_hand_shape": 0.17,
+        "right_hand_shape": 0.17,
+        "pose": 0.14,
+        "face": 0.03,
+        "missing": 0.05
+      },
+      "keypoint_weights": {
+        "hand": {
+          "4": 1.55,
+          "8": 1.7,
+          "opening": 1.5
+        },
+        "pose": {
+          "0": 1.2,
+          "11": 1.4,
+          "12": 1.4,
+          "23": 1.2,
+          "24": 1.2
+        },
+        "face": {}
+      },
+      "focus_groups": [
+        "left_hand",
+        "right_hand",
+        "pose",
+        "two_hand_relation"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.12,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.42,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "phase_order_guard_enabled": true,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_max_score": 45.0,
+        "description": "按语义能量阶段而非绝对帧号进行软 DTW 对齐。"
+      },
+      "semantic_phases": [
+        "双手贴腹伸拇食指",
+        "双手向两边用力拉开",
+        "抬头挺胸并保持坚毅表情"
+      ],
+      "semantic_notes": [
+        "双手横向拉开是主动作，抬头挺胸为辅助语义；面部只给小权重。"
+      ],
+      "profile_status": "text_derived_pending_empirical_calibration",
+      "word": "勇敢",
+      "acquisition_word_index": 19,
+      "document_order": 18,
+      "semantic_id": "勇敢",
+      "source_lines": [
+        "双手贴腹伸拇食指并向两边用力拉开",
+        "表情坚毅严肃",
+        "抬头挺胸"
+      ],
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "月亮": {
+      "word": "月亮",
+      "description": "双手向两边移动的过程中，两根手指的距离需要逐渐变窄，模拟弯月两边窄、中间宽的形状；画面可以在双手运动的过程中，出现于两手间出现一轮弯月",
+      "source_lines": [
+        "双手向两边移动",
+        "两根关键手指间距逐渐变窄表示弯月两端窄中间宽"
+      ],
+      "group_weights": {
+        "left_hand": 0.24,
+        "right_hand": 0.24,
+        "left_hand_shape": 0.24,
+        "right_hand_shape": 0.24,
+        "pose": 0.0,
+        "face": 0.0,
+        "missing": 0.04
+      },
+      "keypoint_weights": {
+        "hand": {
+          "8": 1.7,
+          "12": 1.55,
+          "spread": 1.9,
+          "opening": 1.75
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "left_hand_shape",
+        "right_hand_shape",
+        "left_hand",
+        "right_hand"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.18,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.14,
+        "group_missing_distance_weight": 0.0,
+        "focus_missing_distance_weight": 0.0,
+        "relation_missing_distance_weight": 0.0,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "visible_core_tolerance_cap": 0.034,
+        "core_visible_score_scale": 0.12,
+        "core_visible_dtw_threshold": 0.045,
+        "core_visible_presence_threshold": 0.65,
+        "core_visible_max_normalized_distance": 0.08,
+        "short_core_capture_tolerance_cap": 0.0,
+        "short_core_capture_max_length_ratio": 0.7,
+        "flower_opening_guard_enabled": false,
+        "flower_opening_min_score": 0.3,
+        "flower_visible_core_floor_enabled": false,
+        "flower_visible_core_floor_min_score": 72.0,
+        "flower_visible_core_floor_max_score": 80.0,
+        "flower_visible_core_floor_max_length_ratio": 0.32,
+        "flower_visible_core_floor_min_presence": 0.62,
+        "flower_visible_core_floor_min_opening_score": 0.6,
+        "flower_visible_core_floor_max_dtw": 0.042,
+        "flower_visible_core_floor_min_action_coverage": 0.62,
+        "flower_jump_confusion_guard_enabled": false,
+        "flower_jump_confusion_min_two_hand_presence": 0.58,
+        "flower_jump_confusion_min_relation_valid_count": 3,
+        "flower_jump_confusion_max_opening_score": 0.45,
+        "flower_jump_confusion_min_two_finger_shape_mean": 1.05,
+        "jump_relation_semantic_floor_enabled": false,
+        "jump_relation_semantic_max_score": 0.0,
+        "jump_relation_semantic_min_presence": 0.65,
+        "jump_relation_semantic_min_direction": 0.55,
+        "jump_relation_local_fallback_enabled": false,
+        "jump_relation_local_min_direction": 0.92,
+        "jump_relation_local_min_amplitude_ratio": 0.8,
+        "jump_relation_local_max_horizontal_to_vertical": 0.6,
+        "jump_relation_local_min_coverage": 0.48,
+        "jump_relation_local_max_coverage": 0.78,
+        "jump_relation_local_min_two_finger_shape_mean": 0.95,
+        "phase_order_guard_enabled": false,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_min_disorder_span_score": 0.0,
+        "phase_order_guard_min_adjacent_disorder_span_score": 0.0,
+        "phase_order_guard_max_score": 45.0,
+        "description": "Use semantic energy progress, not frame index, to softly align start/mid/end action phases."
+      },
+      "semantic_notes": [
+        "DOCX 语义是双手向两边移动时，两根手指距离逐渐变窄，形成弯月形状。",
+        "主语义是双手相对运动和指间形状变化；脸、身体和手-躯干关系不参与主距离。",
+        "动态重要帧由双手分离过程和双手手指间距变化驱动。"
+      ],
+      "profile_origin": "legacy_calibrated:月亮",
+      "acquisition_word_index": 20,
+      "document_order": 5,
+      "semantic_id": "月亮",
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    },
+    "指示": {
+      "word": "指示",
+      "description": "左手拇指模拟人头，右手食指表示另一个人的食指，正在左右指挥前面这个人；画面可以在左手拇指上叠加表情和头发，模拟真的的头",
+      "source_lines": [
+        "辅助手拇指表示人头",
+        "主手食指左右指挥辅助手拇指"
+      ],
+      "group_weights": {
+        "left_hand": 0.24,
+        "right_hand": 0.36,
+        "left_hand_shape": 0.14,
+        "right_hand_shape": 0.21,
+        "pose": 0.0,
+        "face": 0.0,
+        "missing": 0.05
+      },
+      "keypoint_weights": {
+        "hand": {
+          "4": 1.55,
+          "8": 2.05,
+          "index": 1.95,
+          "thumb": 1.55
+        },
+        "pose": {},
+        "face": {}
+      },
+      "focus_groups": [
+        "right_hand",
+        "right_hand_shape",
+        "left_hand"
+      ],
+      "allow_hand_swap": true,
+      "semantic_dtw": {
+        "enabled": true,
+        "local_phase_weight": 0.018,
+        "anchor_penalty_weight": 0.1,
+        "anchor_phases": [
+          0.1,
+          0.5,
+          0.9
+        ],
+        "pose_robust_hand_position": true,
+        "hand_global_position_weight": 0.18,
+        "relative_motion_enabled": false,
+        "relative_motion_weight": 0.14,
+        "two_hand_relation_weight": 0.14,
+        "group_missing_distance_weight": 0.0,
+        "focus_missing_distance_weight": 0.0,
+        "relation_missing_distance_weight": 0.0,
+        "required_presence_groups": [],
+        "required_presence_weight": 0.08,
+        "visible_core_tolerance_cap": 0.034,
+        "core_visible_score_scale": 0.12,
+        "core_visible_dtw_threshold": 0.045,
+        "core_visible_presence_threshold": 0.65,
+        "core_visible_max_normalized_distance": 0.08,
+        "short_core_capture_tolerance_cap": 0.0,
+        "short_core_capture_max_length_ratio": 0.7,
+        "flower_opening_guard_enabled": false,
+        "flower_opening_min_score": 0.3,
+        "flower_visible_core_floor_enabled": false,
+        "flower_visible_core_floor_min_score": 72.0,
+        "flower_visible_core_floor_max_score": 80.0,
+        "flower_visible_core_floor_max_length_ratio": 0.32,
+        "flower_visible_core_floor_min_presence": 0.62,
+        "flower_visible_core_floor_min_opening_score": 0.6,
+        "flower_visible_core_floor_max_dtw": 0.042,
+        "flower_visible_core_floor_min_action_coverage": 0.62,
+        "flower_jump_confusion_guard_enabled": false,
+        "flower_jump_confusion_min_two_hand_presence": 0.58,
+        "flower_jump_confusion_min_relation_valid_count": 3,
+        "flower_jump_confusion_max_opening_score": 0.45,
+        "flower_jump_confusion_min_two_finger_shape_mean": 1.05,
+        "jump_relation_semantic_floor_enabled": false,
+        "jump_relation_semantic_max_score": 0.0,
+        "jump_relation_semantic_min_presence": 0.65,
+        "jump_relation_semantic_min_direction": 0.55,
+        "jump_relation_local_fallback_enabled": false,
+        "jump_relation_local_min_direction": 0.92,
+        "jump_relation_local_min_amplitude_ratio": 0.8,
+        "jump_relation_local_max_horizontal_to_vertical": 0.6,
+        "jump_relation_local_min_coverage": 0.48,
+        "jump_relation_local_max_coverage": 0.78,
+        "jump_relation_local_min_two_finger_shape_mean": 0.95,
+        "phase_order_guard_enabled": false,
+        "phase_order_guard_anchor_phases": [
+          0.1,
+          0.25,
+          0.5,
+          0.75,
+          0.9
+        ],
+        "phase_order_guard_min_disorder_span_score": 0.0,
+        "phase_order_guard_min_adjacent_disorder_span_score": 0.0,
+        "phase_order_guard_max_score": 45.0,
+        "description": "Use semantic energy progress, not frame index, to softly align start/mid/end action phases."
+      },
+      "semantic_notes": [
+        "DOCX 语义是左手拇指模拟人头，右手食指左右指挥前面的人。",
+        "主语义是右手食指的左右摆动和左手拇指参照；脸、身体和真实头部位置不参与主距离。",
+        "动态重要帧主要由右手食指摆动驱动，左手拇指作为手部参照。"
+      ],
+      "profile_origin": "legacy_calibrated:指示",
+      "acquisition_word_index": 21,
+      "document_order": 8,
+      "semantic_id": "指示",
+      "docx_source": "/data/WYC/signLanguage/data/Demo词汇(21个）.docx"
+    }
+  }
+}
