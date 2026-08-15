@@ -355,7 +355,7 @@
   - 报告：reports/slu_sit_augment_experiment_report_20260810.md；TensorBoard http://127.0.0.1:6006
   - 待：v6.4 部署验证（用户回来实测坐姿动作）
 
-## 9. D6.x 级联模型：conf 门控 + 负例训练日志（2026-08-15~16）
+## 9. D6.x 语义动作级联打分模型：语义头门控（conf 门控）+ 负例训练日志（2026-08-15~16）
 
 ### 9.1 版本谱系
 - **D6.1**（基线）：930 纯正例（cascade_train_data_v1.npz）→ 现场 holdout MAE 4.92，能区分乱作（conf 门控有效）
@@ -363,7 +363,7 @@
 - **D6.3**：930 + 12486 增强混合（cascade_train_data_v2c.npz，含 neg_samples_v2 3720 + 坐姿 2520，三档标签）→ best_mae 0.0270；conf 分离更强但整体打分偏保守
 - **D6.4.1**（实验）：930 + 48 现场 neg（A/Ov 全 0）→ 门控分离好但 overall 崩（见 9.3）
 
-### 9.2 conf 门控机制（前端上线 PR#96，2026-08-15）
+### 9.2 语义头门控机制（conf 门控，前端上线 PR#96，2026-08-15）
 - conf = 目标词叶子平均激活度（action_head[word_actions[word]].mean()，47 维独立 sigmoid 非 softmax）
 - 总分 = overall × min(1, conf/0.5)；conf<0.1 强提示、0.1-0.5 提示折减（中英双语）
 - 依据：正例 conf 0.51-0.82 vs 乱作负例 0.003-0.034（间距 >10 倍，0.5 落在无人区）
