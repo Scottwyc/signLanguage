@@ -329,6 +329,113 @@ cd /data/WYC/signLanguage && setsid nohup node /home/wuyangcheng/.npm-global/bin
 
 ---
 
+## 3.8 事故记录：2026-08-27 SSE 连接泄漏复发 + 根治方案落地（writer idle timeout）
+
+### 症状与诊断
+
+- 18:00 用户报「4194 刷新不出来」+「team 看板也刷新不出来」：`ss -tn | grep :4194 | grep -c ESTAB` = **218/256**（listenerMaxConnections 已占 85%），`/daemon/status` → `transport.restSseActive: 109`；8466 看板本身健康（HTTP 200、CPU 0%、API 正常），其会话面板 SSE 走后端代理到 4194 被连带挂起
+- 与 8-14/8-26 两次同类：**游离 SSE 连接泄漏占满**，只能重启清空
+
+### 根因（2026-08-27 专项调研，报告 `work/reports/sse_leak_research_20260827.md`）
+
+1. **游离 SSE 流几乎不回收**：0.21.12 运行段 110 条流中 96 条（87%）从打开到 daemon 被杀全程存活，7.6h 内仅 1 条 `client_disconnect` 正常关闭；泄漏源 = 经 **VS Code Remote 端口转发**访问 Web Shell 的浏览器页面（8-26 事故 242/253 条由 VS Code Server 持有）
+2. **daemon 侧无兜底**：`writerIdleTimeoutMs` 默认 null；EventBus `DEFAULT_MAX_SUBSCRIBERS=64` 硬编码无 CLI 参数（0.21.12/0.22.2 均如此）；30 分钟 session 空闲回收不回收 SSE 流；升级 0.22.2 不解决问题
+3. **关键发现**：`--writer-idle-timeout-ms` 参数（Per-SSE-connection idle deadline，支持 `QWEN_SERVE_WRITER_IDLE_TIMEOUT_MS` 环境变量）**从 0.21.12 起就存在**，三次事故从未启用——现成兜底参数被漏掉
+
+### 处置（方案 A 落地）
+
+1. **重启脚本升级 v2**：新建 `work/scripts/restart_daemon_4194_v2.sh`（v1 保留）——
+   - 恢复模型前先 `POST /session/:id/load` 确保会话在内存（修复 channel/lazy 会话如 Jarvis weixin 会话重启后 404 无法 set_model 的问题；load 失败写入 `.team/daemon_v1/daemon_model_pending_restore.json` 待恢复清单）
+   - 启动命令加 `--writer-idle-timeout-ms 300000`（游离 SSE 流 5 分钟无活动自动断开）
+2. **v2 实跑**（18:16）：新 daemon PID=823525，模型映射恢复 **12/12 成功、0 待恢复、0 失败**（含 Jarvis fb711e92→qwen3.8-27b-int4-tp2-g02，v1 时该会话失败）；`/daemon/status` → `limits.writerIdleTimeoutMs: 300000` 生效
+
+### 验证清单（本次实测）
+
+| 检查项 | 结果 |
+|--------|------|
+| 重启前 ESTAB 218 → 重启后 30（基线含监控脚本短连接） | PASS |
+| v2 模型映射恢复 12/12（含 channel 会话 Jarvis） | PASS |
+| `--writer-idle-timeout-ms 300000` 启动参数 + status 生效 | PASS |
+| 4194/8466 入口 HTTP 200 | PASS |
+
+### 预防
+
+- **daemon 启动必须带 `--writer-idle-timeout-ms`**（默认 300000=5 分钟），游离流超时自动回收，根治「无限累积占满 64 订阅者/256 TCP」
+- 重启 4194 一律用 `restart_daemon_4194_v2.sh`（保持模型映射 + lazy 会话 load）
+- 待落地：方案 B 连接数 watchdog（ESTAB>120 预警、>192 自动重启，通知 weixin_push.py）——A 负责常态、B 负责兜底
+- 成员使用规范（方案 C）：独立 SSH 隧道 + 外部浏览器访问 4194，用完关页
+
+---
+
+## 3.9 方案：重启保持工作连续性 v3（2026-08-27，测试实例 4198 全流程验证通过）
+
+### 背景
+
+v2 只能恢复模型映射；重启仍会**打断成员正在进行的任务**（含 sub/后台任务），且 approval 等级（yolo）会回落，等待输入的会话状态丢失。用户要求重启方案完整保持工作连续性。
+
+### 方案（restart_daemon_4194_v3.sh，7 步）
+
+1. **① 捕捉**：`GET /workspace/<ws>/sessions?limit=100` 枚举全部 session → 逐 session `GET /status`（hasActivePrompt / 等待输入）+ `GET /context`（model + configOptions.mode=approval 等级）→ 分类 working/waiting_input/idle/stale → 快照 `.team/daemon_v1/daemon_work_snapshot_restart.json`
+2. **② kill**：pgrep 按 `--port` 匹配 + `ss -tlnp` 按端口兜底；kill 后校验端口释放，未释放 kill -9
+3. **③ 启动**：setsid nohup + `--writer-idle-timeout-ms 300000`（SSE 泄漏根治）
+4. **④ 就绪**：HTTP 200 且 `/daemon/status.pid` ≠ 旧 PID（防旧 daemon 残留误判）
+5. **⑤ 恢复**：lazy 会话先 `POST /session/:id/load` → `POST /model` 恢复模型 → `POST /approval-mode {"mode":...}` 恢复 approval（yolo 不回落）→ 核对 context
+6. **⑥ 继续完成**：对 working 会话发「【系统通知】daemon 重启，任务被中断…请继续完成」（prompt 返回 202 即成功）；对 waiting_input 会话发等待状态已清空说明
+7. **⑦ 验证**：抽查被恢复会话 hasActivePrompt=true + model/mode 正确
+
+### 测试验证（独立实例 4198，`--channel none`）
+
+- 测试 session 设 mode=yolo + model=qwen3.8-27b-int4-tp2-g34 → 触发 sleep 120 长任务 → hasActivePrompt=true
+- v3 全流程：① 捕捉到 1 working（model 正确）→ ② kill → ③ 启动 → ④ 就绪（pid 切换校验）→ ⑤ 恢复 1/1（model+mode=yolo）→ ⑥ 继续完成发送成功（202）→ ⑦ 验证 hasActivePrompt=true（agent 已收到继续完成恢复工作）
+- 测试发现并修复：prompt 返回 **202** 非 200（send_prompt 需认 200/202）；**同机只能一个 daemon 启用 channel**（第二个带 --channel weixin 启动失败，测试必须 `--channel none`）；端口自动转移时 pgrep 漏匹配（ss 兜底）；旧 daemon 残留响应误判（④ PID 校验）
+
+### 成员通知（2026-08-27 18:34）
+
+- 全部 10 个角色（SignL3/signL2/signL4/signL5/signL6/signL7/signL8/signL9/signL10/signL11）已通过 8466 mailbox 收到规则：**重启 4194 必须调用 `restart_daemon_4194_v3.sh`，禁止自行 kill/启动**；收到「继续完成」通知后检查 sub/后台任务继续工作
+- 注意：8466 `/api/messages` 的 `dry_run` 默认 True，真实投递必须显式 `"dry_run": false` + `"confirm": true`
+
+### 固化
+
+- 通用 skill：`~/.qwen/skills/framework/daemon-restart-continuity.md`（7 步流程 + daemon API 约定 + 通用已知坑 + 派生指南）
+- 具体 skill：`~/.qwen/skills/agent-team.md` §8（Base: daemon-restart-continuity，4194 实例绑定）
+
+---
+
+## 3.10 事故与修复：2026-08-27 晚间批量修复（看板乱跳 / position 234 / watchdog 继续 / GPU2+9 迁移）
+
+### 3.10.1 8466 看板「乱跳」根因与修复
+
+- **症状**：看板刷新卡顿/乱跳；`/api/local/messages` 超时（8-10s）；8466 进程持续 90-100% CPU（线程每请求一个、短命烧 CPU）
+- **根因链**：
+  1. `members/*/inbox.jsonl` 与 `events.jsonl` 自 8-18 起累积至 **4.5GB**（signL8 单文件 1GB+）
+  2. console 的 `_tail_lines` 用 `deque(fh, maxlen)` **从文件头全量遍历**——每次读 messages/events 接口完整读 1GB 文件 → 超时 + 100% CPU
+  3. 18:57 `start_daemon_team_v2.sh restart` 误启**第二套 v1 member-helper ×10**（与 8-18 常驻 v2 helper 双份轮询 4194）→ 4194 负载高、inbox 写竞争
+- **处置**：归档 4.5GB 旧数据至 `.team/daemon_v1/members_archive_20260827_4.5g/`（mv，可回滚）；`_tail_lines` 改为**尾部倒读**（seek 到尾向前读，O(尾行数)）；清理重复 v1 helper ×10；另清理 8-9 残留 strace 进程（空转烧 CPU 20 天，kill -9）
+- **验证**：messages 0.02s、status 0.01s、CPU 恢复；残余 90% CPU 定位为 VS Code Server 多面板 SSE 代理负载（8+ 会话事件流 × 每块 flush），非功能 bug，关多余面板即降
+
+### 3.10.2 position 234 复发根因（Sub B 诊断）
+
+- **根因**：18:53 的「qwen3.8 流式透传」修复（nothink_split）**在磁盘但从未被加载**——代理 systemd 自 10:50 未重启。运行旧代码（无条件 `_ThinkStreamProcessor`）对 qwen3.8：content 无 `</think>` → 全程缓冲 → 流结束 `_flush_think` 把整段缓冲重复发出，且与 `[DONE]` 间**单 \n 拼接** → daemon 按空行切分时并入同一事件 → `JSON.parse` 后遇 `[DONE]` → position N（N=缓冲长度，46/77/89/92/98/99/105/234/1026/43380 全部吻合）
+- **修复**：① 磁盘已含 nothink_split（qwen3.8 透传）；② 补 `_process_line` 的 `[DONE]` 分支 `flush + "\n" + line` → `flush + "\n\n" + line`（flush 与 [DONE] 独立事件，修非 qwen3.8 同类隐患）。**代理 19:23 重启一并生效**，实测 43 事件全合法、[DONE] 独立、无解析错误
+
+### 3.10.3 watchdog 压缩后补发「继续」
+
+- `daemon_context_watchdog_v1.py` 的 `two_stage_compress`：压缩成功后（ok=True）补发「继续」prompt（【系统通知】上下文已自动压缩完成…请继续完成），`result["continue_sent"]` 标记；发送失败不影响整体 ok。watchdog 已重启生效（PID 936752）
+
+### 3.10.4 GPU0+2 → GPU2+9 迁移（g29）
+
+- **背景**：释放 GPU9（单卡 llama 950084）与 GPU0；新 TP2 组合 GPU2+9
+- **执行**：zhuhai 停 950084（llama）→ 停 8050（GPU0+2）→ 启 **8054（GPU2+9，PID 3283483）**；settings.json g02 条目→g29 + 默认模型 g29；代理 VLLM_ELASTIC g02→g29（8054/18054/GPU[2,9]）；**代理外部重启**（用户授权）；daemon v3 重启（g29 进列表、g02 移除）；主管/Jarvis 补设 g29+yolo
+- **最终格局**：TP2 槽位 g29(2+9)/g34(3+4)/g56(5+6)/g78(7+8)，GPU0 释放
+- **教训**：daemon 模型列表启动时加载 settings——改 settings 后必须重启 daemon 才生效；v3 ① 捕捉在重启后跑会固化回落值（start_daemon_team_v2.sh 误启时发生过，模型映射被覆盖为错误值）
+
+### 3.10.5 遗留
+
+- 8466 90% CPU（VS Code 多面板 SSE 代理负载）——建议成员用完关面板/页面；可选优化（SSE 代理 write 合并缓冲）
+- `start_daemon_team_v2.sh restart` 会**连带重启 4194 daemon 且不带 writer-idle-timeout/不恢复模型**——禁用该脚本 restart 4194（只能用它启 console/helper 等；4194 重启一律 v3 脚本）
+
+---
+
 ## 4. Web Shell 与 session 生命周期（易踩坑点）
 
 1. **SPA fallback 仅对 HTML 请求生效**：`/session/<id>` 直接 curl（不带 `Accept: text/html`）返回 404 是正常现象，不代表浏览器打不开；浏览器（带 HTML Accept）会拿到 index.html 并正常渲染。检查时务必带 `-H "Accept: text/html"`。
@@ -389,7 +496,8 @@ cd /data/WYC/signLanguage && setsid nohup node /home/wuyangcheng/.npm-global/bin
 - registry/health/dashboard 缓存：`/data/WYC/signLanguage/.team/daemon_v1/`
 - 事故快照：`/data/WYC/signLanguage/.team/daemon_v1/incident_snapshot_20260814_0015/`
 - 辅助进程保活：全部已由 `systemd` 收养（PPID 1631），重启 daemon 不影响它们
-- **4194 重启脚本（保持 session 模型映射）**：`/data/WYC/signLanguage/work/scripts/restart_daemon_4194_v1.sh`（记录映射 → 重启 → 恢复各 session 模型，映射文件 `.team/daemon_v1/daemon_model_map_restart.json`，见 §3.7）
+- **4194 重启脚本（保持 session 模型映射）**：`/data/WYC/signLanguage/work/scripts/restart_daemon_4194_v1.sh`（记录映射 → 重启 → 恢复各 session 模型，映射文件 `.team/daemon_v1/daemon_model_map_restart.json`，见 §3.7）；**v2**：`/data/WYC/signLanguage/work/scripts/restart_daemon_4194_v2.sh`（v2 增加 lazy/channel 会话先 `POST /session/:id/load` 再设模型 + 启动带 `--writer-idle-timeout-ms 300000` 根治 SSE 泄漏，见 §3.8）；**v3（当前标准）**：`/data/WYC/signLanguage/work/scripts/restart_daemon_4194_v3.sh`（v3 增加：重启前捕捉工作状态/模型/approval 等级快照 → 重启后恢复模型+approval mode（`/approval-mode`）+ 向被打断工作会话发送「继续完成」+ 等待输入会话发状态说明；支持 `--port/--workspace/--token/--channel/--dry-run` 参数化；2026-08-27 测试实例 4198 全流程验证通过，见 §3.9）
+- **SSE 连接泄漏专项调研报告**：`/data/WYC/signLanguage/work/reports/sse_leak_research_20260827.md`（根因分析、方案 A-D 对比、实施记录）
 - **代理 systemd 单元**：`~/.config/systemd/user/codex-deepseek-proxy.service`（`Restart=always` 5s 自愈 + 开机自启，管理 11435 本地模型路由代理）
 
 ---
@@ -405,6 +513,9 @@ cd /data/WYC/signLanguage && setsid nohup node /home/wuyangcheng/.npm-global/bin
 | v1.4 | 2026-08-14 10:55 | §2.4.1 触发机制与身份模型（agent 身份=认证账号、触发者=allowlist、自触发硬限制、触发矩阵、方案 A/B 对比与协作场景） |
 | v1.9 | 2026-08-26 22:40 | 新增 §3.6 事故记录（EventBus 订阅者 64 上限被 VS Code Server 游离 SSE 连接占满 → Web Shell 输入框 loading，处置=重启 daemon + 验证清单 + 预防）；排障 checklist 补第 8 条 |
 | v1.10 | 2026-08-27 10:50 | 新增 §3.7 事故记录（代理 `_ThinkStreamProcessor` 流式 SSE 分隔符跨 chunk 丢失 → daemon 解析 position 216 + 代理 select 崩溃 + JSON 解析容错 + systemd 托管 + 重启脚本保持模型映射）；排障 checklist 补第 9/10 条；§7 补 restart_daemon_4194_v1.sh 与 codex-deepseek-proxy.service |
+| v1.11 | 2026-08-27 18:20 | 新增 §3.8 事故记录（SSE 连接泄漏第三次复发 218/256 + 专项调研：游离流 87% 不回收、泄漏源 VS Code 转发、`--writer-idle-timeout-ms` 现成参数被漏用）+ 根治方案 A 落地（restart_daemon_4194_v2.sh：lazy 会话先 load + writer-idle-timeout 300000，实跑 12/12 恢复）；§7 补 v2 脚本与调研报告 |
+| v1.12 | 2026-08-27 18:40 | 新增 §3.9 方案（重启保持工作连续性 v3：捕捉工作状态/模型/approval → 恢复 → 继续完成 → 验证，测试实例 4198 全流程验证通过）；§7 补 restart_daemon_4194_v3.sh；成员通知规则（重启必须调 v3 脚本）；skill 固化（framework/daemon-restart-continuity + agent-team §8） |
+| v1.13 | 2026-08-27 19:40 | 新增 §3.10 晚间批量修复（3.10.1 看板乱跳：4.5GB inbox/events 归档 + `_tail_lines` 尾部倒读 + 清理重复 v1 helper + 残留 strace；3.10.2 position 234 复发：透传修复未加载 + `[DONE]` 补 `\n\n`，代理重启生效；3.10.3 watchdog 压缩后补发「继续」；3.10.4 GPU0+2→GPU2+9 迁移 g29 全链；3.10.5 遗留：8466 SSE 代理负载、禁用 start_daemon_team_v2.sh restart 4194）；§7 补 console/watchdog 备份与归档目录 |
 | v1.5 | 2026-08-14 11:05 | GitHub channel 停用，切换 WeChat channel：§2.4 更新为 weixin 配置/扫码登录/连接验证（仅纯文本、仅 DM、会话过期 errcode -14 需重扫） |
 | v1.6 | 2026-08-14 11:15 | §2.4 补 pairing 配对流程（senderPolicy=pairing 的配对码批准；`qwen channel pairing` 需 `--cwd` daemon workspace、不支持 --daemon-url/--token） |
 | v1.7 | 2026-08-14 11:20 | §2.4 补 agent 权限边界安全说明（workspace=/data/WYC/signLanguage、agent=wuyangcheng 完整用户权限、sessionScope=user 隔离、收紧建议） |
