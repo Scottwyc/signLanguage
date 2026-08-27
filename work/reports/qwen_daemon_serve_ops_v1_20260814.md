@@ -601,6 +601,27 @@ Machine settings（`/home/wuyangcheng/.vscode-server/data/Machine/settings.json`
 
 ---
 
+## 3.16 watchdog 修复迭代与最终验证（2026-08-28）
+
+### 发现的 4 个 watchdog 缺陷（逐一修复）
+
+1. **pgrep 匹配到其他用户进程**（guxifeng 的 VS Code Server PID 65005）→ fdinfo 跨用户不可读 → 一直"统计失败"漏报。修复：按 `/proc/PID/status` Uid 过滤（find_vscode_server）
+2. **inotify watch 不在主进程而在 fileWatcher 子进程**（主进程=0、fileWatcher=14683）→ 单进程统计漏报。修复：`count_vscode_watches()` 统计**当前用户全部 VS Code 相关进程**的 inotify 总和
+3. **VS Code Server 有 cli 守护进程**（8-26 启动的 3139487）——它会**自动拉起泄漏的 server 实例**（kill 1191503→自动拉 1943838→kill→拉 1980349…），只 kill 实例泄漏必复现。修复：重启目标 = **cli 守护**（cmdline 以 `/server/` 结尾，无参数），kill 后整树清空、用户重连时全新初始化
+4. **双 watchdog 实例**（误启）→ 日志双写。清理为单实例
+
+### watcherExclude 补充（19→26 模式）
+
+首次 19 模式只降初始 watch（56191→14683）未根治——找到未排除的 **work/subtitle 17GB**（+work/archive、downloads、documents、other、videos、models），补充 7 模式。
+
+### 最终验证（用户自动重连后）
+
+- cli 守护检测正确（1988259）、进程树统计正确（12951）
+- **inotify：56191 → 12951**（系统上限 65536 的 86% → **20%**）——26 排除模式生效，不再有耗尽风险
+- VS Code Remote 自动重连机制：cli 守护被杀后用户窗口自动重连并拉起新树（无需手动 reload）
+
+---
+
 ## 4. Web Shell 与 session 生命周期（易踩坑点）
 
 1. **SPA fallback 仅对 HTML 请求生效**：`/session/<id>` 直接 curl（不带 `Accept: text/html`）返回 404 是正常现象，不代表浏览器打不开；浏览器（带 HTML Accept）会拿到 index.html 并正常渲染。检查时务必带 `-H "Accept: text/html"`。
@@ -686,6 +707,7 @@ Machine settings（`/home/wuyangcheng/.vscode-server/data/Machine/settings.json`
 | v1.16 | 2026-08-28 07:30 | 新增 §3.13 实时抓取机制鲁棒性改造（stale-while-revalidate）：gpu_live/host_resources/local_services 从「TTL 过期同步 SSH 阻塞」改为「返回旧缓存+stale 标记+后台刷新」——接口有缓存后永远 <10ms，SSH 慢/失败不再卡看板/清空面板；验证 0.00s+stale=True |
 | v1.17 | 2026-08-28 08:10 | 新增 §3.14 VS Code Server inotify 泄漏拖垮系统（本地B 卡死真凶）：inotify 56193 耗尽 → systemd 无法建 watch → 代理崩溃循环 → 本地模型全 503；重启 VS Code Server + 恢复代理 + 新增 vscode_server_watchdog_v1.py（WARN=40000/RESTART=55000 自动重启/冷却 6h）；VS Code Server 重启 vs Remote 重连关系；附发现 g29 端口配置被误改 8050（已修复） |
 | v1.18 | 2026-08-28 08:30 | 新增 §3.15 files.watcherExclude 根治 VS Code inotify 泄漏：追加根因（启动即爆、递归 watch 667GB 工作区、Remote 自动重连复用旧配置）；Machine settings 注入 19 个排除模式；验证 reload 后 inotify 56191→14683（86%→22%）根治有效；残余安全 + watchdog 兜底；备注后续可收紧（watcherPolling/更多排除） |
+| v1.19 | 2026-08-28 08:50 | 新增 §3.16 watchdog 修复迭代：4 缺陷（跨用户匹配/单进程漏报/cli 守护自动拉起实例/双实例）；重启目标=cli 守护；watcherExclude 19→26（补 work/subtitle 17GB 等）；最终验证 inotify 56191→12951（86%→20%）26 模式生效 |
 | v1.5 | 2026-08-14 11:05 | GitHub channel 停用，切换 WeChat channel：§2.4 更新为 weixin 配置/扫码登录/连接验证（仅纯文本、仅 DM、会话过期 errcode -14 需重扫） |
 | v1.6 | 2026-08-14 11:15 | §2.4 补 pairing 配对流程（senderPolicy=pairing 的配对码批准；`qwen channel pairing` 需 `--cwd` daemon workspace、不支持 --daemon-url/--token） |
 | v1.7 | 2026-08-14 11:20 | §2.4 补 agent 权限边界安全说明（workspace=/data/WYC/signLanguage、agent=wuyangcheng 完整用户权限、sessionScope=user 隔离、收紧建议） |

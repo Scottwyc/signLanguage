@@ -53,17 +53,41 @@ def log(msg: str) -> None:
 
 
 def find_vscode_server() -> int | None:
-    """找到 VS Code Server 主进程 PID（.vscode-server/cli/servers/Stable-* server）。"""
+    """找到**当前用户（wuyangcheng）**的 VS Code Server **cli 守护进程** PID。
+
+    必须：
+    1. 按 uid 过滤（其他用户如 guxifeng 有同名进程，跨用户 fdinfo 不可读）
+    2. 优先匹配 **cli 守护**（cmdline 以 `/server/` 结尾，无参数）——它是 server
+       实例的父进程/管理器，kill 它整个进程树清空（实例会自动被拉起的新树替代）；
+       只 kill server 实例（server-main.js）会被守护立即重新拉起，泄漏复现。
+    """
+    candidates: list[int] = []
     try:
         out = subprocess.run(["pgrep", "-f", r"\.vscode-server/cli/servers/Stable-.*/server/"],
                              capture_output=True, text=True, timeout=10).stdout
         for line in out.splitlines():
             pid = line.strip()
-            if pid.isdigit():
-                return int(pid)
+            if not pid.isdigit():
+                continue
+            try:
+                status = Path(f"/proc/{pid}/status").read_text(encoding="utf-8")
+                uid = int(status.split("Uid:")[1].split()[0])
+                if uid != os.getuid():
+                    continue
+                cmd = Path(f"/proc/{pid}/cmdline").read_bytes().replace(b"\0", b" ").decode("utf-8", errors="replace")
+                candidates.append((int(pid), cmd))
+            except (OSError, ValueError, IndexError):
+                continue
     except (OSError, subprocess.TimeoutExpired):
-        pass
-    return None
+        return None
+    if not candidates:
+        return None
+    # cli 守护优先：cmdline 以 '/server/' 结尾（无 node/server-main 等参数）
+    for pid, cmd in candidates:
+        if cmd.rstrip().endswith("/server/"):
+            return pid
+    # 兜底：取最小的 PID（最可能靠近树根）
+    return min(pid for pid, _ in candidates)
 
 
 def count_inotify_watches(pid: int) -> int:
@@ -80,6 +104,39 @@ def count_inotify_watches(pid: int) -> int:
                 continue
     except OSError:
         return -1
+    return total
+
+
+def count_vscode_watches() -> int:
+    """统计**当前用户全部 VS Code Server 相关进程**的 inotify watch 总和。
+
+    watch 可能分布在主进程、fileWatcher（--type=fileWatcher）或 extensionHost 子进程，
+    只盯主进程会漏掉真正的泄漏进程（2026-08-28 实测主进程=0、fileWatcher=14683）。
+    """
+    total = 0
+    for p in Path("/proc").iterdir():
+        if not p.name.isdigit():
+            continue
+        try:
+            status = (p / "status").read_text(encoding="utf-8")
+            uid = int(status.split("Uid:")[1].split()[0])
+            if uid != os.getuid():
+                continue
+            cmd = (p / "cmdline").read_bytes().replace(b"\0", b" ")
+            if b".vscode-server/cli/servers/Stable" not in cmd:
+                continue
+        except (OSError, ValueError, IndexError):
+            continue
+        try:
+            for fdinfo in (p / "fdinfo").iterdir():
+                try:
+                    c = fdinfo.read_text(encoding="utf-8", errors="replace")
+                    if "inotify" in c:
+                        total += c.count("inotify wd")
+                except OSError:
+                    continue
+        except OSError:
+            continue
     return total
 
 
@@ -138,11 +195,8 @@ def main() -> int:
             save_state({"over_rounds": 0, "last_restart_at": last_restart,
                         "warned": False, "last_warn_watches": 0})
             continue
-        watches = count_inotify_watches(pid)
-        if watches < 0:
-            log(f"PID {pid} inotify 统计失败（进程可能退出）")
-            continue
-        log(f"VS Code Server PID={pid} inotify={watches}")
+        watches = count_vscode_watches()   # 进程树总和（主+fileWatcher+extensionHost）
+        log(f"VS Code Server PID={pid} inotify={watches}（进程树总和）")
 
         if now - last_restart < COOLDOWN:
             if watches > WARN:
