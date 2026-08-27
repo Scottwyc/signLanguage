@@ -2086,9 +2086,24 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_response(200); self.send_header("Content-Type", "text/event-stream; charset=utf-8")
                 self.send_header("Cache-Control", "no-cache"); self.send_header("Connection", "keep-alive"); self.end_headers()
                 try:
+                    # [20260827] SSE 转发合并缓冲：原每块立即 write+flush（上游每块数据
+                    # 一次系统调用），多面板并发时系统调用风暴 → 8466 高 CPU/看板卡。
+                    # 改为 ≥8KB 或 ≥50ms 批量 flush（SSE 事件实时性不受影响，延迟 <50ms 无感）
+                    buf = bytearray()
+                    last_flush = time.monotonic()
                     for chunk in upstream:
-                        if isinstance(chunk, str): chunk = chunk.encode("utf-8")
-                        self.wfile.write(chunk); self.wfile.flush()
+                        if isinstance(chunk, str):
+                            chunk = chunk.encode("utf-8")
+                        buf += chunk
+                        now = time.monotonic()
+                        if len(buf) >= 8192 or (now - last_flush) >= 0.05:
+                            self.wfile.write(bytes(buf))
+                            self.wfile.flush()
+                            buf.clear()
+                            last_flush = now
+                    if buf:
+                        self.wfile.write(bytes(buf))
+                        self.wfile.flush()
                 except (BrokenPipeError, ConnectionResetError, OSError):
                     pass
                 finally:

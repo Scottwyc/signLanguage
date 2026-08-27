@@ -468,6 +468,31 @@ v2 只能恢复模型映射；重启仍会**打断成员正在进行的任务**�
 
 ---
 
+## 3.12 事故与修复：2026-08-27 22:00 看板三次卡死 + 连接 watchdog 落地
+
+### 症状
+
+- 8466 看板第三次卡死（90% CPU、接口慢）；4194 ESTAB 连接涨至 **160**：VS Code Server 69 条 + **daemon 自身 85 条**（v3 重启后基线仅 18 条——daemon 内部 channel/EventBus 连接也在累积 ~67 条）+ 监控短连接
+- 连接持续上涨不仅卡看板，**威胁 daemon 本身可用性**（占满 listenerMaxConnections=256 → 成员 Connection error）
+
+### 处置
+
+1. **4194 v3 重启**（160→20；主管/本地B working 会话自动收到继续完成）
+2. **SSE 代理合并缓冲**（`daemon_team_console_v2_server.py` do_GET）：SSE 转发从「每块 write+flush」改为「≥8KB 或 ≥50ms 批量 flush」——系统调用减少 20-100 倍（多面板并发时不再打爆 CPU；SSE 事件延迟 <50ms 无感）。用 faulthandler+SIGUSR1 栈定位确认无其他热点
+3. **新增连接数 watchdog**（`daemon_conn_watchdog_v1.py`，setsid 保活，PID 1192001）：
+   - 每 30s 统计 4194 ESTAB；WARN=120 微信预警（涨幅 >20 再报）、**RESTART=192 连续 2 次自动调 v3 脚本重启**（保持模型映射+继续完成）、重启后冷却 30min、状态落盘 `conn_watchdog_state.json`
+   - 作用：连接累积不再依赖人工发现，超限自动自愈，保护 daemon 可用性
+
+### 验证
+
+- 8466 CPU 0%、接口正常；4194 连接 20（基线）；watchdog 状态文件正常写入
+
+### 观察项
+
+- **daemon 自连累积**：重启后 18 条 → 累积到 85 条（+67）——daemon 内部（channel worker/EventBus）连接也在缓慢泄漏，watchdog 总量兜底；若想根治需深查 daemon 内部连接池（低优先级）
+
+---
+
 ## 4. Web Shell 与 session 生命周期（易踩坑点）
 
 1. **SPA fallback 仅对 HTML 请求生效**：`/session/<id>` 直接 curl（不带 `Accept: text/html`）返回 404 是正常现象，不代表浏览器打不开；浏览器（带 HTML Accept）会拿到 index.html 并正常渲染。检查时务必带 `-H "Accept: text/html"`。
@@ -549,6 +574,7 @@ v2 只能恢复模型映射；重启仍会**打断成员正在进行的任务**�
 | v1.12 | 2026-08-27 18:40 | 新增 §3.9 方案（重启保持工作连续性 v3：捕捉工作状态/模型/approval → 恢复 → 继续完成 → 验证，测试实例 4198 全流程验证通过）；§7 补 restart_daemon_4194_v3.sh；成员通知规则（重启必须调 v3 脚本）；skill 固化（framework/daemon-restart-continuity + agent-team §8） |
 | v1.13 | 2026-08-27 19:40 | 新增 §3.10 晚间批量修复（3.10.1 看板乱跳：4.5GB inbox/events 归档 + `_tail_lines` 尾部倒读 + 清理重复 v1 helper + 残留 strace；3.10.2 position 234 复发：透传修复未加载 + `[DONE]` 补 `\n\n`，代理重启生效；3.10.3 watchdog 压缩后补发「继续」；3.10.4 GPU0+2→GPU2+9 迁移 g29 全链；3.10.5 遗留：8466 SSE 代理负载、禁用 start_daemon_team_v2.sh restart 4194）；§7 补 console/watchdog 备份与归档目录 |
 | v1.14 | 2026-08-27 21:10 | 新增 §3.11 看板二次卡死（`_active_elastic_services` SSH 探测阻塞 + VS Code 转发器 SSE 连接累积 42 条/总量 104）：SSH→本机隧道探测修复 + 4194 v3 重启；VS Code 连接累积机制详解（writer-idle-timeout 只回收写侧空闲流、TCP 半开靠 keepalive）；客户端侧缓解（SSH 隧道+外部浏览器 / 控面板数）；成员↔模型映射自动同步（sync_team_topology_models_v1.py 挂 refresher） |
+| v1.15 | 2026-08-27 22:10 | 新增 §3.12 看板三次卡死（VS Code 69 条 + daemon 自连累积 85 条）+ **连接数 watchdog 落地**（daemon_conn_watchdog_v1.py：WARN=120 微信预警 / RESTART=192 自动 v3 重启 / 冷却 30min）+ SSE 代理合并缓冲（8KB/50ms 批量 flush，根治转发系统调用风暴）+ faulthandler 栈定位；观察项：daemon 内部连接池缓慢累积（watchdog 兜底） |
 | v1.5 | 2026-08-14 11:05 | GitHub channel 停用，切换 WeChat channel：§2.4 更新为 weixin 配置/扫码登录/连接验证（仅纯文本、仅 DM、会话过期 errcode -14 需重扫） |
 | v1.6 | 2026-08-14 11:15 | §2.4 补 pairing 配对流程（senderPolicy=pairing 的配对码批准；`qwen channel pairing` 需 `--cwd` daemon workspace、不支持 --daemon-url/--token） |
 | v1.7 | 2026-08-14 11:20 | §2.4 补 agent 权限边界安全说明（workspace=/data/WYC/signLanguage、agent=wuyangcheng 完整用户权限、sessionScope=user 隔离、收紧建议） |
