@@ -526,6 +526,56 @@ TTL 缓存过期时在请求线程里同步执行 SSH zhuhai（nvidia-smi / CPU 
 
 ---
 
+## 3.14 事故与修复：2026-08-28 VS Code Server inotify 泄漏拖垮系统（本地B 卡死真凶）
+
+### 症状
+
+- 本地B（signL11）"奇怪的卡死"：重启 daemon（v3）无效；模型请求 503
+- 代理（11435）**崩溃循环**（restart counter 70+→117）：`Failed to add inotify watch descriptor ... No space left on device`
+- g29/g56 本地模型请求全部 503/无响应
+
+### 根因链（2026-08-28 深度排查确认）
+
+```
+VS Code Server（.vscode-server/cli/servers/Stable-*，运行 9h+）
+  双重泄漏：
+  1. SSE/TCP 连接 → 4194 累积 69+ 条（已知）
+  2. inotify watch → 单进程 56193 个（/proc/PID/fdinfo 实测，系统上限 65536 的 86%）
+  → inotify 耗尽 → systemd 无法为服务 cgroup 建 watch（"No space left on device"）
+  → 代理崩溃循环（每 5s 重启失败）→ 本地模型全 503
+  → 本地B 卡死 / g29 失败（与 daemon 无关，v3 重启当然无效）
+```
+
+- **inotify 泄漏统计**：VS Code Server 56193 / 系统上限 65536（其余进程合计 ~4000）
+- **辅助发现**：8-28 00:03 另一会话的 askq_sanitize 修改把 g29 配置端口误写为 8050（应 8054）——代理加载后 g29 路由失败；已修复（.bak_20260828_g29port）
+
+### 处置
+
+1. **重启 VS Code Server**（kill 1191503）：inotify 56193→9343、SSE 连接清空
+2. **代理恢复**：kill 端口占用的旧代码进程（1928891）→ systemd 接管新代码（1945287）→ 响应 2.4s 正常（g29→qwen3.8-27b）
+3. **g56 实例拉起**（8052，之前 3h 空闲被弹性池释放）
+4. **新增 VS Code Server watchdog**（`vscode_server_watchdog_v1.py`，setsid 保活 PID 1943776）：
+   - 每 60s 统计 VS Code Server 主进程 inotify watch 数
+   - WARN=40000 微信预警（涨幅 >10000 再报）；**RESTART=55000 连续 2 次自动 kill VS Code Server**（用户重连 Remote 时自动拉起新实例）、冷却 6h
+   - 与 daemon_conn_watchdog_v1.py 互补：daemon 那个管 4194 连接、这个管 VS Code 进程
+
+### VS Code Server 重启与 Remote 重连关系（记录）
+
+- VS Code Server = Remote 连接的服务端进程（承载编辑器状态），由本地 client 重连时自动创建
+- watchdog 只 kill 服务端进程（泄漏清空）；**新 Server 必须用户重连 Remote 才被拉起**——重启后用户 VS Code 显示断连，需重连（hot exit 恢复大部分未保存内容）
+- 所以 watchdog 自动重启后：inotify/连接立即恢复，但 VS Code 可用性取决于用户重连
+
+### 验证
+
+- inotify 56193→9343；代理 systemd active（响应 2.4s）；g29/g56 本地模型正常
+- watchdog 状态文件正常写入
+
+### 备份
+
+`vscode_server_watchdog_v1.py`（新脚本）；代理 `main.py.bak_20260828_g29port`
+
+---
+
 ## 4. Web Shell 与 session 生命周期（易踩坑点）
 
 1. **SPA fallback 仅对 HTML 请求生效**：`/session/<id>` 直接 curl（不带 `Accept: text/html`）返回 404 是正常现象，不代表浏览器打不开；浏览器（带 HTML Accept）会拿到 index.html 并正常渲染。检查时务必带 `-H "Accept: text/html"`。
@@ -609,6 +659,7 @@ TTL 缓存过期时在请求线程里同步执行 SSH zhuhai（nvidia-smi / CPU 
 | v1.14 | 2026-08-27 21:10 | 新增 §3.11 看板二次卡死（`_active_elastic_services` SSH 探测阻塞 + VS Code 转发器 SSE 连接累积 42 条/总量 104）：SSH→本机隧道探测修复 + 4194 v3 重启；VS Code 连接累积机制详解（writer-idle-timeout 只回收写侧空闲流、TCP 半开靠 keepalive）；客户端侧缓解（SSH 隧道+外部浏览器 / 控面板数）；成员↔模型映射自动同步（sync_team_topology_models_v1.py 挂 refresher） |
 | v1.15 | 2026-08-27 22:10 | 新增 §3.12 看板三次卡死（VS Code 69 条 + daemon 自连累积 85 条）+ **连接数 watchdog 落地**（daemon_conn_watchdog_v1.py：WARN=120 微信预警 / RESTART=192 自动 v3 重启 / 冷却 30min）+ SSE 代理合并缓冲（8KB/50ms 批量 flush，根治转发系统调用风暴）+ faulthandler 栈定位；观察项：daemon 内部连接池缓慢累积（watchdog 兜底） |
 | v1.16 | 2026-08-28 07:30 | 新增 §3.13 实时抓取机制鲁棒性改造（stale-while-revalidate）：gpu_live/host_resources/local_services 从「TTL 过期同步 SSH 阻塞」改为「返回旧缓存+stale 标记+后台刷新」——接口有缓存后永远 <10ms，SSH 慢/失败不再卡看板/清空面板；验证 0.00s+stale=True |
+| v1.17 | 2026-08-28 08:10 | 新增 §3.14 VS Code Server inotify 泄漏拖垮系统（本地B 卡死真凶）：inotify 56193 耗尽 → systemd 无法建 watch → 代理崩溃循环 → 本地模型全 503；重启 VS Code Server + 恢复代理 + 新增 vscode_server_watchdog_v1.py（WARN=40000/RESTART=55000 自动重启/冷却 6h）；VS Code Server 重启 vs Remote 重连关系；附发现 g29 端口配置被误改 8050（已修复） |
 | v1.5 | 2026-08-14 11:05 | GitHub channel 停用，切换 WeChat channel：§2.4 更新为 weixin 配置/扫码登录/连接验证（仅纯文本、仅 DM、会话过期 errcode -14 需重扫） |
 | v1.6 | 2026-08-14 11:15 | §2.4 补 pairing 配对流程（senderPolicy=pairing 的配对码批准；`qwen channel pairing` 需 `--cwd` daemon workspace、不支持 --daemon-url/--token） |
 | v1.7 | 2026-08-14 11:20 | §2.4 补 agent 权限边界安全说明（workspace=/data/WYC/signLanguage、agent=wuyangcheng 完整用户权限、sessionScope=user 隔离、收紧建议） |
