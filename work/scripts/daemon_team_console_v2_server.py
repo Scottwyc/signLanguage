@@ -583,10 +583,10 @@ class V2State:
             return [str(s["port"]) for s in topo.get("local_model_services", {}).get("services", [])
                     if s.get("type") == "elastic" and str(s.get("port", "")).isdigit()]
         except (OSError, ValueError):
-            return ["8050", "8051", "8052", "8053", "8054"]
+            return ["8051", "8052", "8053", "8054"]
 
     def _elastic_port_id_map(self) -> dict[str, str]:
-        """从 team_topology.json 读弹性服务 {端口: 服务id}（如 {"8050": "int4-tp2-g02"}）。
+        """从 team_topology.json 读弹性服务 {端口: 服务id}（如 {"8054": "int4-tp2-g29"}）。
 
         用于把巡检/8096 的纯端口数据关联到规范服务 id（模型 id），
         实例刚拉起、巡检（2min 间隔）尚未覆盖时也能补出带正确 id 的卡片。
@@ -673,9 +673,9 @@ class V2State:
     def local_services(self) -> dict[str, Any]:
         """本地模型服务健康与速率（来自巡检 local_services_health_state.json）
 
-        巡检覆盖弹性槽（8050-8054）+ VL 8000；这里实时补充"当前活跃的弹性实例"
+        巡检覆盖弹性槽（8051-8054）+ VL 8000；这里实时补充"当前活跃的弹性实例"
         （SSH 探测正在监听的端口，TTL 5s），并把 rates 键规范化为
-        "端口(服务id)"（如 "8050(int4-tp2-g02)"），与 topology/8096 对齐。
+        "端口(服务id)"（如 "8054(int4-tp2-g29)"），与 topology/8096 对齐。
         DOWN 槽位不补卡（前端只显示 UP，属既定要求：按需实例 DOWN 正常）。
         """
         state = load_json(self.v1 / "local_services_health_state.json", {})
@@ -692,7 +692,7 @@ class V2State:
         # 巡检 services + 实时活跃弹性实例合并
         services = dict(latest.get("services", {}) or {})
         rates = dict(latest.get("rates", {}) or {})
-        # 端口 → 服务 id 映射：优先从巡检键 "8050(int4-tp2-g02)" 解析，
+        # 端口 → 服务 id 映射：优先从巡检键 "8054(int4-tp2-g29)" 解析，
         # topology（type=elastic）兜底补全（实例刚拉起、巡检未覆盖时也能拿到 id）
         port_sid: dict[str, str] = {}
         for k in list(services):
@@ -700,7 +700,7 @@ class V2State:
             if m:
                 port_sid.setdefault(m.group(1), m.group(2))
         port_sid.update(self._elastic_port_id_map())
-        # rates 键规范化：巡检落盘的纯端口键（"8050"）→ 规范键 "8050(int4-tp2-g02)"，
+        # rates 键规范化：巡检落盘的纯端口键（"8054"）→ 规范键 "8054(int4-tp2-g29)"，
         # 保证前端用服务键能查到速率；无映射的键保留原样
         for rk in list(rates):
             base = str(rk).split("(")[0].strip()

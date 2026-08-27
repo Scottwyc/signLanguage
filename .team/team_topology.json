@@ -1,0 +1,408 @@
+{
+  "version": "2026-08-27",
+  "description": "手语团队拓扑：用稳定 id（signL2/signL4/...）指代成员，window 为当前 tmux 窗口名（可能变动，只改这里）。所有脚本从本文件读取窗口名/职责，不硬编码。local_model_services 为本地模型服务注册表（主管+运维共同维护，2026-08-26 新增，见 project_constraints.md §14）。",
+  "local_model_services": {
+    "_note": "本地模型服务注册表。统一入口：nature 综合代理 127.0.0.1:11435 → SSH 隧道 → zhuhai（172.28.17.71:7712）。禁止绕过 11435 直连 zhuhai 端口。服务变更（启停/换卡/换模型）须主管协调 + 运维执行，并在 24h 内更新本注册表。",
+    "_updated_at": "2026-08-27T19:35+08:00",
+    "_inventory_source": "2026-08-27 09:00 运维重构：vLLM INT4 弹性池（4×TP2 固定卡对 + TP1 自动找卡）取代 llama Q4 全部服务；llama 退场、vLLM 常驻三级移除；19:30 迁移：原 g02（GPU0+2）→ g29（GPU2+9），GPU0 释放",
+    "services": [
+      {
+        "id": "int4-tp2-g29",
+        "aliases": [
+          "qwen3.8-27b-int4-tp2-g29"
+        ],
+        "host": "zhuhai",
+        "port": 8054,
+        "tunnel_port": 18054,
+        "model": "Qwen3.8-27B INT4 TP2 GPU2+9（vLLM AWQ-INT4 弹性 TP2 GPU2+9，128K ctx，~56 tok/s，视觉可用，3h 空闲释放）",
+        "gpus": [
+          2,
+          9
+        ],
+        "type": "elastic",
+        "owner_role": "全体按需（常规会话，TP2 主层级）",
+        "status": "on-demand（请求时 GPU2+9 空闲即拉起；卡被占返回不可用）",
+        "note": "vLLM 0.19 INT4 TP2 固定卡对槽位；按需拉起 / 3h 空闲自动释放；2026-08-27 由 g02（GPU0+2）迁移而来"
+      },
+      {
+        "id": "int4-tp2-g34",
+        "aliases": [
+          "qwen3.8-27b-int4-tp2-g34"
+        ],
+        "host": "zhuhai",
+        "port": 8051,
+        "tunnel_port": 18051,
+        "model": "Qwen3.8-27B INT4 TP2 GPU3+4（vLLM AWQ-INT4 弹性 TP2 GPU3+4，128K ctx，~56 tok/s，视觉可用，3h 空闲释放）",
+        "gpus": [
+          3,
+          4
+        ],
+        "type": "elastic",
+        "owner_role": "全体按需（常规会话，TP2 主层级）",
+        "status": "on-demand（请求时 GPU3+4 空闲即拉起；卡被占返回不可用）",
+        "note": "vLLM 0.19 INT4 TP2 固定卡对槽位；按需拉起 / 3h 空闲自动释放"
+      },
+      {
+        "id": "int4-tp2-g56",
+        "aliases": [
+          "qwen3.8-27b-int4-tp2-g56"
+        ],
+        "host": "zhuhai",
+        "port": 8052,
+        "tunnel_port": 18052,
+        "model": "Qwen3.8-27B INT4 TP2 GPU5+6（vLLM AWQ-INT4 弹性 TP2 GPU5+6，128K ctx，~56 tok/s，视觉可用，3h 空闲释放）",
+        "gpus": [
+          5,
+          6
+        ],
+        "type": "elastic",
+        "owner_role": "全体按需（常规会话，TP2 主层级）",
+        "status": "on-demand（请求时 GPU5+6 空闲即拉起；卡被占返回不可用）",
+        "note": "vLLM 0.19 INT4 TP2 固定卡对槽位；按需拉起 / 3h 空闲自动释放"
+      },
+      {
+        "id": "int4-tp2-g78",
+        "aliases": [
+          "qwen3.8-27b-int4-tp2-g78"
+        ],
+        "host": "zhuhai",
+        "port": 8053,
+        "tunnel_port": 18053,
+        "model": "Qwen3.8-27B INT4 TP2 GPU7+8（vLLM AWQ-INT4 弹性 TP2 GPU7+8，128K ctx，~56 tok/s，视觉可用，3h 空闲释放）",
+        "gpus": [
+          7,
+          8
+        ],
+        "type": "elastic",
+        "owner_role": "全体按需（常规会话，TP2 主层级）",
+        "status": "on-demand（请求时 GPU7+8 空闲即拉起；卡被占返回不可用）",
+        "note": "vLLM 0.19 INT4 TP2 固定卡对槽位；按需拉起 / 3h 空闲自动释放"
+      },
+      {
+        "id": "int4-tp1",
+        "aliases": [
+          "qwen3.8-27b-int4-tp1"
+        ],
+        "host": "zhuhai",
+        "port": 8054,
+        "tunnel_port": 18054,
+        "model": "Qwen3.8-27B INT4 TP1 GPU0,2,3,4,5,6,7,8,9（vLLM AWQ-INT4 弹性单卡，自动找空闲卡，4K ctx，~40 tok/s，视觉可用，3h 空闲释放）",
+        "gpus": null,
+        "type": "elastic",
+        "owner_role": "全体按需（轻量/短任务；GPU1 liuchang 严禁）",
+        "status": "on-demand（请求时自动找空闲单卡拉起；无空闲卡返回不可用）",
+        "note": "vLLM 0.19 INT4 TP1 动态槽；候选卡 0/2-9；按需拉起 / 3h 空闲自动释放"
+      },
+      {
+        "id": "int4-tp1-g0",
+        "aliases": [
+          "qwen3.8-27b-int4-tp1-g0"
+        ],
+        "host": "zhuhai",
+        "port": 8060,
+        "tunnel_port": 18060,
+        "model": "Qwen3.8-27B INT4 TP1 GPU0（vLLM AWQ-INT4 弹性单卡 GPU0，4K ctx，~40 tok/s，视觉可用，3h 空闲释放）",
+        "gpus": [
+          0
+        ],
+        "type": "elastic",
+        "owner_role": "全体按需（指定卡 TP1；GPU1 liuchang 严禁）",
+        "status": "on-demand（请求时卡空闲即拉起；卡被占返回不可用）",
+        "note": "vLLM 0.19 INT4 TP1 固定卡槽；按需拉起 / 3h 空闲自动释放"
+      },
+      {
+        "id": "int4-tp1-g2",
+        "aliases": [
+          "qwen3.8-27b-int4-tp1-g2"
+        ],
+        "host": "zhuhai",
+        "port": 8061,
+        "tunnel_port": 18061,
+        "model": "Qwen3.8-27B INT4 TP1 GPU2（vLLM AWQ-INT4 弹性单卡 GPU2，4K ctx，~40 tok/s，视觉可用，3h 空闲释放）",
+        "gpus": [
+          2
+        ],
+        "type": "elastic",
+        "owner_role": "全体按需（指定卡 TP1；GPU1 liuchang 严禁）",
+        "status": "on-demand（请求时卡空闲即拉起；卡被占返回不可用）",
+        "note": "vLLM 0.19 INT4 TP1 固定卡槽；按需拉起 / 3h 空闲自动释放"
+      },
+      {
+        "id": "int4-tp1-g3",
+        "aliases": [
+          "qwen3.8-27b-int4-tp1-g3"
+        ],
+        "host": "zhuhai",
+        "port": 8062,
+        "tunnel_port": 18062,
+        "model": "Qwen3.8-27B INT4 TP1 GPU3（vLLM AWQ-INT4 弹性单卡 GPU3，4K ctx，~40 tok/s，视觉可用，3h 空闲释放）",
+        "gpus": [
+          3
+        ],
+        "type": "elastic",
+        "owner_role": "全体按需（指定卡 TP1；GPU1 liuchang 严禁）",
+        "status": "on-demand（请求时卡空闲即拉起；卡被占返回不可用）",
+        "note": "vLLM 0.19 INT4 TP1 固定卡槽；按需拉起 / 3h 空闲自动释放"
+      },
+      {
+        "id": "int4-tp1-g4",
+        "aliases": [
+          "qwen3.8-27b-int4-tp1-g4"
+        ],
+        "host": "zhuhai",
+        "port": 8063,
+        "tunnel_port": 18063,
+        "model": "Qwen3.8-27B INT4 TP1 GPU4（vLLM AWQ-INT4 弹性单卡 GPU4，4K ctx，~40 tok/s，视觉可用，3h 空闲释放）",
+        "gpus": [
+          4
+        ],
+        "type": "elastic",
+        "owner_role": "全体按需（指定卡 TP1；GPU1 liuchang 严禁）",
+        "status": "on-demand（请求时卡空闲即拉起；卡被占返回不可用）",
+        "note": "vLLM 0.19 INT4 TP1 固定卡槽；按需拉起 / 3h 空闲自动释放"
+      },
+      {
+        "id": "int4-tp1-g5",
+        "aliases": [
+          "qwen3.8-27b-int4-tp1-g5"
+        ],
+        "host": "zhuhai",
+        "port": 8064,
+        "tunnel_port": 18064,
+        "model": "Qwen3.8-27B INT4 TP1 GPU5（vLLM AWQ-INT4 弹性单卡 GPU5，4K ctx，~40 tok/s，视觉可用，3h 空闲释放）",
+        "gpus": [
+          5
+        ],
+        "type": "elastic",
+        "owner_role": "全体按需（指定卡 TP1；GPU1 liuchang 严禁）",
+        "status": "on-demand（请求时卡空闲即拉起；卡被占返回不可用）",
+        "note": "vLLM 0.19 INT4 TP1 固定卡槽；按需拉起 / 3h 空闲自动释放"
+      },
+      {
+        "id": "int4-tp1-g6",
+        "aliases": [
+          "qwen3.8-27b-int4-tp1-g6"
+        ],
+        "host": "zhuhai",
+        "port": 8065,
+        "tunnel_port": 18065,
+        "model": "Qwen3.8-27B INT4 TP1 GPU6（vLLM AWQ-INT4 弹性单卡 GPU6，4K ctx，~40 tok/s，视觉可用，3h 空闲释放）",
+        "gpus": [
+          6
+        ],
+        "type": "elastic",
+        "owner_role": "全体按需（指定卡 TP1；GPU1 liuchang 严禁）",
+        "status": "on-demand（请求时卡空闲即拉起；卡被占返回不可用）",
+        "note": "vLLM 0.19 INT4 TP1 固定卡槽；按需拉起 / 3h 空闲自动释放"
+      },
+      {
+        "id": "int4-tp1-g7",
+        "aliases": [
+          "qwen3.8-27b-int4-tp1-g7"
+        ],
+        "host": "zhuhai",
+        "port": 8066,
+        "tunnel_port": 18066,
+        "model": "Qwen3.8-27B INT4 TP1 GPU7（vLLM AWQ-INT4 弹性单卡 GPU7，4K ctx，~40 tok/s，视觉可用，3h 空闲释放）",
+        "gpus": [
+          7
+        ],
+        "type": "elastic",
+        "owner_role": "全体按需（指定卡 TP1；GPU1 liuchang 严禁）",
+        "status": "on-demand（请求时卡空闲即拉起；卡被占返回不可用）",
+        "note": "vLLM 0.19 INT4 TP1 固定卡槽；按需拉起 / 3h 空闲自动释放"
+      },
+      {
+        "id": "int4-tp1-g8",
+        "aliases": [
+          "qwen3.8-27b-int4-tp1-g8"
+        ],
+        "host": "zhuhai",
+        "port": 8067,
+        "tunnel_port": 18067,
+        "model": "Qwen3.8-27B INT4 TP1 GPU8（vLLM AWQ-INT4 弹性单卡 GPU8，4K ctx，~40 tok/s，视觉可用，3h 空闲释放）",
+        "gpus": [
+          8
+        ],
+        "type": "elastic",
+        "owner_role": "全体按需（指定卡 TP1；GPU1 liuchang 严禁）",
+        "status": "on-demand（请求时卡空闲即拉起；卡被占返回不可用）",
+        "note": "vLLM 0.19 INT4 TP1 固定卡槽；按需拉起 / 3h 空闲自动释放"
+      },
+      {
+        "id": "int4-tp1-g9",
+        "aliases": [
+          "qwen3.8-27b-int4-tp1-g9"
+        ],
+        "host": "zhuhai",
+        "port": 8068,
+        "tunnel_port": 18068,
+        "model": "Qwen3.8-27B INT4 TP1 GPU9（vLLM AWQ-INT4 弹性单卡 GPU9，4K ctx，~40 tok/s，视觉可用，3h 空闲释放）",
+        "gpus": [
+          9
+        ],
+        "type": "elastic",
+        "owner_role": "全体按需（指定卡 TP1；GPU1 liuchang 严禁）",
+        "status": "on-demand（请求时卡空闲即拉起；卡被占返回不可用）",
+        "note": "vLLM 0.19 INT4 TP1 固定卡槽；按需拉起 / 3h 空闲自动释放"
+      },
+      {
+        "id": "vl-8b",
+        "aliases": [
+          "qwen3-vl-8b"
+        ],
+        "host": "zhuhai",
+        "port": 8000,
+        "model": "qwen3-vl-8b（vLLM，视觉）",
+        "gpus": [
+          9
+        ],
+        "type": "resident",
+        "owner_role": "共享（字幕员/宣传员/算法开发者视觉任务）；settings.json visionModel 默认",
+        "status": "down（2026-08-26 02:00 运维复核：GPU9 已空闲——运维清理弹性 8029 后释放；VL 可随时启动 restore_vl_8000.sh）",
+        "note": "GPU9 为 VL 保留卡：现空闲可用；弹性实例会自动避开（占用时 GPU_BUSY 防冲突）"
+      },
+      {
+        "id": "bf16-8001",
+        "aliases": [
+          "qwen3.8-27b-zhuhai"
+        ],
+        "host": "zhuhai",
+        "port": 8001,
+        "tunnel_port": 18001,
+        "model": "Qwen3.8-27B BF16（vLLM TP=4，历史配置）",
+        "gpus": null,
+        "type": "stopped",
+        "owner_role": "无（已停用）",
+        "status": "stopped（2026-08-25 停，释放 GPU0-4）",
+        "note": "⚠️ 调研员（signL9）已于 2026-08-26 02:00 由运维切换至 q4-a-tp2（qwen3.8-27b-q4-tp2），断链已解除"
+      },
+      {
+        "id": "edu-coder",
+        "aliases": [
+          "Qwen3.6-27B-Coder"
+        ],
+        "host": "edu（59.64.38.5:9000）",
+        "port": 9000,
+        "model": "Qwen3.6-27B-Coder（Thinking+Vision）",
+        "gpus": null,
+        "type": "remote",
+        "owner_role": "按需",
+        "status": "remote（不在 zhuhai 卡分配范围）"
+      }
+    ]
+  },
+  "roles": {
+    "SignL3": {
+      "id": "SignL3",
+      "name": "主管人",
+      "window": "SignL3-304",
+      "cli": "qwen",
+      "duty": "统筹/委派/dashboard/公共约束/人工介入队列",
+      "line": "model",
+      "line2": "repo",
+      "model": "qwen3.8-27b-int4-tp2-g29",
+      "local_service": "int4-tp2-g29",
+      "effort": "xhigh"
+    },
+    "signL2": {
+      "id": "signL2",
+      "name": "视频负责人",
+      "window": "signL2-294",
+      "cli": "qwen",
+      "duty": "wan 转绘生成 + 树模型复测",
+      "line": "wan",
+      "model": "qwen3.8-27b-int4-tp2-g34",
+      "local_service": "int4-tp2-g34",
+      "effort": "xhigh"
+    },
+    "signL4": {
+      "id": "signL4",
+      "name": "语义动画制作者",
+      "window": "signL4-overlay",
+      "cli": "qwen",
+      "duty": "overlay 语义标注动画制作",
+      "line": "overlay",
+      "model": "qwen3.8-27b-int4-tp2-g56",
+      "local_service": "int4-tp2-g56",
+      "effort": "xhigh"
+    },
+    "signL5": {
+      "id": "signL5",
+      "name": "算法开发者",
+      "window": "signL5-algo",
+      "cli": "qwen",
+      "duty": "数据增强/算法开发/部署",
+      "line": "algo",
+      "model": "qwen3.8-27b-int4-tp2-g34",
+      "local_service": "int4-tp2-g34",
+      "effort": "xhigh"
+    },
+    "signL6": {
+      "id": "signL6",
+      "name": "字幕员",
+      "window": "signL6-subtitle",
+      "cli": "codex",
+      "duty": "视频中英双语字幕制作",
+      "line": "subtitle",
+      "model": "qwen3.8-27b-int4-tp2-g34",
+      "local_service": "int4-tp2-g34",
+      "effort": "xhigh"
+    },
+    "signL7": {
+      "id": "signL7",
+      "name": "宣传员",
+      "window": "signL7-promoter",
+      "cli": "qwen",
+      "duty": "项目介绍面板制作（中英双语 + VL 美化）",
+      "line": "promo",
+      "model": "qwen3.8-27b-int4-tp2-g34",
+      "local_service": "int4-tp2-g34",
+      "effort": "xhigh"
+    },
+    "signL8": {
+      "id": "signL8",
+      "name": "运维",
+      "window": "signL8-resource",
+      "cli": "qwen",
+      "duty": "外部资源/API 测试与接入 + 环境运维（代理/模型切换、settings 维护、本地模型服务协调）",
+      "line": "resource",
+      "model": "qwen3.8-27b-int4-tp2-g78",
+      "local_service": "int4-tp2-g78",
+      "effort": "xhigh"
+    },
+    "signL9": {
+      "id": "signL9",
+      "name": "调研员",
+      "window": "signL9-research",
+      "cli": "qwen",
+      "duty": "网络调研/材料搜集/问题问答/来源核验",
+      "line": "research",
+      "model": "qwen3.8-27b-int4-tp2-g34",
+      "local_service": "int4-tp2-g34",
+      "effort": "xhigh"
+    },
+    "signL10": {
+      "id": "signL10",
+      "name": "本地A",
+      "window": "signL10-local-model-eval",
+      "cli": "qwen",
+      "duty": "本地 Qwen3.8-27B 实际工作评测（编码/长文档/视觉）与可用性结论",
+      "line": "model",
+      "model": "qwen3.8-27b-int4-tp2-g34",
+      "local_service": "int4-tp2-g34",
+      "effort": "high"
+    },
+    "signL11": {
+      "id": "signL11",
+      "name": "本地B",
+      "window": "signL11-local-b",
+      "cli": "qwen",
+      "duty": "本地模型工作会话（专属双卡 8017 GPU7+8，Owner 直接使用）",
+      "line": "model",
+      "model": "qwen3.8-27b-int4-tp2-g56",
+      "local_service": "int4-tp2-g56",
+      "effort": "high"
+    }
+  }
+}
