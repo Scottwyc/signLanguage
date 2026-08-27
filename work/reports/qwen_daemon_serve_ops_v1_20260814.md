@@ -576,6 +576,31 @@ VS Code Server（.vscode-server/cli/servers/Stable-*，运行 9h+）
 
 ---
 
+## 3.15 根治：files.watcherExclude 解决 VS Code inotify 泄漏（2026-08-28）
+
+### 追加根因（3.14 的深化）
+
+- VS Code Server 的 inotify 泄漏是**启动即爆**（非慢速累积）：7 分钟内即 56191 个——它递归 watch 打开的巨型工作区（/data/WYC 达 **667GB**，含 data/ 视频、模型文件等）
+- VS Code Remote 有**自动重连机制**：kill Server 后客户端自动重连并拉起新 Server（用户无需 reload 也"看似正常"），但新 Server 复用旧配置 → 再次泄漏
+
+### 根治方案（files.watcherExclude）
+
+Machine settings（`/home/wuyangcheng/.vscode-server/data/Machine/settings.json`，备份 .bak_20260828_watcherexclude）注入 19 个排除模式：
+`**/data/**`、`**/work/logs/**`、`**/work/generated/**`、`**/work/worklog/**`、`**/references/**`、`**/.qwen/**`、`**/.codex/**`、`**/.team/**`、`**/.git/**`、`**/node_modules/*/**`、`**/dist/**`、`**/build/**`、`**/__pycache__/**`、`**/*.log`、`**/*.npz`、`**/*.pt`、`**/*.onnx`、`**/*.mp4`
+
+### 验证（用户 reload window 后）
+
+- 新 VS Code Server inotify watch：**56191 → 14683**（系统上限 65536 的 86% → **22%**）
+- 总 inotify：65536（满）→ 24028
+- **根治有效**：不再有耗尽风险；残余 1.5 万来自扩展/未排除目录，安全余量大，vscode_server_watchdog（RESTART=55000）继续兜底
+
+### 备注
+
+- 若后续想进一步收紧：再排除工作区下其他大目录（如 diffusion-searcher/data 等），或改用 polling watcher（`files.watcherPolling`）低频轮询
+- 生效条件：VS Code reload window / 重连 Remote 后新 Server 读取配置
+
+---
+
 ## 4. Web Shell 与 session 生命周期（易踩坑点）
 
 1. **SPA fallback 仅对 HTML 请求生效**：`/session/<id>` 直接 curl（不带 `Accept: text/html`）返回 404 是正常现象，不代表浏览器打不开；浏览器（带 HTML Accept）会拿到 index.html 并正常渲染。检查时务必带 `-H "Accept: text/html"`。
@@ -660,6 +685,7 @@ VS Code Server（.vscode-server/cli/servers/Stable-*，运行 9h+）
 | v1.15 | 2026-08-27 22:10 | 新增 §3.12 看板三次卡死（VS Code 69 条 + daemon 自连累积 85 条）+ **连接数 watchdog 落地**（daemon_conn_watchdog_v1.py：WARN=120 微信预警 / RESTART=192 自动 v3 重启 / 冷却 30min）+ SSE 代理合并缓冲（8KB/50ms 批量 flush，根治转发系统调用风暴）+ faulthandler 栈定位；观察项：daemon 内部连接池缓慢累积（watchdog 兜底） |
 | v1.16 | 2026-08-28 07:30 | 新增 §3.13 实时抓取机制鲁棒性改造（stale-while-revalidate）：gpu_live/host_resources/local_services 从「TTL 过期同步 SSH 阻塞」改为「返回旧缓存+stale 标记+后台刷新」——接口有缓存后永远 <10ms，SSH 慢/失败不再卡看板/清空面板；验证 0.00s+stale=True |
 | v1.17 | 2026-08-28 08:10 | 新增 §3.14 VS Code Server inotify 泄漏拖垮系统（本地B 卡死真凶）：inotify 56193 耗尽 → systemd 无法建 watch → 代理崩溃循环 → 本地模型全 503；重启 VS Code Server + 恢复代理 + 新增 vscode_server_watchdog_v1.py（WARN=40000/RESTART=55000 自动重启/冷却 6h）；VS Code Server 重启 vs Remote 重连关系；附发现 g29 端口配置被误改 8050（已修复） |
+| v1.18 | 2026-08-28 08:30 | 新增 §3.15 files.watcherExclude 根治 VS Code inotify 泄漏：追加根因（启动即爆、递归 watch 667GB 工作区、Remote 自动重连复用旧配置）；Machine settings 注入 19 个排除模式；验证 reload 后 inotify 56191→14683（86%→22%）根治有效；残余安全 + watchdog 兜底；备注后续可收紧（watcherPolling/更多排除） |
 | v1.5 | 2026-08-14 11:05 | GitHub channel 停用，切换 WeChat channel：§2.4 更新为 weixin 配置/扫码登录/连接验证（仅纯文本、仅 DM、会话过期 errcode -14 需重扫） |
 | v1.6 | 2026-08-14 11:15 | §2.4 补 pairing 配对流程（senderPolicy=pairing 的配对码批准；`qwen channel pairing` 需 `--cwd` daemon workspace、不支持 --daemon-url/--token） |
 | v1.7 | 2026-08-14 11:20 | §2.4 补 agent 权限边界安全说明（workspace=/data/WYC/signLanguage、agent=wuyangcheng 完整用户权限、sessionScope=user 隔离、收紧建议） |
