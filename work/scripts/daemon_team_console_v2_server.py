@@ -615,21 +615,22 @@ class V2State:
         ports = self._elastic_ports_from_topology()
         result: dict[str, str] = {}
         if ports:
-            expr = " ".join(ports)
-            cmd = f"for p in {expr}; do (echo > /dev/tcp/127.0.0.1/$p) >/dev/null 2>&1 && echo $p UP || echo $p DOWN; done"
-            try:
-                proc = subprocess.run(
-                    ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=4",
-                     "-o", "StrictHostKeyChecking=accept-new", GPU_HOST, cmd],
-                    capture_output=True, text=True, timeout=GPU_SSH_TIMEOUT,
-                )
-                if proc.returncode == 0:
-                    for line in proc.stdout.splitlines():
-                        parts = line.split()
-                        if len(parts) == 2 and parts[0].isdigit():
-                            result[parts[0]] = parts[1]
-            except (OSError, subprocess.TimeoutExpired):
-                pass
+            # [20260827] 改用本机 SSH 隧道探测（127.0.0.1:180xx → zhuhai 80xx）：
+            # 原实现每次 SSH zhuhai 执行 /dev/tcp 探测（约 2-4s/次），前端轮询
+            # 高频触发导致 SSH 线程堆积 + 看板接口超时/100% CPU。隧道在本机常开，
+            # 本地 health 探测毫秒级，且不占用 zhuhai sshd 连接。
+            for p in ports:
+                if not p.isdigit():
+                    continue
+                tunnel = 18000 + int(p)
+                up = False
+                try:
+                    with urllib.request.urlopen(
+                            f"http://127.0.0.1:{tunnel}/health", timeout=1.5) as r:
+                        up = r.status == 200
+                except (urllib.error.URLError, urllib.error.HTTPError, OSError):
+                    up = False
+                result[p] = "UP" if up else "DOWN"
         with self._lock:
             self._elastic_cache = result
             self._elastic_cache_ts = time.time()

@@ -436,6 +436,38 @@ v2 只能恢复模型映射；重启仍会**打断成员正在进行的任务**�
 
 ---
 
+## 3.11 事故与修复：2026-08-27 21:00 看板二次卡死（SSH 探测阻塞 + VS Code SSE 连接累积）
+
+### 症状
+
+- 8466 看板再次全接口变慢/超时（messages 3.85s、status 2.28s、host-resources 4.32s、**services/health 与 gpu-live 8s 超时**）；8466 进程 100% CPU
+- 4194 ESTAB 连接涨至 **104**（正常 20-30），其中 **VS Code Server（PID 3139487）持有 42 条**（端口转发器为打开过的会话面板保留 SSE/TCP 连接）
+
+### 根因（双因素）
+
+1. **8466 `_active_elastic_services` 每次 SSH zhuhai 探测（2-4s/次）**：前端高频轮询触发多个并发 SSH → SSH 线程堆积 → services/health、gpu-live 接口超时 → 看板卡死。SSH 本身正常（实测 2.8s）但叠加高频轮询即打爆
+2. **VS Code 内置浏览器端口转发器不释放连接**：webview 关闭/刷新面板后，转发器到 daemon 的 SSE/TCP 连接可能残留（TCP 半开）；`writer-idle-timeout-ms`（300000）只回收 daemon 侧**写侧空闲**的 SSE 流——转发器持续心跳/重放（lastEventId）时永不触发，半开连接残留到 TCP keepalive（~2h）才清。104 连接中仅 51 条是活跃 SSE 流，其余为半开残留
+
+### 处置
+
+1. **4194 v3 重启**（清空 104 连接 → 28；7 个 working 会话自动收到「继续完成」）
+2. **`_active_elastic_services` 改为本机 SSH 隧道探测**（127.0.0.1:1805x/health，毫秒级）——不再 SSH zhuhai，消除 SSH 阻塞与 sshd 连接压力（备份 .bak_20260827_elastic_tunnel）
+
+### 验证
+
+- 8466 CPU 100%→**0%**；gpu-live 超时→0.96s、messages 0.08s、全部接口恢复
+- 4194 连接 104→28
+
+### 预防
+
+- **看板侧**：弹性实例活跃探测一律走本机隧道（180xx），不 SSH；此类探测全部用短 TTL 缓存
+- **客户端侧（VS Code 连接累积的根本缓解）**：
+  - 推荐：SSH 隧道 + 外部浏览器访问看板/4194（`ssh -L 8466:127.0.0.1:8466 -L 4194:127.0.0.1:4194 <host>`，关页即断零残留）
+  - 或：VS Code 内置浏览器只保持 1-2 个面板，用完即关
+  - 服务端仅能缓解（writer-idle-timeout 只回收写侧空闲流；TCP 半开连接靠系统 keepalive 清理）
+
+---
+
 ## 4. Web Shell 与 session 生命周期（易踩坑点）
 
 1. **SPA fallback 仅对 HTML 请求生效**：`/session/<id>` 直接 curl（不带 `Accept: text/html`）返回 404 是正常现象，不代表浏览器打不开；浏览器（带 HTML Accept）会拿到 index.html 并正常渲染。检查时务必带 `-H "Accept: text/html"`。
@@ -516,6 +548,7 @@ v2 只能恢复模型映射；重启仍会**打断成员正在进行的任务**�
 | v1.11 | 2026-08-27 18:20 | 新增 §3.8 事故记录（SSE 连接泄漏第三次复发 218/256 + 专项调研：游离流 87% 不回收、泄漏源 VS Code 转发、`--writer-idle-timeout-ms` 现成参数被漏用）+ 根治方案 A 落地（restart_daemon_4194_v2.sh：lazy 会话先 load + writer-idle-timeout 300000，实跑 12/12 恢复）；§7 补 v2 脚本与调研报告 |
 | v1.12 | 2026-08-27 18:40 | 新增 §3.9 方案（重启保持工作连续性 v3：捕捉工作状态/模型/approval → 恢复 → 继续完成 → 验证，测试实例 4198 全流程验证通过）；§7 补 restart_daemon_4194_v3.sh；成员通知规则（重启必须调 v3 脚本）；skill 固化（framework/daemon-restart-continuity + agent-team §8） |
 | v1.13 | 2026-08-27 19:40 | 新增 §3.10 晚间批量修复（3.10.1 看板乱跳：4.5GB inbox/events 归档 + `_tail_lines` 尾部倒读 + 清理重复 v1 helper + 残留 strace；3.10.2 position 234 复发：透传修复未加载 + `[DONE]` 补 `\n\n`，代理重启生效；3.10.3 watchdog 压缩后补发「继续」；3.10.4 GPU0+2→GPU2+9 迁移 g29 全链；3.10.5 遗留：8466 SSE 代理负载、禁用 start_daemon_team_v2.sh restart 4194）；§7 补 console/watchdog 备份与归档目录 |
+| v1.14 | 2026-08-27 21:10 | 新增 §3.11 看板二次卡死（`_active_elastic_services` SSH 探测阻塞 + VS Code 转发器 SSE 连接累积 42 条/总量 104）：SSH→本机隧道探测修复 + 4194 v3 重启；VS Code 连接累积机制详解（writer-idle-timeout 只回收写侧空闲流、TCP 半开靠 keepalive）；客户端侧缓解（SSH 隧道+外部浏览器 / 控面板数）；成员↔模型映射自动同步（sync_team_topology_models_v1.py 挂 refresher） |
 | v1.5 | 2026-08-14 11:05 | GitHub channel 停用，切换 WeChat channel：§2.4 更新为 weixin 配置/扫码登录/连接验证（仅纯文本、仅 DM、会话过期 errcode -14 需重扫） |
 | v1.6 | 2026-08-14 11:15 | §2.4 补 pairing 配对流程（senderPolicy=pairing 的配对码批准；`qwen channel pairing` 需 `--cwd` daemon workspace、不支持 --daemon-url/--token） |
 | v1.7 | 2026-08-14 11:20 | §2.4 补 agent 权限边界安全说明（workspace=/data/WYC/signLanguage、agent=wuyangcheng 完整用户权限、sessionScope=user 隔离、收紧建议） |
