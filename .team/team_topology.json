@@ -3,7 +3,7 @@
   "description": "手语团队拓扑：用稳定 id（signL2/signL4/...）指代成员，window 为当前 tmux 窗口名（可能变动，只改这里）。所有脚本从本文件读取窗口名/职责，不硬编码。local_model_services 为本地模型服务注册表（主管+运维共同维护，2026-08-26 新增，见 project_constraints.md §14）。",
   "local_model_services": {
     "_note": "本地模型服务注册表。统一入口：nature 综合代理 127.0.0.1:11435 → SSH 隧道 → zhuhai（172.28.17.71:7712）。禁止绕过 11435 直连 zhuhai 端口。服务变更（启停/换卡/换模型）须主管协调 + 运维执行，并在 24h 内更新本注册表。",
-    "_updated_at": "2026-08-27T19:35+08:00",
+    "_updated_at": "2026-08-28T07:55+08:00",
     "_inventory_source": "2026-08-27 09:00 运维重构：vLLM INT4 弹性池（4×TP2 固定卡对 + TP1 自动找卡）取代 llama Q4 全部服务；llama 退场、vLLM 常驻三级移除；19:30 迁移：原 g02（GPU0+2）→ g29（GPU2+9），GPU0 释放",
     "services": [
       {
@@ -12,8 +12,8 @@
           "qwen3.8-27b-int4-tp2-g29"
         ],
         "host": "zhuhai",
-        "port": 8054,
-        "tunnel_port": 18054,
+        "port": 8050,
+        "tunnel_port": 18050,
         "model": "Qwen3.8-27B INT4 TP2 GPU2+9（vLLM AWQ-INT4 弹性 TP2 GPU2+9，128K ctx，~56 tok/s，视觉可用，3h 空闲释放）",
         "gpus": [
           2,
@@ -312,8 +312,8 @@
       "cli": "qwen",
       "duty": "wan 转绘生成 + 树模型复测",
       "line": "wan",
-      "model": "qwen3.8-27b-int4-tp2-g34",
-      "local_service": "int4-tp2-g34",
+      "model": "qwen3.8-27b-int4-tp2-g56",
+      "local_service": "int4-tp2-g56",
       "effort": "xhigh"
     },
     "signL4": {
@@ -345,8 +345,8 @@
       "cli": "codex",
       "duty": "视频中英双语字幕制作",
       "line": "subtitle",
-      "model": "qwen3.8-27b-int4-tp2-g34",
-      "local_service": "int4-tp2-g34",
+      "model": "deepseek-v4-flash",
+      "local_service": null,
       "effort": "xhigh"
     },
     "signL7": {
@@ -356,8 +356,8 @@
       "cli": "qwen",
       "duty": "项目介绍面板制作（中英双语 + VL 美化）",
       "line": "promo",
-      "model": "qwen3.8-27b-int4-tp2-g34",
-      "local_service": "int4-tp2-g34",
+      "model": "deepseek-v4-flash",
+      "local_service": null,
       "effort": "xhigh"
     },
     "signL8": {
@@ -378,8 +378,8 @@
       "cli": "qwen",
       "duty": "网络调研/材料搜集/问题问答/来源核验",
       "line": "research",
-      "model": "qwen3.8-27b-int4-tp2-g34",
-      "local_service": "int4-tp2-g34",
+      "model": "qwen3.8-27b-int4-tp2-g78",
+      "local_service": "int4-tp2-g78",
       "effort": "xhigh"
     },
     "signL10": {
@@ -403,6 +403,18 @@
       "model": "qwen3.8-27b-int4-tp2-g56",
       "local_service": "int4-tp2-g56",
       "effort": "high"
+    },
+    "advisor": {
+      "id": "advisor",
+      "name": "顾问",
+      "window": "advisor-main",
+      "cli": "qwen",
+      "duty": "技术顾问：daemon/看板/代理/本地模型运维支持 + 团队协调（与 Jarvis/微信 channel 互动）",
+      "line": "ops",
+      "model": "deepseek-v4-flash",
+      "local_service": null,
+      "effort": "high"
     }
-  }
+  },
+  "_updated_at": "2026-08-28T09:00+08:00"
 }
