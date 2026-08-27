@@ -11,10 +11,10 @@ import datetime as dt
 import hashlib
 import json
 import os
+import threading
 import re
 import shlex
 import subprocess
-import threading
 import time
 import uuid
 from collections import deque
@@ -56,6 +56,11 @@ USAGE_CACHE_TTL = 30        # api-usage 端点内存缓存秒数（daemon 侧 da
 # ---------------- 工作状态判定常量 ----------------
 WORK_STATE_CACHE_TTL = 10.0     # work_states 判定结果内存缓存秒数（避免前端轮询反复压 daemon）
 STALL_THRESHOLD_SECONDS = 300   # running prompt 排队超过该秒数仍未完成 → 判定 stalled（本地模型 prefill 通常 < 120s）
+
+# ---------------- SSE 实时活动监控常量（方案D：真实活动判定工作状态） ----------------
+SSE_CHUNK_FRESH_SECONDS = 60.0  # chunk 事件（thought/message）距今 < 该秒数 → 判定 generating（正在生成）
+SSE_RECONNECT_DELAY = 5.0       # SSE 断连后重连等待秒数
+SSE_MONITOR_SCAN_INTERVAL = 10.0  # 监控主循环扫描成员/补线程的周期秒数
 
 # ---------------- 实时 GPU 抓取常量 ----------------
 GPU_LIVE_CACHE_TTL = 5.0        # gpu_live 结果内存缓存秒数（前端 5s 轮询，需保持 ≤5s 才准确实时）
@@ -219,11 +224,26 @@ class V2State:
         # 工作状态判定的短 TTL 内存缓存
         self._work_state_cache: Optional[dict[str, Any]] = None
         self._work_state_cache_ts = 0.0
+        # SSE 实时活动监控（方案D）：每个成员 session 一个监控线程，跟踪
+        # last_event_ts / last_chunk_ts / open_tools，用于按真实活动判定工作状态。
+        # 结构：sid -> {"last_event_ts": float, "last_chunk_ts": float,
+        #               "last_event_kind": str, "open_tools": {toolCallId: {...}},
+        #               "sse_connected": bool, "sse_error": str}
+        self._sse_activity: dict[str, dict[str, Any]] = {}
+        self._sse_lock = threading.Lock()
+        self._sse_monitor_threads: dict[str, threading.Thread] = {}
+        self._sse_monitor_started = False
         # 实时 GPU 抓取的短 TTL 内存缓存
         self._gpu_live_cache: Optional[dict[str, Any]] = None
         self._gpu_live_cache_ts = 0.0
+        self._gpu_live_refreshing = False          # stale-while-revalidate 后台刷新标记
         self._host_res_cache: Optional[dict[str, Any]] = None
         self._host_res_cache_ts = 0.0
+        self._host_res_refreshing = False
+        # local_services（services/health）stale-while-revalidate 缓存
+        self._local_svc_cache: Optional[dict[str, Any]] = None
+        self._local_svc_cache_ts = 0.0
+        self._local_svc_refreshing = False
         # 弹性实例端口探测的短 TTL 内存缓存
         self._elastic_cache: Optional[dict[str, str]] = None
         self._elastic_cache_ts = 0.0
@@ -671,11 +691,11 @@ class V2State:
             self._elastic_rates_cache_ts = time.time()
         return result
 
-    def local_services(self) -> dict[str, Any]:
-        """本地模型服务健康与速率（来自巡检 local_services_health_state.json）
+    def _fetch_local_services(self) -> dict[str, Any]:
+        """local_services 数据抓取主体（读巡检文件 + 活跃弹性实例 + 速率），由缓存层调用。
 
         巡检覆盖弹性槽（8051-8054）+ VL 8000；这里实时补充"当前活跃的弹性实例"
-        （SSH 探测正在监听的端口，TTL 5s），并把 rates 键规范化为
+        （本机隧道探测正在监听的端口，TTL 5s），并把 rates 键规范化为
         "端口(服务id)"（如 "8054(int4-tp2-g29)"），与 topology/8096 对齐。
         DOWN 槽位不补卡（前端只显示 UP，属既定要求：按需实例 DOWN 正常）。
         """
@@ -767,6 +787,17 @@ class V2State:
             "role_usage": role_usage,
             "updated_at": keys[-1] if keys else None,
         }
+
+    def local_services(self) -> dict[str, Any]:
+        """本地模型服务健康与速率（stale-while-revalidate 缓存，TTL 5s）。
+
+        数据来自巡检文件 + 活跃弹性实例探测；缓存过期时返回旧数据 + stale 标记
+        （后台刷新），隧道探测慢/失败不再阻塞接口（services/health 快速响应）。
+        """
+        return self._cached_swr(
+            "_local_svc_cache", "_local_svc_cache_ts", "_local_svc_refreshing",
+            GPU_LIVE_CACHE_TTL, self._fetch_local_services,
+        )
 
     def local_services_meta(self) -> dict[str, Any]:
         """本地模型服务元信息：svc_id -> {model, aliases, gpus, type, owner_role, status}
@@ -1029,14 +1060,18 @@ class V2State:
     # ---------------- 工作状态判定（区分 prefill 进行中 / 卡住） ----------------
 
     def work_states(self) -> dict[str, Any]:
-        """判定每个成员的 daemon 工作状态：prefilling / stalled / idle / error。
+        """判定每个成员的 daemon 工作状态：generating / tool_running / stalled / working / idle / error。
 
-        判定逻辑（基于 daemon status + pending-prompts）：
+        判定逻辑（方案D：基于 SSE 事件流的真实活动，而非仅排队时长）：
         - hasTurnError=true                       → error（turn 报错）
         - hasActivePrompt=false                   → idle（空闲）
-        - 有 running 的 pending prompt：
-            - queuedAt 距今超过 STALL_THRESHOLD_SECONDS → stalled（疑似卡住：排队超时未完成）
-            - 否则                                    → prefilling（prefill/生成进行中）
+        - 有 active prompt 且 SSE 已连接：
+            - chunk 事件（thought/message）距今 < SSE_CHUNK_FRESH_SECONDS → generating（正在生成）
+            - 有未完成的 tool_call（status pending/in_progress）          → tool_running（工具执行中，绝不判 stalled）
+            - 最近事件距今 > STALL_THRESHOLD_SECONDS                       → stalled（真卡住）
+            - 其余（近期有事件但非 chunk/工具）                            → working
+        - 有 active prompt 但 SSE 不可用（断连/异常）：
+            - 回退到排队时长/updatedAt 粗判，但不误报 stalled（按 working 处理）
         结果带短 TTL 缓存（WORK_STATE_CACHE_TTL），避免前端轮询反复压 daemon。
         """
         now = time.time()
@@ -1053,44 +1088,9 @@ class V2State:
                 detail = "无 session id"
             else:
                 try:
-                    st = self.http_get(f"/session/{quote(sid, safe='')}/status")
-                    has_active = bool(st.get("hasActivePrompt"))
-                    turn_error = bool(st.get("hasTurnError"))
-                    running_since: Optional[float] = None
-                    try:
-                        pp = self.http_get(f"/session/{quote(sid, safe='')}/pending-prompts")
-                        for p in (pp.get("pendingPrompts") if isinstance(pp, dict) else []) or []:
-                            if p.get("state") == "running" and p.get("queuedAt"):
-                                running_since = float(p["queuedAt"]) / 1000.0
-                    except Exception:
-                        pass
-                    if turn_error:
-                        state = "error"
-                        detail = "turn 报错"
-                    elif not has_active:
-                        state = "idle"
-                        detail = "空闲"
-                    elif running_since is not None:
-                        age = now - running_since
-                        if age > STALL_THRESHOLD_SECONDS:
-                            state = "stalled"
-                            detail = f"排队 {int(age)}s 未完成"
-                        else:
-                            state = "prefilling"
-                            detail = f"生成中 {int(max(age, 0))}s"
-                    else:
-                        # 有 active prompt 但 pending 信息缺失：按 updatedAt 新鲜度粗判
-                        stamp = self._parse_dt(st.get("updatedAt"))
-                        if stamp is not None:
-                            age = (dt.datetime.now(dt.timezone.utc) - stamp).total_seconds()
-                            state = "stalled" if age > STALL_THRESHOLD_SECONDS else "prefilling"
-                            detail = f"updatedAt {int(age)}s 前"
-                        else:
-                            state = "prefilling"
-                            detail = "active 状态"
+                    state, detail = self._compute_work_state(sid, now)
                 except Exception as exc:
-                    state = "error"
-                    detail = type(exc).__name__
+                    state, detail = "error", type(exc).__name__
             members.append({
                 "id": m.get("id") or m.get("role") or sid,
                 "role": m.get("role") or m.get("id"),
@@ -1108,13 +1108,7 @@ class V2State:
             state, detail = "unknown", ""
             if jid:
                 try:
-                    st = self.http_get(f"/session/{quote(jid, safe='')}/status")
-                    if bool(st.get("hasActivePrompt")):
-                        state, detail = "prefilling", "处理中"
-                    else:
-                        state, detail = "idle", "空闲"
-                    if bool(st.get("hasTurnError")):
-                        state, detail = "error", "turn 报错"
+                    state, detail = self._compute_work_state(jid, now)
                 except Exception as exc:
                     state, detail = "error", type(exc).__name__
             members.append({"id": "Jarvis", "role": "Jarvis", "session_id": jid,
@@ -1125,6 +1119,190 @@ class V2State:
             self._work_state_cache = result
             self._work_state_cache_ts = time.time()
         return result
+
+    def _compute_work_state(self, sid: str, now: float) -> tuple[str, str]:
+        """基于 daemon status + pending-prompts + SSE 真实活动，计算单个 session 的工作状态。
+
+        返回 (state, detail)。SSE 活动状态来自后台监控线程（_sse_activity）。
+        """
+        st = self.http_get(f"/session/{quote(sid, safe='')}/status")
+        has_active = bool(st.get("hasActivePrompt"))
+        turn_error = bool(st.get("hasTurnError"))
+        running_since: Optional[float] = None
+        try:
+            pp = self.http_get(f"/session/{quote(sid, safe='')}/pending-prompts")
+            for p in (pp.get("pendingPrompts") if isinstance(pp, dict) else []) or []:
+                if p.get("state") == "running" and p.get("queuedAt"):
+                    running_since = float(p["queuedAt"]) / 1000.0
+        except Exception:
+            pass
+        with self._sse_lock:
+            act = dict(self._sse_activity.get(sid) or self._sse_empty_activity())
+            open_tools = dict(act.get("open_tools") or {})
+        if turn_error:
+            return "error", "turn 报错"
+        if not has_active:
+            return "idle", "空闲"
+        if act.get("sse_connected"):
+            # 方案D：基于 SSE 真实活动判定（serverTimestamp 新鲜度，避免重放旧事件误判）
+            chunk_age = now - act.get("last_chunk_ts", 0.0)
+            event_age = now - act.get("last_event_ts", 0.0)
+            if act.get("last_chunk_ts", 0.0) > 0 and chunk_age <= SSE_CHUNK_FRESH_SECONDS:
+                return "generating", f"生成中 {int(max(chunk_age, 0))}s"
+            if open_tools:
+                latest = max(open_tools.values(), key=lambda t: t.get("ts", 0.0))
+                return "tool_running", f"{latest.get('toolName', 'tool')} 执行中"
+            if act.get("last_event_ts", 0.0) > 0 and event_age > STALL_THRESHOLD_SECONDS:
+                return "stalled", f"{int(event_age)}s 无事件"
+            return "working", "工作中"
+        # SSE 不可用：回退到排队时长/updatedAt 粗判，但不误报 stalled
+        if running_since is not None:
+            age = now - running_since
+            return "working", f"生成中 {int(max(age, 0))}s（SSE 不可用）"
+        stamp = self._parse_dt(st.get("updatedAt"))
+        if stamp is not None:
+            age = (dt.datetime.now(dt.timezone.utc) - stamp).total_seconds()
+            return "working", f"updatedAt {int(age)}s 前（SSE 不可用）"
+        return "working", "active 状态（SSE 不可用）"
+
+    # ---------------- SSE 实时活动监控（方案D：真实活动判定工作状态） ----------------
+
+    @staticmethod
+    def _sse_empty_activity() -> dict[str, Any]:
+        return {"last_event_ts": 0.0, "last_chunk_ts": 0.0,
+                "last_event_kind": "", "open_tools": {},
+                "sse_connected": False, "sse_error": ""}
+
+    def start_sse_activity_monitor(self) -> None:
+        """启动 SSE 活动监控守护线程（幂等）。在 main() 中调用一次。"""
+        with self._sse_lock:
+            if self._sse_monitor_started:
+                return
+            self._sse_monitor_started = True
+        threading.Thread(target=self._sse_monitor_loop, name="sse-activity-monitor", daemon=True).start()
+
+    def _sse_member_sids(self) -> list[str]:
+        """当前需要监控的 session id 列表（成员 + Jarvis）。"""
+        sids: list[str] = []
+        seen: set[str] = set()
+        try:
+            for m in self.members():
+                sid = m.get("daemon_session_id") or m.get("session_id")
+                if sid and sid not in seen:
+                    seen.add(sid); sids.append(sid)
+            for us in self.registry().get("unassigned_sessions") or []:
+                if not isinstance(us, dict):
+                    continue
+                if str(us.get("displayName") or "").lower() != "jarvis":
+                    continue
+                jid = us.get("sessionId") or ""
+                if jid and jid not in seen:
+                    seen.add(jid); sids.append(jid)
+        except Exception:
+            pass
+        return sids
+
+    def _sse_monitor_loop(self) -> None:
+        """主循环：为每个成员 session 确保有一个 SSE 监控线程在跑（断线自动补线程）。"""
+        while True:
+            try:
+                sids = self._sse_member_sids()
+                with self._sse_lock:
+                    for sid in sids:
+                        th = self._sse_monitor_threads.get(sid)
+                        if th is None or not th.is_alive():
+                            th = threading.Thread(target=self._sse_session_monitor, args=(sid,),
+                                                   name=f"sse-mon-{sid[:8]}", daemon=True)
+                            self._sse_monitor_threads[sid] = th
+                            th.start()
+            except Exception:
+                pass
+            time.sleep(SSE_MONITOR_SCAN_INTERVAL)
+
+    def _sse_session_monitor(self, sid: str) -> None:
+        """单个 session 的 SSE 长连接监控：持续读取 /events 事件流，更新活动状态。
+
+        断连后等待 SSE_RECONNECT_DELAY 秒自动重连；异常只记录 sse_error，不抛到主循环。
+        """
+        while True:
+            try:
+                resp = self.http_stream(f"/session/{quote(sid, safe='')}/events",
+                                        {"Accept": "text/event-stream"})
+                with self._sse_lock:
+                    self._sse_activity.setdefault(sid, self._sse_empty_activity())
+                    self._sse_activity[sid]["sse_connected"] = True
+                    self._sse_activity[sid]["sse_error"] = ""
+                try:
+                    buf = ""
+                    for raw in resp:
+                        if isinstance(raw, bytes):
+                            raw = raw.decode("utf-8", "replace")
+                        buf += raw
+                        # SSE 事件以换行分隔；逐行解析 data: 行（忽略 event:/注释行）
+                        while "\n" in buf:
+                            line, buf = buf.split("\n", 1)
+                            line = line.strip()
+                            if not line.startswith("data:"):
+                                continue
+                            payload = line[5:].strip()
+                            if not payload or payload == "[DONE]":
+                                continue
+                            try:
+                                ev = json.loads(payload)
+                            except ValueError:
+                                continue
+                            self._sse_record_event(sid, ev)
+                finally:
+                    try:
+                        resp.close()
+                    except Exception:
+                        pass
+                with self._sse_lock:
+                    if sid in self._sse_activity:
+                        self._sse_activity[sid]["sse_connected"] = False
+            except Exception as exc:
+                with self._sse_lock:
+                    self._sse_activity.setdefault(sid, self._sse_empty_activity())
+                    self._sse_activity[sid]["sse_connected"] = False
+                    self._sse_activity[sid]["sse_error"] = type(exc).__name__
+            time.sleep(SSE_RECONNECT_DELAY)
+
+    def _sse_record_event(self, sid: str, ev: dict[str, Any]) -> None:
+        """解析单个 SSE 事件，更新该 session 的活动状态。
+
+        事件结构：{"event": {"type": "session_update", "data": {"update": {
+        "sessionUpdate": "agent_thought_chunk|agent_message_chunk|tool_call|tool_call_update|...",
+        "toolCallId": "...", "status": "pending|in_progress|completed",
+        "_meta": {"toolName": "...", "serverTimestamp": ms}}}}}
+        新鲜度用 _meta.serverTimestamp 判定（避免重放的旧事件被误判为近期活动）。
+        """
+        inner = ev.get("event") if isinstance(ev.get("event"), dict) else ev
+        etype = inner.get("type") or ""
+        data = inner.get("data") or {}
+        update = data.get("update") or {}
+        kind = update.get("sessionUpdate") or ""
+        now = time.time()
+        meta = inner.get("_meta") or {}
+        ts_raw = meta.get("serverTimestamp")
+        try:
+            event_ts = float(ts_raw) / 1000.0 if ts_raw else now
+        except (TypeError, ValueError):
+            event_ts = now
+        with self._sse_lock:
+            act = self._sse_activity.setdefault(sid, self._sse_empty_activity())
+            act["last_event_ts"] = max(act["last_event_ts"], event_ts)
+            act["last_event_kind"] = kind or etype
+            if kind in ("agent_thought_chunk", "agent_message_chunk"):
+                act["last_chunk_ts"] = max(act["last_chunk_ts"], event_ts)
+            if kind in ("tool_call", "tool_call_update"):
+                tool_id = update.get("toolCallId") or ""
+                status = update.get("status") or ""
+                tool_name = (update.get("_meta") or {}).get("toolName") or update.get("title") or "tool"
+                if tool_id:
+                    if status in ("completed", "failed", "cancelled"):
+                        act["open_tools"].pop(tool_id, None)
+                    else:
+                        act["open_tools"][tool_id] = {"toolName": tool_name, "status": status, "ts": event_ts}
 
     # ---------------- 实时 GPU 抓取（SSH → nvidia-smi） ----------------
 
@@ -1194,20 +1372,51 @@ class V2State:
                     model = cached[0]
         return model
 
-    def gpu_live(self) -> dict[str, Any]:
-        """实时 GPU 状态 + 成员→模型→GPU 关联（带短 TTL 缓存）。
-
-        返回：
-        - gpus: [{index,name,util,used_mib}]（zhuhai 实时 nvidia-smi）
-        - members: [{role, model, gpus:[int], gpu_info:[{gpu,util,used_mib}]}]
-        - snapshot_error: SSH/解析失败时的错误信息
-        - updated_at
-        """
+    def _cached_swr(self, cache_attr: str, ts_attr: str, refreshing_attr: str,
+                    ttl: float, fetch, extra_stale: dict | None = None) -> dict:
+        """stale-while-revalidate：缓存新鲜→直接返回；过期→返回旧缓存 + 后台线程刷新；
+        无缓存→同步 fetch 并缓存。SSH/慢数据源不再阻塞接口（有缓存后接口永远快速返回，
+        慢源失败时保留旧数据并标记 stale，页面显示「数据陈旧」而非卡死/空白）。
+        线程安全：self._lock 保护缓存与刷新标记；同一时刻只允许一个刷新线程。"""
         now = time.time()
         with self._lock:
-            if (self._gpu_live_cache is not None
-                    and now - self._gpu_live_cache_ts < GPU_LIVE_CACHE_TTL):
-                return self._gpu_live_cache
+            cache = getattr(self, cache_attr)
+            ts = getattr(self, ts_attr, 0.0)
+            if cache is not None and now - ts < ttl:
+                return cache
+            has_cache = cache is not None
+            refreshing = getattr(self, refreshing_attr, False)
+            if has_cache:
+                if not refreshing:
+                    setattr(self, refreshing_attr, True)
+
+                    def _bg() -> None:
+                        try:
+                            data = fetch()
+                            with self._lock:
+                                setattr(self, cache_attr, data)
+                                setattr(self, ts_attr, time.time())
+                        except Exception:  # noqa: BLE001 后台刷新失败保留旧缓存
+                            pass
+                        finally:
+                            with self._lock:
+                                setattr(self, refreshing_attr, False)
+
+                    threading.Thread(target=_bg, daemon=True).start()
+                stale = dict(cache)
+                stale["stale"] = True
+                stale["stale_ts"] = now_iso()
+                if extra_stale:
+                    stale.update(extra_stale)
+                return stale
+        data = fetch()
+        with self._lock:
+            setattr(self, cache_attr, data)
+            setattr(self, ts_attr, time.time())
+        return data
+
+    def _fetch_gpu_live(self) -> dict[str, Any]:
+        """gpu_live 数据抓取主体（SSH nvidia-smi + 成员模型关联），由缓存层调用。"""
         gpus = self._gpu_snapshot_live()
         error = None
         if gpus and gpus[0].get("error"):
@@ -1244,29 +1453,30 @@ class V2State:
                 continue
             members.append(_member_gpu("Jarvis", us.get("sessionId") or ""))
             break
-        result = {
+        return {
             "gpus": gpus,
             "members": members,
             "snapshot_error": error,
             "updated_at": now_iso(),
         }
-        with self._lock:
-            self._gpu_live_cache = result
-            self._gpu_live_cache_ts = time.time()
-        return result
 
-    def host_resources(self) -> dict[str, Any]:
-        """zhuhai + 本机（nature）CPU 与内存总量使用率监控（带短 TTL 缓存）。
+    def gpu_live(self) -> dict[str, Any]:
+        """实时 GPU 状态 + 成员→模型→GPU 关联（stale-while-revalidate 缓存，TTL 5s）。
 
-        返回 {ok, hosts: [{name, source, cpu_pct, mem_pct, mem_total_gib, mem_used_gib,
-        mem_avail_gib, error?}], updated_at}；zhuhai 在前（SSH base64 传 python 脚本双采样），
-        本机在后（/proc 直接采样）。预警阈值（≤20% 绿 / >20% 红）由前端判定。
+        返回：
+        - gpus: [{index,name,util,used_mib}]（zhuhai 实时 nvidia-smi）
+        - members: [{role, model, gpus:[int], gpu_info:[{gpu,util,used_mib}]}]
+        - snapshot_error: SSH/解析失败时的错误信息
+        - stale / stale_ts: 缓存过期后台刷新中/刷新失败时为 True（前端可提示数据陈旧）
+        - updated_at
         """
-        now = time.time()
-        with self._lock:
-            if (self._host_res_cache is not None
-                    and now - self._host_res_cache_ts < GPU_LIVE_CACHE_TTL):
-                return self._host_res_cache
+        return self._cached_swr(
+            "_gpu_live_cache", "_gpu_live_cache_ts", "_gpu_live_refreshing",
+            GPU_LIVE_CACHE_TTL, self._fetch_gpu_live,
+        )
+
+    def _fetch_host_resources(self) -> dict[str, Any]:
+        """host_resources 数据抓取主体（SSH zhuhai 双采样 + 本机 /proc 采样），由缓存层调用。"""
         hosts: list[dict[str, Any]] = []
         # 1. zhuhai（SSH，base64 传输避免多层转义破坏多行脚本）
         zh = self._ssh_host_resources()
@@ -1326,11 +1536,20 @@ class V2State:
             local["ok"] = False
             local["error"] = str(exc)
         hosts.append(local)
-        result = {"ok": True, "hosts": hosts, "updated_at": now_iso()}
-        with self._lock:
-            self._host_res_cache = result
-            self._host_res_cache_ts = now
-        return result
+        return {"ok": True, "hosts": hosts, "updated_at": now_iso()}
+
+    def host_resources(self) -> dict[str, Any]:
+        """zhuhai + 本机（nature）CPU 与内存总量使用率监控（stale-while-revalidate 缓存）。
+
+        返回 {ok, hosts: [{name, source, cpu_pct, mem_pct, mem_total_gib, mem_used_gib,
+        mem_avail_gib, error?}], stale?, updated_at}；zhuhai 在前（SSH base64 传 python 脚本
+        双采样），本机在后（/proc 直接采样）。预警阈值（≤20% 绿 / >20% 红）由前端判定。
+        缓存过期时返回旧数据 + stale 标记（后台刷新），SSH 抖动不再阻塞/清空面板。
+        """
+        return self._cached_swr(
+            "_host_res_cache", "_host_res_cache_ts", "_host_res_refreshing",
+            GPU_LIVE_CACHE_TTL, self._fetch_host_resources,
+        )
 
     def _ssh_host_resources(self) -> dict[str, Any]:
         """SSH 到 zhuhai 抓 CPU/内存（/proc 双采样 + 用户 wuyangcheng 用量），失败返回 error 字段。"""
@@ -2230,7 +2449,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__); parser.add_argument("--host", default="127.0.0.1"); parser.add_argument("--port", type=int, default=8466); args = parser.parse_args()
     if args.host != "127.0.0.1":
         parser.error("v2 control service only permits --host 127.0.0.1")
-    Handler.state = V2State(); server = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
+    Handler.state = V2State(); Handler.state.start_sse_activity_monitor()  # 方案D：SSE 真实活动监控
+    server = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
     print(f"daemon team console v2 listening on http://{args.host}:{args.port}", flush=True); server.serve_forever()
 
 

@@ -493,6 +493,39 @@ v2 只能恢复模型映射；重启仍会**打断成员正在进行的任务**�
 
 ---
 
+## 3.13 鲁棒性改造：实时抓取机制 stale-while-revalidate（2026-08-28）
+
+### 薄弱点分析（实时抓取链路）
+
+8466 看板的核心实时接口（gpu_live / host_resources / services_health）都是**同步抓取**：
+TTL 缓存过期时在请求线程里同步执行 SSH zhuhai（nvidia-smi / CPU 双采样 / 隧道探测），
+每次 0.7-2.5s（SSH 慢时更久，失败时卡到超时）。前端高频轮询时：
+- SSH 慢/抖动 → 请求线程堆积 → 接口慢/超时 → 看板卡死（8-27 三次卡死的主因之一）
+- SSH 失败 → 接口返回空/error → GPU/资源面板清空（数据丢失，而非保留旧值）
+
+### 修复（console v2 改造，stale-while-revalidate）
+
+新增通用 `_cached_swr(cache, ts, refreshing, ttl, fetch)`：
+- 缓存新鲜 → 直接返回（<1ms）
+- 缓存过期 → **返回旧缓存 + `stale` 标记**，同时后台线程刷新（同一时刻仅一个刷新线程）
+- 无缓存（首次冷启动）→ 同步 fetch
+- 后台刷新失败 → 保留旧缓存（数据不消失）
+
+应用范围：`gpu_live` / `host_resources` / `local_services`（services/health）——全部 SSH/慢数据源
+接口。**有缓存后接口永远 <10ms 返回**，SSH 慢/失败只影响后台刷新，页面显示旧数据 + stale 提示。
+
+### 验证
+
+- 首次（冷启动）：gpu-live 0.71s / services-health 2.45s / host-resources 1.77s（SSH 实耗）
+- 缓存命中：**全部 0.00s**
+- TTL 过期：**全部 0.00-0.01s + stale=True**（后台刷新，不阻塞）
+
+### 备份
+
+`daemon_team_console_v2_server.py.bak_20260828_swr`
+
+---
+
 ## 4. Web Shell 与 session 生命周期（易踩坑点）
 
 1. **SPA fallback 仅对 HTML 请求生效**：`/session/<id>` 直接 curl（不带 `Accept: text/html`）返回 404 是正常现象，不代表浏览器打不开；浏览器（带 HTML Accept）会拿到 index.html 并正常渲染。检查时务必带 `-H "Accept: text/html"`。
@@ -575,6 +608,7 @@ v2 只能恢复模型映射；重启仍会**打断成员正在进行的任务**�
 | v1.13 | 2026-08-27 19:40 | 新增 §3.10 晚间批量修复（3.10.1 看板乱跳：4.5GB inbox/events 归档 + `_tail_lines` 尾部倒读 + 清理重复 v1 helper + 残留 strace；3.10.2 position 234 复发：透传修复未加载 + `[DONE]` 补 `\n\n`，代理重启生效；3.10.3 watchdog 压缩后补发「继续」；3.10.4 GPU0+2→GPU2+9 迁移 g29 全链；3.10.5 遗留：8466 SSE 代理负载、禁用 start_daemon_team_v2.sh restart 4194）；§7 补 console/watchdog 备份与归档目录 |
 | v1.14 | 2026-08-27 21:10 | 新增 §3.11 看板二次卡死（`_active_elastic_services` SSH 探测阻塞 + VS Code 转发器 SSE 连接累积 42 条/总量 104）：SSH→本机隧道探测修复 + 4194 v3 重启；VS Code 连接累积机制详解（writer-idle-timeout 只回收写侧空闲流、TCP 半开靠 keepalive）；客户端侧缓解（SSH 隧道+外部浏览器 / 控面板数）；成员↔模型映射自动同步（sync_team_topology_models_v1.py 挂 refresher） |
 | v1.15 | 2026-08-27 22:10 | 新增 §3.12 看板三次卡死（VS Code 69 条 + daemon 自连累积 85 条）+ **连接数 watchdog 落地**（daemon_conn_watchdog_v1.py：WARN=120 微信预警 / RESTART=192 自动 v3 重启 / 冷却 30min）+ SSE 代理合并缓冲（8KB/50ms 批量 flush，根治转发系统调用风暴）+ faulthandler 栈定位；观察项：daemon 内部连接池缓慢累积（watchdog 兜底） |
+| v1.16 | 2026-08-28 07:30 | 新增 §3.13 实时抓取机制鲁棒性改造（stale-while-revalidate）：gpu_live/host_resources/local_services 从「TTL 过期同步 SSH 阻塞」改为「返回旧缓存+stale 标记+后台刷新」——接口有缓存后永远 <10ms，SSH 慢/失败不再卡看板/清空面板；验证 0.00s+stale=True |
 | v1.5 | 2026-08-14 11:05 | GitHub channel 停用，切换 WeChat channel：§2.4 更新为 weixin 配置/扫码登录/连接验证（仅纯文本、仅 DM、会话过期 errcode -14 需重扫） |
 | v1.6 | 2026-08-14 11:15 | §2.4 补 pairing 配对流程（senderPolicy=pairing 的配对码批准；`qwen channel pairing` 需 `--cwd` daemon workspace、不支持 --daemon-url/--token） |
 | v1.7 | 2026-08-14 11:20 | §2.4 补 agent 权限边界安全说明（workspace=/data/WYC/signLanguage、agent=wuyangcheng 完整用户权限、sessionScope=user 隔离、收紧建议） |
