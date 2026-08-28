@@ -1,5 +1,5 @@
 #!/bin/bash
-# 重启 daemon（默认 4194）保持 session 工作连续性 v3（2026-08-27）
+# 重启 daemon（默认 4194）保持 session 工作连续性 v3（2026-08-27；2026-08-29 修 approval 持久化 bug）
 # 用法: bash restart_daemon_4194_v3.sh [--port 4194] [--workspace /data/WYC/signLanguage] [--token xxx]
 #       [--no-notify-waiting] [--dry-run]
 #
@@ -9,6 +9,16 @@
 #     连同模型、approval mode 一起写入快照 .team/daemon_v1/daemon_work_snapshot_restart.json
 #   - ⑤ 恢复模型映射 + **approval mode**（POST /session/:id/approval-mode，之前 full access=yolo
 #     的会话重启后保持 yolo，不会回落到需要审批的 default）
+#
+# 2026-08-29 修复（approval 状态重启后丢失的根因）：
+#   approval mode 是「运行时状态」，不随会话持久化；唯一持久化来源是 workspace settings 的
+#   tools.approvalMode。旧版 ⑤ 的 set_mode 未传 persist:true（只改内存），且 ensure_loaded 的
+#   load body 未传 approvalMode（会话以 default 启动）→ 重启后重新 load 的会话回落到 default。
+#   现修复两处：
+#     1) set_mode 传 persist:true → 把 tools.approvalMode 写入 workspace settings（根治，
+#        此后即使不走本脚本、直接重启 daemon，会话也会从 settings 恢复 yolo）
+#     2) ensure_loaded 的 load body 传 approvalMode → 会话加载时即处于正确 mode，
+#        消除「先 default 再 set」的瞬态窗口
 #   - ⑥ 重启完成后：对「被打断的工作 session」发送「继续完成」prompt，让成员自动恢复；
 #     对「等待输入的 session」发送说明（等待状态已被重启清空），避免成员空等
 #   - 支持 --port/--workspace/--token 参数化（用于独立测试实例验证，如 4195）
@@ -167,7 +177,7 @@ fi
 log "③ 启动新 daemon..."
 cd "$WORKSPACE" && setsid nohup node /home/wuyangcheng/.npm-global/bin/qwen serve \
   --http-bridge --hostname 127.0.0.1 --port "$PORT" --workspace "$WORKSPACE" \
-  --max-sessions 16 --chat-recording --token "$TOKEN" --require-auth $CHANNEL_ARGS \
+  --max-sessions 32 --max-connections 512 --chat-recording --token "$TOKEN" --require-auth $CHANNEL_ARGS \
   --writer-idle-timeout-ms 300000 \
   >> "$STATE/daemon_4194.log" 2>&1 < /dev/null &
 
@@ -209,12 +219,16 @@ def get_model(sid: str):
     except Exception:
         return None
 
-def ensure_loaded(sid: str) -> bool:
+def ensure_loaded(sid: str, mode: str = None) -> bool:
+    # 传 approvalMode 进 load body，使会话加载时即处于正确 mode，
+    # 避免「先以 default 启动、再 set_mode 纠正」的瞬态窗口（load 路径为 ephemeral，
+    # 真正持久化由 set_mode 的 persist:true 完成）。
+    body = {"approvalMode": mode} if mode else {}
     if get_model(sid) is not None:
         return True
     for attempt in range(3):
         try:
-            st, _ = _req("POST", f"/session/{sid}/load", body={}, timeout=8)
+            st, _ = _req("POST", f"/session/{sid}/load", body=body, timeout=8)
             if st == 200:
                 time.sleep(2)
                 return True
@@ -235,10 +249,12 @@ def set_model(sid: str, mid: str) -> bool:
     return False
 
 def set_mode(sid: str, mode: str) -> bool:
-    """恢复 approval 等级（POST /session/:id/approval-mode，mode∈plan/default/auto-edit/auto/yolo）。"""
+    """恢复 approval 等级（POST /session/:id/approval-mode，mode∈plan/default/auto-edit/auto/yolo）。
+    persist:true 会把 tools.approvalMode 写入 workspace settings，是 approval mode 的唯一
+    持久化来源——缺了它，重启后重新 load 的会话会回落到 default（需审批）。"""
     for attempt in range(3):
         try:
-            st, _ = _req("POST", f"/session/{sid}/approval-mode", body={"mode": mode}, timeout=10)
+            st, _ = _req("POST", f"/session/{sid}/approval-mode", body={"mode": mode, "persist": True}, timeout=10)
             if st == 200:
                 return True
         except (urllib.error.HTTPError, urllib.error.URLError, OSError, TimeoutError):
@@ -251,7 +267,7 @@ pending, ok, fail = [], 0, []
 for sid, info in mapping.items():
     mid = info.get("model")
     mode = info.get("mode")
-    if not ensure_loaded(sid):
+    if not ensure_loaded(sid, mode):
         pending.append({"sessionId": sid, "name": info["name"], "model": mid, "mode": mode})
         print(f"  ⏳ {info['name'][:22]:22s} {sid[:8]} → 会话不在 daemon（load 失败），记入待恢复", flush=True)
         continue
