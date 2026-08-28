@@ -126,6 +126,14 @@ bash /data/WYC/signLanguage/work/scripts/start_daemon_team_v1.sh restart
 - 图片需多模态模型；PDF/代码文件可发送，agent 自动解密读取
 - 建议 `senderPolicy: "pairing"`/`"allowlist"` 控制访问
 
+**主动推送 context_token 机制（2026-08-28 源码+实测确认）**：
+- daemon 端**定时主动推送给微信（weixin_push.py 直调 iLink sendmessage）受 context_token 会话宽限限制**：
+  - `context_token` **只在收到用户（Owner）消息时**随 getupdates 消息下发新值（`msg.context_token`），channel worker 捕获并持久化到 `~/.qwen/channels/weixin/context_tokens.json`
+  - sendmessage 服务端校验 context_token 的会话宽限期 **约 40 分钟**——超过 40 分钟无用户消息时主动推送返回 `ret:-2 prepare failed`
+  - getconfig（带 context_token）只返回 `typing_ticket`，**不刷新** context_token；getupdates 无新消息时响应**不带** token；协议层无主动刷新 API
+- **影响**：Owner 与 Jarvis 微信互动频繁时推送通畅（每次互动续期）；长时间无互动（>40 分钟）后首次主动推送失败，需 Owner 发一条微信消息激活
+- **处置/缓解**：①Owner 保持日常微信互动即可自然续期；②推送失败（ret:-2）时提示"需 Owner 微信发消息激活"（监督器可加失败检测+降级提示）；③40 分钟为 iLink 平台安全限制，客户端无法突破（详见调研报告 `work/reports/ilink_context_token_research_20260828.md`）
+
 **Pairing 配对流程**（`senderPolicy: "pairing"` 时新用户首次给 bot 发消息会生成配对码）：
 - 用户侧：微信给 bot 发消息 → 获得配对码（如 `H4W8WA4C`），把码发给 bot 操作者
 - 操作者侧：批准
@@ -708,6 +716,7 @@ Machine settings（`/home/wuyangcheng/.vscode-server/data/Machine/settings.json`
 | v1.17 | 2026-08-28 08:10 | 新增 §3.14 VS Code Server inotify 泄漏拖垮系统（本地B 卡死真凶）：inotify 56193 耗尽 → systemd 无法建 watch → 代理崩溃循环 → 本地模型全 503；重启 VS Code Server + 恢复代理 + 新增 vscode_server_watchdog_v1.py（WARN=40000/RESTART=55000 自动重启/冷却 6h）；VS Code Server 重启 vs Remote 重连关系；附发现 g29 端口配置被误改 8050（已修复） |
 | v1.18 | 2026-08-28 08:30 | 新增 §3.15 files.watcherExclude 根治 VS Code inotify 泄漏：追加根因（启动即爆、递归 watch 667GB 工作区、Remote 自动重连复用旧配置）；Machine settings 注入 19 个排除模式；验证 reload 后 inotify 56191→14683（86%→22%）根治有效；残余安全 + watchdog 兜底；备注后续可收紧（watcherPolling/更多排除） |
 | v1.19 | 2026-08-28 08:50 | 新增 §3.16 watchdog 修复迭代：4 缺陷（跨用户匹配/单进程漏报/cli 守护自动拉起实例/双实例）；重启目标=cli 守护；watcherExclude 19→26（补 work/subtitle 17GB 等）；最终验证 inotify 56191→12951（86%→20%）26 模式生效 |
+| v1.20 | 2026-08-28 08:30 | §2.4 补 weixin 主动推送 context_token 机制（40 分钟会话宽限：token 仅在 Owner 发消息时续期、getconfig/getupdates 不刷新、sendmessage 超限 ret:-2；缓解=保持微信互动/失败提示激活；调研报告 ilink_context_token_research_20260828.md） |
 | v1.5 | 2026-08-14 11:05 | GitHub channel 停用，切换 WeChat channel：§2.4 更新为 weixin 配置/扫码登录/连接验证（仅纯文本、仅 DM、会话过期 errcode -14 需重扫） |
 | v1.6 | 2026-08-14 11:15 | §2.4 补 pairing 配对流程（senderPolicy=pairing 的配对码批准；`qwen channel pairing` 需 `--cwd` daemon workspace、不支持 --daemon-url/--token） |
 | v1.7 | 2026-08-14 11:20 | §2.4 补 agent 权限边界安全说明（workspace=/data/WYC/signLanguage、agent=wuyangcheng 完整用户权限、sessionScope=user 隔离、收紧建议） |
