@@ -128,6 +128,11 @@
 - **主管拓扑引用规范（2026-08-12 用户确认）**：主管维护公共约束、dashboard、日志和委派任务时，文档与逻辑必须使用 `team_topology.json` 中的稳定成员 id/角色/职责；不得硬编码可能变化的 tmux 窗口名。运行时窗口名只能由拓扑解析模块读取；窗口变动只修改拓扑文件，不改业务脚本和规范正文。
 - **provider 不兼容例外**：若原会话存档绑定了错误或不兼容的 provider（例如旧 DeepSeek 存档不能直接承载 GPT OAuth），由 signL8 先备份并修正 provider/config，再测试原会话 resume；只有确认 resume 会继续错误路由时，才可迁移到新会话。
 - **provider 不兼容必须走历史迁移 skill（2026-08-12 用户确认）**：迁移不得只靠手工摘要或复制几条消息，必须使用既有 `qwen-codex-context-migrate` skill，按其检查、规划、迁移、验证流程迁移完整可用的 session 历史/上下文；迁移前保留旧 session，迁移后验证新 provider 路由、任务连续性和待办完整性，并回报旧/新 session ID、skill 流程、迁移范围与验证结果。
+- **视觉类产物必须用本地模型视觉自检（2026-08-30 Owner 要求，强制）**：凡产出的**视觉类产物**（前端动画、渲染截图、overlay 语义标注、转绘帧、图像等），交付/汇报前**必须用本地 Qwen3.8-27B 自带的视觉能力自检**，确认画面符合要求（如近大远小、场景正确、人物清晰、无缺失/变形），**不得只生成不核验就交付**。
+  - **本地模型视觉调用方式**（OpenAI 兼容多模态）：`POST http://127.0.0.1:11435/v1/chat/completions`，`model=qwen3.8-27b-int4-tp2-g29`（或其它本地槽位），`messages` 里 user content 用 `[{"type":"text","text":<检查要求>},{"type":"image_url","image_url":{"url":"data:image/<type>;base64,<b64>"}}]`。**禁止绕过 11435 直连 zhuhai 端口**。
+  - **响应**：`message.content`=答案、`message.reasoning`=思考；若 content 空（thinking 耗尽预算）→ 加大 `max_tokens` 重试，仍空则从 `reasoning` 尾部兜底。
+  - **可复用脚本**：`/data/WYC/signLanguage/work/scripts/audit_semantic_overlay_strict_v5.py`（`call_vl()` 函数即完整范本，含 base64 转图 + thinking 模式 + 内容兜底）。
+  - **实测背书**（2026-08-30）：本地模型用 `image_url+base64` 看动画渲染截图 `frame_6000ms.png` 能正确判出"有长发女生/雨夜场景/画面生动"（thinking 580-613 字），视觉自检完全可行；动画side（09054c94）此前只产出未自检，正是缺这一步。
 
 ## 5. 公开仓库/部署规范
 
