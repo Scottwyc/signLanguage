@@ -1,9 +1,9 @@
 {
   "version": "2026-08-27",
-  "description": "手语团队拓扑：用稳定 id（signL2/signL4/...）指代成员，window 为当前 tmux 窗口名（可能变动，只改这里）。所有脚本从本文件读取窗口名/职责，不硬编码。local_model_services 为本地模型服务注册表（主管+运维共同维护，2026-08-26 新增，见 project_constraints.md §14）。",
+  "description": "手语团队拓扑：用稳定 id（signL2/signL4/...）指代成员（id 为程序稳定标识，不用于理解含义；理解看 name 中文正式名或 name_en 英文语义名参考）。window 为早期 tmux 窗口名（已废弃，只改这里）。session_id 为 daemon 时代身份主键（权威映射源 = .team/daemon_v1/registry.json，会话重建时由主管同步更新此处）。所有脚本从本文件读取 id/职责，不硬编码。local_model_services 为本地模型服务注册表（主管+运维共同维护，2026-08-26 新增，见 .team/team_constraints.md §14）。",
   "local_model_services": {
     "_note": "本地模型服务注册表。统一入口：nature 综合代理 127.0.0.1:11435 → SSH 隧道 → zhuhai（172.28.17.71:7712）。禁止绕过 11435 直连 zhuhai 端口。服务变更（启停/换卡/换模型）须主管协调 + 运维执行，并在 24h 内更新本注册表。",
-    "_updated_at": "2026-08-28T07:55+08:00",
+    "_updated_at": "2026-08-30T04:58+08:00",
     "_inventory_source": "2026-08-27 09:00 运维重构：vLLM INT4 弹性池（4×TP2 固定卡对 + TP1 自动找卡）取代 llama Q4 全部服务；llama 退场、vLLM 常驻三级移除；19:30 迁移：原 g02（GPU0+2）→ g29（GPU2+9），GPU0 释放",
     "services": [
       {
@@ -107,8 +107,8 @@
         ],
         "type": "elastic",
         "owner_role": "全体按需（指定卡 TP1；GPU1 liuchang 严禁）",
-        "status": "on-demand（请求时卡空闲即拉起；卡被占返回不可用）",
-        "note": "vLLM 0.19 INT4 TP1 固定卡槽；按需拉起 / 3h 空闲自动释放"
+        "status": "disabled（2026-08-29：GPU0 被外人占用，Owner 更新分配前禁止使用）",
+        "note": "vLLM 0.19 INT4 TP1 固定卡槽；GPU0 当前外人占用禁用，Owner 更新分配后恢复对应卡"
       },
       {
         "id": "int4-tp1-g2",
@@ -243,8 +243,8 @@
         ],
         "type": "elastic",
         "owner_role": "全体按需（指定卡 TP1；GPU1 liuchang 严禁）",
-        "status": "on-demand（请求时卡空闲即拉起；卡被占返回不可用）",
-        "note": "vLLM 0.19 INT4 TP1 固定卡槽；按需拉起 / 3h 空闲自动释放"
+        "status": "disabled（2026-08-29：GPU9 归入 g29 弹性槽位 GPU2+9，不再单独保留）",
+        "note": "vLLM 0.19 INT4 TP1 固定卡槽；GPU9 已并入 g29（GPU2+9），本槽位不单独占用"
       },
       {
         "id": "vl-8b",
@@ -254,13 +254,11 @@
         "host": "zhuhai",
         "port": 8000,
         "model": "qwen3-vl-8b（vLLM，视觉）",
-        "gpus": [
-          9
-        ],
-        "type": "resident",
-        "owner_role": "共享（字幕员/宣传员/算法开发者视觉任务）；settings.json visionModel 默认",
-        "status": "down（2026-08-26 02:00 运维复核：GPU9 已空闲——运维清理弹性 8029 后释放；VL 可随时启动 restore_vl_8000.sh）",
-        "note": "GPU9 为 VL 保留卡：现空闲可用；弹性实例会自动避开（占用时 GPU_BUSY 防冲突）"
+        "gpus": [],
+        "type": "stopped",
+        "owner_role": "共享（算法视觉任务）；settings.json visionModel 默认",
+        "status": "down（2026-08-29 Owner 确认停用：线上/本地模型均已自带视觉，GPU9 不再预留 VL，qwen3-vl-8b 服务已停）",
+        "note": "已停用：GPU9 不再保留给 VL 视觉模型，归入 g29 弹性槽位（GPU2+9）；qwen3-vl-8b VL 旧方案取消"
       },
       {
         "id": "bf16-8001",
@@ -275,7 +273,7 @@
         "type": "stopped",
         "owner_role": "无（已停用）",
         "status": "stopped（2026-08-25 停，释放 GPU0-4）",
-        "note": "⚠️ 调研员（signL9）已于 2026-08-26 02:00 由运维切换至 q4-a-tp2（qwen3.8-27b-q4-tp2），断链已解除"
+        "note": "⚠️ 调研（signL9）已于 2026-08-26 02:00 由运维切换至 q4-a-tp2（qwen3.8-27b-q4-tp2），断链已解除"
       },
       {
         "id": "edu-coder",
@@ -295,7 +293,7 @@
   "roles": {
     "SignL3": {
       "id": "SignL3",
-      "name": "主管人",
+      "name": "主管",
       "window": "SignL3-304",
       "cli": "qwen",
       "duty": "统筹/委派/dashboard/公共约束/人工介入队列",
@@ -303,62 +301,48 @@
       "line2": "repo",
       "model": "qwen3.8-27b-int4-tp2-g29",
       "local_service": "int4-tp2-g29",
-      "effort": "xhigh"
+      "effort": "xhigh",
+      "name_en": "supervisor",
+      "session_id": "29d60cd1-aaa8-4ed7-891a-d9c92b0b47c1"
     },
     "signL2": {
       "id": "signL2",
-      "name": "视频负责人",
+      "name": "视频",
       "window": "signL2-294",
       "cli": "qwen",
       "duty": "wan 转绘生成 + 树模型复测",
       "line": "wan",
-      "model": "qwen3.8-27b-int4-tp2-g56",
-      "local_service": "int4-tp2-g56",
-      "effort": "xhigh"
+      "model": "deepseek-v4-flash-vision-exp",
+      "local_service": null,
+      "effort": "xhigh",
+      "name_en": "video",
+      "session_id": "2039ec11-f5c4-4883-9b80-07d22fb3edd7"
     },
     "signL4": {
       "id": "signL4",
-      "name": "语义动画制作者",
+      "name": "语义动画",
       "window": "signL4-overlay",
       "cli": "qwen",
       "duty": "overlay 语义标注动画制作",
       "line": "overlay",
-      "model": "qwen3.8-27b-int4-tp2-g56",
-      "local_service": "int4-tp2-g56",
-      "effort": "xhigh"
+      "model": "deepseek-v4-flash-vision-exp",
+      "local_service": null,
+      "effort": "xhigh",
+      "name_en": "overlay_animator",
+      "session_id": "82f87c76-6ee5-4440-bf4d-5318cf5dba06"
     },
     "signL5": {
       "id": "signL5",
-      "name": "算法开发者",
+      "name": "算法",
       "window": "signL5-algo",
       "cli": "qwen",
       "duty": "数据增强/算法开发/部署",
       "line": "algo",
-      "model": "qwen3.8-27b-int4-tp2-g34",
-      "local_service": "int4-tp2-g34",
-      "effort": "xhigh"
-    },
-    "signL6": {
-      "id": "signL6",
-      "name": "字幕员",
-      "window": "signL6-subtitle",
-      "cli": "codex",
-      "duty": "视频中英双语字幕制作",
-      "line": "subtitle",
-      "model": "deepseek-v4-flash",
+      "model": "deepseek-v4-flash-vision-exp",
       "local_service": null,
-      "effort": "xhigh"
-    },
-    "signL7": {
-      "id": "signL7",
-      "name": "宣传员",
-      "window": "signL7-promoter",
-      "cli": "qwen",
-      "duty": "项目介绍面板制作（中英双语 + VL 美化）",
-      "line": "promo",
-      "model": "deepseek-v4-flash",
-      "local_service": null,
-      "effort": "xhigh"
+      "effort": "xhigh",
+      "name_en": "algorithm",
+      "session_id": "015b14fa-75a7-4e47-9054-7f78f2af956d"
     },
     "signL8": {
       "id": "signL8",
@@ -369,18 +353,22 @@
       "line": "resource",
       "model": "qwen3.8-27b-int4-tp2-g78",
       "local_service": "int4-tp2-g78",
-      "effort": "xhigh"
+      "effort": "xhigh",
+      "name_en": "ops",
+      "session_id": "704485e8-28aa-4c12-8d54-d69756ad7c6f"
     },
     "signL9": {
       "id": "signL9",
-      "name": "调研员",
+      "name": "调研",
       "window": "signL9-research",
       "cli": "qwen",
       "duty": "网络调研/材料搜集/问题问答/来源核验",
       "line": "research",
       "model": "qwen3.8-27b-int4-tp2-g78",
       "local_service": "int4-tp2-g78",
-      "effort": "xhigh"
+      "effort": "xhigh",
+      "name_en": "research",
+      "session_id": "a75dc085-3c9a-4af3-9c9c-fc0f80f346a2"
     },
     "signL10": {
       "id": "signL10",
@@ -389,9 +377,11 @@
       "cli": "qwen",
       "duty": "本地 Qwen3.8-27B 实际工作评测（编码/长文档/视觉）与可用性结论",
       "line": "model",
-      "model": "qwen3.8-27b-int4-tp2-g34",
-      "local_service": "int4-tp2-g34",
-      "effort": "high"
+      "model": "deepseek-v4-flash-vision-exp",
+      "local_service": null,
+      "effort": "high",
+      "name_en": "local_a",
+      "session_id": "8ee20f7e-875c-4341-972c-404d11fb8991"
     },
     "signL11": {
       "id": "signL11",
@@ -400,9 +390,11 @@
       "cli": "qwen",
       "duty": "本地模型工作会话（专属双卡 8017 GPU7+8，Owner 直接使用）",
       "line": "model",
-      "model": "qwen3.8-27b-int4-tp2-g56",
-      "local_service": "int4-tp2-g56",
-      "effort": "high"
+      "model": "deepseek-v4-flash-vision-exp",
+      "local_service": null,
+      "effort": "high",
+      "name_en": "local_b",
+      "session_id": "40e1ab7f-f9f7-47e5-a2b2-ab176310be9a"
     },
     "advisor": {
       "id": "advisor",
@@ -411,10 +403,12 @@
       "cli": "qwen",
       "duty": "技术顾问：daemon/看板/代理/本地模型运维支持 + 团队协调（与 Jarvis/微信 channel 互动）",
       "line": "ops",
-      "model": "deepseek-v4-flash",
-      "local_service": null,
-      "effort": "high"
+      "model": "qwen3.8-27b-int4-tp2-g78",
+      "local_service": "int4-tp2-g78",
+      "effort": "high",
+      "name_en": "advisor",
+      "session_id": "ce3dad61-b421-4dcb-b08a-35bacb88b955"
     }
   },
-  "_updated_at": "2026-08-28T09:00+08:00"
+  "_updated_at": "2026-08-30T04:31+08:00"
 }

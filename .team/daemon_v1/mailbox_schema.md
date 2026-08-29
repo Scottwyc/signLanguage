@@ -47,3 +47,40 @@ python3 work/scripts/daemon_team_mailbox_v1.py --offline-schema-check
 ```
 
 该模式只读取 mailbox JSONL，不访问 daemon；首次文件不存在视为空 mailbox 并返回成功。
+
+## 消息级生命周期（members/<role>/messages.jsonl）
+
+由 `daemon_team_member_helper_v1.py` 在监听成员 session SSE 时，按 `promptId` 把事件聚合为
+**消息级状态机**，补上「投递成功之后 LLM 是否读取/处理/完成」的反馈；事件级
+`inbox.jsonl`/`events.jsonl`/`helper_health.json` 保持不变（向后兼容）。
+
+状态机：
+
+```text
+queued → delivered（SSE user_message_chunk，LLM 已收到/回显）
+       → processing（SSE agent_thought_chunk / agent_message_chunk，LLM 读取处理中）
+       → completed（SSE turn_complete，LLM 已响应）
+       / blocked（SSE permission_request，等人工）
+       / failed（SSE error / session_died）
+```
+
+- `promptId` 位于事件顶层（`turn_complete` 的 `data` 里也有一份），现不再被脱敏——
+  它是不透明关联 ID 而非 prompt 内容；prompt 正文仍按原有规则脱敏。
+- 无 `promptId` 的事件（如多数 `session_died`）不进入消息状态机，只保留事件级记录。
+
+记录文件：`.team/daemon_v1/members/<role>/messages.jsonl`（追加式，同一条 `promptId`
+后续事件更新记录，追加一行完整记录；读取端按 `promptId` 去重保留最后一行 = 最新状态）。
+
+记录字段：
+
+- `promptId`：SSE 事件关联 ID
+- `state`：`delivered` / `processing` / `blocked` / `completed` / `failed`
+- `state_at`：最近一次状态变化时间（UTC ISO-8601）
+- `transitions`：状态变化历史 `[{state, at}, ...]`
+- `text_preview`：脱敏+截断的消息文本摘要（≤240 字符）
+- `session_id`、`role`：helper 所在成员上下文
+- `error`：`failed` 时保留失败原因（如 `data.reason`）
+
+聚合：`daemon_team_message_supervisor_v1.py` 读取各成员 `messages.jsonl`，输出
+`message_supervisor.json`：成员级新增 `msg_state_counts`（五态计数）与 `recent_messages`
+（按 `state_at` 倒序最多 5 条），顶层新增 `messages`（全成员最近消息倒序最多 20 条）。
