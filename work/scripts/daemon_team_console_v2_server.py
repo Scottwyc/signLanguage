@@ -62,6 +62,44 @@ SSE_CHUNK_FRESH_SECONDS = 60.0  # chunk 事件（thought/message）距今 < 该�
 SSE_RECONNECT_DELAY = 5.0       # SSE 断连后重连等待秒数
 SSE_MONITOR_SCAN_INTERVAL = 10.0  # 监控主循环扫描成员/补线程的周期秒数
 
+# ---------------- subagent / side task 追踪常量 ----------------
+SUBAGENT_STALE_SECONDS = 600.0  # meta 状态非终态但 last_updated 距今超过该秒数 → 标记 stale（疑似已死）
+SUBAGENT_TERMINAL_STATUSES = {"completed", "cancelled", "failed"}  # 终态：不再视为活跃 subagent
+# 本地模型前缀兜底：当 team_topology.json 注册表不可读时，仍能识别这些家族前缀为本地模型。
+# 本地模型 = zhuhai vLLM INT4 的 qwen3.8-27b 系列（含 -zhuhai / -int4-tp2-* / -int4-tp1-* 别名）。
+# 注意：主判定是动态读注册表 local_model_services.services[].aliases（唯一事实源，可随新服务自动扩展），
+# 本前缀仅供注册表不可读时兜底；外部 API（gpt-5.x 走 11435 转发、deepseek 直连）永远不显示。
+LOCAL_MODEL_PREFIXES = ("qwen3.8-27b", "Qwen3.8-27B", "qwen3-vl", "Qwen3.6-27B-Coder")
+
+_LOCAL_MODEL_ALIASES_CACHE: dict[str, Any] = {"ts": 0.0, "val": []}
+LOCAL_MODEL_ALIASES_TTL = 60.0  # 本地模型别名集缓存秒数（topology 很少变）
+
+
+def load_local_model_aliases() -> tuple[str, ...]:
+    """从 team_topology.json 的 local_model_services.services 读本地模型别名集（唯一事实源）。
+
+    返回每个 service 的 aliases + id（去重）。这样新增本地服务只需更新注册表，
+    subagent 本地模型判定即自动生效，无需改代码。带 60s 缓存。
+    """
+    now = time.time()
+    if now - _LOCAL_MODEL_ALIASES_CACHE["ts"] < LOCAL_MODEL_ALIASES_TTL:
+        return tuple(_LOCAL_MODEL_ALIASES_CACHE["val"])
+    aliases: set[str] = set()
+    try:
+        topo = json.loads(Path("/data/WYC/signLanguage/.team/team_topology.json").read_text(encoding="utf-8"))
+        for svc in topo.get("local_model_services", {}).get("services", []):
+            for a in svc.get("aliases", []) or []:
+                base = str(a).split("（")[0].split("(")[0].strip()
+                if base:
+                    aliases.add(base)
+            if svc.get("id"):
+                aliases.add(str(svc["id"]))
+    except (OSError, ValueError):
+        pass
+    _LOCAL_MODEL_ALIASES_CACHE["ts"] = now
+    _LOCAL_MODEL_ALIASES_CACHE["val"] = sorted(aliases)
+    return tuple(_LOCAL_MODEL_ALIASES_CACHE["val"])
+
 # ---------------- 实时 GPU 抓取常量 ----------------
 GPU_LIVE_CACHE_TTL = 5.0        # gpu_live 结果内存缓存秒数（前端 5s 轮询，需保持 ≤5s 才准确实时）
 GPU_SSH_TIMEOUT = 6.0           # SSH nvidia-smi 单次超时秒数
@@ -106,7 +144,7 @@ def load_local_model_gpu_map() -> dict[str, list[int]]:
 
 # zhuhai 本地模型服务 → GPU 卡映射（硬编码兜底；优先使用 team_topology.json 自动加载）。
 # 注意弹性单卡：lite=GPU9/8029、lite2=GPU0/8030、lite3=GPU2/8031、lite4=GPU3/8032、lite5=GPU4/8033
-# （2026-08-26 核实：曾把 lite/lite2 卡号写反导致调研员/本地B 显示错卡）。
+# （2026-08-26 核实：曾把 lite/lite2 卡号写反导致调研/本地B 显示错卡）。
 LOCAL_MODEL_GPU_MAP_FALLBACK: dict[str, list[int]] = {
     # 弹性单卡 liteN 系列
     "qwen3.8-27b-q4-lite": [9],
@@ -691,6 +729,44 @@ class V2State:
             self._elastic_rates_cache_ts = time.time()
         return result
 
+    def _llama_auto_discover(self) -> tuple[dict[str, str], dict[str, dict[str, float]]]:
+        """自动发现 zhuhai 上活跃的 llama.cpp 服务并补入看板卡片 + 速率。
+
+        8096 监控（llm_monitor_generic_v2）本身就自动发现 llama-server 并测 P/D 速率
+        （PROC_PATTERNS 含 "llama-server"，_scan_llama 解析日志），只是看板消费端
+        只认 topology 的 elastic/vllm 服务。这里直接拉 8096 /api，把 source=="llama"
+        且 alive 的实例补出来，键名 "端口(llama-模型id)"，速率挂 decode/prefill。
+        不改 topology / 巡检脚本；任何 llama-server 一在 zhuhai 跑起来即自动显示。
+
+        返回 (services 增量, rates 增量)。
+        """
+        services_inc: dict[str, str] = {}
+        rates_inc: dict[str, dict[str, float]] = {}
+        try:
+            with urlopen("http://127.0.0.1:18096/api", timeout=4) as r:
+                data = json.loads(r.read().decode())
+            for m in data if isinstance(data, list) else []:
+                if not m.get("alive"):
+                    continue
+                if m.get("source") != "llama":
+                    continue
+                port = str(m.get("port") or "").strip()
+                mid = str(m.get("model_id") or "llama").strip()
+                if not port or not port.isdigit():
+                    continue
+                key = f"{port}(llama-{mid})"
+                services_inc[key] = "UP(llama)"
+                d = (m.get("decode") or {}).get("last_rate")
+                p = (m.get("prefill_last") or {}).get("tps")
+                rates_inc[key] = {
+                    "decode": float(d) if d is not None else None,
+                    "prefill": float(p) if p is not None else None,
+                }
+        except Exception:
+            # 8096 不可用时静默，不影响 vLLM 面板（自动发现是增强而非必需）
+            pass
+        return services_inc, rates_inc
+
     def _fetch_local_services(self) -> dict[str, Any]:
         """local_services 数据抓取主体（读巡检文件 + 活跃弹性实例 + 速率），由缓存层调用。
 
@@ -763,6 +839,13 @@ class V2State:
             live = active_elastic.get(base)
             if live == "UP":
                 services[f"{base}(弹性)"] = "UP(速率)"
+        # llama.cpp 服务自动发现：从 8096 已发现的 llama-server 实例补出卡片+速率，
+        # 让 llama 引擎的本地模型也能在看板"本地模型服务"面板测速（无 topology 登记也可）。
+        llama_services, llama_rates = self._llama_auto_discover()
+        for k, v in llama_services.items():
+            services.setdefault(k, v)
+        for k, v in llama_rates.items():
+            rates.setdefault(k, v)
         latest = dict(latest)
         latest["services"] = services
         latest["rates"] = rates
@@ -846,8 +929,9 @@ class V2State:
 
     def _role_gpu_usage(self, gpu_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """各角色当前使用的本地模型服务与 GPU 卡
-        角色 model 从 chat jsonl 最近 api_response 提取；
-        实例归属用 11435 路由日志（[route] ts=... model=X -> url）按时间匹配"""
+        角色 model 优先取 dashboard_data.json 的 model 字段（含具体实例名，如
+        "qwen3.8-27b-int4-tp2-g29(openai)"），去掉 (openai) 后缀后匹配 topology 别名定位实例与 GPU；
+        缺失时回退到 chat jsonl 最近 api_response 泛化名 + 11435 路由日志按时间匹配。"""
         registry = self.registry()
         roles = registry.get("roles", {}) if isinstance(registry, dict) else {}
         # 拓扑：服务 aliases/端口 → (service_id, gpus)
@@ -1097,6 +1181,7 @@ class V2State:
                 "session_id": sid,
                 "state": state,
                 "detail": detail,
+                "subagents": self._active_tasks(sid),
             })
         # Jarvis（Owner 私人代理，微信 channel 会话）：unassigned 中 displayName=Jarvis
         for us in self.registry().get("unassigned_sessions") or []:
@@ -1112,7 +1197,8 @@ class V2State:
                 except Exception as exc:
                     state, detail = "error", type(exc).__name__
             members.append({"id": "Jarvis", "role": "Jarvis", "session_id": jid,
-                            "state": state, "detail": detail})
+                            "state": state, "detail": detail,
+                            "subagents": self._active_tasks(jid)})
             break
         result = {"members": members, "generated_at": now_iso()}
         with self._lock:
@@ -1164,6 +1250,131 @@ class V2State:
             age = (dt.datetime.now(dt.timezone.utc) - stamp).total_seconds()
             return "working", f"updatedAt {int(age)}s 前（SSE 不可用）"
         return "working", "active 状态（SSE 不可用）"
+
+    # ---------------- subagent / side task 追踪 ----------------
+
+    def _is_local_model(self, model: str) -> bool:
+        """判定 subagent 用的模型是否为「本地模型服务」（占成员服务线）。
+
+        主判定：model 命中注册表 local_model_services.services[].aliases（唯一事实源），
+        支持精确/前缀双向匹配以覆盖家族变体（如 alias=int4-tp1、model=int4-tp1-g0）。
+        注册表不可读时用 LOCAL_MODEL_PREFIXES 前缀兜底。
+        外部 API（gpt-5.x / deepseek）不命中 → False。
+        """
+        if not model:
+            return False
+        for a in load_local_model_aliases():
+            if model == a or model.startswith(a) or a.startswith(model):
+                return True
+        return model.startswith(LOCAL_MODEL_PREFIXES)
+
+    def _active_subagents(self, session_id: str) -> list[dict[str, Any]]:
+        """扫描 ~/.qwen/projects/*/subagents/<session_id>/agent-*.meta.json，返回该 session 当前活跃且用了本地模型的 subagent。
+
+        Qwen Code 每次 agent（subagent/side task）调用都会写 agent-*.meta.json，
+        status 从 pending/running 过渡到 completed/cancelled/failed。后台 subagent 的
+        tool_call 在启动后即 completed，实际工作仍在后台进行，因此不能依赖 SSE
+        open_tools 判定，必须看 meta 状态。
+        stale：状态非终态但 last_updated 距今超过 SUBAGENT_STALE_SECONDS → 疑似已死。
+        只返回「用了本地模型服务」的 subagent（persistedCliFlags.model 命中原生 LOCAL_MODEL_PREFIXES）：
+        只有本地模型才占用成员服务线，外部 API（gpt-5.x / deepseek）不显示到「成员用卡」。
+        """
+        if not session_id:
+            return []
+        now = time.time()
+        out: list[dict[str, Any]] = []
+        base = Path(os.path.expanduser("~/.qwen/projects"))
+        try:
+            metas = sorted(base.glob(f"*/subagents/{session_id}/agent-*.meta.json"))
+        except OSError:
+            return []
+        for mf in metas:
+            try:
+                m = json.loads(mf.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                continue
+            if not isinstance(m, dict):
+                continue
+            status = str(m.get("status") or "").lower()
+            if status in SUBAGENT_TERMINAL_STATUSES:
+                continue
+            flags = m.get("persistedCliFlags") or {}
+            model = str(flags.get("model") or "").strip()
+            # 仅统计用了本地模型的 subagent（占成员服务线）；外部 API 不显示
+            if not self._is_local_model(model):
+                continue
+            created = self._parse_dt(m.get("createdAt"))
+            last_up = self._parse_dt(m.get("lastUpdatedAt")) or created
+            last_ts = last_up.timestamp() if last_up else 0.0
+            out.append({
+                "agent_id": m.get("agentId") or mf.name[:-len(".meta.json")],
+                "kind": "subagent",
+                "description": m.get("description") or m.get("subagentName") or "subagent",
+                "status": status or "unknown",
+                "model": model,
+                "created_at": m.get("createdAt") or "",
+                "last_updated": m.get("lastUpdatedAt") or "",
+                "elapsed_seconds": int(max(now - created.timestamp(), 0)) if created else 0,
+                "stale": bool(last_ts and now - last_ts > SUBAGENT_STALE_SECONDS),
+            })
+        out.sort(key=lambda x: x.get("created_at") or "", reverse=True)
+        return out
+
+    def _active_side_tasks(self, session_id: str) -> list[dict[str, Any]]:
+        """返回该成员 session 派生、当前活跃且用了本地模型的 side task（fork 出的独立子会话）。
+
+        side task 记录在 daemon registry unassigned_sessions，特征：sourceType=="side_task"，
+        sourceId 指向派生的源会话（=成员 session_id）。
+        活跃 = 未归档 且（有客户端连接 clientCount>0 或 正在处理 prompt hasActivePrompt/pending>0）。
+        [2026-08-29] 判定放宽：有连接即视为活跃，避免 side task 完成一轮/等待输入时
+        hasActivePrompt=false 而成员用卡忽显忽隐（用户启动的本地模型 side task 应稳定显示）。
+        闲置（有连接但无 active prompt）不隐藏，status=idle；stale 仅对 running 且超时判定。
+        外部模型 / 已归档 / 无连接且空闲 的 side task 不显示。
+        模型判定：该 side task 会话当前模型命中本地模型（_member_current_model 查 daemon context）。
+        """
+        if not session_id:
+            return []
+        now = time.time()
+        out: list[dict[str, Any]] = []
+        for s in self.registry().get("unassigned_sessions") or []:
+            if not isinstance(s, dict):
+                continue
+            if s.get("sourceType") != "side_task":
+                continue
+            if str(s.get("sourceId") or "") != session_id:
+                continue
+            if s.get("isArchived"):
+                continue
+            running = bool(s.get("hasActivePrompt") or (s.get("pendingInteractionCount") or 0) > 0)
+            connected = (s.get("clientCount") or 0) > 0
+            if not (running or connected):
+                continue  # 既无客户端连接也不在处理 → 视为已结束，不显示
+            task_sid = s.get("sessionId") or ""
+            if not task_sid:
+                continue
+            model = self._member_current_model(task_sid)
+            if not self._is_local_model(model):
+                continue
+            updated = self._parse_dt(s.get("updatedAt"))
+            out.append({
+                "agent_id": task_sid,
+                "kind": "side_task",
+                "description": (str(s.get("displayName") or "side task").strip())[:60],
+                "status": "running" if running else "idle",
+                "model": model,
+                "created_at": s.get("createdAt") or "",
+                "last_updated": s.get("updatedAt") or "",
+                "elapsed_seconds": int(max(now - updated.timestamp(), 0)) if updated else 0,
+                "stale": bool(running and updated and now - updated.timestamp() > SUBAGENT_STALE_SECONDS),
+            })
+        out.sort(key=lambda x: x.get("created_at") or "", reverse=True)
+        return out
+
+    def _active_tasks(self, session_id: str) -> list[dict[str, Any]]:
+        """合并 subagent + side task（都用本地模型才显示），供「成员用卡」右侧小卡片。"""
+        tasks = self._active_subagents(session_id) + self._active_side_tasks(session_id)
+        tasks.sort(key=lambda x: x.get("created_at") or "", reverse=True)
+        return tasks
 
     # ---------------- SSE 实时活动监控（方案D：真实活动判定工作状态） ----------------
 
@@ -1442,16 +1653,44 @@ class V2State:
                 "local_model": bool(mapped),
             }
 
+        def _member_gpu_with_tasks(role: str, sid: str) -> None:
+            """追加单个 session 的主会话 GPU 关联 + 其派生的活跃本地模型子任务（side task/subagent）。
+
+            roles 成员与 Jarvis 通用：Jarvis（微信 channel 会话）同样会启动 sub/side task，
+            必须一并纳入「成员用卡」，否则 Jarvis 的子任务用卡不显示（2026-08-30 修复）。
+            """
+            members.append(_member_gpu(role, sid))
+            # 该成员派生的活跃本地模型子任务（side task/subagent）：按其实际用卡（model→GPU）归位到
+            # 对应模型分组，并在 role 前标注归属成员，体现"是它的子任务在用卡"（可能与主会话模型不同）。
+            for t in self._active_tasks(sid):
+                t_model = t.get("model") or ""
+                t_mapped = LOCAL_MODEL_GPU_MAP.get(t_model, [])
+                t_info = []
+                for idx in t_mapped:
+                    g = gpu_by_index.get(idx)
+                    if g:
+                        t_info.append({"gpu": idx, "util": g.get("util"), "used_mib": g.get("used_mib")})
+                members.append({
+                    "role": f"{role}{'side' if t.get('kind') == 'side_task' else 'sub'}",
+                    "model": t_model,
+                    "gpus": t_mapped,
+                    "gpu_info": t_info,
+                    "local_model": bool(t_mapped),
+                    "task_type": t.get("kind"),
+                    "task_status": t.get("status", ""),
+                })
+
         for m in self.members():
             sid = m.get("daemon_session_id") or m.get("session_id")
-            members.append(_member_gpu(m.get("role") or m.get("id"), sid))
+            role = m.get("role") or m.get("id")
+            _member_gpu_with_tasks(role, sid)
         # Jarvis（Owner 私人代理，微信 channel 会话）：unassigned 中 displayName=Jarvis
         for us in self.registry().get("unassigned_sessions") or []:
             if not isinstance(us, dict):
                 continue
             if str(us.get("displayName") or "").lower() != "jarvis":
                 continue
-            members.append(_member_gpu("Jarvis", us.get("sessionId") or ""))
+            _member_gpu_with_tasks("Jarvis", us.get("sessionId") or "")
             break
         return {
             "gpus": gpus,
@@ -1794,7 +2033,7 @@ class V2State:
                 continue
             seen_sessions.add(sid)
             mid = member.get("id") or member.get("role")
-            # name = team 角色中文名（主管人/视频负责人等，从 registry roles 映射），前端成员分布按 name 显示
+            # name = team 角色中文名（主管/视频等，从 registry roles 映射），前端成员分布按 name 显示
             members.append({"id": mid,
                             "role": member.get("role") or mid,
                             "name": roles_name.get(mid) or member.get("name") or member.get("displayName") or mid,
