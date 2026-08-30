@@ -40,6 +40,14 @@
 
 ## 当前任务状态
 
+### MTP A/B 对比实验报告（2026-08-30）✅ 已完成
+- **任务**：Jarvis 紧急派发——收尾 MTP A/B 两侧对比报告（图文并茂），完成后回报 Jarvis
+- **报告**：`/data/WYC/signLanguage/work/reports/mtp_ab_comparison_experiment_report_20260830.md`（6 章节，5 图内嵌）
+- **图表**：`/data/WYC/signLanguage/work/reports/figs_mtp_ab_20260830/`（fig1_decode_curve / fig2_prefill_curve / fig3_decode_dist / fig4_prefill_dist / fig5_decode_normalized）
+- **核心结论**：MTP n=2 在真实高熵任务（前端动画）上 decode 未加速反而慢——全时段均值比 0.832（慢 16.8%）；B11 窗口均值比 0.742（慢 26%）；prefill 基本保持（中位数比 1.003）；B 侧任务③失败（B10 崩溃 + B11 死循环）。建议全池回退无 MTP。
+- **数据**：/data/WYC/mtp_rate_task1.csv（18632 行原始，9283 行有效）
+- **已回报**：weixin_push 推送 Owner 微信 ✅
+
 ### dflash2/MTP 加速方案 POC（2026-08-30）⏸️ 已暂停 + GPU3+4 已释放
 - **任务**：Owner 要求评估 dflash2/mtp 加速方案是否应用到当前本地模型服务，验收标准「prefill 保住 vllm 现有效果 + decode 加速」。只动 GPU3+4（8051），严禁动其他槽位。
 - **已得结论（MTP 线）**：MTP n=2 已达标——prefill 持平略升 + decode 1.86-1.90×（达 ~100 tok/s 目标），draft token 接受率 85.4%。**MTP n=2 为首选生产配置，n=1 为保守档**。
@@ -97,6 +105,7 @@
 - **待办**：主管决定是否切 visionModel（默认保持 zhuhai）；重启后验证 edu provider
 
 ## 关键事实（§12 摘要，防走弯路）
+- **所有本地模型部署在 zhuhai，不在 nature 本机（2026-08-30 Owner 确认）**：vLLM INT4 弹性池 g29/g34/g56/g78、llama.cpp 等全部在 zhuhai 服务器上；nature 本机无 GPU 推理能力，仅作 Qwen Code 主进程 + 代理 + 工作目录。后续涉及本地模型部署/调研/换卡/速率测试一律按 zhuhai 卡位理解。
 - 三服务器：nature（本机主工作）/ zhuhai（172.28.17.71:7712，无 sudo，GPU 训练）/ edu（59.64.38.5:9000，教育网大模型 API）
 - zhuhai 资源（2026-08-29 更新）：**GPU0 和 GPU1 一律禁止使用**（均被外部人员占用，含 liuchang MATLAB）；**GPU2-9 = vLLM INT4 弹性池**（g29=8050/2+9、g34=8051/3+4、g56=8052/5+6、g78=8053/7+8，TP2 INT4 128K ctx，视觉可用，3h 空闲释放）；**GPU9 不再给 VL 预留**（归入 g29，线上/本地模型均已自带视觉，qwen3-vl-8b 已停用）；CPU 限核优先 liuchang。统一入口：nature 综合代理 127.0.0.1:11435 → SSH 隧道 → zhuhai，禁止绕过直连。
 - 网络：GFW 需代理 127.0.0.1:18080；DeepSeek/DashScope/GitHub 直连；教育网/内网 IP 直连
@@ -121,3 +130,10 @@
 - 启动陷阱：codex 需要 TTY（管道会报 stdout is not a terminal）；勿用 --model 启动
 - 文档：/data/WYC/codex_chatgpt_oauth_login_20260812.md
 - 验证会话：test-codex-gpt4（gpt-5.6-luna）、test-profile-gpt（gpt-5.5）
+
+## 并行 sub 提前开工（early-dispatch）规范落盘（2026-08-30）
+- Owner 要求提炼"并行 sub 提前开工"工作技巧并写入 team 公共约束——已写入 `.team/team_constraints.md` §4「并行 sub 提前开工（early-dispatch）」+ 文件头时间戳 + §4 变更记录（2026-08-30 18:43）
+- 核心：主任务"基本完成"（核心结构/结论/关键数据稳定，剩余只是不改变下游方向的收尾）时，立即提前派发下游 sub 做"独立准备段"（调研/选型/脚手架），与主任务收尾并行重叠；定稿后 send_message 交最新版做"依赖最终版精修段"
+- 适用：sub 工作可拆"独立准备段 + 依赖最终版精修段"两段；不适用：sub 完全依赖最终产物（会返工）；写作用域隔离
+- 范例：MTP 报告 §5.3 对比分析"基本完成"时应立即提前派发小红书 sub 调研渲染库，而非等报告全部收尾
+- 待办：team_constraints.md 含本会话前的既有未提交改动（zhuhai 部署规则/§12 外网中转/消息前缀规范/session_id），未自动 commit 避免捆绑；Owner 决定 commit 范围
