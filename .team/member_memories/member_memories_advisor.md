@@ -71,3 +71,9 @@
   - **max_tokens=输出上限，输入上限=ctx−max_tokens**；thinking 计入 max_tokens（reasoning.high 会先耗尽预算再出回答，是"回答一半截断"主因）。
   - 35b 窗口 225280；`samplingParams.max_tokens=32768`（2026-09-01 设，位置在 samplingParams 下）。
 - **落盘**：智能路由主题文档第一部分 `work/documents/intelligent_router/intelligent_router_v1_20260901.md`；代理变更记录 `~/.qwen/settings_fix_gpt_models_20260731.md`；team_constraints §3 已补"僵死自愈必须含端口校验"红线。
+
+## 2026-09-01 本地模型"假已下线"看板 bug + 统一代理拉起规范（重要）
+- **事故**：8466 看板 local_services 部分在线的 27b-g78/g34 显示"已下线"，疑看板 bug。
+- **根因（确诊）**：8096 监控 `infer_model(日志名)` 推 model_id，遇 **logtag 命名漂移**——当前 27b 实例手动启动用 `vllm_g78.log`（logtag g78），STATE_FILE 残留旧别名 `int4-tp2-g78`（log=vllm_int4-tp2-g78.log）；同一端口 8053 两个 model_id，旧别名无活跃进程 → alive=False → 看板"假已下线"。
+- **修复**：① 8096 `refresh_models` 用 **port 兜底匹配**翻 alive（`str()` 统一比较——持久化 state["port"] 是字符串 '8053'，find_active_logs 的 port 可能 int）② 清 STATE_FILE 旧别名（删 int4-tp2-g78/g34）③ 重启 8096。备份：`llm_monitor_generic_v2.py.bak_alivefix_20260901`、`llm_monitor_state.json.bak_clean_20260901`。验证 alive=False=0，看板恢复。
+- **重要规范**：**本地模型实例一律用综合代理(11435) 拉起**——代理 `_elastic_vllm_cfg` 用标准 logtag（main.py 177-180 行：27b-g78→`int4-tp2-g78`），保证日志名=标准 model_id，8096/看板正确识别。**手动/裸调另起实例会让 logtag 漂移**（g78 vs int4-tp2-g78）→ 8096 误判已下线。维护/重启实例一律走代理（`_elastic_ensure`），勿绕开；测试/临时实例也勿裸调。

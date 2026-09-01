@@ -40,6 +40,10 @@
   5. **`served_model_name` 与实际模型一致**，不得伪造（如以 qwen3.8-27b 名头实载 Qwen3-30B-A3B，导致路由到错误模型）。
   6. 停实例用 `bash /tmp/elastic_stop_vllm.sh <port>` 或带端口精确 PID，严禁 pkill 宽匹配（见 signL8 记忆「vLLM 清理红线」）。
   7. **仅用标准模板** `/tmp/elastic_start_vllm_tp2_param.sh`（已含 CUDA_VISIBLE_DEVICES + 127.0.0.1），不得裸调 `vllm serve` / `python -m vllm.entrypoints` 另起炉灶。
+- **本地模型实例拉起规范（2026-09-01，生产/测试区分，强制）**：
+  - **生产/常驻服务实例：一律由综合代理(11435) `_elastic_ensure`（`_elastic_vllm_cfg`）拉起**，用标准 logtag（main.py 定义，如 27b-g78→`int4-tp2-g78`）→ 日志名=标准 model_id → 8096/看板正确识别。**严禁手动/裸调另起生产实例**——logtag 漂移（`g78` vs `int4-tp2-g78`）会让 8096/看板把**在线实例误判"已下线"**（2026-09-01 bug：当前 27b-g78/g34 手动起 logtag=`g78`，STATE_FILE 残留 `int4-tp2-g78` 旧别名，在线实例显示"已下线"）。
+  - **测试/临时实例（POC/测速/评测，运维/调研/顾问常裸调）：允许裸调，但必须**①logtag 用带 `_test` 后缀（如 `g78_test`）与生产隔离 ②**用完立即清理**（kill -9 实例 + 删 `~/.qwen/scripts/llm_monitor_state.json` 里对应残留 entry + 清 `/tmp` 残留日志）——**严禁用完不清理**，否则 STATE_FILE 累积残留别名 → 看板"假已下线"。
+  - **通用红线（2026-09-01）**：任何实例（生产/测试）**用完必须清理**，避免 STATE_FILE 累积残留 → 8096 误判"已下线"。若需裸调测试，先确认 logtag 规范 + 用完清理；不确定时走代理 + 临时槽位。
 - **僵死自愈判定必须含端口校验（2026-09-01 重大反例）**：任何"按 GPU 对/卡组匹配进程组并清理（kill -9）"的自动化自愈逻辑，必须**同时校验进程 cmdline 的 `--port == 目标槽位端口`**，严禁只按 GPU 对匹配。否则同 GPU 对跑的不同模型实例（如 g29 卡组 27b=8050 已释放 / 35b=8070 运行，共享 GPU2,9）会被误判为彼此僵死、直接误杀运行中的另一实例，导致本地服务瞬断（`Model stream ended without a finish reason. Connection error.`）。修复见 `work/documents/intelligent_router/intelligent_router_v1_20260901.md` §4。
 - **智能路由 tool-call 兼容性硬规则（2026-08-31 顾问 live 终验，Owner 待定稿，强制门槛）**：候选模型进智能路由** agentic / coding / 多轮工具调用档**前，必须先过 tool-call 兼容性探针（`work/scripts/tool_call_compat_probe.py`），确认返回**原生 OpenAI `tool_calls`** 结构（Qwen Code 可解析执行）。
   - **30B/35B MoE 快档（2026-08-31 顾问复核修正）**：**两者行为不同**——仅 **30B-A3B（Qwen3-30B-A3B，Qwen3 早系）** 输出 **Hermes `<tool_call>` 文本标记**，须用 vLLM 内置 **`--tool-call-parser hermes`** 部署才转成原生 `tool_calls`（实测 GPU0/8097：`qwen3_xml`=0 工具、`hermes`=✅ 原生 tool_calls、`openai`=501 不支持）。**35B-A3B（Qwen3.6-35B-A3B，Qwen3.6 系）用 `qwen3_xml` 直接输出原生 tool_calls**（实测 GPU3+4/8071，finish=tool_calls），**无需换 hermes**。**部署：仅 30B 用 `hermes`，35B 用 `qwen3_xml` 即可**；严禁把 35B 也一律套 `hermes`。

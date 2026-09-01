@@ -178,9 +178,20 @@ def _proc_mtp(pid: str):
     except Exception:
         return False
 
+def _proc_max_num_seqs(pid: str):
+    """从 /proc/PID/cmdline 解析 --max-num-seqs（vLLM 最大并发槽数）。
+    [2026-08-31] 看板补「并发N=x」小字（自动反映实例实际配置）。"""
+    try:
+        with open(f"/proc/{pid}/cmdline", "rb") as f:
+            cmd = f.read().decode("utf-8", errors="replace").replace("\x00", " ")
+        m = re.search(r"--max-num-seqs\s+(\d+)", cmd) or re.search(r"--max-num-seqs=(\d+)", cmd)
+        return int(m.group(1)) if m else None
+    except Exception:
+        return None
+
 def find_active_logs():
     """通过 pgrep 找活跃进程（llama-server / vllm api_server），
-    用 /proc/PID/fd 找它打开的日志文件，返回 {log_path: (port, gpus, mtp)}"""
+    用 /proc/PID/fd 找它打开的日志文件，返回 {log_path: (port, gpus, mtp, max_num_seqs)}"""
     logs: dict[str, tuple] = {}
     for pat in PROC_PATTERNS:
         try:
@@ -190,6 +201,7 @@ def find_active_logs():
                 port = _proc_port(pid)
                 gpus = _proc_gpus(pid)
                 mtp = _proc_mtp(pid)
+                max_num_seqs = _proc_max_num_seqs(pid)
                 try:
                     fd_dir = f"/proc/{pid}/fd"
                     for fd in os.listdir(fd_dir):
@@ -200,7 +212,8 @@ def find_active_logs():
                                 if rp not in logs or port:
                                     logs[rp] = (port or (logs[rp][0] if rp in logs else None),
                                                 gpus or (logs[rp][1] if rp in logs else None),
-                                                mtp or (logs[rp][2] if rp in logs else False))
+                                                mtp or (logs[rp][2] if rp in logs else False),
+                                                max_num_seqs or (logs[rp][3] if len(logs[rp]) > 3 else None))
                         except Exception:
                             pass
                 except Exception:
@@ -221,25 +234,31 @@ def refresh_models():
         for m in models.values():
             m.state["alive"] = False
         active_keys = set()
-        for lp, (port, gpus, mtp) in logs.items():
+        for lp, (port, gpus, mtp, max_num_seqs) in logs.items():
             mid = infer_model(lp)
-            if mid in active_keys:
+            # [20260901 修复] 日志日志名推出的 mid 可能与注册 model_id 不一致（如 vllm_g78.log→g78 vs int4-tp2-g78），
+            # 导致在线实例 alive 翻不回 True（看板"已下线" bug）。用 port 兜底匹配已注册 entry（port 唯一）。
+            m = models.get(mid)
+            if m is None and port is not None:
+                # str() 统一比较：持久化恢复的 state["port"] 是字符串（'8053'），find_active_logs 的 port 是 int（8053）
+                m = next((mm for mm in models.values() if str(mm.state.get("port")) == str(port)), None)
+            if m is None and mid in active_keys:
                 continue  # 同模型多个日志取第一个
             active_keys.add(mid)
-            if mid in models:
-                m = models[mid]
-                m.state["alive"] = True
-                m.last_seen = now
-                if port: m.state["port"] = port
-                if gpus: m.state["gpus"] = gpus
-                m.state["mtp"] = bool(mtp)
-            else:
+            if m is None:
                 source = "vllm" if "vllm" in os.path.basename(lp).lower() else "llama"
                 m = ModelState(mid, lp, source)
                 if port: m.state["port"] = port
                 if gpus: m.state["gpus"] = gpus
                 m.state["mtp"] = bool(mtp)
+                if max_num_seqs: m.state["max_num_seqs"] = max_num_seqs
                 models[mid] = m
+            m.state["alive"] = True
+            m.last_seen = now
+            if port: m.state["port"] = port
+            if gpus: m.state["gpus"] = gpus
+            m.state["mtp"] = bool(mtp)
+            if max_num_seqs: m.state["max_num_seqs"] = max_num_seqs
         # 清理下线超过 2 小时的实例（避免无限累积）
         for mid in [k for k, m in list(models.items())
                     if not m.state.get("alive") and now - (m.last_seen or 0) > 7200]:
@@ -257,8 +276,11 @@ def fetch_vllm_metrics(port):
         # [2026-08-29 fix] vLLM /metrics 的这两个计数器带 label {engine=...,model_name=...}，
         # 原 regex 锚定行首 + \s+ 匹配不到带 label 的值 -> 恒 None -> 瞬时差分从未生效（看板只有 10s 日志均值）。
         # 改为允许 {label} 存在。
-        pt = re.search(r"^vllm:prompt_tokens_total(?:\{[^}]*\})?\s+([\d.]+)", txt, re.M)
-        gt = re.search(r"^vllm:generation_tokens_total(?:\{[^}]*\})?\s+([\d.]+)", txt, re.M)
+        # [2026-08-31 fix] Prometheus 对 >=1e6 的 counter 用科学计数法（如 1.436203e+06），
+        # 原字符集 [\d.]+ 只匹配小数部分丢 e+06 -> 计数器被截断成恒定值 -> 每秒差分≈0 -> 看板 decode 恒 0。
+        # 改字符集为 [\d.eE+-]+ 支持科学计数法（float() 原生解析 e+06）。注：先读到的实例最先破百万触发此 bug。
+        pt = re.search(r"^vllm:prompt_tokens_total(?:\{[^}]*\})?\s+([\d.eE+-]+)", txt, re.M)
+        gt = re.search(r"^vllm:generation_tokens_total(?:\{[^}]*\})?\s+([\d.eE+-]+)", txt, re.M)
         if pt and gt:
             return float(pt.group(1)), float(gt.group(1))
     except Exception:
@@ -272,8 +294,10 @@ def fetch_vllm_specmetrics(port):
     try:
         with urllib.request.urlopen(f"http://127.0.0.1:{port}/metrics", timeout=1) as r:
             txt = r.read().decode("utf-8", errors="replace")
-        dr = re.search(r"^vllm:spec_decode_num_draft_tokens_total(?:\{[^}]*\})?\s+([\d.]+)", txt, re.M)
-        ac = re.search(r"^vllm:spec_decode_num_accepted_tokens_total(?:\{[^}]*\})?\s+([\d.]+)", txt, re.M)
+        # [2026-08-31 fix] 同 generation_tokens_total：MTP 投机计数器也是 vLLM counter，
+        # 破百万走科学计数法，[\d.]+ 截断丢 e+06 -> 接受率差分失效；改 [\d.eE+-]+ 支持。
+        dr = re.search(r"^vllm:spec_decode_num_draft_tokens_total(?:\{[^}]*\})?\s+([\d.eE+-]+)", txt, re.M)
+        ac = re.search(r"^vllm:spec_decode_num_accepted_tokens_total(?:\{[^}]*\})?\s+([\d.eE+-]+)", txt, re.M)
         if dr and ac:
             return float(dr.group(1)), float(ac.group(1))
     except Exception:
@@ -377,14 +401,12 @@ def loop():
                         st = m.state
                         if prev and pt >= prev[1] and gt >= prev[2]:
                             dt = now - prev[0]
-                            if dt > 0:
-                                pf_rate = (pt - prev[1]) / dt
-                                gen_rate = (gt - prev[2]) / dt
-                                if pf_rate > 0:
-                                    st["prefill_last"] = {"task": st.get("latest_task"), "tokens": int(pt), "t": 0.0, "progress": 0.0, "tps": round(pf_rate, 1)}
-                                    st["peak_prefill"] = max(st.get("peak_prefill") or 0, pf_rate)
-                                # [2026-08-30] decode 瞬时速率/peak/window 由 _instant_decoder_thread 唯一负责，
-                                # 这里不再写 decode，避免与 1s 瞬时竞争（loop 的 pf_rate 引擎均值会覆盖瞬时）
+                            # [2026-08-31 fix] prefill 计量统一交给 _scan_vllm（vLLM 引擎日志 Avg prompt throughput）：
+                            # 原 loop() 差分（pf_rate=Δprompt/dt）与 _scan_vllm 双写竞争，且 burst 时差分放大值
+                            # （实测并发爆发飙到 ~6.3 万）覆盖引擎日志的稳定均值，prefill_last 显示虚高且冻结。
+                            # 而引擎日志 Avg prompt throughput 是 vLLM 权威窗口均值（短 prompt 时 7000+，真实）。
+                            # 故 loop() 不再写 prefill_last/peak_prefill，只更新 metric_prev 供 decode 差分参考；
+                            # decode 瞬时仍由 _instant_decoder_thread 唯一负责。
                         metric_prev[mid] = (now, pt, gt)
                 except Exception:
                     pass
