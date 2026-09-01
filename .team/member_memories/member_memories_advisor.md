@@ -60,3 +60,14 @@
 ## 协作约定
 - 消息前缀用【顾问】；排查结论落盘文档 + 回报主管
 - 报告文档路径：work/documents/ 与 work/reports/（中文，含保存时间精确到分钟）
+
+## 2026-09-01 智能路由 / 弹性池关键诊断与修复（顾问参与，重要）
+- **事故**：16:30 用卡2+9(35b) 出现 `Model stream ended without a finish reason. Connection error.`，打断本地服务。
+- **根因（确诊）**：`_kill_stale_elastic_workers("qwen3.8-27b-int4-tp2-g29")` **只按 GPU 对 {2,9} 匹配 VLLM 进程组**，无法区分同卡组不同模型——g29 卡组 27b(8050,已释放) 与 35b(8070,运行) 共享 GPU2,9，把 35b(PGID 1021461) 误判为"27b 僵死"、反复命中待清、试图 kill -9。这是**按 GPU 对匹配的跨模型误杀 bug**。
+- **修复**：`_kill_stale_elastic_workers` 判定处，GPU 对匹配基础上**增加 cmdline `--port == 本槽位端口` 校验**（`re.search(rf"--port[ =]{port}(?!\d)")`）。备份 `main.py.bak_portcheck_20260901`；单测 6/6 PASS；已重启 11435 生效。
+- **联动修复**：上游 vLLM 断流 `http.client.IncompleteRead` 时不补 finish_reason → 客户端报错。已给 `_handle_local_backend` 补 finish_reason 防护 4 处（含 `except IncompleteRead` 断流补发）。备份 `main.py.bak_finish_patch_20260901`。
+- **知识沉淀**：
+  - **端口是区分槽位/实例最可靠字段**（每槽位独占端口；同 GPU 对可跑不同模型）。任何"按 GPU 对匹配进程"的清理逻辑必须加 `--port` 校验。
+  - **max_tokens=输出上限，输入上限=ctx−max_tokens**；thinking 计入 max_tokens（reasoning.high 会先耗尽预算再出回答，是"回答一半截断"主因）。
+  - 35b 窗口 225280；`samplingParams.max_tokens=32768`（2026-09-01 设，位置在 samplingParams 下）。
+- **落盘**：智能路由主题文档第一部分 `work/documents/intelligent_router/intelligent_router_v1_20260901.md`；代理变更记录 `~/.qwen/settings_fix_gpt_models_20260731.md`；team_constraints §3 已补"僵死自愈必须含端口校验"红线。
