@@ -4,6 +4,11 @@
 > 主题：signLanguage 团队"智能路由"（codex-deepseek-proxy :11435 综合代理）的本地模型服务部署、弹性池机制、关键 bug 修复与运维红线。
 > 维护：顾问 / 运维（signL8）协作；本文为智能路由主题文档**第一部分**（本地模型服务部署），后续部分（如 DeepSeek/GPT 路由、tool-call 兼容层、质检等）另文。
 
+> **本文件模型简称对照（2026-09-01）**：
+> - **27b** = **Qwen3.8-27B**（`qwen3.8-27b-int4-tp2-*`，g29/34/56/78 槽位；**稠密 27B，AWQ-INT4**）
+> - **35b** = **Qwen3.6-35B-A3B**（`qwen3.6-35b-a3b-tp2-*`；**MoE，AWQ-4bit**，窗口 225280）
+> - 全文（除模型 id 本身外）出现"27b/35b"均指以上两款；涉及对比类结论必写全型号（见 §7）。
+
 ---
 
 ## 1. 整体架构（nature 本机 ↔ zhuhai 服务器）
@@ -87,10 +92,45 @@
 - **thinking 也计入 max_tokens**：`reasoning.effort=high` 下先输出思考 token 再输出回答，思考+回答 ≤ max_tokens。思考占满预算 → 回答截断（`finish_reason=length`），这是早期"回答一半截断"的原因之一（配合加大 max_tokens / 降 reasoning 缓解）。
 - 多轮会话 context 累积，接近窗口时 Qwen Code 自动 compress。
 
-## 7. 引用／关联
+## 7. 本地模型视觉能力实测比较（2026-09-01，顾问实测）
+
+> 详细记录：`intelligent_router/local_vision_capacity_cmp_v1_20260901.md`
+> 方法：**直接走 OpenAI 兼容 API**（`127.0.0.1:11435/v1/chat/completions`，绕过 Qwen Code 前端），同题同图、temperature=0。4 题：颜色/OCR/位置、计数+空间、柱状图读值、中文 OCR。
+
+### 7.1 被测对象
+- **Qwen3.6-35B-A3B（35b）**：`qwen3.6-35b-a3b-tp2-g29`（MoE，AWQ-4bit，卡2+9、端口 8070，**运行中**）
+- **Qwen3.8-27B（27b）**：`qwen3.8-27b-int4-tp2-g34`（稠密 27B，AWQ-INT4，卡3+4、端口 8051，**空闲实例**）
+
+### 7.2 结果速览
+
+| 题 | 评估能力 | Qwen3.6-35B-A3B(35b) | Qwen3.8-27B(27b) |
+|----|---------|-----|-----|
+| fig1 | 颜色/左右位置/文字 OCR（QK42） | ✅ 全对 | ✅ 全对 |
+| fig2 | 计数(6)+形状颜色+数量比较(3蓝圆>2黄三角)+空间(左下) | ✅ 全对 | ✅ 全对 |
+| fig3 | 柱状图**数值读取**+高低排序（真值 A150/B300/C220/D380） | ❌ **空输出** | ⚠️ 有推理但**数值上偏**（读成 A≈200/B≈400/C≈300/D>400） |
+| fig4 | 中文 OCR（手语智能评估系统 2026） | ✅ 全对 | ✅ 全对 |
+| 无图对照 | 是否诚实拒答 | ✅ 诚实说看不到 | ✅ 诚实说看不到 |
+
+### 7.3 关键结论
+1. **两者都有原生视觉**（Qwen3.x GDN 视觉塔，与两个模型同架构），实测图像 token 确实进入（带图 prompt≈250-330 vs 纯文字 ~40），**非 visionBridge 桥接**。
+2. **基础能力（颜色/位置/OCR/计数/空间）强且持平**：fig1/2/4 两模型全部答对。
+3. **分水岭在"图表/精细数值读取"（fig3）**：
+   - **Qwen3.6-35B-A3B(35b) 完全宕机**（给足 800 token 仍 0 输出、无读数无推理）；
+   - **Qwen3.8-27B(27b) 有结构化推理**（think 内逐刻度/逐像素坐标推断、能判断高低趋势与排序）但**绝对数值上偏**（把 300 读成 400、150 读成 200）。
+   - → 两者对**精确图表读数都不可靠**，但 27b 至少能给出"趋势+排序"，35b 直接无产出。
+4. **风格差异**：35b 输出更直接简洁；27b 在需推理的视觉题上**先写长 think 草稿再答** → 正文易溢出被截断（与文本任务"思考超长"同源，非视觉特有）。
+5. **⚠️ Qwen Code 前端注意**：`~/.qwen/settings.json` 中 **Qwen3.6-35B-A3B(35b) 模型注释为"工具调用可用"、未标"视觉可用"**；而 **Qwen3.8-27B(27b) 标了"视觉可用"**。→ 前端对 35b **可能不默认启用本地图像 pipeline（或走 visionBridge）**。本测试是绕过前端直打 API 才测到真实多模态能力。**成员若要在 Qwen Code 里用 35b 看图，需先确认前端是否将 35b 当作视觉模型处理。**
+
+### 7.4 建议分工（结合实测）
+- **看真实图片/图表/带数据图**：优先 **Qwen3.8-27B**（有推理趋势，读数需人工核对）；Qwen3.6-35B-A3B 仅适合**描述/OCR**，不适合**精确读图/读数**。
+- **精确考据（图表数值、硬事实）**：仍走**联网核实**或 **deepseek-v4-flash-vision-exp（官方 API，顾问在用，1M ctx）**。
+- **视觉作为 agentic 一环（需看图决策）**：用 Qwen3.8-27B 或官方 VL 更稳；Qwen3.6-35B-A3B 虽有工具调用但视觉读取弱。
+
+## 8. 引用／关联
 
 - 35B 部署：`work/documents/local_model_eval/local_model_qwen36_35b_a3b_deploy_v1_20260831.md`
 - 弹性槽位事故报告：`work/documents/zhuhai_qwen3_8_27b_deploy/elastic_slot_stale_incident_report_20260829_v1.md`
 - 代理隔离目录：`work/documents/zhuhai_qwen3_8_27b_deploy/codex-deepseek-proxy_isolated_20260825/`
 - tool-call 兼容报告：`work/documents/advisor_toolcall_compat_report_20260831_v1.md`
 - 代理变更记录：`~/.qwen/settings_fix_gpt_models_20260731.md`（2026-09-01 段：代理 finish 防护 + g29 max_tokens）
+- 本地引擎思考强度控制调研（2026-09-01，effort 机制 vLLM vs llama.cpp）：`work/documents/intelligent_router/local_reasoning_effort_control_v1_20260901.md`

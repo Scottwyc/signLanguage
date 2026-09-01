@@ -77,3 +77,45 @@
 - **根因（确诊）**：8096 监控 `infer_model(日志名)` 推 model_id，遇 **logtag 命名漂移**——当前 27b 实例手动启动用 `vllm_g78.log`（logtag g78），STATE_FILE 残留旧别名 `int4-tp2-g78`（log=vllm_int4-tp2-g78.log）；同一端口 8053 两个 model_id，旧别名无活跃进程 → alive=False → 看板"假已下线"。
 - **修复**：① 8096 `refresh_models` 用 **port 兜底匹配**翻 alive（`str()` 统一比较——持久化 state["port"] 是字符串 '8053'，find_active_logs 的 port 可能 int）② 清 STATE_FILE 旧别名（删 int4-tp2-g78/g34）③ 重启 8096。备份：`llm_monitor_generic_v2.py.bak_alivefix_20260901`、`llm_monitor_state.json.bak_clean_20260901`。验证 alive=False=0，看板恢复。
 - **重要规范**：**本地模型实例一律用综合代理(11435) 拉起**——代理 `_elastic_vllm_cfg` 用标准 logtag（main.py 177-180 行：27b-g78→`int4-tp2-g78`），保证日志名=标准 model_id，8096/看板正确识别。**手动/裸调另起实例会让 logtag 漂移**（g78 vs int4-tp2-g78）→ 8096 误判已下线。维护/重启实例一律走代理（`_elastic_ensure`），勿绕开；测试/临时实例也勿裸调。
+
+## 2026-09-01 本地模型视觉能力实测对比（顾问免前端直测，重要）
+- **方法**：经 `127.0.0.1:11435/v1/chat/completions` 直打 OpenAI 兼容 API（**绕过 Qwen Code 前端**），同题同图、temp=0，4 题（颜色/OCR/位置、计数+空间、柱状图读值、中文 OCR）。
+- **被测**：35b=`qwen3.6-35b-a3b-tp2-g29`(卡2+9/8070,运行中)；27b=`qwen3.8-27b-int4-tp2-g34`(卡3+4/8051,空闲)。
+- **结论**：
+  - **两者都有原生视觉**（Qwen3.x GDN 视觉塔），实测图像 token 确实进入（带图 prompt≈250-330 vs 纯文字 ~40），**非 visionBridge 桥接**。
+  - 基础能力（颜色/位置/OCR/计数/空间）**强且持平**：fig1/2/4 双模型全对；无图时都诚实拒答。
+  - **分水岭=图表/精细数值读取（fig3 柱状图，真值 A150/B300/C220/D380）**：**Qwen3.6-35B-A3B(35b) 完全宕机**（给足 800 token 仍 0 输出）；**Qwen3.8-27B(27b) 有结构化推理但数值上偏**（读成 A≈200/B≈400/C≈300/D>400）。→ 精确读图**两者都不可靠**，27b 至少能出趋势+排序，35b 直接无产出。
+  - **风格**：35b 输出直接简洁；27b 需推理的视觉题先长 think 草稿再答 → 正文易溢出截断（与文本"思考超长"同源）。
+  - **⚠️ Qwen Code 前端注意**：settings.json 里 **Qwen3.6-35B-A3B(35b) 注释"工具调用可用"、未标"视觉可用"**；Qwen3.8-27B(27b) 标了"视觉可用"。→ 前端对 35b **可能不默认启用本地图像 pipeline（或走 visionBridge）**；本次是绕过前端才测到真实多模态。**成员用 35b 看图前需先确认前端是否把它当视觉模型。**
+- **建议分工**：看真实图/图表→优先 Qwen3.8-27B（读数需人工核对）；精确考据→联网核实 / deepseek-v4-flash-vision-exp（官方 API, 1M ctx）；视觉作为 agentic 一环→Qwen3.8-27B 或官方 VL。
+- **文档**：`work/documents/intelligent_router/local_vision_capacity_cmp_v1_20260901.md`；`intelligent_router_v1_20260901.md` 新增 §7「本地模型视觉能力实测比较」（§8 引用/关联）。
+- **⚠️ 通用规则（Owner 2026-09-01 要求，强制）**：**性能实测/模型对比报告必须写清每个被测模型的完整规格**（品牌型号+架构+量化+model_id+槽位/端口/状态），**禁止只写"27b/35b"简写**。已写入 `team_constraints.md §4`「性能实测/对比必须写清模型型号」+ 项目反馈记忆 `report-must-state-model-full-spec`。凡后续做任何模型实测/对比（视觉/速度/tool-call/长文本等）都要遵守。
+
+## 2026-09-01 死循环监督 watchdog（顾问实现，重要）
+- **背景（Owner 要求）**：本地 AWQ4 量化的 Qwen3.6-35B-A3B（35b）Moe 出现"思考循环"——模型在思考/输出陷入无限重复，耗 token/上下文却不产出有效结果，会话像卡死。需监督成员输出，发现死循环及时打断，按 ctx 余量决定是否 /compress，再补发「继续完成」。
+- **实现**：新建 `work/scripts/daemon_loop_watchdog_v1.py`（常驻进程，setsid 保活，PID 3395761）。复用 `daemon_auth_v1` + context watchdog 的 HTTP 模式。
+- **关键发现**：
+  - daemon SSE 事件流**不吐 token 增量**（只有 `git_status_changed` 等离散事件）→ 死循环**不能靠事件流**，改读 **transcript 尾部**（`chats/<sid>.jsonl`）提取 model 消息正文（`message.role=='model'`、文本在 `message.parts[].text`，Qwen Code 不落盘 thinking）。
+  - `context-usage` 端点可精确拿 `totalTokens/contextWindowSize` → 算余量占比可靠。
+  - `POST /session/:id/cancel`（204）可打断；`mid-turn-message` 只在有 active turn 时接受（`accepted:false` 是空闲态正常）。
+- **检测算法（以最后一条为中心）**：连续 3 条 model 文本，最后一条（≥120 字）与其余每条相似度 ≥0.90 判死循环。测试全过（完全重复/逐条累积→True；正常不同/短文本→False）。真实会话 model 文本中位长度 590+，120 阈值合理。
+- **恢复流程**：`cancel` 打断 → 查 `context-usage`，余量 <20% 先 `/compress`（等完成）再发「继续完成」，否则直接发「继续完成」。
+- **限流**：同会话 120s 冷却；1h 触发 3 次转人工介入队列。
+- **落盘**：`team_constraints.md §4`「死循环自动监督机制」+ §16.3 工具目录登记；状态 `.team/daemon_v1/loop_watchdog_state.json` + `loop_watchdog.log`；告警写 `team_messages.log`。
+
+## 2026-09-01 本地引擎思考强度控制调研（重要，回答 Owner「本地能否像官方一样控制 effort」）
+- **背景**：35b（Qwen3.6-35B-A3B-AWQ）思考过长→截断/1 turn 停；Owner 问「官方模型能 /effort，我们本地 vLLM/llama.cpp 难道不能吗」。
+- **核心区分（baseUrl 决定引擎）**：官方 qwen3.6-plus/qwen-max → `dashscope.aliyuncs.com`（阿里云，供应商原生实现 effort ✅）；本地 27b/35b → `127.0.0.1:11435`（我们 zhuhai vLLM 0.19 ❌）。
+- **vLLM 0.19 对 Qwen3 effort 无效**（源码+实测确认）：
+  - `--reasoning-parser qwen3` 只做输出解析（拆 `<think>`/`</think>`），**不控思考长度**；无 `--reasoning-effort` 参数。
+  - 协议层 `reasoning_effort`（protocol.py:182）**仅对 Harmony/GPT-OSS 模型生效**（harmony_utils 经系统提示词），**对 Qwen3 无作用**。
+  - 实测 27b 中性/medium/high completion=81/97/80（随机级）、35b 波动<8% → 均无效。
+- **llama.cpp 0.3.0 完整支持 reasoning_effort**（实测有效）：
+  - CLI `--reasoning-effort`（minimal/low/medium/high/xhigh/max，arg.cpp:3669）+ **请求级 `inp["reasoning_effort"]`**（chat.cpp:970）+ 模板变量 `reasoning_effort`/`reasoning_strength`（caps.cpp:29）。
+  - Qwen3.8-27B 模板**消费**该变量，但机制是**把 effort 翻译成 system 提示词推理指令**（`reasoning_instructions`：xhigh=多想、low=少想），`high` 归一成 `xhigh`（`resolved_reasoning_effort`）。**非硬性 token 限制**，效果依赖模型遵循度。
+  - 实测（Qwen3.8-27B-UD-Q4_K_M 单卡 GPU5，高难度逻辑题）：low→reasoning 7533 / medium→5970 / high→3525（**方向反**：low 反而最长；软引导不稳定）。
+- **硬性限制思考长度的办法**：
+  - **vLLM**：`thinking_token_budget`（logits processor，builtin.py:352-498）解码时计数 `<think>` 达预算强制 `</think>`；**需 `--reasoning-config '{"reasoning_start_str":"<think>","reasoning_end_str":"</think>"}'` 解锁**；字段能从 11435 透传（发 budget=0 返回门控报错）。Owner 决定暂不落地（需改 zhuhai 脚本+重启）。
+  - **llama.cpp**：`enable_thinking=False` 彻底关思考（硬开关）。
+- **文档**：`work/documents/intelligent_router/local_reasoning_effort_control_v1_20260901.md`（完整调研：背景/引擎区分/源码证据/实测数据/结论/落地步骤）。
+- **结论**：本地引擎**能**控制思考强度，但选对引擎/参数——llama.cpp 走模板软引导（支持 effort，但效度依赖遵循度）、vLLM 对 Qwen3 effort 无效、硬限制要用 thinking_token_budget/enable_thinking。
